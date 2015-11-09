@@ -127,26 +127,6 @@ class AdminController extends LSYii_Controller
     public function run($action)
     {
 
-         // ========================  Begin LimeService Mod
-        if (Yii::app()->getConfig('locked'))
-        {
-            header("Expires: Sat, 26 Jul 1997 05:00:00 GMT");
-            die("
-                Dear survey administrator - the administration is currently not available since you used up your available Survey Responses.<br />
-                Please login with your username at <a href='https://www.limeservice.com'>LimeService</a> and buy some Survey Responses!");
-        }
-
-        $sDomain=$_SERVER['SERVER_NAME'];
-        $sSubdomain=substr($sDomain,0,strpos($sDomain,'.'));
-        $sDomain=substr($sDomain,strpos($sDomain,'.')+1);
-
-        $iAffectedRows = Yii::app()->dbstats->createCommand("Update pageviews set modified=now(), pageviews_admin=pageviews_admin+1 where subdomain='{$sSubdomain}' and rootdomain='{$sDomain}'")->execute();
-        if ($iAffectedRows==0)
-        {
-            Yii::app()->dbstats->createCommand("insert into pageviews (pageviews_admin, pageviews_client, subdomain, rootdomain, lastaccess, created, modified ) values (1,0,'{$sSubdomain}','{$sDomain}','".date('Y-m-d H:i:s')."', now(), now())")->execute();
-        }
-        // ========================  End LimeService Mod
-
         // Check if the DB is up to date
         if (Yii::app()->db->schema->getTable('{{surveys}}'))
         {
@@ -400,11 +380,7 @@ class AdminController extends LSYii_Controller
 
         $updateModel = new UpdateForm();
         $updateNotification = $updateModel->updateNotification;
-        // LimeService Mod Start
-        //$aData['showupdate'] = $updateNotification->result;
-        $aData['showupdate'] = '';
-        // LimeService Mod end
-
+        $aData['showupdate'] = $updateNotification->result;
         $aData['surveyid'] = $surveyid;
         $aData['iconsize'] = Yii::app()->getConfig('adminthemeiconsize');
         $aData['sImageURL'] = Yii::app()->getConfig('adminimageurl');

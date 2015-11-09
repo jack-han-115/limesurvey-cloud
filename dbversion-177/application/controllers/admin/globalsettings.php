@@ -47,9 +47,6 @@ class GlobalSettings extends Survey_Common_Action
 
     public function showphpinfo()
     {
-        // LimeService Mod Start
-        die ('No permission');
-        // LimeService Mod End
         if (!Yii::app()->getConfig('demoMode')) {
             phpinfo();
         }

@@ -1175,9 +1175,12 @@ function getSurveyInfo($surveyid, $languagecode='')
             if (!isset($thissurvey['adminname'])) {$thissurvey['adminname']=Yii::app()->getConfig('siteadminemail');}
             if (!isset($thissurvey['adminemail'])) {$thissurvey['adminemail']=Yii::app()->getConfig('siteadminname');}
             if (!isset($thissurvey['urldescrip']) || $thissurvey['urldescrip'] == '' ) {$thissurvey['urldescrip']=$thissurvey['surveyls_url'];}
+
             $staticSurveyInfo[$surveyid][$languagecode]=$thissurvey;
         }
+
     }
+
     return $thissurvey;
 }
 
@@ -4015,12 +4018,9 @@ function SendEmailMessage($body, $subject, $to, $from, $sitename, $ishtml=false,
     }
 
     switch ($emailmethod) {
-        // LimeService Mod start
-        /*case "qmail":
+        case "qmail":
             $mail->IsQmail();
-            break;*/
-        // LimeService Mod end
-            
+            break;
         case "smtp":
             $mail->IsSMTP();
             if ($emailsmtpdebug>0)
@@ -4042,23 +4042,13 @@ function SendEmailMessage($body, $subject, $to, $from, $sitename, $ishtml=false,
                 $mail->SMTPAuth = true;
             }
             break;
-        // LimeService Mod start
-        /*case "sendmail":
+        case "sendmail":
             $mail->IsSendmail();
-            break;*/
-        // LimeService Mod end
+            break;
         default:
             //Set to the default value to rule out incorrect settings.
             $emailmethod="mail";
-            $mail->IsMail();   
-        // LimeService Mod start
-            $mail->AddReplyTo($fromemail, $fromname);
-            $fromemail='noreply@limeservice.com';
-            if (trim($fromname)=='')
-                $fromname='LimeService';
-            $senderemail='bounces@limeservice.com';        
-        // LimeService Mod end
-            
+            $mail->IsMail();
     }
 
     $mail->SetFrom($fromemail, $fromname);
@@ -4082,8 +4072,8 @@ function SendEmailMessage($body, $subject, $to, $from, $sitename, $ishtml=false,
             $mail->AddCustomHeader($val);
         }
     }
-    $mail->AddCustomHeader("X-Surveymailer: $sitename Emailer ( LimeService http://www.limeservice.com )");
-    if (get_magic_quotes_gpc() != "0")	{$body = stripcslashes($body);}
+    $mail->AddCustomHeader("X-Surveymailer: $sitename Emailer (LimeSurvey.sourceforge.net)");
+    if (get_magic_quotes_gpc() != "0")    {$body = stripcslashes($body);}
     if ($ishtml)
     {
         $mail->IsHTML(true);

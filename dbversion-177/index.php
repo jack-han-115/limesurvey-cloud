@@ -143,10 +143,9 @@
 
 		define('APPPATH', BASEPATH . $application_folder . '/');
 	}
-    $userdir=str_replace('instances','installations',dirname(dirname(__FILE__))).'/'.$_SERVER['SERVER_NAME'].'/userdata';
-    if (file_exists($userdir.DIRECTORY_SEPARATOR.'config.php'))
+    if (file_exists(APPPATH.'config'.DIRECTORY_SEPARATOR.'config.php'))
     {
-        $aSettings= include($userdir.DIRECTORY_SEPARATOR.'config.php');
+        $aSettings= include(APPPATH.'config'.DIRECTORY_SEPARATOR.'config.php');
     }
     else
     {
@@ -188,14 +187,16 @@ require_once APPPATH . 'core/LSYii_Application' . EXT;
 
 $config = require_once(APPPATH . 'config/internal' . EXT);
 
-if (!file_exists($userdir.DIRECTORY_SEPARATOR . 'config' . EXT)) {    
+if (!file_exists(APPPATH . 'config/config' . EXT)) {    
     // If Yii can not start due to unwritable runtimePath, present an error    
     $runtimePath = $config['runtimePath'];
     if (!is_dir($runtimePath) || !is_writable($runtimePath)) {
         // @@TODO: present html page styled like the installer
-        die (sprintf('%s should be writable by the webserver (755 or 775).', $runtimePath));
+        die (sprintf('%s should be writable by the webserver (766 or 776).', $runtimePath));
     }
 }
+
+
 Yii::createApplication('LSYii_Application', $config)->run();
 
 /* End of file index.php */

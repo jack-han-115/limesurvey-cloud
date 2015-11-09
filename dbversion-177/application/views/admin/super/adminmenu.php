@@ -16,18 +16,6 @@
             { ?>
             <div class='menubar-title-right'><a href='<?php echo $this->createUrl("admin/globalsettings");?>'><?php echo sprintf($clang->ngT('Update available: %s','Updates available: %s',count($aUpdateVersions)),$sUpdateText);?></a></div>
             <?php } ?>
-        <?php
-
-    //===============Begin LimeService Mod
-    $sDomain=$_SERVER['SERVER_NAME'];
-    $sSubdomain=substr($sDomain,0,strpos($sDomain,'.'));
-    $sDomain=substr($sDomain,strpos($sDomain,'.')+1);
-
-    $iResponses = Yii::app()->dbstats->createCommand("select responses_avail from limeservice_system.balances where user_id=".substr(Yii::app()->db->username,6))->queryScalar();
-    echo "<div class='menubar-title-right'><small>".sprintf($clang->gT('Your response balance: %s'),$iResponses)."</small> <a href='http://www.limeservice.com/en/buy-survey-responses'>".'(Buy more)'.'</a></div>';
-    //===============End LimeService Mod            
-
-    ?>
     </div>
     <div class='menubar-main'>
         <div class='menubar-left'>

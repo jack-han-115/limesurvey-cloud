@@ -52,6 +52,10 @@ class LSYii_Validators extends CValidator {
         if($this->xssfilter)
         {
             $object->$attribute=$this->xssFilter($object->$attribute);
+            if($this->isUrl)
+            {
+                $object->$attribute=str_replace('javascript:','',html_entity_decode($object->$attribute, ENT_QUOTES, "UTF-8")); 
+            }
         }
         // Note that URL checking only checks basic URL properties. As a URL can contain EM expression there needs to be a lot of freedom.
         if($this->isUrl)

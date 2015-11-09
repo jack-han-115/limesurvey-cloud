@@ -42,20 +42,23 @@ class LSYii_Application extends CWebApplication
         parent::__construct($config);
         Yii::setPathOfAlias('bootstrap' , Yii::getPathOfAlias('ext.bootstrap'));
         // Load the default and environmental settings from different files into self.
-        $ls_config = require(__DIR__ . '/../config/config-defaults.php'); 
+        $ls_config = require(__DIR__ . '/../config/config-defaults.php');
         $email_config = require(__DIR__ . '/../config/email.php');
         $version_config = require(__DIR__ . '/../config/version.php');
-        $settings = array_merge($ls_config, $version_config, $email_config);
-        // LImeService Mod Start
-        if (file_exists($userdir.DIRECTORY_SEPARATOR.'config.php'))
+
+	$updater_version_config = require(__DIR__ . '/../config/updater_version.php');
+        $settings = array_merge($ls_config, $version_config, $email_config, $updater_version_config);
+
+
+        if(file_exists(__DIR__ . '/../config/config.php'))
         {
-            $ls_config = require($userdir . DIRECTORY_SEPARATOR . 'config.php');
+            $ls_config = require(__DIR__ . '/../config/config.php');
             if(is_array($ls_config['config']))
             {
                 $settings = array_merge($settings, $ls_config['config']);
             }
         }
-        // LImeService Mod End
+
         foreach ($settings as $key => $value)
             $this->setConfig($key, $value);
 

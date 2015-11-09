@@ -14,7 +14,7 @@ App()->getClientScript()->registerScriptFile(Yii::app()->getConfig('adminscripts
                             {
                                 echo " selected='selected'";
                             }
-                        ?>><?php $clang->eT("LimeService"); ?></option>
+                        ?>><?php $clang->eT("None"); ?></option>
                     <option value='L'<?php
                             if ($settings['bounceprocessing'] == 'L')
                             {

@@ -394,7 +394,7 @@
         $supportedLanguages['ckb']['description'] = gT('Kurdish (Sorani)');
         $supportedLanguages['ckb']['nativedescription'] = '&#1705;&#1608;&#1585;&#1583;&#1740;&#1740; &#1606;&#1575;&#1608;&#1749;&#1606;&#1583;&#1740;';
         $supportedLanguages['ckb']['rtl'] = true;
-        $supportedLanguages['ckb']['dateformat'] = 1;
+        $supportedLanguages['ckb']['dateformat'] = 1;                        
         $supportedLanguages['ckb']['radixpoint'] = 1;
         $supportedLanguages['ckb']['cldr'] = 'ku';
         

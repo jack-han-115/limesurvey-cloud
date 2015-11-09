@@ -1147,7 +1147,7 @@ function db_upgrade_all($iOldDBVersion) {
                 dropColumn('{{sessions}}','data');
             }
             catch (Exception $e) {
-
+                
             }
             switch (Yii::app()->db->driverName){
                 case 'mysql':
@@ -1299,24 +1299,24 @@ function db_upgrade_all($iOldDBVersion) {
                 }
             }
             $oDB->createCommand()->update('{{settings_global}}',array('stg_value'=>180),"stg_name='DBVersion'");
-
+            
         }
         if ($iOldDBVersion < 181)
         {
             upgradeTokenTables181();
             upgradeSurveyTables181();
             $oDB->createCommand()->update('{{settings_global}}',array('stg_value'=>181),"stg_name='DBVersion'");
-        }
+        }        
         if ($iOldDBVersion < 183)
         {
             upgradeSurveyTables183();
             $oDB->createCommand()->update('{{settings_global}}',array('stg_value'=>183),"stg_name='DBVersion'");
-        }
+        }        
         if ($iOldDBVersion < 184)
         {
-//            fixKCFinder184();
+            fixKCFinder184();
             $oDB->createCommand()->update('{{settings_global}}',array('stg_value'=>184),"stg_name='DBVersion'");
-        }
+        }        
         $oTransaction->commit();
         // Activate schema caching
         $oDB->schemaCachingDuration=3600;
@@ -1346,7 +1346,7 @@ function db_upgrade_all($iOldDBVersion) {
 function upgradeSurveyTables183()
 {
     $oSchema = Yii::app()->db->schema;
-    $aTables = dbGetTablesLike("survey\_%");
+    $aTables = dbGetTablesLike("survey\_%");        
     if (!empty($aTables))
     {
         foreach ( $aTables as $sTableName )
@@ -1354,8 +1354,8 @@ function upgradeSurveyTables183()
             $oTableSchema=$oSchema->getTable($sTableName);
             if (empty($oTableSchema->primaryKey))
             {
-                addPrimaryKey(substr($sTableName,strlen(Yii::app()->getDb()->tablePrefix)), 'id');
-            }
+                addPrimaryKey(substr($sTableName,strlen(Yii::app()->getDb()->tablePrefix)), 'id');            
+            }   
         }
     }
 }
@@ -1366,10 +1366,10 @@ function fixKCFinder184()
     $sThirdPartyDir=Yii::app()->getConfig('homedir').DIRECTORY_SEPARATOR.'third_party'.DIRECTORY_SEPARATOR;
     rmdirr($sThirdPartyDir.'ckeditor/plugins/toolbar');
     rmdirr($sThirdPartyDir.'ckeditor/plugins/toolbar/ls-office2003');
-    array_map('unlink', glob($sThirdPartyDir.'kcfinder/cache/*.js'));
-    array_map('unlink', glob($sThirdPartyDir.'kcfinder/cache/*.css'));
-    rmdirr($sThirdPartyDir.'kcfinder/upload/files');
-    rmdirr($sThirdPartyDir.'kcfinder/upload/.thumbs');
+    array_map('unlink', glob($sThirdPartyDir.'kcfinder/cache/*.js')); 
+    array_map('unlink', glob($sThirdPartyDir.'kcfinder/cache/*.css')); 
+    rmdirr($sThirdPartyDir.'kcfinder/upload/files'); 
+    rmdirr($sThirdPartyDir.'kcfinder/upload/.thumbs'); 
 }
 
 
@@ -1379,7 +1379,7 @@ function upgradeSurveyTables181()
     $oSchema = Yii::app()->db->schema;
     if(Yii::app()->db->driverName!='pgsql')
     {
-        $aTables = dbGetTablesLike("survey\_%");
+        $aTables = dbGetTablesLike("survey\_%");        
         if ($aTables)
         {
             foreach ( $aTables as $sTableName )
@@ -1397,8 +1397,8 @@ function upgradeSurveyTables181()
                     case 'mysqli':
                         alterColumn($sTableName, 'token', "string(35) COLLATE 'utf8_bin'");
                         break;
-                    default: die('Unknown database driver');
-                }
+                    default: die('Unknown database driver');    
+                }   
             }
         }
     }
@@ -1426,8 +1426,8 @@ function upgradeTokenTables181()
                     case 'mysqli':
                         alterColumn($sTableName, 'token', "string(35) COLLATE 'utf8_bin'");
                         break;
-                    default: die('Unknown database driver');
-                }
+                    default: die('Unknown database driver');    
+                }   
             }
         }
     }
@@ -1446,7 +1446,7 @@ function upgradeTokenTables179()
             break;
         default:
             $sSubstringCommand='substr';
-    }
+    }    
     $surveyidresult = dbGetTablesLike("tokens%");
     if ($surveyidresult)
     {
@@ -2409,16 +2409,16 @@ function dropUniqueKeyMSSQL($sFieldName, $sTableName)
 function dropSecondaryKeyMSSQL($sFieldName, $sTableName)
 {
     $oDB = Yii::app()->getDb();
-    $sQuery="select
+    $sQuery="select 
     i.name as IndexName
-    from sys.indexes i
+    from sys.indexes i 
     join sys.objects o on i.object_id = o.object_id
-    join sys.index_columns ic on ic.object_id = i.object_id
+    join sys.index_columns ic on ic.object_id = i.object_id 
     and ic.index_id = i.index_id
-    join sys.columns co on co.object_id = i.object_id
+    join sys.columns co on co.object_id = i.object_id 
     and co.column_id = ic.column_id
-    where i.[type] = 2
-    and i.is_unique = 0
+    where i.[type] = 2 
+    and i.is_unique = 0 
     and i.is_primary_key = 0
     and o.[type] = 'U'
     and ic.is_included_column = 0

@@ -399,6 +399,7 @@ class responses extends Survey_Common_Action
 
                 $oRow = SurveyDynamic::model($iSurveyID)->findByAttributes(array('id' => $iId));
                 $phparray = json_decode_ls($oRow->$fieldname);
+
                 for ($i = 0; $i < count($phparray); $i++)
                 {
                     if (rawurldecode($phparray[$i]['name']) == rawurldecode($downloadindividualfile))

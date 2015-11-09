@@ -100,7 +100,7 @@ class QuestionAttribute extends LSActiveRecord
             ->where(array('and', 'qid=:qid'))->bindParam(":qid", $qid)
             ->order('qaid asc')
             ->query();
-    }     
+    }    
 
     /**
     * Returns Question attribute array name=>value

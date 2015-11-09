@@ -116,24 +116,21 @@ class LSYii_Application extends CWebApplication
         {
             $config['components']['assetManager']=array();
         }        
-        $userdir=str_replace('instances','installations',dirname(dirname(dirname(dirname(__FILE__))))).'/'.$_SERVER['SERVER_NAME'].'/userdata';
-        
         $config['components']['assetManager']=array_merge_recursive($config['components']['assetManager'],array(
-            'basePath'=> $userdir.DIRECTORY_SEPARATOR.'tmp'.DIRECTORY_SEPARATOR.'assets'   // Enable to activate cookie protection
-        ));          
+            'basePath'=> dirname(dirname(dirname(__FILE__))).DIRECTORY_SEPARATOR.'tmp'.DIRECTORY_SEPARATOR.'assets'   // Enable to activate cookie protection
+        ));
 
-        $config['runtimePath'] =$userdir.DIRECTORY_SEPARATOR.'tmp'.DIRECTORY_SEPARATOR.'runtime';
         parent::__construct($config);
         Yii::setPathOfAlias('bootstrap' , Yii::getPathOfAlias('ext.bootstrap'));
         // Load the default and environmental settings from different files into self.
-        $ls_config = require(__DIR__ . '/../config/config-defaults.php'); 
+        $ls_config = require(__DIR__ . '/../config/config-defaults.php');
         $email_config = require(__DIR__ . '/../config/email.php');
         $version_config = require(__DIR__ . '/../config/version.php');
         $settings = array_merge($ls_config, $version_config, $email_config);
         
-        if (file_exists($userdir.DIRECTORY_SEPARATOR.'config.php'))
+        if(file_exists(__DIR__ . '/../config/config.php'))
         {
-            $ls_config = require($userdir . DIRECTORY_SEPARATOR . 'config.php');
+            $ls_config = require(__DIR__ . '/../config/config.php');
             if(is_array($ls_config['config']))
             {
                 $settings = array_merge($settings, $ls_config['config']);
@@ -288,11 +285,11 @@ class LSYii_Application extends CWebApplication
     }
     /**
      * Get the pluginManager
- * 
+     * 
      * @return PluginManager
- */
+     */
     public function getPluginManager()
-	{
+    {
         return $this->pluginManager;
     }
 

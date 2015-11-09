@@ -463,8 +463,8 @@ class tokens extends Survey_Common_Action
                 $action .= '<div style="width: 20px; height: 16px; float: left;"></div>';
             }
             if($bTokenDeletePermission){
-            $attribs = array('onclick' => 'if (confirm("' . $clang->gT("Are you sure you want to delete this entry?") . ' (' . $token['tid'] . ')")) {$("#displaytokens").delRowData(' . $token['tid'] . ');$.post(delUrl,{tid:' . $token['tid'] . '});}');
-            $action .= viewHelper::getImageLink('token_delete.png', null, $clang->gT("Delete token entry"), null, 'imagelink btnDelete', $attribs);
+                $attribs = array('onclick' => 'if (confirm("' . $clang->gT("Are you sure you want to delete this entry?") . ' (' . $token['tid'] . ')")) {$("#displaytokens").delRowData(' . $token['tid'] . ');$.post(delUrl,{tid:' . $token['tid'] . '});}');
+                $action .= viewHelper::getImageLink('token_delete.png', null, $clang->gT("Delete token entry"), null, 'imagelink btnDelete', $attribs);
             }
             if (strtolower($token['emailstatus']) == 'ok' && $token['email'] && $bTokenUpdatePermission) {
                 if ($token['completed'] == 'N' && $token['usesleft'] > 0) {
@@ -480,7 +480,7 @@ class tokens extends Survey_Common_Action
                 $action .= '<div style="width: 20px; height: 16px; float: left;"></div>';
             }
             if($bTokenUpdatePermission)
-            $action .= viewHelper::getImageLink('edit_16.png', null, $clang->gT("Edit token entry"), null, 'imagelink token_edit');
+                $action .= viewHelper::getImageLink('edit_16.png', null, $clang->gT("Edit token entry"), null, 'imagelink token_edit');
             if(!empty($token['participant_id']) && $token['participant_id'] != "" && $bGlobalPanelReadPermission) {
                 $action .= viewHelper::getImageLink('cpdb_16.png', null, $clang->gT("View this person in the central participants database"), null, 'imagelink cpdb',array('onclick'=>"sendPost('".$this->getController()->createUrl('admin/participants/sa/displayParticipants')."','',['searchcondition'],['participant_id||equal||{$token['participant_id']}']);"));
             } else {
@@ -618,7 +618,7 @@ class tokens extends Survey_Common_Action
         {
             $clang->eT("We are sorry but you don't have permissions to do this.");// return json ? error not treated in js.
             return;
-    }
+        }
     }
 
     /**
@@ -1245,20 +1245,6 @@ class tokens extends Survey_Common_Action
     */
     function email($iSurveyId, $tokenids = null)
     {
-        // LimeService Mod Start _--------------------------
-
-        /**
-         * Get the database name
-         */
-        function _getDbName() {
-            // Yii doesn't give us a good way to get the database name
-            preg_match('/dbname=([^;]*)/', Yii::app()->db->getSchema()->getDbConnection()->connectionString, $aMatches);
-            $sDbName = $aMatches[1];
-
-            return $sDbName;
-        }    
-        
-        // LimeService Mod End --------------------------
         $clang = $this->getController()->lang;
         $iSurveyId = sanitize_int($iSurveyId);
 
@@ -1285,10 +1271,11 @@ class tokens extends Survey_Common_Action
             $aTokenIds = array_map('sanitize_int', $aTokenIds);
         }
         $aTokenIds=array_unique(array_filter((array) $aTokenIds));
-        
+
         $sSubAction = Yii::app()->request->getParam('action');
         $sSubAction = !in_array($sSubAction, array('email', 'remind')) ? 'email' : $sSubAction;
         $bEmail = $sSubAction == 'email';
+
         Yii::app()->loadHelper('surveytranslator');
         Yii::app()->loadHelper('/admin/htmleditor');
         Yii::app()->loadHelper('replacements');
@@ -1388,7 +1375,6 @@ class tokens extends Survey_Common_Action
 
             $attributes = array_keys(getTokenFieldsAndNames($iSurveyId,true));
             $tokenoutput = "";
-            $sCustomerID=substr(_getDbName(),6);
             if ($emcount > 0)
             {
                 foreach ($emresult as $emrow)
@@ -1438,11 +1424,7 @@ class tokens extends Survey_Common_Action
                     }
 
                     $customheaders = array('1' => "X-surveyid: " . $iSurveyId,
-                    '2' => "X-tokenid: " . $fieldsarray["{TOKEN}"]
-                    // LimeService Mod Start _--------------------------
-                    ,'3' => "X-did: ".$sCustomerID
-                    // LimeService Mod End _--------------------------
-                    );
+                    '2' => "X-tokenid: " . $fieldsarray["{TOKEN}"]);
                     global $maildebug;
                     $modsubject = Replacefields($sSubject[$emrow['language']], $fieldsarray);
                     $modmessage = Replacefields($sMessage[$emrow['language']], $fieldsarray);

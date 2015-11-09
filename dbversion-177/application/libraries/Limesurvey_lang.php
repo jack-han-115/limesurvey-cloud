@@ -39,16 +39,7 @@
             }
             else
             {
-                // LimeService modification start
-                if (file_exists(Yii::app()->getConfig('uploaddir').'/locale205/'.$sLanguageCode.'.mo'))
-                {
-                    $streamer = new FileReader(Yii::app()->getConfig('uploaddir').'/locale205/'.$sLanguageCode.'.mo');
-                }
-                else
-                {
-                    $streamer = new FileReader(getcwd().DIRECTORY_SEPARATOR.'locale'.DIRECTORY_SEPARATOR.$sLanguageCode.DIRECTORY_SEPARATOR.'LC_MESSAGES'.DIRECTORY_SEPARATOR.$sLanguageCode.'.mo');
-                }            
-                // LimeService modification end         
+                $streamer = new FileReader(getcwd().DIRECTORY_SEPARATOR.'locale'.DIRECTORY_SEPARATOR.$sLanguageCode.DIRECTORY_SEPARATOR.'LC_MESSAGES'.DIRECTORY_SEPARATOR.$sLanguageCode.'.mo');
                 $this->gettextclass = $aClassCache[$sLanguageCode] = new gettext_reader($streamer);
             }
             $this->langcode = $sLanguageCode;

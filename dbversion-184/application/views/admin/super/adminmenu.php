@@ -12,22 +12,11 @@
                 <?php } ?>
         </div>
 
-        <?php if($showupdate){ ?>
+        <?php if($showupdate): ?>
             <div id="update-small-notification" class='menubar-title-right <?php if(Yii::app()->session['notificationstate']=='1' || Yii::app()->session['unstable_update'] ){echo 'hidden';};?> fade in'>
                         <strong><?php eT('New update available:');?></strong> <a href="<?php echo Yii::app()->createUrl("admin/globalsettings", array("update"=>'updatebuttons')); ?>"><?php eT('Click here to use ComfortUpdate or to download it.');?></a>
             </div>
-        <?php }
-    //===============Begin LimeService Mod ?>
-    <?php
-    $sDomain=$_SERVER['SERVER_NAME'];
-    $sSubdomain=substr($sDomain,0,strpos($sDomain,'.'));
-    $sDomain=substr($sDomain,strpos($sDomain,'.')+1);
-
-    $iResponses = Yii::app()->dbstats->createCommand("select responses_avail from limeservice_system.balances where user_id=".substr(Yii::app()->db->username,6))->queryScalar();
-    echo "<div class='menubar-title-right'><small>".sprintf(gT('Your response balance: %s'),$iResponses)."</small> <a href='http://www.limeservice.com/en/buy-survey-responses'>".'(Buy more)'.'</a></div>';
-
-    //===============End LimeService Mod ?>
-
+        <?php endif; ?>
     </div>
     <div class='menubar-main'>
         <div class='menubar-left'>

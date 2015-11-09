@@ -1,8 +1,8 @@
 <?php
 /**
  * This view generate the 'general' tab inside global settings.
- *
- *
+ * 
+ *  
  */
 ?>
 
@@ -16,10 +16,16 @@
         <select id='emailmethod' name='emailmethod'>
             <option value='mail'
                 <?php if (getGlobalSetting('emailmethod')=='mail') { echo "selected='selected'";} ?>
-                ><?php eT("LimeService"); ?></option>
+                ><?php eT("PHP (default)"); ?></option>
             <option value='smtp'
                 <?php if (getGlobalSetting('emailmethod')=='smtp') { echo "selected='selected'";} ?>
                 ><?php eT("SMTP"); ?></option>
+            <option value='sendmail'
+                <?php if (getGlobalSetting('emailmethod')=='sendmail') { echo "selected='selected'";} ?>
+                ><?php eT("Sendmail"); ?></option>
+            <option value='qmail'
+                <?php if (getGlobalSetting('emailmethod')=='qmail') { echo "selected='selected'";} ?>
+                ><?php eT("Qmail"); ?></option>
         </select></li>
     <li><label for="emailsmtphost"><?php eT("SMTP host:"); ?></label>
         <input type='text' size='50' id='emailsmtphost' name='emailsmtphost' value="<?php echo htmlspecialchars(getGlobalSetting('emailsmtphost')); ?>" />&nbsp;<span class='hint'><?php eT("Enter your hostname and port, e.g.: my.smtp.com:25"); ?></span></li>

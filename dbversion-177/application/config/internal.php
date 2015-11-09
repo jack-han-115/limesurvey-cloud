@@ -5,15 +5,10 @@
  * Do not change these unless you know what you are doing.
  * 
  */
-@date_default_timezone_set(@date_default_timezone_get());   
-if (!isset($_SERVER['SERVER_NAME'])) {
-    $_SERVER['SERVER_NAME'] = $argv[2];
-}
-
-$userdir=str_replace('instances','installations',dirname(dirname(dirname(dirname(__FILE__))))).'/'.$_SERVER['SERVER_NAME'].'/userdata';
+@date_default_timezone_set(@date_default_timezone_get());
 $internalConfig = array(
 	'basePath' => dirname(dirname(__FILE__)),
-	'runtimePath' => $userdir.DIRECTORY_SEPARATOR.'tmp'.DIRECTORY_SEPARATOR.'runtime',
+	'runtimePath' => dirname(dirname(dirname(__FILE__))).DIRECTORY_SEPARATOR.'tmp'.DIRECTORY_SEPARATOR.'runtime',
 	'name' => 'LimeSurvey',
 	'defaultController' => 'surveys',
 	'import' => array(
@@ -38,7 +33,7 @@ $internalConfig = array(
             'packages' => require('third_party.php')
         ),
         'assetManager' => array(
-            'baseUrl' => '/tmp/assets'         
+            'baseUrl' => '/tmp/assets'
         ),
 		'request' => array(
             'class'=>'LSHttpRequest',
@@ -64,11 +59,10 @@ $internalConfig = array(
 	)
 );
 
-
-if (!file_exists($userdir .  '/config.php')) {
+if (!file_exists(dirname(__FILE__) .  '/config.php')) {
     $userConfig = require(dirname(__FILE__) . '/config-sample-mysql.php');
 } else {
-    $userConfig = require($userdir . '/config.php');
+    $userConfig = require(dirname(__FILE__) . '/config.php');
 }
 
 $result = CMap::mergeArray($internalConfig, $userConfig);

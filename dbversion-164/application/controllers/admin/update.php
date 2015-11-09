@@ -44,7 +44,7 @@ class update extends Survey_Common_Action
                 setGlobalSetting('updateversion',$aUpdateVersion['versionnumber']);
             }
         }
-
+        
         $error = false;
 
         if (!is_writable($tempdir)) {
@@ -75,7 +75,7 @@ class update extends Survey_Common_Action
         }
         return $this->_readChangelog($http);
     }
-
+    
     private function _getChangelog($buildnumber, $updaterversion)
     {
         Yii::import('application.libraries.admin.http.httpRequestIt');
@@ -114,7 +114,7 @@ class update extends Survey_Common_Action
 
         return $http->SendRequest($arguments);
     }
-
+    
     private function _requestChangedFiles(httpRequestIt $http, $buildnumber, $updaterversion)
     {
         $http->timeout = 0;
@@ -126,10 +126,10 @@ class update extends Survey_Common_Action
 
         return $http->SendRequest($arguments);
     }
-
+    
     function step2()
     {
-
+        
         $clang = $this->getController()->lang;
         $buildnumber = Yii::app()->getConfig("buildnumber");
         $updatebuild = getGlobalSetting("updatebuild");
@@ -212,7 +212,6 @@ class update extends Survey_Common_Action
 
     function step3()
     {
-        die();
         $clang = $this->getController()->lang;
         $buildnumber = Yii::app()->getConfig("buildnumber");
         $tempdir = Yii::app()->getConfig("tempdir");
@@ -434,7 +433,7 @@ class update extends Survey_Common_Action
         setGlobalSetting('updatebuild','');
         setGlobalSetting('updateversions','');
         // We create this new language object here because the language files might have been overwritten earlier
-        // and the pointers to the file from the application language are not valid anymore
+        // and the pointers to the file from the application language are not valid anymore 
         Yii::app()->lang = $aData['clang'] = new Limesurvey_lang(Yii::app()->session['adminlang']);
         $this->_renderWrappedTemplate('update', 'step4', $aData);
     }
@@ -448,7 +447,7 @@ class update extends Survey_Common_Action
 
         Yii::import('application.libraries.admin.http.httpRequestIt');
         $oHTTPRequest=new httpRequestIt;
-
+        
         /* Connection timeout */
         $oHTTPRequest->timeout=0;
         /* Data transfer timeout */

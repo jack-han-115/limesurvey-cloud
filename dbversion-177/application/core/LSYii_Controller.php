@@ -14,7 +14,7 @@
 
 abstract class LSYii_Controller extends CController
 {
-	/**
+    /**
      * This array contains the survey / group / question id used by the menu widget.
      * @var array
      */
@@ -30,11 +30,11 @@ abstract class LSYii_Controller extends CController
 	public function __construct($id, $module = null)
 	{
 		parent::__construct($id, $module);
-//		$this->_checkInstallation();
+		$this->_checkInstallation();
 
         Yii::app()->session->init();
 		$this->loadLibrary('LS.LS');
-		$this->loadHelper('globalsettings');
+        $this->loadHelper('globalsettings');
 		$this->loadHelper('common');
 		$this->loadHelper('expressions.em_manager');
 		$this->loadHelper('replacements');
@@ -128,17 +128,17 @@ abstract class LSYii_Controller extends CController
             error_reporting(0);
         }
         
-        //SET LOCAL TIME
-        $timeadjust = Yii::app()->getConfig("timeadjust");
-        if (substr($timeadjust,0,1)!='-' && substr($timeadjust,0,1)!='+') {$timeadjust='+'.$timeadjust;}
-        if (strpos($timeadjust,'hours')===false && strpos($timeadjust,'minutes')===false && strpos($timeadjust,'days')===false)
-        {
-            Yii::app()->setConfig("timeadjust",$timeadjust.' hours');
-        }
+		//SET LOCAL TIME
+		$timeadjust = Yii::app()->getConfig("timeadjust");
+		if (substr($timeadjust,0,1)!='-' && substr($timeadjust,0,1)!='+') {$timeadjust='+'.$timeadjust;}
+		if (strpos($timeadjust,'hours')===false && strpos($timeadjust,'minutes')===false && strpos($timeadjust,'days')===false)
+		{
+			Yii::app()->setConfig("timeadjust",$timeadjust.' hours');
+		}
         
         Yii::app()->setConfig('adminimageurl', Yii::app()->getConfig('styleurl').Yii::app()->getConfig('admintheme').'/images/');
         Yii::app()->setConfig('adminstyleurl', Yii::app()->getConfig('styleurl').Yii::app()->getConfig('admintheme').'/');
-    }
+	}
 
     /**
      * Creates an absolute URL based on the given controller and action information.

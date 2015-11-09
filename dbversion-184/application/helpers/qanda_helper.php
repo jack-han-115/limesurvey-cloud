@@ -3649,27 +3649,20 @@ function do_shortfreetext($ia)
 
 }
 
-function getLatLongFromIp($ip){
+function getLatLongFromIp($sIPAddress){
+    $ipInfoDbAPIKey = Yii::app()->getConfig("ipInfoDbAPIKey");
+    if($ipInfoDbAPIKey)// ipinfodb.com need a key
+    {
+        $oXML = simplexml_load_file("http://api.ipinfodb.com/v3/ip-city/?key=$ipInfoDbAPIKey&ip=$sIPAddress&format=xml");
+        if ($oXML->{'statusCode'} == "OK"){
+            $lat = (float)$oXML->{'latitude'};
+            $lng = (float)$oXML->{'longitude'};
 
-// LimeService Mod Start -------------------------
-    require_once(APPPATH.'/third_party/maxmind/geoipcity.inc');
-    require_once(APPPATH.'/third_party/maxmind/geoipregionvars.php');
-
-    // uncomment for Shared Memory support
-    // geoip_load_shared_mem("/usr/local/share/GeoIP/GeoIPCity.dat");
-    // $gi = geoip_open("/usr/local/share/GeoIP/GeoIPCity.dat",GEOIP_SHARED_MEMORY);
-    $gi = geoip_open(APPPATH.'/third_party/maxmind/GeoLiteCity.dat', GEOIP_STANDARD);
-
-    $record = geoip_record_by_addr($gi, $ip);
-
-    if (is_object($record)){
-        $lat = (float)$record->latitude;
-        $lng = (float)$record->longitude;
-        return(array($lat,$lng));
+            return(array($lat,$lng));
+        }
+        else
+            return false;
     }
-    else
-        return false;
-// LimeService Mod End ----------------------
 }
 
 

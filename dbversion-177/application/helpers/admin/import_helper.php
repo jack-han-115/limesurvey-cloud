@@ -4707,11 +4707,9 @@ function XMLImportTimings($sFullFilePath,$iSurveyID,$aFieldReMap=array())
             $insertdata[$key]=(string)$value;
         }
 
-        $result = SurveyTimingDynamic::model($iSurveyID)->insertRecords($insertdata);
-        if ($result)
-        {
-            $results['responses']++;
-        }
+        $result = SurveyTimingDynamic::model($iSurveyID)->insertRecords($insertdata) or safeDie($clang->gT("Error").": Failed to insert data[17]<br />");
+
+        $results['responses']++;
     }
     switchMSSQLIdentityInsert('survey_'.$iSurveyID.'_timings',false);
 

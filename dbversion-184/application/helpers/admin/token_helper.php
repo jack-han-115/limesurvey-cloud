@@ -107,12 +107,7 @@ function emailTokens($iSurveyID,$aResultTokens,$sType)
 		}
 
 		//mail headers
-		$customheaders = array('1' => "X-surveyid: " . $iSurveyID,
-                               '2' => "X-tokenid: " . $fieldsarray["{TOKEN}"]
-                               // LimeService Mod start ===============================
-                               ,'3' => "X-did: ".substr(Yii::app()->db->username,6)
-                               // LimeService Mod end ===============================
-                              );
+		$customheaders = array('1' => "X-surveyid: " . $iSurveyID,'2' => "X-tokenid: " . $fieldsarray["{TOKEN}"]);
 
 		global $maildebug;
 

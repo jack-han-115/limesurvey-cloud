@@ -81,26 +81,14 @@ class QuestionAttribute extends LSActiveRecord
     public function setQuestionAttribute($iQuestionID,$sAttributeName, $sValue)
     {
         $oModel = new self;
-        $aResult=$oModel->findAll('attribute=:attributeName and qid=:questionID',array(':attributeName'=>$sAttributeName,':questionID'=>$iQuestionID));
-        if (!empty($aResult))
-        {
-            $oModel->updateAll(array('value'=>$sValue),'attribute=:attributeName and qid=:questionID',array(':attributeName'=>$sAttributeName,':questionID'=>$iQuestionID));
-        }
-        else
-        {
-            $oModel = new self;
-            $oModel->attribute=$sAttributeName;
-            $oModel->value=$sValue;
-            $oModel->qid=$iQuestionID;
-            $oModel->save();
-        }
+        $oModel->updateAll(array('value'=>$sValue),'attribute=:attributeName and qid=:questionID',array(':attributeName'=>$sAttributeName,':questionID'=>$iQuestionID));
         return Yii::app()->db->createCommand()
             ->select()
             ->from($this->tableName())
             ->where(array('and', 'qid=:qid'))->bindParam(":qid", $qid)
             ->order('qaid asc')
             ->query();
-    }     
+    }    
 
     /**
     * Returns Question attribute array name=>value

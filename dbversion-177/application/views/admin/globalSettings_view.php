@@ -52,10 +52,7 @@
                 ?>
             </table>
             <?php
-
-            // LimeService Mod Start
-            /*
-                if (Yii::app()->session['USER_RIGHT_CONFIGURATOR'] == 1)
+                if (Permission::model()->hasGlobalPermission('superadmin','read'))
                 {
                 ?>
                     <p><a href="<?php echo $this->createUrl('admin/globalsettings',array('sa'=>'showphpinfo')) ?>" target="blank" class="button"><?php $clang->eT("Show PHPInfo"); ?></a></p>
@@ -64,7 +61,7 @@
                 ?>
 
                 <div class='header ui-widget-header'><?php echo $clang->eT("Updates"); ?></div><br/><ul>
-                <li><label for='updatecheckperiod'><?php echo $clang->eT("Check for updates:"); ?></label>
+                <li><label for='updatecheckperiod'><?php echo $clang->eT("Automatically check for updates:"); ?></label>
                     <select name='updatecheckperiod' id='updatecheckperiod'>
                         <option value='0'
                             <?php if ($thisupdatecheckperiod==0) { echo "selected='selected'";} ?>
@@ -81,10 +78,23 @@
                         <option value='30'
                             <?php if ($thisupdatecheckperiod==30) { echo "selected='selected'";} ?>
                             ><?php echo $clang->eT("Every month"); ?></option>
-                    </select>&nbsp;<input type='button' onclick="window.open('<?php echo $this->createUrl("admin/globalsettings/sa/updatecheck"); ?>', '_top')" value='<?php $clang->eT("Check now"); ?>' />&nbsp;<span id='lastupdatecheck'><?php echo sprintf($clang->gT("Last check: %s"),$updatelastcheck); ?></span></li></ul><p>
+                    </select>&nbsp;<input type='button' onclick="window.open('<?php echo $this->createUrl("admin/globalsettings/sa/updatecheck"); ?>', '_top')" value='<?php $clang->eT("Check now"); ?>' />&nbsp;<span id='lastupdatecheck'><?php echo sprintf($clang->gT("Last check: %s"),$updatelastcheck); ?></span>
+                </li>
+                <li><label for='updatenotification'><?php echo $clang->eT("Show update notifications:"); ?></label>
+                    <select name='updatenotification' id='updatenotification'>
+                        <option value='never'
+                            <?php if ($sUpdateNotification=='never') { echo "selected='selected'";} ?>
+                            ><?php echo $clang->eT("Never"); ?></option>
+                        <option value='stable'
+                            <?php if ($sUpdateNotification=='stable') { echo "selected='selected'";} ?>
+                            ><?php echo $clang->eT("For stable versions"); ?></option>
+                        <option value='both'
+                            <?php if ($sUpdateNotification=='both') { echo "selected='selected'";} ?>
+                            ><?php echo $clang->eT("For stable and unstable versions"); ?></option>
+                    </select></li>
 
                 <?php
-                    if (isset($updateavailable) && $updateavailable==1)
+                    if (isset($updateavailable) && $updateavailable==1 && is_array($aUpdateVersions))
                     { ?>
                     <li><label><span style="font-weight: bold;"><?php echo $clang->gT('The following LimeSurvey updates are available:');?></span></label><table>
                         <?php 
@@ -119,10 +129,8 @@
                     }
 
                 ?>
-            </p>*/
-            // LimeService Mod End
-            ?>
-            </div>
+            </ul>
+            </p></div>
 
         <div id='general'>
             <ul>
@@ -207,12 +215,9 @@
                     <span><input type='text' size='10' id='timeadjust' name='timeadjust' value="<?php echo htmlspecialchars(str_replace(array('+',' hours',' minutes'),array('','',''),getGlobalSetting('timeadjust'))/60); ?>" />
                         <?php echo $clang->gT("Server time:").' '.convertDateTimeFormat(date('Y-m-d H:i:s'),'Y-m-d H:i:s',$dateformatdata['phpdate'].' H:i')." - ". $clang->gT("Corrected time:").' '.convertDateTimeFormat(dateShift(date("Y-m-d H:i:s"), 'Y-m-d H:i:s', getGlobalSetting('timeadjust')),'Y-m-d H:i:s',$dateformatdata['phpdate'].' H:i'); ?>
                     </span></li>
-<?php /* LimeService mod start
+
                 <li <?php if( ! isset(Yii::app()->session->connectionID)) echo 'style="display: none"';?>><label for='iSessionExpirationTime'><?php $clang->eT("Session lifetime for surveys (seconds):"); ?></label>
                     <input type='text' size='10' id='iSessionExpirationTime' name='iSessionExpirationTime' value="<?php echo htmlspecialchars(getGlobalSetting('iSessionExpirationTime')); ?>" /></li>
-                    
- LimeService mod end */
-?>
                 <li><label for='ipInfoDbAPIKey'><?php $clang->eT("IP Info DB API Key:"); ?></label>
                     <input type='text' size='35' id='ipInfoDbAPIKey' name='ipInfoDbAPIKey' value="<?php echo htmlspecialchars(getGlobalSetting('ipInfoDbAPIKey')); ?>" /></li>
                 <li><label for='googleMapsAPIKey'><?php $clang->eT("Google Maps API key:"); ?></label>
@@ -234,19 +239,16 @@
                     <select id='emailmethod' name='emailmethod'>
                         <option value='mail'
                             <?php if (getGlobalSetting('emailmethod')=='mail') { echo "selected='selected'";} ?>
-                            ><?php $clang->eT("LimeService"); ?></option>
+                            ><?php $clang->eT("PHP (default)"); ?></option>
                         <option value='smtp'
                             <?php if (getGlobalSetting('emailmethod')=='smtp') { echo "selected='selected'";} ?>
                             ><?php $clang->eT("SMTP"); ?></option>
-<?php /*                LimeService Mod Start
                         <option value='sendmail'
                             <?php if (getGlobalSetting('emailmethod')=='sendmail') { echo "selected='selected'";} ?>
                             ><?php $clang->eT("Sendmail"); ?></option>
                         <option value='qmail'
                             <?php if (getGlobalSetting('emailmethod')=='qmail') { echo "selected='selected'";} ?>
                             ><?php $clang->eT("Qmail"); ?></option>
-                            LimeService Mod End
-                      */  ?>
                     </select></li>
                 <li><label for="emailsmtphost"><?php $clang->eT("SMTP host:"); ?></label>
                     <input type='text' size='50' id='emailsmtphost' name='emailsmtphost' value="<?php echo htmlspecialchars(getGlobalSetting('emailsmtphost')); ?>" />&nbsp;<span class='hint'><?php $clang->eT("Enter your hostname and port, e.g.: my.smtp.com:25"); ?></span></li>
@@ -292,7 +294,7 @@
                     <select id='bounceaccounttype' name='bounceaccounttype'>
                         <option value='off'
                             <?php if (getGlobalSetting('bounceaccounttype')=='off') {echo " selected='selected'";}?>
-                            ><?php $clang->eT("LimeService"); ?></option>
+                            ><?php $clang->eT("Off"); ?></option>
                         <option value='IMAP'
                             <?php if (getGlobalSetting('bounceaccounttype')=='IMAP') {echo " selected='selected'";}?>
                             ><?php $clang->eT("IMAP"); ?></option>
@@ -359,9 +361,9 @@
 
                 <?php $thisforce_ssl = getGlobalSetting('force_ssl');
                     $opt_force_ssl_on = $opt_force_ssl_off = $opt_force_ssl_neither = '';
-                    // LimeService Mod Start
-                    $warning_force_ssl =  $clang->gT("Attention: SSL is only available for *.limequery.com domains. If the setting 'Force https' (SSL) is enabled/enforced then 0.5 responses are counted additionally if a survey is started and using SSL encryption (a complete responses will cost then 1.5 LimeService responses).");
-/*                    
+                    $warning_force_ssl = sprintf($clang->gT('Warning: Before turning on HTTPS,%s check if this link works.%s'),'<a href="https://'.$_SERVER['HTTP_HOST'].$this->createUrl("admin/globalsettings/sa").'" title="'. $clang->gT('Test if your server has SSL enabled by clicking on this link.').'">','</a>')
+                    .'<br/> '
+                    . $clang->gT("If the link does not work and you turn on HTTPS, LimeSurvey will break and you won't be able to access it.");
                     switch($thisforce_ssl)
                     {
                         case 'on':
@@ -373,8 +375,6 @@
                         default:
                             $thisforce_ssl = 'neither';
                     };
-                    */
-                    // LimeService Mod Start end
                     $this_opt = 'opt_force_ssl_'.$thisforce_ssl;
                     $$this_opt = ' selected="selected"';
                 ?><li><label for="force_ssl"><?php $clang->eT('Force HTTPS:'); ?></label>
@@ -383,7 +383,7 @@
                         <option value="off" <?php echo $opt_force_ssl_off; ?>><?php $clang->eT('Off'); ?></option>
                         <option value="neither" <?php echo $opt_force_ssl_neither; ?>><?php $clang->eT("Don't force on or off"); ?></option>
                     </select></li>
-                <li><span style='font-size:0.8em;font-weight:bold;'><?php echo $warning_force_ssl; ?></span></li>
+                <li><span style='font-size:0.7em;'><?php echo $warning_force_ssl; ?></span></li>
                 <?php unset($thisforce_ssl,$opt_force_ssl_on,$opt_force_ssl_off,$opt_force_ssl_neither,$warning_force_ssl,$this_opt); ?>
             </ul></div>
 

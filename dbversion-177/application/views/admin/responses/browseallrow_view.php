@@ -57,7 +57,7 @@ if (Permission::model()->hasSurveyPermission($surveyid, 'responses', 'delete'))
                         <?php }
                         else
                         { ?>
-                        <td><?php echo rawurldecode($phparray[$index][$metadata]); ?></td>
+                        <td><?php echo htmlspecialchars(rawurldecode($phparray[$index][$metadata]),ENT_QUOTES,'utf-8'); ?></td>
                         <?php
                     }
                 }

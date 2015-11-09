@@ -45,17 +45,12 @@ class GlobalSettings extends Survey_Common_Action
         $this->_displaySettings();
     }
 
-
-    // Start LimeService Mod
-    /*
     public function showphpinfo()
     {
         if (!Yii::app()->getConfig('demoMode')) {
             phpinfo();
         }
     }
-    */
-    // End LimeService Mod
 
     private function _displaySettings()
     {

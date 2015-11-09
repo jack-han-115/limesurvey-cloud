@@ -34,7 +34,7 @@ class update extends Survey_Common_Action
         }
         return 'https://';
     }
-
+    
     /**
     * Default Controller Action
     */
@@ -58,7 +58,7 @@ class update extends Survey_Common_Action
                 setGlobalSetting('updateversion',$aUpdateVersion['versionnumber']);
             }
         }
-
+        
         $error = false;
 
         if (!is_writable($tempdir)) {
@@ -89,7 +89,7 @@ class update extends Survey_Common_Action
         }
         return $this->_readChangelog($http);
     }
-
+    
     private function _getChangelog($buildnumber, $updaterversion)
     {
         Yii::import('application.libraries.admin.http.httpRequestIt');
@@ -130,7 +130,7 @@ class update extends Survey_Common_Action
 
         return $http->SendRequest($arguments);
     }
-
+    
     private function _requestChangedFiles(httpRequestIt $http, $buildnumber, $updaterversion)
     {
         $http->proxy_host_name = Yii::app()->getConfig("proxy_host_name","");
@@ -144,7 +144,7 @@ class update extends Survey_Common_Action
 
         return $http->SendRequest($arguments);
     }
-
+    
     function step2()
     {
         $aReadOnlyFiles=array();
@@ -235,7 +235,6 @@ class update extends Survey_Common_Action
 
     function step3()
     {
-        die();
         $clang = $this->getController()->lang;
         $buildnumber = Yii::app()->getConfig("buildnumber");
         $tempdir = Yii::app()->getConfig("tempdir");
@@ -367,7 +366,7 @@ class update extends Survey_Common_Action
         $downloaderror=false;
         Yii::import('application.libraries.admin.http.httpRequestIt');
         $http=new httpRequestIt;
-
+        
         $http->proxy_host_name = Yii::app()->getConfig("proxy_host_name","");
         $http->proxy_host_port = Yii::app()->getConfig("proxy_host_port",80);
 
@@ -437,8 +436,8 @@ class update extends Survey_Common_Action
                 }
             }
         }
-
-
+        
+        
         $aData['new_files'] = $new_files;
         $aData['downloaderror'] = $downloaderror;
 
@@ -469,7 +468,7 @@ class update extends Survey_Common_Action
         Yii::app()->getController()->redirect(array('/admin/update/sa/step4b'));
     }
 
-
+    
     function step4b()
     {
         if (!isset(Yii::app()->session['installlstep4b'])) die();
@@ -487,7 +486,7 @@ class update extends Survey_Common_Action
 
         Yii::import('application.libraries.admin.http.httpRequestIt');
         $oHTTPRequest=new httpRequestIt;
-
+        
         $oHTTPRequest->proxy_host_name = Yii::app()->getConfig("proxy_host_name","");
         $oHTTPRequest->proxy_host_port = Yii::app()->getConfig("proxy_host_port",80);
 

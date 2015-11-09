@@ -846,9 +846,9 @@ class dataentry extends Survey_Common_Action
                             $anscount= count($ansresult);
                             $answers= array();
                                 foreach ($ansresult as $ansrow)
-                            {
+                                {
                                     $answers[] = $ansrow;
-                            }
+                                }
                             for ($i=1; $i<=$anscount; $i++)
                             {
                                 $aDataentryoutput .= "\n<li class=\"select-item\">";
@@ -857,29 +857,29 @@ class dataentry extends Survey_Common_Action
                                     $aDataentryoutput .=$clang->gT('First choice');
                                 }else{
                                     $aDataentryoutput .=$clang->gT('Next choice');
-                            }
+                                }
 
                                 $aDataentryoutput .="</label>";
                                 $aDataentryoutput .= "<select name=\"{$myfname}{$i}\" id=\"answer{$myfname}{$i}\">\n";
                                 (!isset($currentvalues[$i-1])) ? $selected=" selected=\"selected\"" : $selected="";
                                 $aDataentryoutput .= "\t<option value=\"\" $selected>".$clang->gT('None')."</option>\n";
                                 foreach ($answers as $ansrow)
-                            {
+                                {
                                     (isset($currentvalues[$i-1]) && $currentvalues[$i-1]==$ansrow['code']) ? $selected=" selected=\"selected\"" : $selected="";
                                     $aDataentryoutput .= "\t<option value=\"".$ansrow['code']."\" $selected>".flattenText($ansrow['answer'])."</option>\n";
-                                        }
+                                }
                                 $aDataentryoutput .= "</select\n";
                                 $aDataentryoutput .="</li>";
-                                    }
+                            }
                             $aDataentryoutput .= '</ul>';
                             $aDataentryoutput .= "<div style='display:none' id='ranking-{$thisqid}-maxans'>{$anscount}</div>"
                                 . "<div style='display:none' id='ranking-{$thisqid}-minans'>0</div>"
                                 . "<div style='display:none' id='ranking-{$thisqid}-name'>javatbd{$myfname}</div>";
                             $aDataentryoutput .="<div style=\"display:none\">";
                             foreach ($answers as $ansrow)
-                                {
+                            {
                                 $aDataentryoutput.="<div id=\"htmlblock-{$thisqid}-{$ansrow['code']}\">{$ansrow['answer']}</div>";
-                                }
+                            }
                             $aDataentryoutput .="</div>";
                             $aDataentryoutput .= '</div>';
                             App()->getClientScript()->registerPackage('jquery-actual');
@@ -1464,22 +1464,6 @@ class dataentry extends Survey_Common_Action
 
             $updateres = dbExecuteAssoc($updateqr) or safeDie("Update failed:<br />\n<br />$updateqr");
 
-             // ========================  Begin LimeService Mod
-            $aRow = SurveyDynamic::model($surveyid)->findByPk($id);
-            if ($_POST['completed']!= "N" && $aRow->submitdate!='' )
-            {
-                $sDomain=$_SERVER['SERVER_NAME'];
-                $sSubdomain=substr($sDomain,0,strpos($sDomain,'.'));
-                $sDomain=substr($sDomain,strpos($sDomain,'.')+1);
-
-                $iAffectedRows = Yii::app()->dbstats->createCommand("Update responses set hits=hits+0.5, modified=NOW() where subdomain='{$sSubdomain}' and rootdomain='{$sDomain}' and hitperiod='".date('Y-m-d H:00:00')."'")->execute();
-                if ($iAffectedRows==0)
-                {
-                    Yii::app()->dbstats->createCommand("insert into responses (hits,subdomain,rootdomain,hitperiod, created) values (0.5,'{$sSubdomain}','{$sDomain}','".date('Y-m-d H:00:00')."', NOW())")->execute();
-                }
-            }
-            // ========================  End LimeService Mod
-
             $onerecord_link = $this->getController()->createUrl('/admin/responses/sa/view/surveyid/'.$surveyid.'/id/'.$id);
             $allrecords_link = $this->getController()->createUrl('/admin/responses/sa/index/surveyid/'.$surveyid);
             $aDataentryoutput .= "<div class='messagebox ui-corner-all'><div class='successheader'>".$clang->gT("Success")."</div>\n"
@@ -1721,20 +1705,6 @@ class dataentry extends Survey_Common_Action
                     }
                     $new_response->save();
                     $last_db_id = $new_response->getPrimaryKey();
-
-                     // ========================  Begin LimeService Mod
-                    $sDomain=$_SERVER['SERVER_NAME'];
-                    $sSubdomain=substr($sDomain,0,strpos($sDomain,'.'));
-                    $sDomain=substr($sDomain,strpos($sDomain,'.')+1);
-                    if (isset($_POST['closerecord'])) {$fHitValue='1';} else {$fHitValue='0.5';}
-                    $iAffectedRows = Yii::app()->dbstats->createCommand("Update responses set hits=hits+{$fHitValue}, modified=NOW() where subdomain='{$sSubdomain}' and rootdomain='{$sDomain}' and hitperiod='".date('Y-m-d H:00:00')."'")->execute();
-                    if ($iAffectedRows==0)
-                    {
-                        Yii::app()->dbstats->createCommand("insert into responses (hits,subdomain,rootdomain,hitperiod, created) values ({$fHitValue},'{$sSubdomain}','{$sDomain}','".date('Y-m-d H:00:00')."', NOW())")->execute();
-                    }
-                    // ========================  End LimeService Mod
-
-
                     if (isset($_POST['closerecord']) && isset($_POST['token']) && $_POST['token'] != '') // submittoken
                     {
                         // get submit date
@@ -1755,7 +1725,7 @@ class dataentry extends Survey_Common_Action
                         {
                             if (isset($usesleft) && $usesleft<=1)
                             {
-                                $utquery .= "SET usesleft=usesleft-1, completed=".dbQuoteAll($submitdate);
+                                $utquery .= "SET usesleft=usesleft-1, completed='$submitdate'\n";
                             }
                             else
                             {
@@ -1773,7 +1743,7 @@ class dataentry extends Survey_Common_Action
                                 $utquery .= "SET usesleft=usesleft-1\n";
                             }
                         }
-                        $utquery .= " WHERE token=".dbQuoteAll($_POST['token']);
+                        $utquery .= "WHERE token=".dbQuoteAll($_POST['token']);
                         $utresult = dbExecuteAssoc($utquery); //Yii::app()->db->Execute($utquery) or safeDie ("Couldn't update tokens table!<br />\n$utquery<br />\n".Yii::app()->db->ErrorMsg());
 
                         // save submitdate into survey table
@@ -2159,10 +2129,10 @@ class dataentry extends Survey_Common_Action
                             $ansresult = Yii::app()->db->createCommand($ansquery)->query()->readAll();   //Checked
                             $anscount= count($ansresult);
                             $answers= array();
-                            foreach ($ansresult as $ansrow)
-                            {
+                                foreach ($ansresult as $ansrow)
+                                {
                                     $answers[] = $ansrow;
-                            }
+                                }
                             $cdata['answers']=$answers;
                             App()->getClientScript()->registerPackage('jquery-actual');
                             App()->getClientScript()->registerScriptFile(Yii::app()->getConfig('generalscripts') . 'ranking.js');

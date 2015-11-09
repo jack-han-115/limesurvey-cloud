@@ -648,6 +648,10 @@ class InstallerController extends CController {
                         }
                         // Save user
                         $user=new User;
+                        // Fix UserID to 1 for MySQL even if installed in master-master configuration scenario
+                        if (in_array($this->connection->getDriverName(), array('mysql', 'mysqli'))) {
+                            $user->uid=1;
+                        }
                         $user->users_name=$sDefaultAdminUserName;
                         $user->password=$sPasswordHash;
                         $user->full_name=$sDefaultAdminRealName;
@@ -924,11 +928,6 @@ class InstallerController extends CController {
                 case 'mysql':
                 case 'mysqli':
                     $this->connection->createCommand("ALTER DATABASE ". $this->connection->quoteTableName($sDatabaseName) ." DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci;")->execute();
-                    break;
-                case 'pgsql':
-                    if (version_compare($this->connection->getServerVersion(),'9','>=')) {
-                        $this->connection->createCommand("ALTER DATABASE ". $this->connection->quoteTableName($sDatabaseName) ." SET bytea_output='escape';")->execute();
-                    }
                     break;
             }
         } catch(Exception $e) {

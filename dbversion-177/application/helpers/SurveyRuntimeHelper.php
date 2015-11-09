@@ -560,19 +560,6 @@ class SurveyRuntimeHelper {
                 }
                 else //THE FOLLOWING DEALS WITH SUBMITTING ANSWERS AND COMPLETING AN ACTIVE SURVEY
                 {
-
-                     // ========================  Begin LimeService Mod
-                    $sDomain=$_SERVER['SERVER_NAME'];
-                    $sSubdomain=substr($sDomain,0,strpos($sDomain,'.'));
-                    $sDomain=substr($sDomain,strpos($sDomain,'.')+1);
-                     
-                    $iAffectedRows = Yii::app()->dbstats->createCommand("Update responses set hits=hits+0.5, modified=NOW() where subdomain='{$sSubdomain}' and rootdomain='{$sDomain}' and hitperiod='".date('Y-m-d H:00:00')."'")->execute();
-                    if ($iAffectedRows==0)
-                    {
-                        Yii::app()->dbstats->createCommand("insert into responses (hits,subdomain,rootdomain,hitperiod, created) values (0.5,'{$sSubdomain}','{$sDomain}','".date('Y-m-d H:00:00')."', NOW())")->execute();
-                    } 
-                    // ========================  End LimeService Mod                    
-
                     if ($thissurvey['usecookie'] == "Y" && $tokensexist != 1) //don't use cookies if tokens are being used
                     {
                         setcookie("LS_" . $surveyid . "_STATUS", "COMPLETE", time() + 31536000); //Cookie will expire in 365 days

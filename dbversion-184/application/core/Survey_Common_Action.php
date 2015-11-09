@@ -357,7 +357,16 @@ class Survey_Common_Action extends CAction
 
 	function _updatenotification()
 	{
-
+    	if( !Yii::app()->user->isGuest )
+		{
+			$updateModel = new UpdateForm();
+			$updateNotification = $updateModel->updateNotification;
+			
+			if($updateNotification->result)
+			{
+				return $this->getController()->renderPartial("/admin/update/_update_notification", array('security_update_available'=>$updateNotification->security_update));
+			}
+		}
 	}
 
     /**
@@ -373,7 +382,7 @@ class Survey_Common_Action extends CAction
 
         //Show Question Details
         $qrrow = Question::model()->findByAttributes(array('qid' => $qid, 'gid' => $gid, 'sid' => $iSurveyID, 'language' => $baselang));
-        if (is_null($qrrow))
+        if (is_null($qrrow)) 
             return; // Throw 404 ....
 
 
