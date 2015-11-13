@@ -3,9 +3,9 @@
 /**
  * This file contains configuration parameters for the Yii framework.
  * Do not change these unless you know what you are doing.
- * 
+ *
  */
-@date_default_timezone_set(@date_default_timezone_get());   
+@date_default_timezone_set(@date_default_timezone_get());
 if (!isset($_SERVER['SERVER_NAME'])) {
     $_SERVER['SERVER_NAME'] = $argv[2];
 }
@@ -33,12 +33,13 @@ $internalConfig = array(
 			'rules' => require('routes.php'),
 			'showScriptName' => true,
 		),
-        
+
         'clientScript' => array(
             'packages' => require('third_party.php')
         ),
         'assetManager' => array(
-            'baseUrl' => '/tmp/assets'         
+            'baseUrl' => '/tmp/assets',
+            'linkAssets' => true
         ),
 		'request' => array(
             'class'=>'LSHttpRequest',
