@@ -12,7 +12,7 @@
 | EXPLANATION OF VARIABLES
 | -------------------------------------------------------------------
 |
-|	'connectionString' Hostname, database, port and database type for 
+|	'connectionString' Hostname, database, port and database type for
 |	 the connection. Driver example: mysql. Currently supported:
 |				 mysql, pgsql, mssql, sqlite, oci
 |	'username' The username used to connect to the database
@@ -26,17 +26,17 @@ return array(
     'runtimePath' => dirname(dirname(__FILE__)).DIRECTORY_SEPARATOR.'userdata'.DIRECTORY_SEPARATOR.'tmp'.DIRECTORY_SEPARATOR.'runtime',
 	'name' => 'LimeSurvey',
 	'defaultController' => 'survey',
-	
+
 	'import' => array(
 		'application.core.*',
 		'application.models.*',
 		'application.controllers.*',
 		'application.modules.*',
 	),
-	
+
 	'components' => array(
 		'db' => array(
-			'connectionString' => 'mysql:host=localhost;port=3306;dbname=#dbname;',
+            'connectionString' => 'mysql:unix_socket=/var/run/mysqld/mysqld.sock;dbname=#dbname;',
 			'emulatePrepare' => true,
 			'username' => '#dbuser',
 			'password' => '#dbpass',
@@ -51,20 +51,20 @@ return array(
             'tablePrefix' => '',
             'class' => 'CDbConnection'
         ),
-        
+
 		// Uncomment the following line if you need table-based sessions
 		// 'session' => array (
 			// 'class' => 'system.web.CDbHttpSession',
 			// 'connectionID' => 'db',
 			// 'sessionTableName' => '{{sessions}}',
 		// ),
-		
+
 		'urlManager' => array(
 			'urlFormat' => 'path',
             'rules' => require(dirname(dirname(__FILE__)).DIRECTORY_SEPARATOR.'limesurvey'.DIRECTORY_SEPARATOR.'application'.DIRECTORY_SEPARATOR.'config'.DIRECTORY_SEPARATOR.'routes.php'),
 			'showScriptName' => true,
 		),
-	
+
 	),
 	// Use the following config variable to set modified optional settings copied from config-defaults.php
 	'config'=>array(
