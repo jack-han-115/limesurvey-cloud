@@ -103,12 +103,12 @@ button.ui-button-icons-only {
 
 .ui-button-text-icon-primary .ui-button-text {
 	padding: 0 0.7em 0 1.7em;
-	*padding: 0 20px; 
+	*padding: 0 20px;
 }
 
 .ui-button-text-icon-secondary .ui-button-text {
 	padding: 0 1.7em 0 0.7em;
-	*padding: 0 20px; 
+	*padding: 0 20px;
 }
 
 .ui-button-text-icons .ui-button-text {
@@ -484,7 +484,7 @@ span.surveydescription {
 
 td.survey-welcome {
 	text-align: center;
-	padding-top: 20px;
+	padding: 20px;
 }
 
 span.surveywelcome {
