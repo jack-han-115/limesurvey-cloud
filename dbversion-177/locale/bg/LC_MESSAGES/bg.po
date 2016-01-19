@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: LimeSurvey 2.x\n"
 "Report-Msgid-Bugs-To: http://translate.limesurvey.org/\n"
 "POT-Creation-Date: 2015-10-21 14:33+0200\n"
-"PO-Revision-Date: 2015-11-04 11:35+0100\n"
+"PO-Revision-Date: 2016-01-19 16:38+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: bg\n"
@@ -14477,7 +14477,7 @@ msgstr "Моля напишете своя отговор тук"
 #: dbversion-184/application/controllers/admin/printablesurvey.php:1347
 #: dbversion-184/application/controllers/admin/printablesurvey.php:1456
 msgid "Please choose the appropriate response for each item:"
-msgstr "Моля изберете подходящ отговор за всеки елемент"
+msgstr "Моля, изберете отговор за всяко от твърденията:"
 
 #: dbversion-155/admin/printablesurvey.php:1486
 #: dbversion-164/application/controllers/admin/printablesurvey.php:1512

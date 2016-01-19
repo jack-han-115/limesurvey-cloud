@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: LimeSurvey 2.x\n"
 "Report-Msgid-Bugs-To: http://translate.limesurvey.org/\n"
 "POT-Creation-Date: 2015-10-21 14:33+0200\n"
-"PO-Revision-Date: 2015-10-21 15:01+0200\n"
+"PO-Revision-Date: 2016-01-19 16:42+0100\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -6177,9 +6177,8 @@ msgstr "Az Ön rangsora"
 #: dbversion-155/admin/dataentry.php:1124
 #: dbversion-155/admin/dataentry.php:2516 dbversion-155/qanda.php:3400
 #: dbversion-155/qanda.php:3404
-#, fuzzy
 msgid "Only numbers may be entered in this field"
-msgstr "Csak számokat írhat ebbe a mezőbe!"
+msgstr "Csak számokat írhatsz ebbe a mezőbe."
 
 #: dbversion-155/admin/dataentry.php:1568
 #: dbversion-155/admin/dataentry.php:2943
@@ -14200,7 +14199,7 @@ msgstr "Kérem, adja be %s szerint..."
 #: dbversion-184/application/controllers/admin/printablesurvey.php:553
 msgid "Only answer this question if the following conditions are met:"
 msgstr ""
-"Csak akkor válaszoljon erre a kérdésre, ha az alábbi feltételek teljesülnek:"
+"Csak akkor válaszolj erre a kérdésre, ha az alábbi feltételek teljesülnek:"
 
 #: dbversion-155/admin/printablesurvey.php:452
 #: dbversion-164/application/controllers/admin/printablesurvey.php:581
@@ -14270,7 +14269,7 @@ msgstr "*"
 #: dbversion-184/application/controllers/admin/printablesurvey.php:934
 #: dbversion-184/application/controllers/admin/templates.php:1126
 msgid "Please choose *only one* of the following:"
-msgstr "Kérem, válasszon *egyet* az alábbiak közül:"
+msgstr "Kérlek, válassz *egyet* az alábbiak közül:"
 
 #: dbversion-155/admin/printablesurvey.php:531
 #: dbversion-155/admin/printablesurvey.php:533
@@ -14324,7 +14323,7 @@ msgstr ""
 #: dbversion-177/application/controllers/admin/printablesurvey.php:792
 #: dbversion-184/application/controllers/admin/printablesurvey.php:786
 msgid "Please choose *all* that apply:"
-msgstr "Kérem, válasszon ki *mindent*, ami érvényes:"
+msgstr "Kérlek, válassz ki mindent, ami érvényes:"
 
 #: dbversion-155/admin/printablesurvey.php:740
 #, fuzzy
@@ -14403,7 +14402,7 @@ msgstr "Kérem, írja ide a válaszait:"
 #: dbversion-184/application/controllers/admin/printablesurvey.php:913
 #: dbversion-184/application/controllers/admin/printablesurvey.php:928
 msgid "Please write your answer here:"
-msgstr "Kérem, írja ide a válaszát:"
+msgstr "Kérlek, ide írd a válaszodat:"
 
 #: dbversion-155/admin/printablesurvey.php:869
 #: dbversion-155/admin/printablesurvey.php:886
@@ -14441,8 +14440,7 @@ msgstr "Kérem, írja ide a válaszát:"
 #: dbversion-184/application/controllers/admin/printablesurvey.php:1347
 #: dbversion-184/application/controllers/admin/printablesurvey.php:1456
 msgid "Please choose the appropriate response for each item:"
-msgstr ""
-"Kérem, jelöljön meg egy megfelelő választ minden felsorolt elem számára: "
+msgstr "Kérlek, minden felsorolt elem esetében jelöld be a megfelelő választ:"
 
 #: dbversion-155/admin/printablesurvey.php:1486
 #: dbversion-164/application/controllers/admin/printablesurvey.php:1512
@@ -33927,7 +33925,7 @@ msgstr "Minden válasz %s kell legyen"
 #: dbversion-184/application/helpers/expressions/em_manager_helper.php:3197
 #, php-format
 msgid "Your answer must be between %s and %s"
-msgstr "A válasznak %s - %s között kell lennie"
+msgstr "A válaszodnak %s és %s közé kell esnie."
 
 #: dbversion-177/application/helpers/expressions/em_manager_helper.php:3153
 #: dbversion-184/application/helpers/expressions/em_manager_helper.php:3211

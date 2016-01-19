@@ -3,17 +3,19 @@ msgstr ""
 "Project-Id-Version: LimeSurvey 2.x\n"
 "Report-Msgid-Bugs-To: http://translate.limesurvey.org/\n"
 "POT-Creation-Date: 2015-10-21 14:33+0200\n"
-"PO-Revision-Date: 2015-04-28 11:49:46+0000\n"
+"PO-Revision-Date: 2016-01-19 16:47+0100\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
-"X-Generator: GlotPress/1.0-alpha-1000\n"
+"X-Generator: Poedit 1.8.5\n"
 "X-Poedit-KeywordsList: gT;ngt:1,2;eT;neT:1,2\n"
 "X-Poedit-SourceCharset: utf-8\n"
-"X-Poedit-Basepath: ..\\..\\..\\\n"
+"X-Poedit-Basepath: ../../..\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: sk\n"
 "X-Poedit-SearchPath-0: .\n"
-"X-Poedit-Language: Slovak\n"
 
 #: dbversion-155/admin/access_denied.php:22
 #: dbversion-164/application/controllers/admin/expressions.php:29
@@ -33904,9 +33906,9 @@ msgstr "Každá odpoveď musí byť %s"
 
 #: dbversion-177/application/helpers/expressions/em_manager_helper.php:3139
 #: dbversion-184/application/helpers/expressions/em_manager_helper.php:3197
-#, fuzzy, php-format
+#, php-format
 msgid "Your answer must be between %s and %s"
-msgstr "Každá odpoveď musí byť medzi %s a %s"
+msgstr "Každá odpoveď musí byť medzi %s a %s."
 
 #: dbversion-177/application/helpers/expressions/em_manager_helper.php:3153
 #: dbversion-184/application/helpers/expressions/em_manager_helper.php:3211

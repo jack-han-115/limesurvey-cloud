@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: LimeSurvey 2.x\n"
 "Report-Msgid-Bugs-To: http://translate.limesurvey.org/\n"
 "POT-Creation-Date: 2015-10-21 14:33+0200\n"
-"PO-Revision-Date: 2015-10-21 15:03+0200\n"
+"PO-Revision-Date: 2016-01-19 16:37+0100\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -34224,7 +34224,7 @@ msgstr "Su respuesta debe ser %s"
 #: dbversion-184/application/helpers/expressions/em_manager_helper.php:3197
 #, php-format
 msgid "Your answer must be between %s and %s"
-msgstr "Su respueta debe estar entre %s y %s"
+msgstr "Su repuesta debe estar entre %s y %s."
 
 #: dbversion-177/application/helpers/expressions/em_manager_helper.php:3153
 #: dbversion-184/application/helpers/expressions/em_manager_helper.php:3211
