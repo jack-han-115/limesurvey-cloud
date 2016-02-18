@@ -76,7 +76,8 @@ function loadanswers()
         // If survey come from reload (GET or POST); some value need to be found on saved_control, not on survey
         if (Yii::app()->request->getParam('loadall') == "reload")
         {
-            $oSavedSurvey=SavedControl::model()->find("identifier=:identifier AND access_code=:access_code",array(":identifier"=>$sLoadName,":access_code"=>md5($sLoadPass)));
+            $oSavedSurvey=SavedControl::model()->find("identifier=:identifier AND access_code=:access_code AND sid=:surveyid",
+                                                       array(":identifier"=>$sLoadName,":access_code"=>md5($sLoadPass),':surveyid'=>$surveyid));
             // We don't need to control if we have one, because we do the test before
             $_SESSION['survey_'.$surveyid]['scid'] = $oSavedSurvey->scid;
             $_SESSION['survey_'.$surveyid]['step'] = ($oSavedSurvey->saved_thisstep>1)?$oSavedSurvey->saved_thisstep:1;
@@ -501,7 +502,7 @@ function submittokens($quotaexit=false)
             {
                 $slquery = SurveyLink::model()->find('participant_id = :pid AND survey_id = :sid AND token_id = :tid', array(':pid'=> $token->participant_id, ':sid'=>$surveyid, ':tid'=>$token->tid));
                 if ($slquery)
-                {                
+                {
                     if (isTokenCompletedDatestamped($thissurvey))
                     {
                         $slquery->date_completed = $today;
@@ -537,7 +538,7 @@ function submittokens($quotaexit=false)
                 // added survey url in replacement vars
                 $surveylink = Yii::app()->createAbsoluteUrl("/survey/index/sid/{$surveyid}",array('lang'=>$_SESSION['survey_'.$surveyid]['s_lang'],'token'=>$token->token));
                 $aReplacementVars['SURVEYURL'] = $surveylink;
-                
+
                 $attrfieldnames=getAttributeFieldNames($surveyid);
                 foreach ($attrfieldnames as $attr_name)
                 {
@@ -576,7 +577,7 @@ function submittokens($quotaexit=false)
             $sToAddress=validateEmailAddresses($token->email);
             if ($sToAddress) {
                 $aAttachments = unserialize($thissurvey['attachments']);
-    
+
                 $aRelevantAttachments = array();
                 /*
                  * Iterate through attachments and check them for relevance.
@@ -609,12 +610,12 @@ function sendSubmitNotifications($surveyid)
 {
     // @todo: Remove globals
     global $thissurvey, $maildebug, $tokensexist;
-    
+
     if (trim($thissurvey['adminemail'])=='')
     {
         return;
     }
-    
+
     $homeurl=Yii::app()->createAbsoluteUrl('/admin');
     $clang = Yii::app()->lang;
     $sitename = Yii::app()->getConfig("sitename");
@@ -727,7 +728,7 @@ function sendSubmitNotifications($surveyid)
     $sFrom = $thissurvey['adminname'].' <'.$thissurvey['adminemail'].'>';
 
     $aAttachments = unserialize($thissurvey['attachments']);
-    
+
     $aRelevantAttachments = array();
     /*
      * Iterate through attachments and check them for relevance.
@@ -744,7 +745,7 @@ function sendSubmitNotifications($surveyid)
             }
         }
     }
-    
+
     $redata=compact(array_keys(get_defined_vars()));
     if (count($aEmailNotificationTo)>0)
     {
@@ -1053,7 +1054,7 @@ function buildsurveysession($surveyid,$preview=false)
         if (isset($loadsecurity) &&
         isset($_SESSION['survey_'.$surveyid]['secanswer']) &&
         $loadsecurity == $_SESSION['survey_'.$surveyid]['secanswer'])
-        {          
+        {
             if ($thissurvey['alloweditaftercompletion'] == 'Y' )
             {
                 $oTokenEntry = Token::model($surveyid)->findByAttributes(array('token'=> $clienttoken));
@@ -1184,7 +1185,7 @@ function buildsurveysession($surveyid,$preview=false)
     unset($_SESSION['survey_'.$surveyid]['groupReMap']);
     $_SESSION['survey_'.$surveyid]['fieldnamesInfo'] = Array();
 
-    // Multi lingual support order : by REQUEST, if not by Token->language else by survey default language 
+    // Multi lingual support order : by REQUEST, if not by Token->language else by survey default language
     if (returnGlobal('lang',true))
     {
         $language_to_set=returnGlobal('lang',true);
@@ -1474,7 +1475,7 @@ function buildsurveysession($surveyid,$preview=false)
         $_SESSION['survey_'.$surveyid]['fieldmap-' . $surveyid . $_SESSION['survey_'.$surveyid]['s_lang']] = $fieldmap;
         $_SESSION['survey_'.$surveyid]['fieldmap-' . $surveyid . '-randMaster'] = 'fieldmap-' . $surveyid . $_SESSION['survey_'.$surveyid]['s_lang'];
     }
-    
+
     // TMSW Condition->Relevance:  don't need hasconditions, or usedinconditions
 
     $_SESSION['survey_'.$surveyid]['fieldmap']=$fieldmap;
@@ -1646,7 +1647,7 @@ function surveymover()
 
     // Submit ?
     if ($iSessionStep && ($iSessionStep == $iSessionTotalSteps)
-        || $thissurvey['format'] == 'A' 
+        || $thissurvey['format'] == 'A'
         )
     {
         $sMoveNext="movesubmit";
@@ -1920,7 +1921,7 @@ function checkCompletedQuota($surveyid,$return=false)
     {
         return;
     }
-    static $aMatchedQuotas; // EM call 2 times quotas with 3 lines of php code, then use static. 
+    static $aMatchedQuotas; // EM call 2 times quotas with 3 lines of php code, then use static.
     if(!$aMatchedQuotas)
     {
         $aMatchedQuotas=array();
@@ -1929,7 +1930,7 @@ function checkCompletedQuota($surveyid,$return=false)
         if(!$aQuotasInfo || empty($aQuotasInfo))
             return $aMatchedQuotas;
         // OK, we have some quota, then find if this $_SESSION have some set
-        $aPostedFields = explode("|",Yii::app()->request->getPost('fieldnames','')); // Needed for quota allowing update 
+        $aPostedFields = explode("|",Yii::app()->request->getPost('fieldnames','')); // Needed for quota allowing update
         foreach ($aQuotasInfo as $aQuotaInfo)
         {
             $iMatchedAnswers=0;
