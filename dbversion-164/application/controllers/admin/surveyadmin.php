@@ -144,12 +144,12 @@ class SurveyAdmin extends Survey_Common_Action
 
         $this->_renderWrappedTemplate('survey', $aViewUrls, $arrayed_data);
     }
-    
+
     function fakebrowser()
     {
         $aData['clang'] = $this->getController()->lang;
         Yii::app()->getController()->render('/admin/survey/newSurveyBrowserMessage', $aData);
-    }    
+    }
 
     /**
     * This function prepares the view for editing a survey
@@ -174,7 +174,7 @@ class SurveyAdmin extends Survey_Common_Action
 
         Yii::app()->loadHelper('/admin/htmleditor');
         initKcfinder();
-        
+
         $esrow = array();
         $esrow = self::_fetchSurveyInfo('editsurvey', $iSurveyID);
         $aData['esrow'] = $esrow;
@@ -353,7 +353,7 @@ class SurveyAdmin extends Survey_Common_Action
 
             //Remove any survey_links to the CPDB
             Survey_links::model()->deleteLinksBySurvey($iSurveyID);
-            
+
 
             // IF there are any records in the saved_control table related to this survey, they have to be deleted
             $result = Saved_control::model()->deleteSomeRecords(array('sid' => $iSurveyID)); //Yii::app()->db->createCommand($query)->query();
@@ -863,8 +863,8 @@ class SurveyAdmin extends Survey_Common_Action
                 else
                 {
                     $sExtension = "";
-                }            
-                
+                }
+
                 $aData['sHeader'] = $clang->gT("Import survey data");
                 $aData['sSummaryHeader'] = $clang->gT("Survey structure import summary");
                 $importingfrom = "http";
@@ -876,8 +876,8 @@ class SurveyAdmin extends Survey_Common_Action
                 else
                 {
                     $sExtension = "";
-                }            
-                
+                }
+
             }
             elseif ($action == 'copysurvey')
             {
@@ -886,11 +886,11 @@ class SurveyAdmin extends Survey_Common_Action
             }
             // Start traitment and messagebox
             $aData['bFailed'] = false; // Put a var for continue
-            
+
             if ($action == 'importsurvey')
             {
 
-                $sFullFilepath = Yii::app()->getConfig('tempdir') . DIRECTORY_SEPARATOR . randomChars(20).'.'.$sExtension;
+                $sFullFilepath = Yii::app()->getConfig('tempdir') . DIRECTORY_SEPARATOR . randomChars(30);
                 if (!@move_uploaded_file($_FILES['the_file']['tmp_name'], $sFullFilepath))
                 {
                     $aData['sErrorMessage'] = sprintf($clang->gT("An error occurred uploading your file. This may be caused by incorrect permissions in your %s folder."), Yii::app()->getConfig('tempdir'));
@@ -1189,16 +1189,16 @@ class SurveyAdmin extends Survey_Common_Action
         $aData['sRadixDefault'] = $aLanguageDetails['radixpoint'];
         $aData['sDateFormatDefault'] = $aLanguageDetails['dateformat'];
         foreach (getRadixPointData() as $index=>$radixptdata){
-          $aRadixPointData[$index]=$radixptdata['desc'];  
+          $aRadixPointData[$index]=$radixptdata['desc'];
         }
         $aData['aRadixPointData']=$aRadixPointData;
-        
-        foreach (getDateFormatData (0,Yii::app()->session['adminlang']) as $index => $dateformatdata) 
+
+        foreach (getDateFormatData (0,Yii::app()->session['adminlang']) as $index => $dateformatdata)
         {
-          $aDateFormatData[$index]=$dateformatdata['dateformat'];  
+          $aDateFormatData[$index]=$dateformatdata['dateformat'];
         }
         $aData['aDateFormatData']=$aDateFormatData;
-                
+
         return $aData;
     }
 
@@ -1469,7 +1469,7 @@ class SurveyAdmin extends Survey_Common_Action
             $generalscripts_path = Yii::app()->getConfig('generalscripts');
             $adminscripts_path = Yii::app()->getConfig('adminscripts');
             $styleurl = Yii::app()->getConfig('styleurl');
-                                                                            
+
             $js_files = array(
             $adminscripts_path . 'surveysettings.js',
             $generalscripts_path . 'jquery/jqGrid/js/i18n/grid.locale-en.js',
@@ -1591,14 +1591,14 @@ class SurveyAdmin extends Survey_Common_Action
                 $aInsertData['adminemail'] = Yii::app()->request->getPost('adminemail');
             } else {
                 $aInsertData['adminemail'] = '';
-                $warning .= $this->getController()->lang->gT("Warning! Notification email was not updated because it was not valid.").'<br/>'; 
+                $warning .= $this->getController()->lang->gT("Warning! Notification email was not updated because it was not valid.").'<br/>';
             }
             if (Yii::app()->request->getPost('bounce_email', '') == ''
                 || validateEmailAddress(Yii::app()->request->getPost('bounce_email'))) {
                 $aInsertData['bounce_email'] = Yii::app()->request->getPost('bounce_email');
             } else {
                 $aInsertData['bounce_email'] = '';
-                $warning .= $this->getController()->lang->gT("Warning! Bounce email was not updated because it was not valid.").'<br/>'; 
+                $warning .= $this->getController()->lang->gT("Warning! Bounce email was not updated because it was not valid.").'<br/>';
             }
 
             if (!is_null($iSurveyID))
