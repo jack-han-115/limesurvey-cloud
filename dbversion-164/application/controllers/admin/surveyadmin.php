@@ -890,15 +890,15 @@ class SurveyAdmin extends Survey_Common_Action
             if ($action == 'importsurvey')
             {
 
-                $sFullFilepath = Yii::app()->getConfig('tempdir') . DIRECTORY_SEPARATOR . randomChars(30);
-                if (!@move_uploaded_file($_FILES['the_file']['tmp_name'], $sFullFilepath))
-                {
-                    $aData['sErrorMessage'] = sprintf($clang->gT("An error occurred uploading your file. This may be caused by incorrect permissions in your %s folder."), Yii::app()->getConfig('tempdir'));
-                    $aData['bFailed'] = true;
-                }
+                $sFullFilepath = Yii::app()->getConfig('tempdir') . DIRECTORY_SEPARATOR . randomChars(20).'.'.$sExtension;
                 if (!$aData['bFailed'] && (strtolower($sExtension) != 'csv' && strtolower($sExtension) != 'lss' && strtolower($sExtension) != 'txt' && strtolower($sExtension) != 'lsa'))
                 {
                     $aData['sErrorMessage'] = sprintf($clang->gT("Import failed. You specified an invalid file type '%s'."), $sExtension);
+                    $aData['bFailed'] = true;
+                }
+                elseif (!@move_uploaded_file($_FILES['the_file']['tmp_name'], $sFullFilepath))
+                {
+                    $aData['sErrorMessage'] = sprintf($clang->gT("An error occurred uploading your file. This may be caused by incorrect permissions in your %s folder."), Yii::app()->getConfig('tempdir'));
                     $aData['bFailed'] = true;
                 }
             }
