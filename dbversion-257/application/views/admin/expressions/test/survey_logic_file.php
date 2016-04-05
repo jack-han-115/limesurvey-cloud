@@ -1,4 +1,18 @@
 <?php
+    $fullPage = (isset($_GET["sid"]))?false:true;
+?>
+
+<?php if(!$fullPage):?>
+<div class="side-body" id="edit-survey-text-element">
+<?php endif;?>
+	<h3><?php eT("Edit survey settings");?></h3>
+
+	<div class="row">
+		<div class="col-lg-12 content-right">
+
+
+
+<?php
 if (count($_GET) > 0) {
     foreach ($_GET as $key=>$val) {
         if ($key == 'sid') {
@@ -64,52 +78,42 @@ else {
     $gid = (isset($_REQUEST['gid']) ? sanitize_int($_REQUEST['gid']) : NULL);
     $qid = (isset($_REQUEST['qid']) ? sanitize_int($_REQUEST['qid']) : NULL);
 
-    print <<< EOD
-<html>
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Logic File - Survey #$surveyid</title>
-<style type="text/css">
-tr.LEMgroup td
-{
-background-color:lightgrey;
-}
-
-tr.LEMquestion
-{
-background-color:#EAF2D3;
-}
-
-tr.LEManswer td
-{
-background-color:white;
-}
-
-.LEMerror
-{
-color:red;
-font-weight:bold;
-}
-
-tr.LEMsubq td
-{
-background-color:lightyellow;
-}
-</style>
-</head>
-<body>
-EOD;
-
-
+    App()->getClientScript()->registerCssFile(Yii::app()->getConfig('styleurl') . 'expressionlogicfile.css');
     SetSurveyLanguage($surveyid, $language);
     LimeExpressionManager::SetDirtyFlag();
     Yii::app()->setLanguage(Yii::app()->session['adminlang']);
     $result = LimeExpressionManager::ShowSurveyLogicFile($surveyid, $gid, $qid,$LEMdebugLevel,$assessments);
     print $result['html'];
 
-    print <<< EOD
-</body>
-</html>
-EOD;
 }
 ?>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		</div>
+	</div>
+
+<?php if(!$fullPage):?>
+</div>
+<?php endif;?>
+
+

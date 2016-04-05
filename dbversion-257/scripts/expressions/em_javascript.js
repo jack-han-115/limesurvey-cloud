@@ -14,12 +14,12 @@
  * @author Denis Chenu (Shnoulle)
  *
  * Portion from php.js licensed under the MIT licenses.
- * Copyright (c) 2013 Kevin van Zonneveld (http://kvz.io) 
+ * Copyright (c) 2013 Kevin van Zonneveld (http://kvz.io)
  * and Contributors (http://phpjs.org/authors)
  */
 
-/* Default event to trigger on answer part 
- * see https://manual.limesurvey.org/Project_ideas_for_GSoC_2015#Expression_Manager_JavaScript_optimizations 
+/* Default event to trigger on answer part
+ * see https://manual.limesurvey.org/Project_ideas_for_GSoC_2015#Expression_Manager_JavaScript_optimizations
  * Actually only for list with comment and select in ranking
  **/
 $(document).on("keyup",".text-item textarea:not([onkeyup]),.text-item :text:not([onkeyup])",function(event){
@@ -216,49 +216,49 @@ function LEMis_string(a)
 
 /**
  * Find the closest matching numerical input values in a list an replace it by the
- * corresponding value within another list 
+ * corresponding value within another list
  *
  * @author Johannes Weberhofer, 2013
  *
  * @param numeric fValueToReplace
- * @param numeric iStrict - 1 for exact matches only otherwise interpolation the 
+ * @param numeric iStrict - 1 for exact matches only otherwise interpolation the
  * 		  closest value should be returned
  * @param string sTranslateFromList - comma seperated list of values to translate from
  * @param string sTranslateToList - comma seperated list of values to translate to
  * @return numeric
  */
-function LEMconvert_value( fValueToReplace, iStrict, sTranslateFromList, sTranslateToList) 
+function LEMconvert_value( fValueToReplace, iStrict, sTranslateFromList, sTranslateToList)
 {
-	if ( isNaN(fValueToReplace) || (iStrict==null) || (sTranslateFromList==null) || (sTranslateToList==null) ) 
-	{
-		return null;
-	}
-	aFromValues = sTranslateFromList.split(",");
-	aToValues = sTranslateToList.split(",");
-	if ( (aFromValues.length > 0)  && (aFromValues.length == aToValues.length) ) 
-	{
-		fMinimumDiff = null;
-		iNearestIndex = 0;
-		for ( i = 0; i < aFromValues.length; i++) {
-			if ( isNaN(aFromValues[i]) ) {
-				// break processing when non-numeric variables are about to be processed
-				return null;
-			}
-			fCurrentDiff = Math.abs(aFromValues[i] - fValueToReplace);
-			if (fCurrentDiff === 0) {
-				return aToValues[i];
-			} else if (i === 0) {
-				fMinimumDiff = fCurrentDiff;
-			} else if ( fMinimumDiff > fCurrentDiff ) {
-				fMinimumDiff = fCurrentDiff;
-				iNearestIndex = i;
-			}
-		}					
-		if ( iStrict !== 1 ) {
-			return aToValues[iNearestIndex];
-		}
-	}
-	return null;
+    if ( isNaN(fValueToReplace) || (iStrict==null) || (sTranslateFromList==null) || (sTranslateToList==null) )
+    {
+        return null;
+    }
+    aFromValues = sTranslateFromList.split(",");
+    aToValues = sTranslateToList.split(",");
+    if ( (aFromValues.length > 0)  && (aFromValues.length == aToValues.length) )
+    {
+        fMinimumDiff = null;
+        iNearestIndex = 0;
+        for ( i = 0; i < aFromValues.length; i++) {
+            if ( isNaN(aFromValues[i]) ) {
+                // break processing when non-numeric variables are about to be processed
+                return null;
+            }
+            fCurrentDiff = Math.abs(aFromValues[i] - fValueToReplace);
+            if (fCurrentDiff === 0) {
+                return aToValues[i];
+            } else if (i === 0) {
+                fMinimumDiff = fCurrentDiff;
+            } else if ( fMinimumDiff > fCurrentDiff ) {
+                fMinimumDiff = fCurrentDiff;
+                iNearestIndex = i;
+            }
+        }
+        if ( iStrict !== 1 ) {
+            return aToValues[iNearestIndex];
+        }
+    }
+    return null;
 }
 
 function LEMif(a,b,c)
@@ -461,6 +461,7 @@ function LEMval(alias)
     if (LEMradix === ',') {
         newval = str.split(',').join('.');
     }
+
     if (newval == parseFloat(newval)) {
         if (newval.length > 0 && newval[0]==0) {
             return newval;   // so keep 0 prefixes on numbers
@@ -484,13 +485,19 @@ function LEMval(alias)
             return '';
         }
     }
-    var whichJsName;    // correct name whether on- or off-page
-    if (LEMmode=='survey' || (LEMmode=='group' && attr.gseq == LEMgseq) || (LEMmode=='question' && attr.qid == LEMqid)) {
+    var whichJsName; // correct name whether on- or off-page
+    var onSamePage; // Tag if value is on same page or not (
+    if (LEMmode=='survey' || (LEMmode=='group' && attr.gseq == LEMgseq) || (LEMmode=='question' && attr.qid == LEMqid))
+    {
         whichJsName = (typeof attr.jsName_on === 'undefined') ? attr.jsName : attr.jsName_on;
+        onSamePage=true;
     }
-    else {
+    else
+    {
         whichJsName = attr.jsName;
+        onSamePage=false;
     }
+
     if (whichJsName === null || typeof document.getElementById(whichJsName) === 'undefined' || document.getElementById(whichJsName) === null) {
         an_error = true;    // this line is here to make debugging easier
         return '';
@@ -673,9 +680,13 @@ function LEMval(alias)
                 {
                     return "";
                 }
-                if (LEMradix === ',') {
+                // If value is on same page : value use LEMradix, else use . (dot) : bug #10001
+                if (LEMradix === ',' && onSamePage )
+                {
                     var regValidateNum = /^-?\d*\,?\d*$/;
-                }else{
+                }
+                else
+                {
                     var regValidateNum = /^-?\d*\.?\d*$/;
                 }
                 if(!regValidateNum.test(value))
@@ -703,13 +714,13 @@ function LEMval(alias)
             else if (attr.type=='D')  {
                 // get date format pattern of referenced question
                 var sdatetimePattern=$(jsName.replace(/java/g, '#dateformat')).attr('value');
-                
+
                 // if undefined (eg., variable on a previous page), set default format yy-mm-dd HH:MM
                 sdatetimePattern=typeof sdatetimePattern=='undefined'? 'yy-mm-dd HH:MM': sdatetimePattern;
-                
+
                 if (sdatetimePattern==null) {
                     sdatetimePattern="";
-                } 
+                }
                 if (value=='INVALID') {
                     value="";
                 }
@@ -863,17 +874,17 @@ function  LEMsetTabIndexes()
  */
 function LEMflagMandOther(sgqa,checked)
 {
-	if (checked) {
-		if ($.trim($('#java'+sgqa).val()) == '') {
-			$('#answer'+sgqa).addClass('em_sq_validation error').removeClass('good');
-		}
-		else {
-			$('#answer'+sgqa).addClass('em_sq_validation good').removeClass('error');
-		}
-	}
-	else {
-		$('#answer'+sgqa).addClass('em_sq_validation good').removeClass('error');
-	}
+    if (checked) {
+        if ($.trim($('#java'+sgqa).val()) == '') {
+            $('#answer'+sgqa).addClass('em_sq_validation error').removeClass('good');
+        }
+        else {
+            $('#answer'+sgqa).addClass('em_sq_validation good').removeClass('error');
+        }
+    }
+    else {
+        $('#answer'+sgqa).addClass('em_sq_validation good').removeClass('error');
+    }
 }
 
 /* The following functions are courtesy of phpjs.org */
@@ -2189,14 +2200,14 @@ function strtotime (text, now) {
         .replace(/[\t\r\n]/g, '')
         .toLowerCase();
 
-    // in contrast to php, js Date.parse function interprets: 
-    // dates given as yyyy-mm-dd as in timezone: UTC, 
+    // in contrast to php, js Date.parse function interprets:
+    // dates given as yyyy-mm-dd as in timezone: UTC,
     // dates with "." or "-" as MDY instead of DMY
     // dates with two-digit years differently
     // etc...etc...
     // ...therefore we manually parse lots of common date formats
     match = text.match(/^(\d{1,4})([\-\.\/\:])(\d{1,2})([\-\.\/\:])(\d{1,4})(?:\s(\d{1,2}):(\d{2})?:?(\d{2})?)?(?:\s([A-Z]+)?)?$/);
-    
+
     if (match && match[2] === match[4]) {
         if (match[1] > 1901) {
             switch (match[2]) {
@@ -2204,7 +2215,7 @@ function strtotime (text, now) {
                     if (match[3] > 12 || match[5] > 31) {
                         return fail;
                     }
-                    
+
                     return new Date(match[1], parseInt(match[3], 10) - 1, match[5],
                         match[6] || 0, match[7] || 0, match[8] || 0, match[9] || 0) / 1000;
                 }
@@ -2215,7 +2226,7 @@ function strtotime (text, now) {
                     if (match[3] > 12 || match[5] > 31) {
                         return fail;
                     }
-                    
+
                     return new Date(match[1], parseInt(match[3], 10) - 1, match[5],
                         match[6] || 0, match[7] || 0, match[8] || 0, match[9] || 0) / 1000;
                 }
@@ -2226,7 +2237,7 @@ function strtotime (text, now) {
                     if (match[3] > 12 || match[1] > 31) {
                         return fail;
                     }
-                    
+
                     return new Date(match[5], parseInt(match[3], 10) - 1, match[1],
                         match[6] || 0, match[7] || 0, match[8] || 0, match[9] || 0) / 1000;
                 }
@@ -2234,7 +2245,7 @@ function strtotime (text, now) {
                     if (match[3] > 12 || match[1] > 31) {
                         return fail;
                     }
-                    
+
                     return new Date(match[5], parseInt(match[3], 10) - 1, match[1],
                         match[6] || 0, match[7] || 0, match[8] || 0, match[9] || 0) / 1000;
                 }
@@ -2242,7 +2253,7 @@ function strtotime (text, now) {
                     if (match[1] > 12 || match[3] > 31) {
                         return fail;
                     }
-                    
+
                     return new Date(match[5], parseInt(match[1], 10) - 1, match[3],
                         match[6] || 0, match[7] || 0, match[8] || 0, match[9] || 0) / 1000;
                 }
@@ -2254,7 +2265,7 @@ function strtotime (text, now) {
                     if (match[3] > 12 || match[5] > 31 || (match[1] < 70 && match[1] > 38)) {
                         return fail;
                     }
-                    
+
                     year = match[1] >= 0 && match[1] <= 38 ? +match[1] + 2000 : match[1];
                     return new Date(year, parseInt(match[3], 10) - 1, match[5],
                         match[6] || 0, match[7] || 0, match[8] || 0, match[9] || 0) / 1000;
@@ -2264,7 +2275,7 @@ function strtotime (text, now) {
                         if (match[3]>12 || match[1]>31) {
                             return fail;
                         }
-                        
+
                         return new Date(match[5], parseInt(match[3], 10) - 1, match[1],
                             match[6] || 0, match[7] || 0, match[8] || 0, match[9] || 0) / 1000;
                     }
@@ -2272,19 +2283,19 @@ function strtotime (text, now) {
                         if (match[1] > 23 || match[3] > 59) {
                             return fail;
                         }
-                        
+
                         today = new Date();
                         return new Date(today.getFullYear(), today.getMonth(), today.getDate(),
                             match[1] || 0, match[3] || 0, match[5] || 0, match[9] || 0) / 1000;
                     }
-                    
+
                     return fail;  // invalid format, cannot be parsed
                 }
                 case '/': {  // M/D/YY
                     if (match[1] > 12 || match[3] > 31 || (match[5] < 70 && match[5] > 38)) {
                         return fail;
                     }
-                    
+
                     year = match[5] >= 0 && match[5] <= 38 ? +match[5] + 2000 : match[5];
                     return new Date(year, parseInt(match[1], 10) - 1, match[3],
                         match[6] || 0, match[7] || 0, match[8] || 0, match[9] || 0) / 1000;
@@ -2293,7 +2304,7 @@ function strtotime (text, now) {
                     if (match[1] > 23 || match[3] > 59 || match[5] > 59) {
                         return fail;
                     }
-                    
+
                     today = new Date();
                     return new Date(today.getFullYear(), today.getMonth(), today.getDate(),
                         match[1] || 0, match[3] || 0, match[5] || 0) / 1000;
@@ -2301,8 +2312,8 @@ function strtotime (text, now) {
             }
         }
     }
-    
-    
+
+
     // other formats and "now" should be parsed by Date.parse()
     if (text === 'now') {
         return now === null || isNaN(now) ? new Date().getTime() / 1000 | 0 : now | 0;
@@ -2364,7 +2375,7 @@ function strtotime (text, now) {
         if (ranges.hasOwnProperty(range) && !splt[1].match(/^mon(day|\.)?$/i)) {
             return date['set' + ranges[range]](date['get' + ranges[range]]() + num);
         }
-        
+
         if (range === 'wee') {
             return date.setDate(date.getDate() + (num * 7));
         }
@@ -2375,7 +2386,7 @@ function strtotime (text, now) {
         else if (!typeIsNumber) {
             return false;
         }
-        
+
         return true;
     }
 

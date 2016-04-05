@@ -469,12 +469,15 @@ function XMLImportQuestion($sFullFilePath, $iNewSID, $newgid)
             foreach ($insertdata as $k => $v)
                 $ques->$k = $v;
             $result = $ques->save();
-            $newsqid=getLastInsertID($ques->tableName());
-            if (!isset($insertdata['qid']))
+            if ($result)
             {
-                $aQIDReplacements[$oldsqid]=$newsqid; // add old and new qid to the mapping array
+                $newsqid=getLastInsertID($ques->tableName());
+                if (!isset($insertdata['qid']))
+                {
+                    $aQIDReplacements[$oldsqid]=$newsqid; // add old and new qid to the mapping array
+                }
+                $results['subquestions']++;
             }
-            $results['subquestions']++;
         }
     }
 
@@ -710,7 +713,7 @@ function importSurveyFile($sFullFilePath, $bTranslateLinksFields, $sNewSurveyNam
     {
         return XMLImportSurvey($sFullFilePath, null, $sNewSurveyName, $DestSurveyID, $bTranslateLinksFields);
     }
-    elseif ($sExtension == 'txt')
+    elseif ($sExtension == 'txt' || $sExtension == 'tsv')
     {
         return TSVImportSurvey($sFullFilePath);
     }
@@ -765,7 +768,7 @@ function importSurveyFile($sFullFilePath, $bTranslateLinksFields, $sNewSurveyNam
                 else
                 {
                     $aTokenCreateResults = array('tokentablecreated' => false);
-                    $aTokenImportResults['warnings'][] = gt("Unable to create token table");
+                    $aTokenImportResults['warnings'][] = gT("Unable to create token table");
 
                 }
                 $aImportResults = array_merge_recursive($aTokenImportResults, $aImportResults);
@@ -1538,21 +1541,16 @@ function XMLImportSurvey($sFullFilePath,$sXMLdata=NULL,$sNewSurveyName=NULL,$iDe
 function GetNewSurveyID($iOldSID)
 {
     Yii::app()->loadHelper('database');
-    $query = "SELECT sid FROM {{surveys}} WHERE sid=$iOldSID";
-
-    $aRow = Yii::app()->db->createCommand($query)->queryRow();
-
-    //if (!is_null($isresult))
-    if($aRow!==false)
+    $aSurvey=Survey::model()->findByPk($iOldSID);
+    if(!empty($aSurvey))
     {
         // Get new random ids until one is found that is not used
         do
         {
             $iNewSID = randomChars(5,'123456789');
-            $query = "SELECT sid FROM {{surveys}} WHERE sid=$iNewSID";
-            $aRow = Yii::app()->db->createCommand($query)->queryRow();
+            $aSurvey=Survey::model()->findByPk($iNewSID);
         }
-        while ($aRow!==false);
+        while (!empty($aSurvey));
 
         return $iNewSID;
     }
@@ -1947,7 +1945,7 @@ function CSVImportResponses($sFullFilePath,$iSurveyId,$aOptions=array())
     // Do a model function for this can be a good idea (see activate_helper/activateSurvey)
     if (Yii::app()->db->driverName=='pgsql')
     {
-        $sSequenceName= Yii::app()->db->getSchema()->getTable("{{survey_{$iSurveyID}}}")->sequenceName;
+        $sSequenceName= Yii::app()->db->getSchema()->getTable("{{survey_{$iSurveyId}}}")->sequenceName;
         $iActualSerial=Yii::app()->db->createCommand("SELECT last_value FROM  {$sSequenceName}")->queryScalar();
         if($iActualSerial<$iMaxId)
         {
@@ -2375,7 +2373,7 @@ function TSVImportSurvey($sFullFilePath)
                 }
 
                 // insert default value
-                if (isset($row['default']))
+                if (isset($row['default']) && $row['default']!=="")
                 {
                     $insertdata=array();
                     $insertdata['qid'] = $qid;

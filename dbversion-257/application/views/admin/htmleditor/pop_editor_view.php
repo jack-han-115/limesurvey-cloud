@@ -7,7 +7,6 @@
         <?php
         App()->getClientScript()->registerPackage('jqueryui');
         App()->getClientScript()->registerPackage('jquery-superfish');
-        App()->getClientScript()->registerCoreScript('ckeditor');
         App()->getClientScript()->registerCssFile(Yii::app()->getConfig('adminstyleurl') . "jquery-ui/jquery-ui.css" );
         ?>
 <!--        <script type="text/javascript" src="<?php echo Yii::app()->getConfig('generalscripts') . 'jquery/jquery.js'; ?>"></script> -->
@@ -32,9 +31,14 @@
 
 
                 var saveChanges = false;
-                var sReplacementFieldTitle = '<?php eT('LimeSurvey replacement field properties','js');?>';
-                var sReplacementFieldButton = '<?php eT('Insert/edit LimeSurvey replacement field','js');?>';
+                var sReplacementFieldTitle = '<?php eT('Placeholder fields','js');?>';
+                var sReplacementFieldButton = '<?php eT('Insert/edit placeholder field','js');?>';
                 $(document).ready(function(){
+                    //console.log('iGroupId: '+iGroupId);
+            // Better use try/catch to not crash JS completely
+            /*
+                try{ console.log('iGroupId: '+iGroupId); } catch (e){ console.log(e); }
+                */
                     CKEDITOR.on('instanceReady',CKeditor_OnComplete);
                     var oCKeditor = CKEDITOR.replace( 'MyTextarea' ,  { height	: '350',
                         width	: '98%',
@@ -94,7 +98,7 @@
                     html_transfert();
 
                     window.opener.document.getElementsByName('<?php echo $sFieldName; ?>')[0].readOnly= false;
-                    window.opener.document.getElementsByName('<?php echo $sFieldName; ?>')[0].className='htmlinput';
+                    window.opener.document.getElementsByName('<?php echo $sFieldName; ?>')[0].className='htmlinput form-control input-lg';
                     window.opener.document.getElementById('<?php echo $sControlIdEna; ?>').style.display='';
                     window.opener.document.getElementById('<?php echo $sControlIdDis; ?>').style.display='none';
                     window.opener.focus();

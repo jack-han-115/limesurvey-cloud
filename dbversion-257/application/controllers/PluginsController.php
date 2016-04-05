@@ -1,9 +1,12 @@
 <?php
 
+/**
+ * @todo Not used, copied to admin/pluginmanager.php. Delete this file?
+ */
 class PluginsController extends LSYii_Controller
 {
 
-    public $layout = 'main';
+    //public $layout = 'main';
 
     /**
      * Stored dynamic properties set and unset via __get and __set.
@@ -27,22 +30,19 @@ class PluginsController extends LSYii_Controller
         Yii::app()->bootstrap->init();      // Make sure bootstrap css is rendered in time
     }
 
-    public function accessRules()
-    {
-        $aRules = array(
-            array('allow', 'roles' => array('administrator')),
-            array('allow', 'actions' => array('direct')),
-            array('deny')
-        );
-
-
-        // Note the order; rules are numerically indexed and we want to
-        // parents rules to be executed only if ours dont apply.
-        return array_merge($aRules, parent::accessRules());
-    }
-
+    /**
+     * Activates plugin with $id
+     *
+     * @param int $id
+     * @return void
+     */
     public function actionActivate($id)
     {
+        if(!Permission::model()->hasGlobalPermission('settings','update'))
+        {
+            Yii::app()->session['flashmessage'] =gT('Access denied!');
+            $this->redirect($this->createUrl("/admin/plugins"));
+        }
         $oPlugin = Plugin::model()->findByPk($id);
         if (!is_null($oPlugin))
         {
@@ -68,8 +68,19 @@ class PluginsController extends LSYii_Controller
         $this->redirect(array('plugins/'));
     }
 
+    /**
+     * Show configuration for plugin with $id
+     *
+     * @param int $id
+     * @return void
+     */
     public function actionConfigure($id)
     {
+        if(!Permission::model()->hasGlobalPermission('settings','update'))
+        {
+            Yii::app()->session['flashmessage'] =gT('Access denied!');
+            $this->redirect($this->createUrl("/admin/plugins"));
+        }
         $arPlugin      = Plugin::model()->findByPk($id)->attributes;
         $oPluginObject = App()->getPluginManager()->loadPlugin($arPlugin['name'], $arPlugin['id']);
 
@@ -78,7 +89,7 @@ class PluginsController extends LSYii_Controller
             Yii::app()->user->setFlash('pluginmanager', 'Plugin not found');
             $this->redirect(array('plugins/'));
         }
-        
+
         // If post handle data, yt0 seems to be the submit button
         if (App()->request->isPostRequest)
         {
@@ -112,8 +123,19 @@ class PluginsController extends LSYii_Controller
         $this->render('/plugins/configure', array('settings' => $aSettings, 'plugin' => $arPlugin, 'properties' => $aPluginProp));
     }
 
+    /**
+     * Deactivates plugin with $id
+     *
+     * @param int $id
+     * @return void
+     */
     public function actionDeactivate($id)
     {
+        if(!Permission::model()->hasGlobalPermission('settings','update'))
+        {
+            Yii::app()->session['flashmessage'] =gT('Access denied!');
+            $this->redirect($this->createUrl("/admin/plugins"));
+        }
         $oPlugin = Plugin::model()->findByPk($id);
         if (!is_null($oPlugin))
         {
@@ -137,7 +159,12 @@ class PluginsController extends LSYii_Controller
         $this->redirect(array('plugins/'));
     }
 
-    public function actionDirect($plugin, $function)
+    /**
+     * Launch the event newDirectRequest
+     * @param $plugin : the target
+     * @param $function : the function to call from the plugin
+     */
+    public function actionDirect($plugin, $function=null)
     {
         $oEvent = new PluginEvent('newDirectRequest');
         // The intended target of the call.
@@ -147,21 +174,55 @@ class PluginsController extends LSYii_Controller
         $oEvent->set('request', App()->request);
 
         App()->getPluginManager()->dispatchEvent($oEvent);
-
         $sOutput = '';
         foreach ($oEvent->getAllContent() as $content)
         {
             $sOutput .= $content->getContent();
         }
+        if (!empty($sOutput))
+        {
+            $this->renderText($sOutput);
+        }
+    }
+    /**
+     * Launch the event newUnsecureRequest
+     * @param $plugin : the target
+     * @param $function : the function to call from the plugin
+     */
+    public function actionUnsecure($plugin, $function=null)
+    {
+        $oEvent = new PluginEvent('newUnsecureRequest');
+        // The intended target of the call.
+        $oEvent->set('target', $plugin);
+        // The name of the function.
+        $oEvent->set('function', $function);
+        $oEvent->set('request', App()->request);
 
+        App()->getPluginManager()->dispatchEvent($oEvent);
+        $sOutput = '';
+        foreach ($oEvent->getAllContent() as $content)
+        {
+            $sOutput .= $content->getContent();
+        }
         if (!empty($sOutput))
         {
             $this->renderText($sOutput);
         }
     }
 
+    /**
+     * Show list of plugins
+     *
+     * @return void
+     */
     public function actionIndex()
     {
+        if(!Permission::model()->hasGlobalPermission('settings','read'))
+        {
+            Yii::app()->session['flashmessage'] =gT('Access denied!');
+            $this->redirect($this->createUrl("/admin"));
+        }
+
         $oPluginManager = App()->getPluginManager();
 
         // Scan the plugins folder.
@@ -210,6 +271,9 @@ class PluginsController extends LSYii_Controller
         echo $this->render('/plugins/index', compact('data'));
     }
 
+    /**
+     * @todo Doc
+     */
     public function filters()
     {
         $aFilters = array(

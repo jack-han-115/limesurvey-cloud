@@ -41,7 +41,8 @@
          */
         public function getFiles()
         {
-            $questions = Question::model()->findAllByAttributes(array('sid' => $this->dynamicId,'type' => '|'));
+
+            $questions = Question::model()->findAllByAttributes(array('sid' => $this->dynamicId,'type' => '|','language'=>getBaseLanguageFromSurveyID($this->dynamicId)));
             $files = array();
             foreach ($questions as $question)
             {
@@ -66,11 +67,10 @@
             }
         }
         public function delete($deleteFiles = false) {
-            if ($deleteFiles)
-            {
+            if ($deleteFiles) {
                 $this->deleteFiles();
             }
-            parent::delete();
+            return parent::delete();
         }
 		public function relations()
 		{
@@ -86,7 +86,7 @@
 		{
 			return '{{survey_' . $this->dynamicId . '}}';
 		}
-        
+
         public function getSurveyId() {
             return $this->dynamicId;
         }
