@@ -12,6 +12,10 @@ if (!file_exists(dirname(__FILE__) .  '/config.php')) {
     $userConfig = require(dirname(__FILE__) . '/config.php');
 }
 @date_default_timezone_set(@date_default_timezone_get());
+if (!isset($_SERVER['SERVER_NAME']))
+{
+    $_SERVER['SERVER_NAME']=$argv[2];
+}
 $userdir=str_replace('instances','installations',dirname(dirname(dirname(dirname(__FILE__))))).'/'.$_SERVER['SERVER_NAME'].'/userdata';
 if (function_exists('mb_internal_encoding')) {
     // Needed to substring arabic etc
@@ -50,7 +54,7 @@ $internalConfig = array(
         ),
 
     'params'=>array(
-        'defaultPageSize'=>10	,
+        'defaultPageSize'=>10    ,
         'pageSizeOptions'=>array(5=>5,10=>10,20=>20,50=>50,100=>100),
     ),
 
