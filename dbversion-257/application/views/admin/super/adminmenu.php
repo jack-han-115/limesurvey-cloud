@@ -139,7 +139,16 @@
                     </a>
                 </li>
             <?php endif;?>
+            <?php
+            //===============Begin LimeService Mod
+            $sDomain=$_SERVER['SERVER_NAME'];
+            $sSubdomain=substr($sDomain,0,strpos($sDomain,'.'));
+            $sDomain=substr($sDomain,strpos($sDomain,'.')+1);
 
+            $iResponses = Yii::app()->dbstats->createCommand("select responses_avail from limeservice_system.balances where user_id=".substr(Yii::app()->db->username,6))->queryScalar();
+            echo " <li>".sprintf(gT('Response balance: %s'),$iResponses)." <a href='http://www.limeservice.com/en/buy-survey-responses'>".'Need more?'.'</a></li>';
+
+            //===============End LimeService Mod ?>
             <?php if($showupdate): ?>
             <li class="">
                 <a href="#notifications">
