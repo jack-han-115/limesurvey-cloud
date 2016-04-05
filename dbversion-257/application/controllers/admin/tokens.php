@@ -622,7 +622,7 @@ class tokens extends Survey_Common_Action
         {
             eT("We are sorry but you don't have permissions to do this.");// return json ? error not treated in js.
             return;
-    }
+        }
     }
 
     /**
@@ -1240,20 +1240,6 @@ class tokens extends Survey_Common_Action
     */
     function email($iSurveyId, $tokenids = null)
     {
-        // LimeService Mod Start _--------------------------
-
-        /**
-         * Get the database name
-         */
-        function _getDbName() {
-            // Yii doesn't give us a good way to get the database name
-            preg_match('/dbname=([^;]*)/', Yii::app()->db->getSchema()->getDbConnection()->connectionString, $aMatches);
-            $sDbName = $aMatches[1];
-
-            return $sDbName;
-        }
-
-        // LimeService Mod End --------------------------
         $iSurveyId = sanitize_int($iSurveyId);
 
         if (!Permission::model()->hasSurveyPermission($iSurveyId, 'tokens', 'update'))
@@ -1399,7 +1385,6 @@ class tokens extends Survey_Common_Action
             }
 
             $tokenoutput = "";
-            $sCustomerID=substr(_getDbName(),6);
             if ($emcount > 0)
             {
                 foreach ($emresult as $emrow)
@@ -1444,14 +1429,6 @@ class tokens extends Survey_Common_Action
                         $modsubject = str_replace("@@{$key}URL@@", $url, $modsubject);
                         $modmessage = str_replace("@@{$key}URL@@", $url, $modmessage);
                     }
-                    // LimeService Mod Start
-                    $customheaders = array('1' => "X-surveyid: " . $iSurveyId,
-                    '2' => "X-tokenid: " . $fieldsarray["{TOKEN}"]
-                    // LimeService Mod Start _--------------------------
-                    ,'3' => "X-did: ".$sCustomerID
-                    // LimeService Mod End _--------------------------
-                    );
-                    // LimeService Mod End
                     $modsubject = Replacefields($modsubject, $fieldsarray);
                     $modmessage = Replacefields($modmessage, $fieldsarray);
 

@@ -66,10 +66,6 @@ function loadanswers()
     }
     else
     {
-        //===============Begin LimeService Mod
-        $_SESSION['survey_'.$surveyid]['limeservice_start']=true;
-        //===============End LimeService Mod
-
         //A match has been found. Let's load the values!
         //If this is from an email, build surveysession first
         $_SESSION['survey_'.$surveyid]['LEMtokenResume']=true;
@@ -77,7 +73,7 @@ function loadanswers()
         // If survey come from reload (GET or POST); some value need to be found on saved_control, not on survey
         if (Yii::app()->request->getParam('loadall') == "reload")
         {
-            $oSavedSurvey=SavedControl::model()->find("identifier=:identifier AND sid=:surveyid AND (access_code=:access_code OR access_code=:sha256_code)",array(':identifier'=>$sLoadName,':access_code'=>md5($sLoadPass),':sha256_code'=>hash('sha256',$sLoadPass),':surveyid'=>$surveyid));
+            $oSavedSurvey=SavedControl::model()->find("identifier=:identifier AND (access_code=:access_code OR access_code=:sha256_code)",array(':identifier'=>$sLoadName,':access_code'=>md5($sLoadPass),':sha256_code'=>hash('sha256',$sLoadPass)));
             // We don't need to control if we have one, because we do the test before
             $_SESSION['survey_'.$surveyid]['scid'] = $oSavedSurvey->scid;
             $_SESSION['survey_'.$surveyid]['step'] = ($oSavedSurvey->saved_thisstep>1)?$oSavedSurvey->saved_thisstep:1;
@@ -892,10 +888,10 @@ function buildsurveysession($surveyid,$preview=false)
             && isset($_GET['loadname']) && isset($_GET['loadpass']))
             {
                 echo "
-                <input type='hidden' name='loadall' value='".htmlspecialchars($_GET['loadall'])."' id='loadall' />
+                <input type='hidden' name='loadall' value='".htmlspecialchars($_GET['loadall'],ENT_QUOTES, 'UTF-8')."' id='loadall' />
                 <input type='hidden' name='scid' value='".returnGlobal('scid',true)."' id='scid' />
-                <input type='hidden' name='loadname' value='".htmlspecialchars($_GET['loadname'])."' id='loadname' />
-                <input type='hidden' name='loadpass' value='".htmlspecialchars($_GET['loadpass'])."' id='loadpass' />";
+                <input type='hidden' name='loadname' value='".htmlspecialchars($_GET['loadname'],ENT_QUOTES, 'UTF-8')."' id='loadname' />
+                <input type='hidden' name='loadpass' value='".htmlspecialchars($_GET['loadpass'],ENT_QUOTES, 'UTF-8')."' id='loadpass' />";
             }
 
             echo "
@@ -976,10 +972,10 @@ function buildsurveysession($surveyid,$preview=false)
             && isset($_GET['loadname']) && isset($_GET['loadpass']))
             {
                 echo "
-                <input type='hidden' name='loadall' value='".htmlspecialchars($_GET['loadall'])."' id='loadall' />
+                <input type='hidden' name='loadall' value='".htmlspecialchars($_GET['loadall'],ENT_QUOTES, 'UTF-8')."' id='loadall' />
                 <input type='hidden' name='scid' value='".returnGlobal('scid',true)."' id='scid' />
-                <input type='hidden' name='loadname' value='".htmlspecialchars($_GET['loadname'])."' id='loadname' />
-                <input type='hidden' name='loadpass' value='".htmlspecialchars($_GET['loadpass'])."' id='loadpass' />";
+                <input type='hidden' name='loadname' value='".htmlspecialchars($_GET['loadname'],ENT_QUOTES, 'UTF-8')."' id='loadname' />
+                <input type='hidden' name='loadpass' value='".htmlspecialchars($_GET['loadpass'],ENT_QUOTES, 'UTF-8')."' id='loadpass' />";
             }
             echo "</li>";
 
@@ -1118,10 +1114,10 @@ function buildsurveysession($surveyid,$preview=false)
                         if (isset($_GET['loadall']) && isset($_GET['scid'])
                         && isset($_GET['loadname']) && isset($_GET['loadpass']))
                         {
-                            echo "<input type='hidden' name='loadall' value='".htmlspecialchars($_GET['loadall'])."' id='loadall' />
+                            echo "<input type='hidden' name='loadall' value='".htmlspecialchars($_GET['loadall'],ENT_QUOTES, 'UTF-8')."' id='loadall' />
                             <input type='hidden' name='scid' value='".returnGlobal('scid',true)."' id='scid' />
-                            <input type='hidden' name='loadname' value='".htmlspecialchars($_GET['loadname'])."' id='loadname' />
-                            <input type='hidden' name='loadpass' value='".htmlspecialchars($_GET['loadpass'])."' id='loadpass' />";
+                            <input type='hidden' name='loadname' value='".htmlspecialchars($_GET['loadname'],ENT_QUOTES, 'UTF-8')."' id='loadname' />
+                            <input type='hidden' name='loadpass' value='".htmlspecialchars($_GET['loadpass'],ENT_QUOTES, 'UTF-8')."' id='loadpass' />";
                         }
 
                         echo '<label for="token">'.gT("Token")."</label><input class='text' type='password' id='token' name='token'></li>";
@@ -1137,10 +1133,10 @@ function buildsurveysession($surveyid,$preview=false)
                     if (isset($_GET['loadall']) && isset($_GET['scid'])
                     && isset($_GET['loadname']) && isset($_GET['loadpass']))
                     {
-                        echo "<input type='hidden' name='loadall' value='".htmlspecialchars($_GET['loadall'])."' id='loadall' />
+                        echo "<input type='hidden' name='loadall' value='".htmlspecialchars($_GET['loadall'],ENT_QUOTES, 'UTF-8')."' id='loadall' />
                         <input type='hidden' name='scid' value='".returnGlobal('scid',true)."' id='scid' />
-                        <input type='hidden' name='loadname' value='".htmlspecialchars($_GET['loadname'])."' id='loadname' />
-                        <input type='hidden' name='loadpass' value='".htmlspecialchars($_GET['loadpass'])."' id='loadpass' />";
+                        <input type='hidden' name='loadname' value='".htmlspecialchars($_GET['loadname'],ENT_QUOTES, 'UTF-8')."' id='loadname' />
+                        <input type='hidden' name='loadpass' value='".htmlspecialchars($_GET['loadpass'],ENT_QUOTES, 'UTF-8')."' id='loadpass' />";
                     }
                     echo '<label for="token">'.gT("Token:")."</label><span id='token'>$gettoken</span>"
                     ."<input type='hidden' name='token' value='$gettoken'></li>";
@@ -1203,12 +1199,12 @@ function buildsurveysession($surveyid,$preview=false)
     ." AND {{questions}}.parent_qid=0\n";
     $totalquestions = Yii::app()->db->createCommand($sQuery)->queryScalar();
 
-    $sQuery= "select count(*) from {{groups}}
-        left join {{questions}} on  {{groups}}.gid={{questions}}.gid
+    $sQuery= "select count(*) from {{groups}} 
+        left join {{questions}} on  {{groups}}.gid={{questions}}.gid 
         where {{groups}}.sid={$surveyid} and qid is null";
     $iTotalGroupsWithoutQuestions = Yii::app()->db->createCommand($sQuery)->queryScalar();
 
-
+    
     // Fix totalquestions by substracting Test Display questions
     $iNumberofQuestions=dbExecuteAssoc("SELECT count(*)\n"
     ." FROM {{questions}}"
@@ -1927,7 +1923,7 @@ function checkCompletedQuota($surveyid,$return=false)
         if(!$aQuotasInfo || empty($aQuotasInfo))
             return $aMatchedQuotas;
         // OK, we have some quota, then find if this $_SESSION have some set
-        $aPostedFields = explode("|",Yii::app()->request->getPost('fieldnames','')); // Needed for quota allowing update
+        $aPostedFields = explode("|",Yii::app()->request->getPost('fieldnames','')); // Needed for quota allowing update 
         foreach ($aQuotasInfo as $aQuotaInfo)
         {
             if(count($aQuotaInfo['members'])===0)

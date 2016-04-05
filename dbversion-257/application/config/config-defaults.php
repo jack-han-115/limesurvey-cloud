@@ -43,7 +43,7 @@ $config['rootdir']            =   getcwd(); //dirname(__FILE__); // This is the 
 
 
 // Site Info
-$config['sitename']           =   'LimeService - Your online survey service';     // The official name of the site (appears in the Window title)
+$config['sitename']           =   'LimeSurvey';     // The official name of the site (appears in the Window title)
 $config['scriptname']         =   'admin.php';      // The name of the admin script
 
 $config['defaultuser']        =   'admin';          // This is the default username when LimeSurvey is installed
@@ -72,7 +72,7 @@ $config['allowexportalldb']   =   0;                // 0 will only export prefix
 $config['maxdumpdbrecords']   =   500;              // The maximum number of records that would be ouputted in a go during a database backup. Reduce this number if you're getting errors while backing up the entire database.
 $config['deletenonvalues']    =   1;                // By default, LimeSurvey does not save responses to conditional questions that haven't been answered/shown. To have LimeSurvey save these responses change this value to 0.
 $config['stringcomparizonoperators']   =   0;                // By default, LimeSurvey assumes the numrical order for comparizon operators in conditions. If you need string comparizon operators, set this parameter to 1
-$config['shownoanswer']       =   2;                // Show 'no answer' for non mandatory questions ( 0 = no , 1 = yes , 2 = survey admin can choose )
+$config['shownoanswer']       =   1;                // Show 'no answer' for non mandatory questions ( 0 = no , 1 = yes , 2 = survey admin can choose )
 $config['blacklistallsurveys']     =  'N';          // Blacklist all current surveys for participant once the global field is set
 $config['blacklistnewsurveys']     =  'N';          // Blacklist participant for any new added survey once the global field is set
 $config['blockaddingtosurveys']     =  'Y';         // Don't allow blacklisted participants to be added to new survey
@@ -82,9 +82,9 @@ $config['allowunblacklist']     =  'N';             // Allow participant to unbl
 $config['userideditable']     =  'N';               // Allow editing of user IDs
 $config['defaulttemplate']    =  'default';         // This setting specifys the default theme used for the 'public list' of surveys
 
-$config['allowedtemplateuploads'] = 'gif,ico,jpg,png,css,js,map,json,eot,svg,ttf,woff,woff2';  // File types allowed to be uploaded in the templates section.
+$config['allowedtemplateuploads'] = 'gif,ico,jpg,png,css,js,map,json,eot,svg,ttf,woff,txt,md';  // File types allowed to be uploaded in the templates section.
 
-$config['allowedresourcesuploads'] = '7z,aiff,asf,avi,bmp,csv,doc,docx,fla,flv,gif,gz,gzip,ico,jpeg,jpg,mid,mov,mp3,mp4,mpc,mpeg,mpg,ods,odt,pdf,png,ppt,pxd,qt,ram,rar,rm,rmi,rmvb,rtf,sdc,sitd,swf,sxc,sxw,tar,tgz,tif,tiff,ttf,svg,eot,woff,woff2,txt,vsd,wav,wma,wmv,xls,xlsx,xml,zip,pstpl,css,js';   // File types allowed to be uploaded in the resources sections, and with the HTML Editor
+$config['allowedresourcesuploads'] = '7z,aiff,asf,avi,bmp,csv,doc,docx,fla,flv,gif,gz,gzip,ico,jpeg,jpg,mid,mov,mp3,mp4,mpc,mpeg,mpg,ods,odt,pdf,png,ppt,pxd,qt,ram,rar,rm,rmi,rmvb,rtf,sdc,sitd,swf,sxc,sxw,tar,tgz,tif,tiff,txt,vsd,wav,wma,wmv,xls,xlsx,xml,zip,pstpl,css,js';   // File types allowed to be uploaded in the resources sections, and with the HTML Editor
 
 $config['memory_limit']        =  '128';   // This sets how much memory LimeSurvey can access in megabytes. 128 MB is the minimum recommended - if you are using PDF functions up to 256 MB may be needed
 
@@ -133,7 +133,7 @@ $config['surveyPreview_require_Auth'] = true;
 // a one time password which was previously written into the users table (column one_time_pw) by
 // an external application.
 // This setting has to be turned on to enable the usage of one time passwords (default = off).
-$config['use_one_time_passwords'] = true;
+$config['use_one_time_passwords'] = false;
 
 
 // display_user_password_in_html
@@ -483,7 +483,7 @@ $config['showqnumcode'] = 'choose';
 * If LimeSurvey comes up as normal, then everything is fine. If you
 * get a page not found error or permission denied error then
 */
-$config['force_ssl'] = 'off'; // DO not turn on unless you are sure your server supports SSL/HTTPS
+$config['force_ssl'] = ''; // DO not turn on unless you are sure your server supports SSL/HTTPS
 
 
 /**
@@ -555,7 +555,7 @@ $config['RPCInterface'] = 'off';
 * Default is 2 hours
 * @var integer
 */
-$config['iSessionExpirationTime'] = 28800;
+$config['iSessionExpirationTime'] = 7200;
 
 /**
 * This parameter can be used to set some question not selectable in LimeReplacementFiels
@@ -581,9 +581,6 @@ $config['updatenotification'] = 'both';
 $config['proxy_host_name'] = '';
 $config['proxy_host_port'] = 80;
 
-// LimeService Mod Start
-$config['locked'] = false;
-// LimeService Mod End
 
 // === Advanced Setup
 // The following parameters need information from config.php
@@ -625,10 +622,9 @@ $config['adminstyleurl']           = $config['styleurl'].$config['admintheme'].'
 
 $config['publicdir']               = $config['rootdir'];                                   // The directory path of the public scripts
 $config['homedir']                 = $config['rootdir'];       // The directory path of the admin scripts
-$userdir=str_replace('instances','installations',dirname(dirname(dirname(dirname(__FILE__))))).'/'.$_SERVER['SERVER_NAME'].'/userdata';
-$config['tempdir']                 = $userdir.DIRECTORY_SEPARATOR."tmp";         // The directory path where LimeSurvey can store temporary files
+$config['tempdir']                 = $config['rootdir'].DIRECTORY_SEPARATOR."tmp";         // The directory path where LimeSurvey can store temporary files
 $config['imagedir']                = $config['rootdir'].DIRECTORY_SEPARATOR."images";      // The directory path of the image directory
-$config['uploaddir']               = $userdir.DIRECTORY_SEPARATOR."upload";
+$config['uploaddir']               = $config['rootdir'].DIRECTORY_SEPARATOR."upload";
 $config['standardtemplaterootdir'] = $config['rootdir'].DIRECTORY_SEPARATOR."templates";   // The directory path of the standard templates
 $config['usertemplaterootdir']     = $config['uploaddir'].DIRECTORY_SEPARATOR."templates"; // The directory path of the user templates
 $config['styledir']                = $config['rootdir'].DIRECTORY_SEPARATOR.'styles';

@@ -5308,26 +5308,6 @@
 
             if (count($updatedValues) > 0 || $finished)
             {
-                
-                 // ========================  Begin LimeService Mod
-                if (!isset($_SESSION[$this->sessid]['limeservice_start']) && $this->surveyOptions['active']=='Y' && ($_SESSION[$this->sessid]['step']==1 || ($_SESSION[$this->sessid]['totalsteps']==1 && $_SESSION[$this->sessid]['step']==2)))
-                {
-                    $sDomain=$_SERVER['SERVER_NAME'];
-                    $sSubdomain=substr($sDomain,0,strpos($sDomain,'.'));
-                    $sDomain=substr($sDomain,strpos($sDomain,'.')+1);
-                    $iResponsesToAdd=0.5;
-                    if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off') $iResponsesToAdd=1;
-
-                    
-                    $iAffectedRows =  Yii::app()->dbstats->createCommand("Update responses set hits=hits+{$iResponsesToAdd}, modified=NOW() where subdomain='{$sSubdomain}' and rootdomain='{$sDomain}' and hitperiod='".date('Y-m-d H:00:00')."'")->execute();
-                    if ($iAffectedRows==0)
-                    {
-                        Yii::app()->dbstats->createCommand("insert into responses (hits,subdomain,rootdomain,hitperiod, created) values ({$iResponsesToAdd},'{$sSubdomain}','{$sDomain}','".date('Y-m-d H:00:00')."', NOW())")->execute();
-                    } 
-                    $_SESSION[$this->sessid]['limeservice_start']=true;
-                }
-                // ========================  End LimeService Mod  
-                            
                 $query = 'UPDATE ' . $this->surveyOptions['tablename'] . ' SET ';
                 $setter = array();
                 switch ($this->surveyMode)

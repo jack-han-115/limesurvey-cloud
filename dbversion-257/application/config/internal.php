@@ -12,11 +12,10 @@ if (!file_exists(dirname(__FILE__) .  '/config.php')) {
     $userConfig = require(dirname(__FILE__) . '/config.php');
 }
 @date_default_timezone_set(@date_default_timezone_get());
-$userdir=str_replace('instances','installations',dirname(dirname(dirname(dirname(__FILE__))))).'/'.$_SERVER['SERVER_NAME'].'/userdata';
 $internalConfig = array(
-	'basePath' => dirname(dirname(__FILE__)),
-	'runtimePath' => $userdir.DIRECTORY_SEPARATOR.'tmp'.DIRECTORY_SEPARATOR.'runtime',
-	'name' => 'LimeSurvey',
+    'basePath' => dirname(dirname(__FILE__)),
+    'runtimePath' => dirname(dirname(dirname(__FILE__))).DIRECTORY_SEPARATOR.'tmp'.DIRECTORY_SEPARATOR.'runtime',
+    'name' => 'LimeSurvey',
     'localeClass' =>  'LSYii_Locale',
     'defaultController' => 'surveys',
     'import' => array(
@@ -34,13 +33,13 @@ $internalConfig = array(
             'jqueryCss' => false
         ),
         'clientScript'=>array(
-/*            'class'=>'ext.ExtendedClientScript.ExtendedClientScript',
+            'class'=>'ext.ExtendedClientScript.ExtendedClientScript',
             'combineCss'=>false,
             'compressCss'=>false,
             'combineJs'=>$userConfig['config']['debug']>0?false:true,
-            'compressJs'=>false,*/
+            'compressJs'=>false,
             'packages' => require('third_party.php'),
-            //'excludeFiles' => array(), // empty array to add more easily files to exclude
+            'excludeFiles' => array(), // empty array to add more easily files to exclude
         ),
         'urlManager' => array(
             'urlFormat' => 'get',
@@ -49,8 +48,8 @@ $internalConfig = array(
         ),
         'assetManager' => array(
             'baseUrl' => '/tmp/assets',
-            'basePath'=> $userdir.DIRECTORY_SEPARATOR.'tmp'.DIRECTORY_SEPARATOR.'assets'
-
+            'basePath'=> dirname(dirname(dirname(__FILE__))).DIRECTORY_SEPARATOR.'tmp'.DIRECTORY_SEPARATOR.'assets'
+            
         ),
         'request' => array(
             'class'=>'LSHttpRequest',
@@ -105,11 +104,6 @@ $internalConfig = array(
 );
 
 
-if (!file_exists($userdir .  '/config.php')) {
-    $userConfig = require(dirname(__FILE__) . '/config-sample-mysql.php');
-} else {
-    $userConfig = require($userdir . '/config.php');
-}
 
 $result = CMap::mergeArray($internalConfig, $userConfig);
 /**
