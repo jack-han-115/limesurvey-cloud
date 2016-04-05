@@ -36,7 +36,7 @@ class Statistics_userController extends LSYii_Controller {
     function actionAction($surveyid,$language=null)
     {
         $sLanguage=$language;
-        ob_start(function($buffer, $phase) {
+        ob_start(function($buffer) {
             App()->getClientScript()->render($buffer);
             App()->getClientScript()->reset();
             return $buffer;
@@ -45,7 +45,7 @@ class Statistics_userController extends LSYii_Controller {
         $iSurveyID=(int)$surveyid;
         //$postlang = returnglobal('lang');
         Yii::import('application.libraries.admin.progressbar',true);
-        Yii::app()->loadHelper("admin/statistics");
+        Yii::app()->loadHelper("userstatistics");
         Yii::app()->loadHelper('database');
         Yii::app()->loadHelper('surveytranslator');
         App()->getClientScript()->registerPackage('jqueryui');
@@ -68,40 +68,36 @@ class Statistics_userController extends LSYii_Controller {
         }
 
 
-        if ($iSurveyID)
+        $actresult = Survey::model()->findAll('sid = :sid AND active = :active', array(':sid' => $iSurveyID, ':active' => 'Y'));      //Checked
+        if (count($actresult) == 0)
         {
-            $actresult = Survey::model()->findAll('sid = :sid AND active = :active', array(':sid' => $iSurveyID, ':active' => 'Y'));      //Checked
-            if (count($actresult) == 0)
+            safeDie('You have to provide a valid survey ID.');
+        }
+        else
+        {
+            $surveyinfo = getSurveyInfo($iSurveyID);
+            // CHANGE JSW_NZ - let's get the survey title for display
+            $thisSurveyTitle = $surveyinfo["name"];
+            // CHANGE JSW_NZ - let's get css from individual template.css - so define path
+            $thisSurveyCssPath = getTemplateURL($surveyinfo["template"]);
+            if ($surveyinfo['publicstatistics']!='Y')
             {
-                safeDie('You have to provide a valid survey ID.');
+                safeDie('The public statistics for this survey are deactivated.');
+            }
+
+            //check if graphs should be shown for this survey
+            if ($surveyinfo['publicgraphs']=='Y')
+            {
+                $publicgraphs = 1;
             }
             else
             {
-                $surveyinfo = getSurveyInfo($iSurveyID);
-                // CHANGE JSW_NZ - let's get the survey title for display
-                $thisSurveyTitle = $surveyinfo["name"];
-                // CHANGE JSW_NZ - let's get css from individual template.css - so define path
-                $thisSurveyCssPath = getTemplateURL($surveyinfo["template"]);
-                if ($surveyinfo['publicstatistics']!='Y')
-                {
-                    safeDie('The public statistics for this survey are deactivated.');
-                }
-
-                //check if graphs should be shown for this survey
-                if ($surveyinfo['publicgraphs']=='Y')
-                {
-                    $publicgraphs = 1;
-                }
-                else
-                {
-                    $publicgraphs = 0;
-                }
+                $publicgraphs = 0;
             }
         }
 
         //we collect all the output within this variable
         $statisticsoutput ='';
-
 
         //for creating graphs we need some more scripts which are included here
         //True -> include
@@ -175,6 +171,7 @@ class Statistics_userController extends LSYii_Controller {
         usort($rows, 'groupOrderThenQuestionOrder');
 
         //put the question information into the filter array
+        $filters = array();
         foreach ($rows as $row)
         {
             //store some column names in $filters array
@@ -206,16 +203,12 @@ class Statistics_userController extends LSYii_Controller {
             $totalrecords = reset($row);
         }
 
-
-        //this is the array which we need later...
-        $summary = array();
         //...while this is the array from copy/paste which we don't want to replace because this is a nasty source of error
         $allfields = array();
 
-
         //---------- CREATE SGQA OF ALL QUESTIONS WHICH USE "PUBLIC_STATISTICS" ----------
 
-                /*
+        /*
          * let's go through the filter array which contains
          *     ['qid'],
          ['gid'],
@@ -338,20 +331,23 @@ class Statistics_userController extends LSYii_Controller {
         }
         //end foreach -> loop through all questions with "public_statistics" enabled
         }// end if -> for removing the error message in case there are no filters
-        $summary = $allfields;
 
+        $summary = $allfields;
 
         // Get the survey inforamtion
         $thissurvey = getSurveyInfo($surveyid,$sLanguage);
 
         //SET THE TEMPLATE DIRECTORY
-        $data['sTemplatePath'] = $surveyinfo['template'];// surveyinfo=getSurveyInfo and if survey don't exist : stop before. 
+        $data['sTemplatePath'] = $surveyinfo['template'];// surveyinfo=getSurveyInfo and if survey don't exist : stop before.
 
 
         //---------- CREATE STATISTICS ----------
         $redata = compact(array_keys(get_defined_vars()));
         doHeader();
-        echo templatereplace(file_get_contents(getTemplatePath($data['sTemplatePath']).DIRECTORY_SEPARATOR."startpage.pstpl"),array(), $redata);
+
+        /// $oTemplate is a global variable defined in controller/survey/index
+        $oTemplate = Template::model()->getInstance(null, $surveyid);
+        echo templatereplace(file_get_contents($oTemplate->viewPath."startpage.pstpl"),array(), $redata);
 
 
         //some progress bar stuff
@@ -368,10 +364,7 @@ class Statistics_userController extends LSYii_Controller {
         $prb->addLabel('percent','pct1');    // add Percent as Label 'pct1'
         $prb->addButton('btn1',gT('Go back'),'?action=statistics&amp;sid='.$iSurveyID);    // add Button as Label 'btn1' and action '?restart=1'
 
-        //progress bar starts with 35%
-        $process_status = 35;
         $prb->show();    // show the ProgressBar
-
 
         // 1: Get list of questions with answers chosen
         //"Getting Questions and Answer ..." is shown above the bar
@@ -379,6 +372,7 @@ class Statistics_userController extends LSYii_Controller {
         $prb->moveStep(5);
 
         // creates array of post variable names
+        $postvars = array();
         for (reset($_POST); $key=key($_POST); next($_POST))
         {
             $postvars[]=$key;
@@ -394,7 +388,7 @@ class Statistics_userController extends LSYii_Controller {
         $process_status = 40;
 
         //Show Summary results
-        if (isset($summary) && $summary)
+        if (isset($summary) && !empty($summary))
         {
             //"Generating Summaries ..." is shown above the progress bar
             $prb->setLabelValue('txt1',gT('Generating summaries ...'));
@@ -413,7 +407,7 @@ class Statistics_userController extends LSYii_Controller {
 
             }    // end foreach -> loop through all questions
 
-            $helper = new statistics_helper();
+            $helper = new userstatistics_helper();
             $statisticsoutput .= $helper->generate_statistics($iSurveyID, $summary, $summary, $publicgraphs, 'html', null,$sLanguage,false);
 
         }    //end if -> show summary results

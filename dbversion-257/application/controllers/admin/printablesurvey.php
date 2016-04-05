@@ -32,7 +32,6 @@ class printablesurvey extends Survey_Common_Action
         if(!Permission::model()->hasSurveyPermission($surveyid,'surveycontent','read'))
         {
             $aData['surveyid'] = $surveyid;
-            App()->getClientScript()->registerPackage('jquery-superfish');
             $message['title']= gT('Access denied!');
             $message['message']= gT('You do not have sufficient rights to access this page.');
             $message['class']= "error";
@@ -733,7 +732,7 @@ class printablesurvey extends Survey_Common_Action
                                 if ($deqrow['other'] == 'Y')
                                 {
                                     if(trim($qidattributes["other_replace_text"][$sLanguageCode])=='')
-                                    {$qidattributes["other_replace_text"][$sLanguageCode]=gt("Other");}
+                                    {$qidattributes["other_replace_text"][$sLanguageCode]=gT("Other");}
                                     //                    $printablesurveyoutput .="\t".$wrapper['item-start']."\t\t".self::_input_type_image('radio' , gT("Other"))."\n\t\t\t".gT("Other")."\n\t\t\t<input type='text' size='30' readonly='readonly' />\n".$wrapper['item-end'];
                                     $question['ANSWER']  .= $wrapper['item-start-other'].self::_input_type_image('radio',gT($qidattributes["other_replace_text"][$sLanguageCode])).' '.gT($qidattributes["other_replace_text"][$sLanguageCode]).self::_addsgqacode(" (-oth-)")."\n\t\t\t".self::_input_type_image('other').self::_addsgqacode(" (".$deqrow['sid']."X".$deqrow['gid']."X".$deqrow['qid']."other)")."\n".$wrapper['item-end'];
                                 }
@@ -1577,7 +1576,6 @@ class printablesurvey extends Survey_Common_Action
             // END recursive empty tag stripping.
 
             echo self::_populate_template( 'survey' , $survey_output );
-
         }// End print
     }
 
@@ -1592,10 +1590,11 @@ class printablesurvey extends Survey_Common_Action
      * keywords replaced by variables.
      *
      * How:
+     * @param string $template
      */
     private function _populate_template( $template , $input  , $line = '')
     {
-        $full_path = PRINT_TEMPLATE_DIR.'print_'.$template.'.pstpl';
+        $full_path = PRINT_TEMPLATE_DIR.'views/print_'.$template.'.pstpl';
         $full_constant = 'TEMPLATE'.$template.'.pstpl';
         if(!defined($full_constant))
         {
@@ -1612,8 +1611,8 @@ class printablesurvey extends Survey_Common_Action
             }
             else
             {
-                define($full_constant , '');
-                return "<!--\n\t$full_path is not a propper file or is missing.\n-->";
+                // No template found, abort
+                throw new \Exception("No template file found at path " . $full_path);
             }
         }
         else
@@ -1646,6 +1645,7 @@ class printablesurvey extends Survey_Common_Action
                 return '<!-- '.$line.'There was nothing to put into the template -->'."\n";
             }
         }
+
     }
 
     private function _min_max_answers_help($qidattributes, $sLanguageCode, $surveyid) {
@@ -1660,6 +1660,9 @@ class printablesurvey extends Survey_Common_Action
     }
 
 
+    /**
+     * @param string $type
+     */
     private function _input_type_image( $type , $title = '' , $x = 40 , $y = 1 , $line = '' )
     {
         if($type == 'other' or $type == 'othercomment')
@@ -1706,11 +1709,11 @@ class printablesurvey extends Survey_Common_Action
             case 'radio':
             case 'checkbox':if(!defined('IMAGE_'.$type.'_SIZE'))
             {
-                $image_dimensions = getimagesize(PRINT_TEMPLATE_DIR.'print_img_'.$type.'.png');
+                $image_dimensions = getimagesize(PRINT_TEMPLATE_DIR.'files/print_img_'.$type.'.png');
                 // define('IMAGE_'.$type.'_SIZE' , ' width="'.$image_dimensions[0].'" height="'.$image_dimensions[1].'"');
                 define('IMAGE_'.$type.'_SIZE' , ' width="14" height="14"');
             }
-            $output = '<img src="'.PRINT_TEMPLATE_URL.'print_img_'.$type.'.png"'.constant('IMAGE_'.$type.'_SIZE').' alt="'.htmlspecialchars($title).'" class="input-'.$type.'" />';
+            $output = '<img src="'.PRINT_TEMPLATE_URL.'files/print_img_'.$type.'.png"'.constant('IMAGE_'.$type.'_SIZE').' alt="'.htmlspecialchars($title).'" class="input-'.$type.'" />';
             break;
 
             case 'rank':

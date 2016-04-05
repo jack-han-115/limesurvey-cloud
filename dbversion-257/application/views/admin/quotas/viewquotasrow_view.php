@@ -9,7 +9,7 @@
             {
                 echo '<font color="#48B150">'.gT("Active").'</font>';
             } else {
-                echo '<font color="#B73838">'.gT("Not Active").'</font>';
+                echo '<font color="#B73838">'.gT("Not active").'</font>';
             }
         ?>
     </td>
@@ -20,12 +20,12 @@
                 eT("Terminate survey with warning");
         } ?>
     </td>
-    <td <?php echo $highlight;?>><?php echo is_null($completed) ? gt("N/A"): $completed ;?></td>
+    <td <?php echo $highlight;?>><?php echo is_null($completed) ? gT("N/A"): $completed ;?></td>
     <td><?php echo $quotalisting['qlimit'];?></td>
     <td style="padding: 3px;">
         <?php if (Permission::model()->hasSurveyPermission($iSurveyId, 'quotas','update')) { ?>
             <?php echo CHtml::form(array("admin/quotas/sa/editquota/surveyid/{$iSurveyId}"), 'post'); ?>
-                <input name="submit" type="submit" class="submit" value="<?php eT("Edit");?>" />
+                <input name="submit" type="submit" class="submit btn btn-default" value="<?php eT("Edit");?>" />
                 <input type="hidden" name="sid" value="<?php echo $iSurveyId;?>" />
                 <input type="hidden" name="action" value="quotas" />
                 <input type="hidden" name="quota_id" value="<?php echo $quotalisting['id'];?>" />
@@ -34,7 +34,7 @@
         <?php } ?>
         <?php if (Permission::model()->hasSurveyPermission($iSurveyId, 'quotas','delete')) { ?>
             <?php echo CHtml::form(array("admin/quotas/sa/delquota/surveyid/{$iSurveyId}"), 'post'); ?>
-                <input name="submit" type="submit" class="submit" value="<?php eT("Remove");?>" />
+                <input name="submit" type="submit" class="submit btn btn-default"  value="<?php eT("Remove");?>" />
                 <input type="hidden" name="sid" value="<?php echo $iSurveyId;?>" />
                 <input type="hidden" name="action" value="quotas" />
                 <input type="hidden" name="quota_id" value="<?php echo $quotalisting['id'];?>" />
@@ -55,7 +55,7 @@
     <td style="padding: 3px;">
         <?php if (Permission::model()->hasSurveyPermission($iSurveyId, 'quotas','update')) { ?>
             <?php echo CHtml::form(array("admin/quotas/sa/new_answer/surveyid/{$iSurveyId}"), 'post'); ?>
-                <input name="submit" type="submit" class="quota_new" value="<?php eT("Add answer");?>" />
+                <input name="submit" type="submit" class="quota_new btn btn-default"  value="<?php eT("Add answer");?>" />
                 <input type="hidden" name="sid" value="<?php echo $iSurveyId;?>" />
                 <input type="hidden" name="action" value="quotas" />
                 <input type="hidden" name="quota_id" value="<?php echo $quotalisting['id'];?>" />

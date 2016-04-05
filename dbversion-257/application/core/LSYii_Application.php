@@ -40,13 +40,13 @@ class LSYii_Application extends CWebApplication
     public function __construct($config = null)
     {
         parent::__construct($config);
-        Yii::setPathOfAlias('bootstrap' , Yii::getPathOfAlias('ext.bootstrap'));
         // Load the default and environmental settings from different files into self.
-        $ls_config = require(__DIR__ . '/../config/config-defaults.php'); 
+        $ls_config = require(__DIR__ . '/../config/config-defaults.php');
         $email_config = require(__DIR__ . '/../config/email.php');
         $version_config = require(__DIR__ . '/../config/version.php');
-        $settings = array_merge($ls_config, $version_config, $email_config);
-        // LImeService Mod Start
+        $updater_version_config = require(__DIR__ . '/../config/updater_version.php');
+        $settings = array_merge($ls_config, $version_config, $email_config, $updater_version_config);
+        // ======== LimeService Mod Start =============
         if (file_exists($userdir.DIRECTORY_SEPARATOR.'config.php'))
         {
             $ls_config = require($userdir . DIRECTORY_SEPARATOR . 'config.php');
@@ -55,7 +55,7 @@ class LSYii_Application extends CWebApplication
                 $settings = array_merge($settings, $ls_config['config']);
             }
         }
-        // LImeService Mod End
+        // ======= LimeService Mod End========
         foreach ($settings as $key => $value)
             $this->setConfig($key, $value);
 
@@ -63,14 +63,14 @@ class LSYii_Application extends CWebApplication
     }
 
 
-	public function init() {
-		parent::init();
+    public function init() {
+        parent::init();
         $this->initLanguage();
         // These take care of dynamically creating a class for each token / response table.
-		Yii::import('application.helpers.ClassFactory');
-		ClassFactory::registerClass('Token_', 'Token');
-		ClassFactory::registerClass('Response_', 'Response');
-	}
+        Yii::import('application.helpers.ClassFactory');
+        ClassFactory::registerClass('Token_', 'Token');
+        ClassFactory::registerClass('Response_', 'Response');
+    }
 
     public function initLanguage()
     {
@@ -179,6 +179,7 @@ class LSYii_Application extends CWebApplication
     */
     public function setLanguage( $sLanguage )
     {
+        $sLanguage=preg_replace('/[^a-z0-9-]/i', '', $sLanguage);
         $this->messages->catalog = $sLanguage;
         parent::setLanguage($sLanguage);
     }
@@ -206,4 +207,3 @@ class LSYii_Application extends CWebApplication
 
 
 }
-

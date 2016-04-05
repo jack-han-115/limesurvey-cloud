@@ -33,7 +33,7 @@
         public function attributeLabels() {
             $labels = array(
                 'tid' => gT('Token ID'),
-                'partcipant' => gt('Participant ID'),
+                'partcipant' => gT('Participant ID'),
                 'firstname' => gT('First name'),
                 'lastname' => gT('Last name'),
                 'email' => gT('Email address'),
@@ -69,22 +69,22 @@
             return $result;
         }
 
-        public static function createTable($surveyId, array $extraFields = array())
+        public static function createTable($surveyId, array $extraFields  = array())
         {
             $surveyId=intval($surveyId);
             // Specify case sensitive collations for the token
             $sCollation='';
-            if  (Yii::app()->db->driverName=='mysqli' | Yii::app()->db->driverName=='mysqli'){
-                $sCollation="COLLATE 'utf8_bin'";
+            if  (Yii::app()->db->driverName=='mysql' || Yii::app()->db->driverName=='mysqli'){
+                $sCollation="COLLATE 'utf8mb4_bin'";
             }
-            if  (Yii::app()->db->driverName=='sqlsrv' | Yii::app()->db->driverName=='dblib' | Yii::app()->db->driverName=='mssql'){
+            if  (Yii::app()->db->driverName=='sqlsrv' || Yii::app()->db->driverName=='dblib' || Yii::app()->db->driverName=='mssql'){
                 $sCollation="COLLATE SQL_Latin1_General_CP1_CS_AS";
             }
             $fields = array(
                 'tid' => 'pk',
                 'participant_id' => 'string(50)',
-                'firstname' => 'string(40)',
-                'lastname' => 'string(40)',
+                'firstname' => 'string(150)',
+                'lastname' => 'string(150)',
                 'email' => 'text',
                 'emailstatus' => 'text',
                 'token' => "string(35) {$sCollation}",
@@ -140,7 +140,7 @@
             $length = $this->survey->tokenlength;
             $this->token = \Yii::app()->securityManager->generateRandomString($length);
             $counter = 0;
-            while (!$this->validate('token'))
+            while (!$this->validate(array('token')))
             {
                 $this->token = \Yii::app()->securityManager->generateRandomString($length);
                 $counter++;
@@ -151,7 +151,16 @@
                 }
             }
         }
-
+        /**
+         * Sanitize token show to the user (replace sanitize_helper sanitize_token)
+         * @param string token to sanitize
+         * @return string sanitized token
+         */
+        public static function sanitizeToken($token)
+        {
+            // According to Yii doc : http://www.yiiframework.com/doc/api/1.1/CSecurityManager#generateRandomString-detail
+            return preg_replace('/[^0-9a-zA-Z_~]/', '', $token);
+        }
         /**
          * Generates a token for all token objects in this survey.
          * Syntax: Token::model(12345)->generateTokens();

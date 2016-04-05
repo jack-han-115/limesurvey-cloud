@@ -63,7 +63,7 @@
                     {
                         $_SESSION['KCFINDER']['uploadURL'] = Yii::app()->getConfig('uploadurl')."/surveys/{$surveyid}/";
                     }
-                    $_SESSION['KCFINDER']['uploadDir'] = Yii::app()->getConfig('uploaddir') .DIRECTORY_SEPARATOR.'surveys'.DIRECTORY_SEPARATOR.$surveyid.DIRECTORY_SEPARATOR;
+                    $_SESSION['KCFINDER']['uploadDir'] = realpath(Yii::app()->getConfig('uploaddir')) .DIRECTORY_SEPARATOR.'surveys'.DIRECTORY_SEPARATOR.$surveyid.DIRECTORY_SEPARATOR;
                 }
             }
             elseif (preg_match('/^edit:label/', Yii::app()->session['FileManagerContext']) != 0)
@@ -75,7 +75,7 @@
                 {
                     $_SESSION['KCFINDER']['disabled'] = false;
                     $_SESSION['KCFINDER']['uploadURL'] = Yii::app()->getConfig('uploadurl')."/labels/{$labelid}/";
-                    $_SESSION['KCFINDER']['uploadDir'] = Yii::app()->getConfig('uploaddir') .DIRECTORY_SEPARATOR.'labels'.DIRECTORY_SEPARATOR.$labelid.DIRECTORY_SEPARATOR;
+                    $_SESSION['KCFINDER']['uploadDir'] = realpath(Yii::app()->getConfig('uploaddir')) .DIRECTORY_SEPARATOR.'labels'.DIRECTORY_SEPARATOR.$labelid.DIRECTORY_SEPARATOR;
                 }
             }
         }
@@ -109,7 +109,6 @@
 
     function PrepareEditorScript($load=false, $controller = null)
     {
-        App()->getClientScript()->registerCoreScript('ckeditor');
         if ($controller == null)
         {
             $controller = Yii::app()->getController();
@@ -184,12 +183,16 @@
         $fieldtype == 'addlabel')
         {
             $imgopts = "width='16' height='16'";
+            $class="editorLink";
         }
-
+        else
+        {
+            $class="editorLink input-group-addon";
+        }
         $htmlcode .= ""
-        . "<a href=\"javascript:start_popup_editor('".$fieldname."','".addslashes(htmlspecialchars_decode($fieldtext,ENT_QUOTES))."','".$surveyID."','".$gID."','".$qID."','".$fieldtype."','".$action."')\" id='".$fieldname."_ctrl' class='editorLink'>\n"
-        . "\t<img alt=\"".gT("Start HTML editor in a popup window")."\" id='".$fieldname."_popupctrlena' src='".Yii::app()->getConfig('adminimageurl')."edithtmlpopup.png' $imgopts class='btneditanswerena' />\n"
-        . "\t<img alt=\"".gT("Give focus to the HTML editor popup window")."\" id='".$fieldname."_popupctrldis' src='".Yii::app()->getConfig('adminimageurl')."edithtmlpopup_disabled.png' style='display:none' $imgopts class='btneditanswerdis' />\n"
+        . "<a href=\"javascript:start_popup_editor('".$fieldname."','".addslashes(htmlspecialchars_decode($fieldtext,ENT_QUOTES))."','".$surveyID."','".$gID."','".$qID."','".$fieldtype."','".$action."')\" id='".$fieldname."_ctrl' class='{$class}'>\n"
+        . "\t<span class='glyphicon glyphicon-pencil btneditanswerena' id='".$fieldname."_popupctrlena' data-toggle='tooltip' data-placement='bottom' title='".gT("Start HTML editor in a popup window")."'></span>"
+        . "\t<span class='glyphicon glyphicon-pencil btneditanswerdis' id='".$fieldname."_popupctrldis'  style='display:none'  ></span>"
         . "</a>\n";
 
         return $htmlcode;
@@ -197,6 +200,7 @@
 
     function getInlineEditor($fieldtype,$fieldname,$fieldtext, $surveyID=null,$gID=null,$qID=null,$action=null)
     {
+        App()->getClientScript()->registerCssFile(Yii::app()->getConfig('styleurl')."htmleditor.css");
         $htmlcode = '';
         $imgopts = '';
         $toolbarname = 'inline';
@@ -259,11 +263,17 @@
         ,LimeReplacementFieldsPath : \"".Yii::app()->getController()->createUrl("admin/limereplacementfields/sa/index/")."\"
         ,width:'660'
         ,language:'".sTranslateLangCode2CK(Yii::app()->session['adminlang'])."'
-        ,smiley_path : \"".Yii::app()->getConfig('uploadurl')."/images/smiley/msn/\"\n"
+        ,smiley_path : \"".Yii::app()->getConfig('imageurl')."/emoticons/texteditor/\"\n"
         . $sFileBrowserAvailable
         . $htmlformatoption
         . $toolbaroption
         ."});
+
+CKEDITOR.editorConfig = function( config )
+{
+    config.uiColor = '#FFF';
+};
+
         \$('#$fieldname').parents('ul:eq(0)').addClass('editor-parent');
         });";
 
