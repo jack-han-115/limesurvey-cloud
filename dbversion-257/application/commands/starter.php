@@ -1,0 +1,60 @@
+#!/usr/bin/php
+<?php   
+/*
+* LimeSurvey (tm)
+* Copyright (C) 2011 The LimeSurvey Project Team / Carsten Schmitz
+* All rights reserved.
+* License: GNU/GPL License v2 or later, see LICENSE.php
+* LimeSurvey is free software. This version may have been modified pursuant
+* to the GNU General Public License, and as distributed it includes or
+* is derivative of works licensed under the GNU General Public License or
+* other free or open source software licenses.
+* See COPYRIGHT.php for copyright notices and details.
+*
+*/
+if (!isset($argv[0])) die();
+define('BASEPATH','.');
+$sCurrentDir=dirname(__FILE__);
+$aOptions=parseParameters();
+if (isset($aOptions['config']))
+{
+    $sConfigPath=$aOptions['config'];
+}
+else                              
+{
+    $sConfigPath=dirname($sCurrentDir).DIRECTORY_SEPARATOR.'config'.DIRECTORY_SEPARATOR.'config.php';
+}
+$config=require ($sConfigPath);
+unset ($config['defaultController']);
+unset ($config['config']);
+
+require (dirname(dirname($sCurrentDir)).DIRECTORY_SEPARATOR.'framework'.DIRECTORY_SEPARATOR.'yiic.php');
+
+function parseParameters($noopt = array()) {
+    $result = array();
+    $params = $GLOBALS['argv'];
+    // could use getopt() here (since PHP 5.3.0), but it doesn't work relyingly
+    reset($params);
+    while (list($tmp, $p) = each($params)) {
+        if ($p{0} == '-') {
+            $pname = substr($p, 1);
+            $value = true;
+            if ($pname{0} == '-') {
+                // long-opt (--<param>)
+                $pname = substr($pname, 1);
+                if (strpos($p, '=') !== false) {
+                    // value specified inline (--<param>=<value>)
+                    list($pname, $value) = explode('=', substr($p, 2), 2);
+                }
+            }
+            // check if next parameter is a descriptor or a value
+            $nextparm = current($params);
+            if (!in_array($pname, $noopt) && $value === true && $nextparm !== false && $nextparm{0} != '-') list($tmp, $value) = each($params);
+            $result[$pname] = $value;
+        } else {
+            // param doesn't belong to any option
+            $result[] = $p;
+        }
+    }
+    return $result;
+}
