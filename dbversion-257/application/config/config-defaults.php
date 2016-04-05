@@ -637,10 +637,12 @@ $config['adminstyleurl']           = $config['styleurl'].$config['admintheme'].'
 
 $config['publicdir']               = $config['rootdir'];                                   // The directory path of the public scripts
 $config['homedir']                 = $config['rootdir'];       // The directory path of the admin scripts
-$userdir=str_replace('instances','installations',dirname(dirname(dirname(dirname(__FILE__))))).'/'.$_SERVER['SERVER_NAME'].'/userdata';
+// LimeService Mod start
+$config['configdir']=$userdir=str_replace('instances','installations',dirname(dirname(dirname(dirname(__FILE__))))).'/'.$_SERVER['SERVER_NAME'].'/userdata';
 $config['tempdir']                 = $userdir.DIRECTORY_SEPARATOR."tmp";         // The directory path where LimeSurvey can store temporary files
 $config['imagedir']                = $config['rootdir'].DIRECTORY_SEPARATOR."images";      // The directory path of the image directory
 $config['uploaddir']               = $userdir.DIRECTORY_SEPARATOR."upload";
+// LimeService Mod end
 $config['standardtemplaterootdir'] = $config['rootdir'].DIRECTORY_SEPARATOR."templates";   // The directory path of the standard templates
 $config['usertemplaterootdir']     = $config['uploaddir'].DIRECTORY_SEPARATOR."templates"; // The directory path of the user templates
 $config['styledir']                = $config['rootdir'].DIRECTORY_SEPARATOR.'styles';

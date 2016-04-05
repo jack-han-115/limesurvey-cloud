@@ -51,7 +51,9 @@ abstract class LSYii_Controller extends CController
      */
     protected function _checkInstallation()
     {
-        $file_name = Yii::app()->getConfig('rootdir').'/application/config/config.php';
+        // Start LimeService mod ===============
+        $file_name = Yii::app()->getConfig('configdir').'/config.php';
+        // End LimeService mod ===============
         if (!file_exists($file_name))
         {
             $this->redirect(array('/installer'));
