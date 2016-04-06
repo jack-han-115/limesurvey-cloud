@@ -141,6 +141,24 @@ class quotas extends Survey_Common_Action
                 $aData['completed'] = $completed;
                 $aData['totalquotas'] = $totalquotas;
                 $aData['totalcompleted'] = $totalcompleted;
+
+                // Edit URL
+                $aData['editUrl'] = App()->createUrl("admin/quotas/sa/editquota/surveyid/" . $iSurveyId, array(
+                    'sid' => $iSurveyId,
+                    'action' => 'quotas',
+                    'quota_id' => $aQuotaListing['id'],
+                    'subaction' => 'quota_editquota'
+
+                ));
+
+                // Delete URL
+                $aData['deleteUrl'] = App()->createUrl("admin/quotas/sa/delquota/surveyid/" . $iSurveyId, array(
+                    'sid' => $iSurveyId,
+                    'action' => 'quotas',
+                    'quota_id' => $aQuotaListing['id'],
+                    'subaction' => 'quota_delquota'
+                ));
+
                 $aViewUrls['output'] .= $this->getController()->renderPartial("/admin/quotas/viewquotasrow_view", $aData, true);
                 $aData['output'] .= $this->getController()->renderPartial("/admin/quotas/viewquotasrow_view", $aData, true);
 
@@ -242,6 +260,7 @@ class quotas extends Survey_Common_Action
                 $oQuotaLanguageSettings->quotals_urldescrip = $_POST['quotals_urldescrip_' . $sLang];
                 $oQuotaLanguageSettings->save();
             }
+            Yii::app()->user->setFlash('success', gT("New quota saved"));
         }
 
         self::_redirectToIndex($iSurveyId);
@@ -348,9 +367,13 @@ class quotas extends Survey_Common_Action
         $iSurveyId = sanitize_int($iSurveyId);
         $this->_checkPermissions($iSurveyId, 'delete');
 
-        Quota::model()->deleteByPk(Yii::app()->request->getPost('quota_id'));
-        QuotaLanguageSetting::model()->deleteAllByAttributes(array('quotals_quota_id' => Yii::app()->request->getPost('quota_id')));
-        QuotaMember::model()->deleteAllByAttributes(array('quota_id' => Yii::app()->request->getPost('quota_id')));
+        $quotaId = Yii::app()->request->getQuery('quota_id');
+
+        Quota::model()->deleteByPk($quotaId);
+        QuotaLanguageSetting::model()->deleteAllByAttributes(array('quotals_quota_id' => $quotaId));
+        QuotaMember::model()->deleteAllByAttributes(array('quota_id' => $quotaId));
+
+        Yii::app()->user->setFlash('success', sprintf(gT("Quota with id %s was deleted"), $quotaId));
 
         self::_redirectToIndex($iSurveyId);
     }
@@ -362,8 +385,9 @@ class quotas extends Survey_Common_Action
         $aData = $this->_getData($iSurveyId);
         $aLangs = $aData['aLangs'];
         $aViewUrls = array();
+        $quotaId = Yii::app()->request->getQuery('quota_id');
 
-        $aQuotaInfo = Quota::model()->findByPk(Yii::app()->request->getPost('quota_id'));
+        $aQuotaInfo = Quota::model()->findByPk($quotaId);
         $aData['quotainfo'] = $aQuotaInfo;
 
         $first=true;
@@ -375,7 +399,7 @@ class quotas extends Survey_Common_Action
                 $aTabTitles[$sLanguage].= ' (' . gT("Base language") . ')';
                 $first = false;
             }
-            $aData['langquotainfo'] = QuotaLanguageSetting::model()->findByAttributes(array('quotals_quota_id' => Yii::app()->request->getPost('quota_id'), 'quotals_language' => $sLanguage));
+            $aData['langquotainfo'] = QuotaLanguageSetting::model()->findByAttributes(array('quotals_quota_id' => $quotaId, 'quotals_language' => $sLanguage));
             $aData['lang'] = $sLanguage;
             $aTabContents[$sLanguage] = $this->getController()->renderPartial('/admin/quotas/editquotalang_view', $aData, true);
         }
@@ -391,6 +415,9 @@ class quotas extends Survey_Common_Action
         //$aData['surveybar']['active_survey_properties'] = 'quotas';
         $aData['surveybar']['closebutton']['url'] = 'admin/quotas/sa/index/surveyid/'.$iSurveyId;  // Close button
         $aData['surveybar']['savebutton']['form'] = 'frmeditgroup';
+
+        $aData['langs'] = $aData['aLangs'];
+        $aData['baselang'] = $aData['sBaseLang'];
 
         $this->_renderWrappedTemplate('quotas', $aViewUrls, $aData);
     }

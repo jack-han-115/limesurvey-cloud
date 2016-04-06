@@ -31,6 +31,7 @@ class TemplateConfiguration extends CFormModel
     public $filesPath;
     public $cssFramework;
     public $packages;
+    public $depends;
     public $otherFiles;
 
     public $oSurvey;
@@ -120,11 +121,27 @@ class TemplateConfiguration extends CFormModel
         $this->cssFramework = $this->config->engine->cssframework;
         $this->packages     = (array) $this->config->engine->packages->package;
         $this->otherFiles   = $this->setOtherFiles();
-
+        $this->depends      = $this->packages;
+        $this->depends[]    = (string) $this->cssFramework;
 
         $this->createTemplatePackage();
 
         return $this;
+    }
+
+    /**
+     * Update the configuration file "last update" node.
+     * It forces the asset manager to republish all the assets
+     * So after a modification of the CSS or the JS, end user will not have to refresh the cache of their browser.
+     * For now, it's called only from template editor
+     */
+    public function actualizeLastUpdate()
+    {
+        $date = date("Y-m-d H:i:s");
+        $config = simplexml_load_file(realpath ($this->xmlFile));
+        $config->metadatas->last_update = $date;
+        $config->asXML( realpath ($this->xmlFile) );                // Belt
+        touch ( $this->path );                                      // & Suspenders ;-)
     }
 
     /**
@@ -163,7 +180,8 @@ class TemplateConfiguration extends CFormModel
         Yii::app()->clientScript->addPackage( 'survey-template', array(
             'basePath'    => 'survey.template.path',
             'css'         => $this->config->files->css->filename,
-            'js'          => $this->config->files->js->filename
+            'js'          => $this->config->files->js->filename,
+            'depends'     => $this->depends,
         ) );
     }
 
