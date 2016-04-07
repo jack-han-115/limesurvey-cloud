@@ -17,9 +17,6 @@
 var labelcache=[];
 
 /* Event added on document for all button (new one added in js too)*/
-$(document).on("click",'.btntogglerelevance',function(){
-    togglerelevance();
-});
 $(document).on("click","#editsubquestionsform :submit", function() {
     //Validate duplicate before try to submit: surely some other javascript elsewhere
     return code_duplicates_check();
@@ -48,7 +45,64 @@ $(document).ready(function(){
     $('#btnsave').click(savelabel);
 
     updaterowproperties();
+
+    bindExpandRelevanceEquation();
+
 });
+
+/**
+ * Bind relevance equation to expand on click (only once)
+ *
+ * @return void
+ */
+function bindExpandRelevanceEquation()
+{
+    $('.relevance').unbind('click').on('click', function() {
+        $('#rel-eq-th').toggleClass('col-md-1 col-md-4', 'fast');
+        $('.relevance').data('toggle', '').tooltip('destroy');
+        $('.relevance').unbind('click');
+    });
+}
+
+/**
+ * @return {boolean} true if relevance equation field is expanded
+ */
+function relevanceIsExpanded()
+{
+    return $('#rel-eq-th').hasClass('col-md-4');
+}
+
+/**
+ * Bind click to expand relevance equation
+ * if not already expanded.
+ *
+ * @return {void}
+ */
+function bindClickIfNotExpanded()
+{
+    if (!relevanceIsExpanded())
+    {
+        bindExpandRelevanceEquation();
+        // Activate tooltip
+        $('[data-toggle="tooltip"]').tooltip()
+    }
+
+}
+
+/**
+ * Get toolrip data for relevance equation.
+ * If expanded, returns empty string
+ *
+ * @return {string}
+ */
+function getRelevanceToolTip()
+{
+    var relevanceTooltip = !relevanceIsExpanded() ? 
+        'data-toggle="tooltip" data-title="' + clickToExpand + '"' :
+        '';
+
+    return relevanceTooltip;
+}
 
 function deleteinput()
 {
@@ -154,7 +208,7 @@ function addinput()
 
         if (x==0)
         {
-            $(".relevance").toggle(false);
+            /*
             if (scale_id==0)
             {
                 relbutton  = '<td>';
@@ -162,8 +216,11 @@ function addinput()
                 relbutton += '  <input style="display: none" type="text" size="20" id="relevance_'+randomid+'_'+scale_id+'" name="relevance_'+randomid+'_'+scale_id+'" class="relevance"  value="1"></input>';
                 relbutton += '</td>';
             }
+            */
 
             // Line insertion
+            var idAndScale = '' + randomid + '_' + scale_id;
+
             inserthtml= '<tr id="row_'+newposition+'" class="row_'+newposition+'" style="">';
             inserthtml+='   <td style="vertical-align: middle;">';
             inserthtml+='       <span class="glyphicon glyphicon-move"></span>';
@@ -178,13 +235,17 @@ function addinput()
             inserthtml+='       </div>';
             inserthtml+='  </td>';
 
+            inserthtml+='  <td>';
+            inserthtml+='      <input id="relevance_' + idAndScale + '" name="relevance_' + idAndScale + '" class="relevance form-control input-lg" type="text" value="1" ' + getRelevanceToolTip() + '/>';
+            inserthtml+='  </td>';
+
             inserthtml+='  <td style="vertical-align: middle;">';
             inserthtml+='           <a id="answer_'+languages[x]+'_'+randomid+'_'+scale_id+'_ctrl" href="javascript:start_popup_editor(\'answer_'+languages[x]+'_'+randomid+'_'+scale_id+'\',\'[Subquestion:]('+languages[x]+')\',\''+sID+'\',\''+gID+'\',\''+qID+'\',\'editanswer\',\'editanswer\')" class="editorLink">';
             inserthtml+='               <span id="answer_'+languages[x]+'_'+randomid+'_'+scale_id+'_popupctrlena" class="glyphicon glyphicon-pencil btneditanswerena"></span>';
             inserthtml+='               <span id="answer_'+languages[x]+'_'+randomid+'_'+scale_id+'_popupctrldis" class="glyphicon glyphicon-pencil btneditanswerdis" alt="Give focus to the HTML editor popup window" style="display: none;"></span>';
             inserthtml+='           </a>';
             inserthtml+='       <span class="icon-add text-success btnaddanswer" data-code="'+htmlspecialchars(sNextCode)+'"></span>';
-            inserthtml+='       <span class="glyphicon glyphicon-trash text-success btndelanswer"  ></span>';
+            inserthtml+='       <span class="glyphicon glyphicon-trash text-danger btndelanswer"  ></span>';
             inserthtml+='  </td>' + relbutton + '</tr>';
         }
         else
@@ -196,7 +257,7 @@ function addinput()
                 relbutton+='               <span id="answer_'+languages[x]+'_'+randomid+'_'+scale_id+'_popupctrlena" class="btneditanswerena glyphicon glyphicon-pencil text-success"></span>';
                 relbutton+='               <span id="answer_'+languages[x]+'_'+randomid+'_'+scale_id+'_popupctrldis" class="btneditanswerdis glyphicon glyphicon-pencil text-success" title="Give focus to the HTML editor popup window" style="display: none;"></span>';
                 relbutton+='           </a>';
-                relbutton+='    <span class="icon-conditions text-success btntogglerelevance"></span>';
+                //relbutton+='    <span class="icon-conditions text-success btntogglerelevance"></span>';
                 relbutton+='    <span style="display: none" class="relevance">1</span>';
                 relbutton+='</td>';
             }
@@ -238,6 +299,8 @@ function addinput()
     $('.row_'+newposition).show(); //Workaround : IE does not show with fadeIn only
 
     $('.tab-page:first .answertable tbody').sortable('refresh');
+
+    bindClickIfNotExpanded();
 
 }
 
@@ -417,6 +480,8 @@ function popupeditor()
 
 function code_duplicates_check()
 {
+    //$('.code[data-toggle="tooltip"]').data('toggle', '').tooltip('destroy');
+
     languages=langs.split(';');
     var cansubmit=true;
     $('#tabpage_'+languages[0]+' .answertable tbody').each(function(){
@@ -424,10 +489,32 @@ function code_duplicates_check()
         $(this).find('tr .code').each(function(){
             codearray.push($(this).val().toLowerCase());
         });
-        if (arrHasDupes(codearray))
+        var theDuplicate = arrHasDupesWhich(codearray);
+        if (theDuplicate !== false)
         {
-            //alert(duplicatesubquestioncode);
-            $notifycontainer.notify("create", 'error-notify', { message:duplicatesubquestioncode});
+
+            $('.code').each( function() {
+                if ($(this).val() == theDuplicate) {
+                    var $theDuplicateElement = $(this);
+
+                    $('#error-modal .modal-body-text').html(duplicatesubquestioncode);
+                    $('#error-modal').modal();
+
+                    // Tooltip doesn't scroll
+                    /*
+                    $theDuplicateElement.data('toggle', 'tooltip');
+                    $theDuplicateElement.data('title', duplicatesubquestioncode);
+                    $theDuplicateElement.tooltip({
+                        placement: 'left'
+                    })
+                    $theDuplicateElement.tooltip('show');
+                    */
+
+                    // Flash the elements that are duplicates
+                    //$theDuplicateElement.fadeOut(100).fadeIn(100).fadeOut(100).fadeIn(100).fadeOut(100).fadeIn(100);
+            
+                }
+            });
             cansubmit= false;
         }
     });
@@ -653,7 +740,6 @@ function transferlabels()
                             var randomid='new'+Math.floor(Math.random()*111111);
                             if (x==0)
                             {
-                                $(".relevance").toggle(false);
                                 tablerows=tablerows+
                                 '<tr id="row_'+k+'_'+scale_id+'" class="row_'+k+'_'+scale_id+'" >'+
                                 '   <td>'+
@@ -702,7 +788,7 @@ function transferlabels()
                                 '               <span id="answer_'+languages[x]+'_'+randomid+'_'+scale_id+'_popupctrlena" class="btneditanswerena glyphicon glyphicon-pencil text-success"></span><span id="answer_'+languages[x]+'_'+randomid+'_'+scale_id+'_popupctrldis" class="btneditanswerdis  glyphicon glyphicon-pencil text-success" title="Give focus to the HTML editor popup window" style="display: none;" ></span>'+
                                 '           </a>'+
 
-                                '       <span class="btntogglerelevance icon-expressionmanagercheck text-success"></span>'+
+                                //'       <span class="btntogglerelevance icon-expressionmanagercheck text-success"></span>'+
                                 '       <span style="display: none" class="relevance">1</span>'+
                                 '   </td>'+
                                 '</tr>';
@@ -732,7 +818,7 @@ function transferlabels()
                         '               <span id="answer_'+languages[x]+'_'+randomid+'_'+scale_id+'_popupctrlena" class="btneditanswerena  glyphicon glyphicon-pencil text-success" ><span>'+
                         '               <span id="answer_'+languages[x]+'_'+randomid+'_'+scale_id+'_popupctrldis" class="btneditanswerdis  glyphicon glyphicon-pencil text-success" title="Give focus to the HTML editor popup window" style="display: none;"></span>'+
                         '           </a>'+
-                        '       <span class="btntogglerelevance icon-expressionmanagercheck text-success"></span>'+
+                        //'       <span class="btntogglerelevance icon-expressionmanagercheck text-success"></span>'+
                         '       <span style="display: none" class="relevance">1</span>'+
                         '   </td>'+
                         '</tr>';
@@ -822,10 +908,12 @@ function quickaddlabels()
             }
             if (x==0)
             {
+                var idAndScale = '' + randomid + '_' + scale_id;
+
                 tablerows=tablerows+
                 '<tr id="row_'+k+'" class="row_'+k+'">'+
                 '   <td>'+
-                '       <span class="glyphicon glyphicon-move text-success"></span>'+
+                '       <span class="glyphicon glyphicon-move"></span>'+
                 '   </td>'+
 
                 '   <td style="vertical-align: middle;">'+
@@ -845,6 +933,10 @@ function quickaddlabels()
                 '       </div>'+
                 '   </td>'+
 
+                '   <td>' +
+                '       <input id="relevance_' + idAndScale + '" name="relevance_' + idAndScale + '" class="relevance form-control input-lg" type="text" value="1" ' + getRelevanceToolTip() + '/>' +
+                '   </td>' +
+
                 '   <td>'+
                 '           <a class="editorLink">'+
                 '               <span class="btneditanswerena glyphicon glyphicon-pencil text-success"></span>'+
@@ -852,11 +944,9 @@ function quickaddlabels()
                 '           </a>'+
 
                 '       <span class="btnaddanswer icon-add text-success"></span>'+
-                '       <span class="btndelanswer glyphicon glyphicon-trash text-warning"></span>'+
+                '       <span class="btndelanswer glyphicon glyphicon-trash text-danger"></span>'+
                 '   </td>'+
                 '</tr>';
-
-                $(".relevance").toggle(false);
 
             }
             else
@@ -904,6 +994,7 @@ function quickaddlabels()
     updaterowproperties();
     $('#quickaddModal').modal('hide')
 
+    bindClickIfNotExpanded();
 }
 
 function getlabel()
@@ -1056,11 +1147,4 @@ function ajaxreqsave() {
             $('#dialog-result').show();
         }
     });
-}
-
-
-
-function togglerelevance()
-{
-    $(".relevance").toggle("fast");
 }

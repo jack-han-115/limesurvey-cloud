@@ -1053,12 +1053,14 @@ function do_date($ia)
                 case 'h':
                 case 'g':
                 case 'G':
-                    $sRows .= Yii::app()->getController()->renderPartial('/survey/questions/date/dropdown/rows/hour', array('hourId'=>$ia[1], 'currenthour'=>$currenthour,), true);
+                    $sRows .= Yii::app()->getController()->renderPartial('/survey/questions/date/dropdown/rows/hour', array('hourId'=>$ia[1], 'currenthour'=>$currenthour, 'datepart'=>$datepart), true);
                     break;
                 case 'i':
-                    $sRows .= Yii::app()->getController()->renderPartial('/survey/questions/date/dropdown/rows/minute', array('minuteId'=>$ia[1], 'currentminute'=>$currenthour, 'dropdown_dates_minute_step'=>$aQuestionAttributes['dropdown_dates_minute_step'], 'datepart'=>$datepartdatepart ), true);
+                    $sRows .= Yii::app()->getController()->renderPartial('/survey/questions/date/dropdown/rows/minute', array('minuteId'=>$ia[1], 'currentminute'=>$currenthour, 'dropdown_dates_minute_step'=>$aQuestionAttributes['dropdown_dates_minute_step'], 'datepart'=>$datepart ), true);
                     break;
-                default:  $sRows .= $datepart;
+                default:
+                $sRows .= Yii::app()->getController()->renderPartial('/survey/questions/date/dropdown/rows/datepart', array('datepart'=>$datepart ), true);
+
             }
         }
 
@@ -1900,22 +1902,24 @@ function do_ranking($ia)
         $answers[] = $ansrow;
     }
 
+    $inputnames = array();
+    $sSelects = '';
+
     for ($i=1; $i<=$iMaxLine; $i++)
     {
         $myfname=$ia[1].$i;
         $labeltext = ($i==1)?gT('First choice'):sprintf(gT('Choice of rank %s'),$i);
+        $itemDatas = array();
 
-        $sOptions = '';
         if (!$_SESSION['survey_'.Yii::app()->getConfig('surveyID')][$myfname])
         {
-            $itemDatas = array(
+            $itemDatas[] = array(
                 'value'      => '',
                 'selected'   => 'SELECTED',
                 'classes'    => '',
                 'id'         => '',
                 'optiontext' => gT('Please choose...'),
             );
-            $sOptions .= Yii::app()->getController()->renderPartial('/survey/questions/ranking/rows/answer_row', $itemDatas, true);
         }
 
         foreach ($answers as $ansrow)
@@ -1931,21 +1935,28 @@ function do_ranking($ia)
                 $selected = '';
             }
 
-            $itemDatas = array(
+            $itemDatas[] = array(
                 'value' => $ansrow['code'],
                 'selected'=>$selected,
                 'classes'=>'',
-                'id'=> '',
-                'optiontext'=>flattenText($ansrow['answer']),
+                'optiontext'=>flattenText($ansrow['answer'])
             );
 
-            $sOptions .= Yii::app()->getController()->renderPartial('/survey/questions/ranking/rows/answer_row', $itemDatas, true);
         }
-        $itemlistfooterDatas = array(
+
+        $sSelects .= Yii::app()->getController()->renderPartial(
+            '/survey/questions/ranking/rows/answer_row',
+            array(
+                'myfname' => $myfname,
+                'labeltext' => $labeltext,
+                'options' => $itemDatas,
+                'thisvalue' => $thisvalue
+            ),
+            true
         );
+
         $inputnames[]=$myfname;
     }
-
 
     App()->getClientScript()->registerPackage('jquery-actual'); // Needed to with jq1.9 ?
     Yii::app()->getClientScript()->registerScriptFile(Yii::app()->getConfig('generalscripts')."ranking.js");
@@ -1971,7 +1982,7 @@ function do_ranking($ia)
     $rank_help = gT("Double-click or drag-and-drop items in the left list to move them to the right - your highest ranking item should be on the top right, moving through to your lowest ranking item.",'js');
 
     $answer .= Yii::app()->getController()->renderPartial('/survey/questions/ranking/answer', array(
-                    'sOptions'          => $sOptions,
+                    'sSelects'          => $sSelects,
                     'thisvalue'         => $thisvalue,
                     'answers'           => $answers,
                     'myfname'           => $myfname,
@@ -2185,7 +2196,7 @@ function do_multiplechoice($ia)
         // or if the column has been closed and the row count reset before.
         if($iNbCols > 1 && $iRowCount == 1 )
         {
-            $sRows .= Yii::app()->getController()->renderPartial('/survey/questions/questions/multiplechoice/columns/column_header', array('iColumnWidth' => $iColumnWidth, 'first'=>false), true);
+            $sRows .= Yii::app()->getController()->renderPartial('/survey/questions/multiplechoice/columns/column_header', array('iColumnWidth' => $iColumnWidth, 'first'=>false), true);
         }
 
         ////
@@ -2439,6 +2450,7 @@ function do_multiplechoice_withcomments($ia)
         ." /*]]>*/\n"
         ."</script>\n";
     }
+
     return array($answer, $inputnames);
 }
 
@@ -3037,7 +3049,9 @@ function do_multiplenumeric($ia)
                 $sValue = str_replace('.',$sSeparator,$sValue);
             }
 
-            $sRows .= Yii::app()->getController()->renderPartial('/survey/questions/multiplenumeric/rows/answer_row', array(
+            if(!$sliders)
+            {
+            $sRows .= Yii::app()->getController()->renderPartial('/survey/questions/multiplenumeric/rows/input/answer_row', array(
                 'qid'                    => $ia[0],
                 'extraclass'             => $extraclass,
                 'sDisplayStyle'          => $sDisplayStyle,
@@ -3046,9 +3060,6 @@ function do_multiplenumeric($ia)
                 'theanswer'              => $theanswer,
                 'labelname'              => 'answer'.$myfname,
                 'prefixclass'            => $prefixclass,
-                'sliders'                => $sliders,
-                'sliderleft'             => $sliderleft,
-                'sliderright'            => $sliderright,
                 'prefix'                 => $prefix,
                 'suffix'                 => $suffix,
                 'tiwidth'                => $tiwidth,
@@ -3057,22 +3068,46 @@ function do_multiplenumeric($ia)
                 'maxlength'              => $maxlength,
                 'labelText'              => $labelText,
                 'checkconditionFunction' => $checkconditionFunction.'(this.value, this.name, this.type)',
-                'slider_orientation'     => $slider_orientation,
-                'slider_step'            => $slider_step    ,
-                'slider_min'             => $slider_min     ,
-                'slider_mintext'         => $slider_mintext ,
-                'slider_max'             => $slider_max     ,
-                'slider_maxtext'         => $slider_maxtext ,
-                'slider_default'         => $slider_default ,
-                'slider_handle'          => $slider_handle,
-                'slider_reset'           => $slider_reset,
-                'slider_custom_handle'   => $slider_custom_handle,
-                'slider_user_no_action'  => $slider_user_no_action,
-                'slider_showminmax'      => $aQuestionAttributes['slider_showminmax'],
-                'sSeparator'             => $sSeparator,
-                'sUnformatedValue'       => $sUnformatedValue,
             ), true);
-
+            }
+            else
+            {
+                $sRows .= Yii::app()->getController()->renderPartial('/survey/questions/multiplenumeric/rows/sliders/answer_row', array(
+                    'qid'                    => $ia[0],
+                    'extraclass'             => $extraclass,
+                    'sDisplayStyle'          => $sDisplayStyle,
+                    'kpclass'                => $kpclass,
+                    'alert'                  => $alert,
+                    'theanswer'              => $theanswer,
+                    'labelname'              => 'answer'.$myfname,
+                    'prefixclass'            => $prefixclass,
+                    'sliders'                => $sliders,
+                    'sliderleft'             => $sliderleft,
+                    'sliderright'            => $sliderright,
+                    'prefix'                 => $prefix,
+                    'suffix'                 => $suffix,
+                    'tiwidth'                => $tiwidth,
+                    'myfname'                => $myfname,
+                    'dispVal'                => $sValue,
+                    'maxlength'              => $maxlength,
+                    'labelText'              => $labelText,
+                    'checkconditionFunction' => $checkconditionFunction.'(this.value, this.name, this.type)',
+                    'slider_orientation'     => $slider_orientation,
+                    'slider_step'            => $slider_step    ,
+                    'slider_min'             => $slider_min     ,
+                    'slider_mintext'         => $slider_mintext ,
+                    'slider_max'             => $slider_max     ,
+                    'slider_maxtext'         => $slider_maxtext ,
+                    'slider_default'         => $slider_default ,
+                    'slider_handle'          => $slider_handle,
+                    'slider_reset'           => $slider_reset,
+                    'slider_custom_handle'   => $slider_custom_handle,
+                    'slider_user_no_action'  => $slider_user_no_action,
+                    'slider_showminmax'      => $aQuestionAttributes['slider_showminmax'],
+                    'sSeparator'             => $sSeparator,
+                    'sUnformatedValue'       => $sUnformatedValue,
+                ), true);
+            }
             $fn++;
             $inputnames[]=$myfname;
         }
@@ -4444,6 +4479,7 @@ function do_array($ia)
         $labelcode[] = $lrow->code;
     }
 
+    // No-dropdown layout
     if ($useDropdownLayout === false && count($lresult) > 0)
     {
         $sQuery = "SELECT count(qid) FROM {{questions}} WHERE parent_qid={$ia[0]} AND question like '%|%' ";
@@ -4536,9 +4572,19 @@ function do_array($ia)
 
             $myfname        = $ia[1].$ansrow['title'];
             $answertext     = $ansrow['question'];
-            $answertext     = (strpos($answertext,'|'))?substr($answertext,0, strpos($answertext,'|')):$answertext;
-            $answerwidth    = (strpos($answertext,'|'))?$answerwidth/2:$answerwidth;
+            $answertext     = (strpos($answertext,'|') !== false) ? substr($answertext,0, strpos($answertext,'|')) : $answertext;
+            $answerwidth    = (strpos($answertext,'|') !== false) ? $answerwidth/2 : $answerwidth;
             $answertextsave = $answertext;
+
+            if ($right_exists && strpos($ansrow['question'], '|') !== false)
+            {
+                $answertextright = substr($ansrow['question'], strpos($ansrow['question'], '|') + 1);
+            }
+            else
+            {
+                $answertextright = null;
+            }
+
             $error          = (in_array($myfname, $aMandatoryViolationSubQ))?true:false;             /* Check the mandatory sub Q violation */
             $value          = (isset($_SESSION['survey_'.Yii::app()->getConfig('surveyID')][$myfname]))? $_SESSION['survey_'.Yii::app()->getConfig('surveyID')][$myfname] : '';
             $sDisplayStyle  = return_display_style($ia, $aQuestionAttributes, $thissurvey, $myfname);
@@ -4559,7 +4605,7 @@ function do_array($ia)
                 $thiskey++;
             }
 
-
+            /*
             if (strpos($answertextsave,'|'))
             {
                 $answertext        = substr($answertextsave,strpos($answertextsave,'|')+1);
@@ -4576,11 +4622,14 @@ function do_array($ia)
                     'content' => '&nbsp;',
                 ),  true);
             }
+            */
 
+            // NB: $ia[6] = mandatory
+            $no_answer_td = '';
             if ($ia[6] != 'Y' && SHOW_NO_ANSWER == 1)
             {
                 $CHECKED = (!isset($_SESSION['survey_'.Yii::app()->getConfig('surveyID')][$myfname]) || $_SESSION['survey_'.Yii::app()->getConfig('surveyID')][$myfname] == '')?'CHECKED':'';
-                $answer_tds .= Yii::app()->getController()->renderPartial('/survey/questions/arrays/array/no_dropdown/rows/cells/answer_td', array(
+                $no_answer_td .= Yii::app()->getController()->renderPartial('/survey/questions/arrays/array/no_dropdown/rows/cells/answer_td', array(
                             'myfname'                => $myfname,
                             'ld'                     => '',
                             'label'                  => gT('No answer'),
@@ -4591,8 +4640,11 @@ function do_array($ia)
 
             $sRows .= Yii::app()->getController()->renderPartial('/survey/questions/arrays/array/no_dropdown/rows/answer_row', array(
                         'answer_tds' => $answer_tds,
+                        'no_answer_td' => $no_answer_td,
                         'myfname'    => $myfname,
                         'answertext' => $answertext,
+                        'answertextright' => $right_exists ? $answertextright : null,
+                        'right_exists' => $right_exists,
                         'value'      => $value,
                         'error'      => $error,
                         'zebra'      => 2 - ($i % 2)
@@ -4605,8 +4657,8 @@ function do_array($ia)
         $sColumns = '';
         foreach ($labelans as $c)
         {
-            $odd_even = alternation($odd_even);
-            $sColumns =  Yii::app()->getController()->renderPartial('/survey/questions/arrays/array/no_dropdown/columns/col', array(
+            $odd_even .= alternation($odd_even);
+            $sColumns .=  Yii::app()->getController()->renderPartial('/survey/questions/arrays/array/no_dropdown/columns/col', array(
                 'class'     => $odd_even,
                 'cellwidth' => $cellwidth,
             ), true);
@@ -4615,7 +4667,7 @@ function do_array($ia)
         if ($right_exists)
         {
             $odd_even = alternation($odd_even);
-            $sColumns =  Yii::app()->getController()->renderPartial('/survey/questions/arrays/array/no_dropdown/columns/col', array(
+            $sColumns .=  Yii::app()->getController()->renderPartial('/survey/questions/arrays/array/no_dropdown/columns/col', array(
                 'class'     => 'answertextright '.$odd_even,
                 'cellwidth' => $cellwidth,
             ), true);
@@ -4624,7 +4676,7 @@ function do_array($ia)
         if ($ia[6] != 'Y' && SHOW_NO_ANSWER == 1) //Question is not mandatory
         {
             $odd_even = alternation($odd_even);
-            $sColumns =  Yii::app()->getController()->renderPartial('/survey/questions/arrays/array/no_dropdown/columns/col', array(
+            $sColumns .=  Yii::app()->getController()->renderPartial('/survey/questions/arrays/array/no_dropdown/columns/col', array(
                 'class'     => 'col-no-answer '.$odd_even,
                 'cellwidth' => $cellwidth,
             ), true);
@@ -4641,7 +4693,6 @@ function do_array($ia)
     }
 
     // Dropdown layout
-
     elseif ($useDropdownLayout === true && count($lresult)> 0)
     {
         foreach($lresult as $lrow)
@@ -4695,17 +4746,24 @@ function do_array($ia)
         $inputnames=array();
 
         $sRows = "";
-        foreach ($aQuestions as $ansrow)
+        foreach ($aQuestions as $j => $ansrow)
         {
             $myfname        = $ia[1].$ansrow['title'];
             $answertext     = $ansrow['question'];
-            $answertext     = (strpos($answertext,'|'))?substr($answertext,0, strpos($answertext,'|')):$answertext;
-            $answerwidth    = (strpos($answertext,'|'))?$answerwidth/2:$answerwidth;
+            $answertext     = (strpos($answertext,'|') !== false) ? substr($answertext,0, strpos($answertext,'|')):$answertext;
+            $answerwidth    = (strpos($answertext,'|') !== false) ? $answerwidth/2:$answerwidth;
             $error          = (in_array($myfname, $aMandatoryViolationSubQ))?true:false;             /* Check the mandatory sub Q violation */
             $value          = (isset($_SESSION['survey_'.Yii::app()->getConfig('surveyID')][$myfname]))? $_SESSION['survey_'.Yii::app()->getConfig('surveyID')][$myfname] : '';
             $sDisplayStyle  = return_display_style($ia, $aQuestionAttributes, $thissurvey, $myfname);
-            $thRight        = (strpos($answertext,'|'))?true:false;
-            $tdRight        = (!(strpos($answertext,'|')) && $right_exists)?true:false;
+
+            if ($right_exists && (strpos($ansrow['question'], '|') !== false))
+            {
+                $answertextright = substr($ansrow['question'], strpos($ansrow['question'], '|') + 1);
+            }
+            else
+            {
+                $answertextright = null;
+            }
 
             $options = array();
 
@@ -4729,9 +4787,10 @@ function do_array($ia)
                 'value'                  => $value,
                 'error'                  => $error,
                 'checkconditionFunction' => $checkconditionFunction,
+                'right_exists'           => $right_exists,
+                'answertextright'        => $answertextright,
                 'options'                => $options,
-                'thRight'                => $thRight,
-                'tdRight'                => $tdRight,
+                'zebra'                  => 2 - ($j % 2)
             ),  true);
 
             $inputnames[]=$myfname;
