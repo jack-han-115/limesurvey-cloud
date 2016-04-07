@@ -1053,12 +1053,14 @@ function do_date($ia)
                 case 'h':
                 case 'g':
                 case 'G':
-                    $sRows .= Yii::app()->getController()->renderPartial('/survey/questions/date/dropdown/rows/hour', array('hourId'=>$ia[1], 'currenthour'=>$currenthour,), true);
+                    $sRows .= Yii::app()->getController()->renderPartial('/survey/questions/date/dropdown/rows/hour', array('hourId'=>$ia[1], 'currenthour'=>$currenthour, 'datepart'=>$datepart), true);
                     break;
                 case 'i':
-                    $sRows .= Yii::app()->getController()->renderPartial('/survey/questions/date/dropdown/rows/minute', array('minuteId'=>$ia[1], 'currentminute'=>$currenthour, 'dropdown_dates_minute_step'=>$aQuestionAttributes['dropdown_dates_minute_step'], 'datepart'=>$datepartdatepart ), true);
+                    $sRows .= Yii::app()->getController()->renderPartial('/survey/questions/date/dropdown/rows/minute', array('minuteId'=>$ia[1], 'currentminute'=>$currenthour, 'dropdown_dates_minute_step'=>$aQuestionAttributes['dropdown_dates_minute_step'], 'datepart'=>$datepart ), true);
                     break;
-                default:  $sRows .= $datepart;
+                default:
+                $sRows .= Yii::app()->getController()->renderPartial('/survey/questions/date/dropdown/rows/datepart', array('datepart'=>$datepart ), true);
+
             }
         }
 
@@ -1900,22 +1902,24 @@ function do_ranking($ia)
         $answers[] = $ansrow;
     }
 
+    $inputnames = array();
+    $sSelects = '';
+
     for ($i=1; $i<=$iMaxLine; $i++)
     {
         $myfname=$ia[1].$i;
         $labeltext = ($i==1)?gT('First choice'):sprintf(gT('Choice of rank %s'),$i);
+        $itemDatas = array();
 
-        $sOptions = '';
         if (!$_SESSION['survey_'.Yii::app()->getConfig('surveyID')][$myfname])
         {
-            $itemDatas = array(
+            $itemDatas[] = array(
                 'value'      => '',
                 'selected'   => 'SELECTED',
                 'classes'    => '',
                 'id'         => '',
                 'optiontext' => gT('Please choose...'),
             );
-            $sOptions .= Yii::app()->getController()->renderPartial('/survey/questions/ranking/rows/answer_row', $itemDatas, true);
         }
 
         foreach ($answers as $ansrow)
@@ -1931,21 +1935,28 @@ function do_ranking($ia)
                 $selected = '';
             }
 
-            $itemDatas = array(
+            $itemDatas[] = array(
                 'value' => $ansrow['code'],
                 'selected'=>$selected,
                 'classes'=>'',
-                'id'=> '',
-                'optiontext'=>flattenText($ansrow['answer']),
+                'optiontext'=>flattenText($ansrow['answer'])
             );
 
-            $sOptions .= Yii::app()->getController()->renderPartial('/survey/questions/ranking/rows/answer_row', $itemDatas, true);
         }
-        $itemlistfooterDatas = array(
+
+        $sSelects .= Yii::app()->getController()->renderPartial(
+            '/survey/questions/ranking/rows/answer_row',
+            array(
+                'myfname' => $myfname,
+                'labeltext' => $labeltext,
+                'options' => $itemDatas,
+                'thisvalue' => $thisvalue
+            ),
+            true
         );
+
         $inputnames[]=$myfname;
     }
-
 
     App()->getClientScript()->registerPackage('jquery-actual'); // Needed to with jq1.9 ?
     Yii::app()->getClientScript()->registerScriptFile(Yii::app()->getConfig('generalscripts')."ranking.js");
@@ -1971,7 +1982,7 @@ function do_ranking($ia)
     $rank_help = gT("Double-click or drag-and-drop items in the left list to move them to the right - your highest ranking item should be on the top right, moving through to your lowest ranking item.",'js');
 
     $answer .= Yii::app()->getController()->renderPartial('/survey/questions/ranking/answer', array(
-                    'sOptions'          => $sOptions,
+                    'sSelects'          => $sSelects,
                     'thisvalue'         => $thisvalue,
                     'answers'           => $answers,
                     'myfname'           => $myfname,
@@ -3038,7 +3049,9 @@ function do_multiplenumeric($ia)
                 $sValue = str_replace('.',$sSeparator,$sValue);
             }
 
-            $sRows .= Yii::app()->getController()->renderPartial('/survey/questions/multiplenumeric/rows/answer_row', array(
+            if(!$sliders)
+            {
+            $sRows .= Yii::app()->getController()->renderPartial('/survey/questions/multiplenumeric/rows/input/answer_row', array(
                 'qid'                    => $ia[0],
                 'extraclass'             => $extraclass,
                 'sDisplayStyle'          => $sDisplayStyle,
@@ -3047,9 +3060,6 @@ function do_multiplenumeric($ia)
                 'theanswer'              => $theanswer,
                 'labelname'              => 'answer'.$myfname,
                 'prefixclass'            => $prefixclass,
-                'sliders'                => $sliders,
-                'sliderleft'             => $sliderleft,
-                'sliderright'            => $sliderright,
                 'prefix'                 => $prefix,
                 'suffix'                 => $suffix,
                 'tiwidth'                => $tiwidth,
@@ -3058,22 +3068,46 @@ function do_multiplenumeric($ia)
                 'maxlength'              => $maxlength,
                 'labelText'              => $labelText,
                 'checkconditionFunction' => $checkconditionFunction.'(this.value, this.name, this.type)',
-                'slider_orientation'     => $slider_orientation,
-                'slider_step'            => $slider_step    ,
-                'slider_min'             => $slider_min     ,
-                'slider_mintext'         => $slider_mintext ,
-                'slider_max'             => $slider_max     ,
-                'slider_maxtext'         => $slider_maxtext ,
-                'slider_default'         => $slider_default ,
-                'slider_handle'          => $slider_handle,
-                'slider_reset'           => $slider_reset,
-                'slider_custom_handle'   => $slider_custom_handle,
-                'slider_user_no_action'  => $slider_user_no_action,
-                'slider_showminmax'      => $aQuestionAttributes['slider_showminmax'],
-                'sSeparator'             => $sSeparator,
-                'sUnformatedValue'       => $sUnformatedValue,
             ), true);
-
+            }
+            else
+            {
+                $sRows .= Yii::app()->getController()->renderPartial('/survey/questions/multiplenumeric/rows/sliders/answer_row', array(
+                    'qid'                    => $ia[0],
+                    'extraclass'             => $extraclass,
+                    'sDisplayStyle'          => $sDisplayStyle,
+                    'kpclass'                => $kpclass,
+                    'alert'                  => $alert,
+                    'theanswer'              => $theanswer,
+                    'labelname'              => 'answer'.$myfname,
+                    'prefixclass'            => $prefixclass,
+                    'sliders'                => $sliders,
+                    'sliderleft'             => $sliderleft,
+                    'sliderright'            => $sliderright,
+                    'prefix'                 => $prefix,
+                    'suffix'                 => $suffix,
+                    'tiwidth'                => $tiwidth,
+                    'myfname'                => $myfname,
+                    'dispVal'                => $sValue,
+                    'maxlength'              => $maxlength,
+                    'labelText'              => $labelText,
+                    'checkconditionFunction' => $checkconditionFunction.'(this.value, this.name, this.type)',
+                    'slider_orientation'     => $slider_orientation,
+                    'slider_step'            => $slider_step    ,
+                    'slider_min'             => $slider_min     ,
+                    'slider_mintext'         => $slider_mintext ,
+                    'slider_max'             => $slider_max     ,
+                    'slider_maxtext'         => $slider_maxtext ,
+                    'slider_default'         => $slider_default ,
+                    'slider_handle'          => $slider_handle,
+                    'slider_reset'           => $slider_reset,
+                    'slider_custom_handle'   => $slider_custom_handle,
+                    'slider_user_no_action'  => $slider_user_no_action,
+                    'slider_showminmax'      => $aQuestionAttributes['slider_showminmax'],
+                    'sSeparator'             => $sSeparator,
+                    'sUnformatedValue'       => $sUnformatedValue,
+                ), true);
+            }
             $fn++;
             $inputnames[]=$myfname;
         }
