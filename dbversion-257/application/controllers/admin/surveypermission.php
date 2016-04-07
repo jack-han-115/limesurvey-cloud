@@ -593,14 +593,17 @@ class surveypermission extends Survey_Common_Action {
         $action = App()->getRequest()->getParam('action');
 
         $imageurl = Yii::app()->getConfig('imageurl');
-        $postuserid = !empty(App()->getRequest()->getParam('uid')) ? App()->getRequest()->getParam('uid') : false;
-        $postusergroupid = !empty(App()->getRequest()->getParam('gid')) ? App()->getRequest()->getParam('uid') : false;// Not used
+        $uid = App()->getRequest()->getParam('uid');
+        $gid = App()->getRequest()->getParam('gid');
+        $postuserid = (!empty($uid)) ? $uid : false;
+        $postusergroupid = (!empty($gid)) ? $gid : false;// Not used
+        $userList = getUserList('onlyuidarray');
 
-        if($postuserid && !in_array($postuserid,getUserList('onlyuidarray')))
+        if($postuserid && !in_array($postuserid,$userList))
         {
             $this->getController()->error('Access denied');
         }
-        elseif( $postusergroupid &&  !in_array($postusergroupid,getUserList('onlyuidarray')))
+        elseif($postusergroupid && !in_array($postusergroupid, $userList))
         {
             $this->getController()->error('Access denied');
         }
