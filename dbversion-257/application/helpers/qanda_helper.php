@@ -5156,23 +5156,24 @@ function do_array_multitext($ia)
         }
 
         $answer = Yii::app()->getController()->renderPartial('/survey/questions/arrays/multitext/answer', array(
-                    'answerwidth'       => $answerwidth,
-                    'col_head'          => $col_head,
-                    'cellwidth'         => $cellwidth,
-                    'labelans'          => $labelans,
-                    'right_exists'      => $right_exists,
-                    'showGrandTotal'    => $showGrandTotal,
-                    'q_table_id_HTML'   => $q_table_id_HTML,
-                    'extraclass'        => $extraclass,
-                    'num_class'         => $num_class,
-                    'totals_class'      => $totals_class,
-                    'showtotals'        => $showtotals,
-                    'row_head'          => $row_head,
-                    'total'             => $total,
-                    'q_table_id'        => $q_table_id,
-                    'radix'             => $radix,
-                    'name'              => $ia[0],
-                    'sRows'             => $sRows,
+                    'answerwidth'               => $answerwidth,
+                    'col_head'                  => $col_head,
+                    'cellwidth'                 => $cellwidth,
+                    'labelans'                  => $labelans,
+                    'right_exists'              => $right_exists,
+                    'showGrandTotal'            => $showGrandTotal,
+                    'q_table_id_HTML'           => $q_table_id_HTML,
+                    'extraclass'                => $extraclass,
+                    'num_class'                 => $num_class,
+                    'totals_class'              => $totals_class,
+                    'showtotals'                => $showtotals,
+                    'row_head'                  => $row_head,
+                    'total'                     => $total,
+                    'q_table_id'                => $q_table_id,
+                    'radix'                     => $radix,
+                    'name'                      => $ia[0],
+                    'sRows'                     => $sRows,
+                    'checkconditionFunction'    => $checkconditionFunction
                 ),  true);
     }
     else
@@ -5190,6 +5191,7 @@ function do_array_multiflexi($ia)
 {
     global $thissurvey;
 
+    $answer                     = '';
     $aLastMoveResult            = LimeExpressionManager::GetLastMoveResult();
     $aMandatoryViolationSubQ    = ($aLastMoveResult['mandViolation'] && $ia[6] == 'Y') ? explode("|",$aLastMoveResult['unansweredSQs']) : array();
     $repeatheadings             = Yii::app()->getConfig("repeatheadings");
@@ -5394,7 +5396,7 @@ function do_array_multiflexi($ia)
             {
                 if ( ($anscount - $fn + 1) >= $minrepeatheadings )
                 {
-                    $answer .=  Yii::app()->getController()->renderPartial('/survey/questions/arrays/multiflexi/rows/repeat_header', array(
+                    $sAnswerRows .=  Yii::app()->getController()->renderPartial('/survey/questions/arrays/multiflexi/rows/repeat_header', array(
                                 'labelans'      =>  $labelans,
                                 'right_exists'  =>  $right_exists,
                                 'cellwidth'     =>  $cellwidth,
