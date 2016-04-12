@@ -3129,8 +3129,9 @@ function do_multiplenumeric($ia)
             $displaytotal = true;
         }
 
-
-        $answer      = Yii::app()->getController()->renderPartial('/survey/questions/multiplenumeric/answer', array(
+        // TODO: Slider and multiple-numeric input should really be two different question types
+        $templateFile = $sliders ? 'answer' : 'answer_input';
+        $answer      = Yii::app()->getController()->renderPartial('/survey/questions/multiplenumeric/' . $templateFile, array(
                         'sRows'            => $sRows,
                         'prefixclass'      => $prefixclass,
                         'equals_num_value' => $equals_num_value,
@@ -3140,6 +3141,7 @@ function do_multiplenumeric($ia)
                         'sumRemainingEqn'  => (isset($qinfo))?$qinfo['sumRemainingEqn']:'',
                         'displaytotal'     => $displaytotal,
                         'sumEqn'           => (isset($qinfo))?$qinfo['sumEqn']:'',
+                        'prefix'           => $prefix,  // Need to know this to place sum/remaining correctly
                        ), true);
 
     }
@@ -5922,8 +5924,7 @@ function do_array_dual($ia)
                 $answer_head1 = "";
             }
             $answer .= '<div class="no-more-tables no-more-tables-array-dual">';
-            //$answer .= "\n<table class=\"table-in-qanda-9 question subquestions-list questions-list\" summary=\"{$caption}\">\n"
-            $answer .= "\n<table class=\"no-more-tables table-in-qanda-9 table question subquestion-list questions-list\">\n"
+            $answer .= "\n<table class=\"no-more-tables table-dual-scale table question subquestion-list questions-list\">\n"
             . $mycolumns
             . "\n\t<thead>\n"
             . $answer_head1
