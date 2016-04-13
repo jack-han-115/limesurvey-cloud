@@ -2954,9 +2954,10 @@ function do_multiplenumeric($ia)
 
     $answer_main = '';
 
+    $inputnames = array();
+
     if ($anscount==0)
     {
-        $inputnames =array();
         $noanswer   = true;
         $answer    = Yii::app()->getController()->renderPartial('/survey/questions/multiplenumeric/empty', array(), true);
     }
@@ -4105,7 +4106,6 @@ function do_array_10point($ia)
     }
     $ansresult = dbExecuteAssoc($ansquery);   //Checked
     $aSubquestions = $ansresult->readAll();
-    $anscount = count($aSubquestions);
 
     $fn = 1;
 

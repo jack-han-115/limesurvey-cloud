@@ -110,6 +110,16 @@ function replaceColumnWithDiv(that) {
 
 $(document).ready(function(){
 
+    // Make the label clickable
+    $('.label-clickable').each(function(){
+        var $that    = $(this);
+        var $inputEl = $("#"+$that.attr('id').replace("label-", ""));
+        $that.on('click', function(){
+            console.log($inputEl.attr('id'));
+            $inputEl.trigger( "click" );
+        });
+    });
+
     // iPad has width 768, Google Nexus 10 width 800
     // It's OK to keep tables on pads.
     if($(window).width() < 768)
@@ -120,19 +130,21 @@ $(document).ready(function(){
                 $that = $(this);
                 $label = $that.data('title');
                 $input = $that.find('input');
-                if($input.is(':checkbox'))
+                if($input.is(':checkbox') || $that.hasClass('radio'))
                 {
-                    $that.find('label').removeClass('hide');
+                    $that.find('.hide').removeClass('hide');
                 }
                 else
                 {
+                    // TODO: Remove this logic for screen reader
+                    // Only used for array dual scale and array columns now.
                     $that.find('label').prepend($label);
                 }
 
             });
         }
 
-        // Brutally remake the array-by-columns question type to divs, 
+        // Brutally remake the array-by-columns question type to divs,
         // because you can't wrap table columns
         $('.array-by-columns-table').each(function() {
             replaceColumnWithDiv(this);
