@@ -97,7 +97,7 @@ function replaceColumnWithDiv(that) {
                 newHtml += "</div>";
             }
             else {
-                newHtml += "<div class='radio-item'>";
+                newHtml += "<div class='radio-item radio'>";
                 newHtml += $(this).html();
                 newHtml += "</div>";
             }
@@ -119,6 +119,8 @@ $(document).ready(function(){
             $inputEl.trigger( "click" );
         });
     });
+
+    $('.if-no-js').hide();
 
     // iPad has width 768, Google Nexus 10 width 800
     // It's OK to keep tables on pads.

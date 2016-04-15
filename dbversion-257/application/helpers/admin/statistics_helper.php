@@ -1782,7 +1782,7 @@ class statistics_helper {
                         $fname= "$al[1]";
                     }
 
-                    $bAnswer = false; // For view
+                    $bAnswer = true; // For view
                     $bSum = false;
                 }
 
@@ -2388,6 +2388,16 @@ class statistics_helper {
     */
     protected function displayResults($outputs, $results, $rt, $outputType, $surveyid, $sql, $usegraph, $browse, $sLanguage)
     {
+        // TODO: Should not be necessary - this combination should never happen
+        // File-upload is not displayed in PDF
+        if (($outputType=='pdf' && $outputs['qtype'] === "|"))
+        {
+            return array(
+                "statisticsoutput" => "",
+                "pdf" => null,
+                "astatdata" => array()
+            );
+        }
 
         /* Set up required variables */
         $TotalCompleted = 0; //Count of actually completed answers
@@ -2652,7 +2662,7 @@ class statistics_helper {
                     $fname= "$al[1]";
                 }
 
-                $bAnswer = false; // For view
+                $bAnswer = true; // For view
                 $bSum = false;
 
                 if ($browse===true && isset($_POST['showtextinline']) && $outputType=='pdf') {
@@ -3405,6 +3415,14 @@ class statistics_helper {
         {
             //$tablePDF = array();
             $tablePDF = array_merge_recursive($tablePDF, $footPDF);
+            if (!isset($headPDF))
+            {
+                if ($outputs['qtype'] === "|")
+                {
+                }
+                // file upload lack headPDF
+                //throw new CException('$headPDF is not defined');
+            }
             $this->pdf->headTable($headPDF,$tablePDF);
             //$this->pdf->tableintopdf($tablePDF);
 

@@ -106,8 +106,6 @@ function retrieveAnswers($ia)
         ,'essentials'         => ''
     );
 
-
-
     $oQuestion = Question::model()->findByPk(array('qid'=>$ia[0], 'language'=>$lang));
 
     switch ($ia[4])
@@ -2594,7 +2592,7 @@ function do_file_upload($ia)
                         <h4 class="modal-title">' . ngT("Upload file|Upload files", $aQuestionAttributes['max_num_of_files']) . '</h4>
                     </div>
                     <div class="modal-body file-upload-modal-body">
-                        <iframe id="uploader" name="uploader" class="externalSite" src="' . $uploadurl . '"></iframe>
+                        <iframe id="uploader' . $ia[1] . '" name="uploader' . $ia[1] . '" class="externalSite" src="' . $uploadurl . '"></iframe>
                     </div>
                     <div class="modal-footer file-upload-modal-footer">
                         <button type="button" class="btn btn-success" data-dismiss="modal">' . gT("Save changes") . '</button>
@@ -3868,7 +3866,6 @@ function do_gender($ia)
 * @param $ia
 * @return unknown_type
 */
-// TMSW TODO - Can remove DB query by passing in answer list from EM
 function do_array_5point($ia)
 {
     global $thissurvey;
@@ -3896,19 +3893,6 @@ function do_array_5point($ia)
     }
 
     $cellwidth  = round((( 100 - $answerwidth ) / $cellwidth) , 1); // convert number of columns to percentage of table width
-    $sQuery     = "SELECT question FROM {{questions}} WHERE parent_qid=".$ia[0]." AND question like '%|%'";
-    $iCount     = Yii::app()->db->createCommand($sQuery)->queryScalar();
-
-    if ($iCount>0)
-    {
-        $right_exists = true;
-        $answerwidth  = $answerwidth/2;
-    }
-    else
-    {
-        $right_exists = false;
-    }
-
 
     if ($aQuestionAttributes['random_order']==1)
     {
@@ -3923,8 +3907,18 @@ function do_array_5point($ia)
     $aSubquestions = $ansresult->readAll();
     $anscount      = count($aSubquestions);
     $fn            = 1;
-    $sColumns       = $sHeaders = $sRows = $answer_tds = '';
+    $sColumns      = $sHeaders = $sRows = $answer_tds = '';
 
+    // Check if any subquestion use suffix/prefix
+    $right_exists  = false;
+    foreach ($aSubquestions as $j => $ansrow)
+    {
+        $answertext2   = $ansrow['question'];
+        if (strpos($answertext2,'|'))
+        {
+            $right_exists  = true;
+        }
+    }
 
     for ($xc=1; $xc<=5; $xc++)
     {
@@ -3932,6 +3926,12 @@ function do_array_5point($ia)
     }
 
     if ($ia[6] != 'Y' && SHOW_NO_ANSWER == 1) //Question is not mandatory
+    {
+        $sColumns  .= Yii::app()->getController()->renderPartial('/survey/questions/arrays/5point/columns/col', array('cellwidth'=>$cellwidth), true);
+    }
+
+    // Column for suffix
+    if ($right_exists)
     {
         $sColumns  .= Yii::app()->getController()->renderPartial('/survey/questions/arrays/5point/columns/col', array('cellwidth'=>$cellwidth), true);
     }
@@ -3945,6 +3945,7 @@ function do_array_5point($ia)
         ), true);
     }
 
+    // Header for suffix
     if ($right_exists)
     {
         $sHeaders .= Yii::app()->getController()->renderPartial('/survey/questions/arrays/5point/rows/cells/thead', array(
@@ -3985,7 +3986,6 @@ function do_array_5point($ia)
         // Value
         $value = (isset($_SESSION['survey_'.Yii::app()->getConfig('surveyID')][$myfname])) ? $_SESSION['survey_'.Yii::app()->getConfig('surveyID')][$myfname] : '';
 
-        // ==> tds
         for ($i=1; $i<=5; $i++)
         {
             $CHECKED = (isset($_SESSION['survey_'.Yii::app()->getConfig('surveyID')][$myfname]) && $_SESSION['survey_'.Yii::app()->getConfig('surveyID')][$myfname] == $i)?'CHECKED':'';
@@ -3998,8 +3998,8 @@ function do_array_5point($ia)
             ), true);
         }
 
-        // => tds
-        $answertext2 = $ansrow['question'];
+        // Suffix
+        $answertext2   = $ansrow['question'];
         if (strpos($answertext2,'|'))
         {
             $answertext2=substr($answertext2,strpos($answertext2,'|')+1);
@@ -4031,14 +4031,14 @@ function do_array_5point($ia)
         }
 
         $sRows .= Yii::app()->getController()->renderPartial('/survey/questions/arrays/5point/rows/answer_row', array(
-                    'answer_tds'=>$answer_tds,
-                    'myfname'=>$myfname,
-                    'answerwidth'=>$answerwidth,
-                    'answertext'=>$answertext,
-                    'value'=>$value,
-                    'error'=>$error,
-                    'sDisplayStyle'=>$sDisplayStyle,
-                    'zebra' => 2 - ($j % 2)
+                    'answer_tds'    => $answer_tds,
+                    'myfname'       => $myfname,
+                    'answerwidth'   => $answerwidth,
+                    'answertext'    => $answertext,
+                    'value'         => $value,
+                    'error'         => $error,
+                    'sDisplayStyle' => $sDisplayStyle,
+                    'zebra'         => 2 - ($j % 2)
                 ), true);
 
         $answer_tds = '';
@@ -4047,10 +4047,10 @@ function do_array_5point($ia)
     }
 
     $answer = Yii::app()->getController()->renderPartial('/survey/questions/arrays/5point/answer', array(
-                'extraclass'=>$extraclass,
-                'sColumns'=>$sColumns,
-                'sHeaders'=>$sHeaders,
-                'sRows'=>$sRows,
+                'extraclass' => $extraclass,
+                'sColumns'   => $sColumns,
+                'sHeaders'   => $sHeaders,
+                'sRows'      => $sRows,
             ), true);
 
     //$answer .= $answer_t_content;
@@ -4882,6 +4882,7 @@ function do_array_multitext($ia)
             $q_table_id      = 'totals_'.$ia[0];
             $q_table_id_HTML = ' id="'.$q_table_id.'"';
         }
+        
         $num_class   = ' numbers-only';
         $extraclass .= " numberonly";
         $caption    .= gT("Each answer is a number. ");
@@ -5260,6 +5261,7 @@ function do_array_multiflexi($ia)
 
     $checkboxlayout = false;
     $inputboxlayout = false;
+    $textAlignment  = 'right';
 
     if ($aQuestionAttributes['multiflexible_checkbox']!=0)
     {
@@ -5268,6 +5270,7 @@ function do_array_multiflexi($ia)
         $checkboxlayout      =  true;
         $answertypeclass     =  " checkbox";
         $caption            .= gT("Check or uncheck the answer for each subquestion. ");
+        $textAlignment       = 'center';
     }
     elseif ($aQuestionAttributes['input_boxes']!=0 )
     {
@@ -5275,6 +5278,7 @@ function do_array_multiflexi($ia)
         $answertypeclass    .= " numeric-item text";
         $extraclass         .= " numberonly";
         $caption            .= gT("Each answers are a number. ");
+        $textAlignment       = 'right';
     }
     else
     {
@@ -5404,6 +5408,7 @@ function do_array_multiflexi($ia)
                                 'right_exists'  =>  $right_exists,
                                 'cellwidth'     =>  $cellwidth,
                                 'answerwidth'   =>  $answerwidth,
+                                'textAlignment' => $textAlignment,
                             ),  true);
                 }
             }
@@ -5534,7 +5539,6 @@ function do_array_multiflexi($ia)
                 $rightTd = true;
             }
 
-            // answer_row
             $sAnswerRows .=  Yii::app()->getController()->renderPartial('/survey/questions/arrays/multiflexi/rows/answer_row', array(
                                 'sDisplayStyle'     => $sDisplayStyle,
                                 'useAnswerWidth'    => $useAnswerWidth,
@@ -5559,12 +5563,12 @@ function do_array_multiflexi($ia)
                             'cellwidth'         => $cellwidth,
                             'right_exists'      => $right_exists,
                             'sAnswerRows'       => $sAnswerRows,
+                            'textAlignment'     => $textAlignment,
                         ),  true);
 
     }
     else
     {
-        //$answer = "\n<p class=\"error\">".gT("Error: There are no answer options for this question and/or they don't exist in this language.")."</p>\n";
         $answer     = Yii::app()->getController()->renderPartial('/survey/questions/arrays/multiflexi/empty_error', array(),  true);
         $inputnames = '';
     }
@@ -5592,12 +5596,14 @@ function do_arraycolumns($ia)
     $labelans=array();
     $labelcode=array();
     $labels=array();
+
     foreach ($aAnswers as $lrow)
     {
         $labelans[]=$lrow['answer'];
         $labelcode[]=$lrow['code'];
         $labels[]=array("answer"=>$lrow['answer'], "code"=>$lrow['code']);
     }
+
     if (count($labelans) > 0)
     {
         if ($ia[6] != 'Y' && SHOW_NO_ANSWER == 1)
@@ -5616,110 +5622,91 @@ function do_arraycolumns($ia)
         $ansresult = dbExecuteAssoc($ansquery);  //Checked
         $aQuestions = $ansresult->readAll();
         $anscount = count($aQuestions);
+
+        $aData = array();
+        $aData['labelans'] = $labelans;
+        $aData['labelcode'] = $labelcode;
+
         if ($anscount>0)
         {
-            $fn=1;
             $cellwidth=$anscount;
             $cellwidth=round(( 50 / $cellwidth ) , 1);
-            //$answer = "\n<table class=\"table-in-qanda-8  question subquestions-list questions-list\" summary=\"{$caption}\">\n"
-            $answer = "\n<table class=\"array-by-columns-table table-array-by-column table question subquestion-list questions-list\">\n"
-            . "\t<colgroup class=\"col-responses\">\n"
-            //. "\t<col class=\"col-answers\" width=\"50%\" />\n";
-            . "\t<col class=\"col-answers\" style='width: 50%' />\n";
-            $odd_even = '';
-            for( $c = 0 ; $c < $anscount ; ++$c )
-            {
-                $odd_even = alternation($odd_even);
-                $odd_even_well = ($odd_even == 'odd')?$odd_even.' well':$odd_even;
-                //$answer .= "<col class=\"$odd_even question-item answers-list radio-list\" width=\"$cellwidth%\" />\n";
-                $answer .= "<col class=\"$odd_even_well question-item answers-list radio-list\" style='width: $cellwidth%;' />\n";
-            }
-            $answer .= "\t</colgroup>\n\n"
-            . "\t<thead class='thead-array-by-column'>\n"
-            . "<tr>\n"
-            . "\t<td>&nbsp;</td>\n";
+
+            $aData['anscount'] = $anscount;
+            $aData['cellwidth'] = $cellwidth;
+            $aData['aQuestions'] = $aQuestions;
 
             foreach ($aQuestions as $ansrow)
             {
                 $anscode[]=$ansrow['title'];
                 $answers[]=$ansrow['question'];
             }
-            $trbc = '';
-            $odd_even = '';
+
+            $aData['anscode'] = $anscode;
+            $aData['answers'] = $answers;
+
             for ($_i=0;$_i<count($answers);++$_i)
             {
-                $ld = $answers[$_i];
                 $myfname = $ia[1].$anscode[$_i];
-                $trbc = alternation($trbc , 'row');
                 /* Check the Sub Q mandatory violation */
                 if ($ia[6]=='Y' && in_array($myfname, $aMandatoryViolationSubQ))
                 {
-                    //$ld = "<span class=\"errormandatory\">{$ld}</span>";
-                    $ld ='
-                                <div class="alert alert-danger " role="alert">'.
-                                        $ld
-                                    .'
-                                </div>';
-
+                    $aData['aQuestions'][$_i]['errormandatory'] = true;
                 }
-                $odd_even = alternation($odd_even);
-                $answer .= "\t<th class=\"$odd_even\">$ld</th>\n";
+                else
+                {
+                    $aData['aQuestions'][$_i]['errormandatory'] = false;
+                }
             }
-            unset($trbc);
-            $answer .= "</tr>\n\t</thead>\n\n\t<tbody>\n";
-            $ansrowcount=0;
-            $ansrowtotallength=0;
-            foreach($aQuestions as $ansrow)
-            {
-                $ansrowcount++;
-                $ansrowtotallength=$ansrowtotallength+strlen($ansrow['question']);
-            }
-            $percwidth=100 - ($cellwidth*$anscount);
+
+            $aData['labels'] = $labels;
+            $aData['checkconditionFunction'] = $checkconditionFunction;
+
             foreach($labels as $ansrow)
             {
-                $answer .= "<tr>\n"
-                . "\t<th class=\"arraycaptionleft dontread\">{$ansrow['answer']}</th>\n";
-                $i = 0;
-                foreach ($anscode as $ld)
+                foreach ($anscode as $j => $ld)
                 {
-                    //if (!isset($trbc) || $trbc == 'array1') {$trbc = 'array2';} else {$trbc = 'array1';}
                     $myfname=$ia[1].$ld;
-                    $answer .= "\t<td data-title='" . $ansrow['answer'] . "' class=\"answer-cell-7 answer_cell_$ld answer-item radio-item\">\n"
-                    . "\t<label for=\"answer".$myfname.'-'.$ansrow['code']."\"><input class=\"radio\" type=\"radio\" name=\"".$myfname.'" value="'.$ansrow['code'].'" '
-                    . 'id="answer'.$myfname.'-'.$ansrow['code'].'" ';
+                    $aData['aQuestions'][$j]['myfname'] = $myfname;
                     if (isset($_SESSION['survey_'.Yii::app()->getConfig('surveyID')][$myfname]) && $_SESSION['survey_'.Yii::app()->getConfig('surveyID')][$myfname] == $ansrow['code'])
                     {
-                        $answer .= CHECKED;
+                        $aData['checked'][$ansrow['code']][$ld] = CHECKED;
                     }
                     elseif (!isset($_SESSION['survey_'.Yii::app()->getConfig('surveyID')][$myfname]) && $ansrow['code'] == '')
                     {
-                        $answer .= CHECKED;
+                        $aData['checked'][$ansrow['code']][$ld] = CHECKED;
                         // Humm.. (by lemeur), not sure this section can be reached
                         // because I think $_SESSION['survey_'.Yii::app()->getConfig('surveyID')][$myfname] is always set (by save.php ??) !
                         // should remove the !isset part I think !!
                     }
-                    $answer .= " onclick=\"$checkconditionFunction(this.value, this.name, this.type)\" />\n"
-                    //. "<label class=\"hide read\" for=\"answer".$myfname.'-'.$ansrow['code']."\">{$ansrow['answer']}</label>\n"
-                    . "\t</label></td>\n";
-                    $i += 1;
+                    else
+                    {
+                        $aData['checked'][$ansrow['code']][$ld] = "";
+                    }
                 }
-                unset($trbc);
-                $answer .= "</tr>\n";
-                $fn++;
             }
 
-            $answer .= "\t</tbody>\n</table>\n";
-            foreach($anscode as $ld)
+            foreach($anscode as $j => $ld)
             {
                 $myfname=$ia[1].$ld;
-                $answer .= '<input type="hidden" name="java'.$myfname.'" id="java'.$myfname.'" value="';
                 if (isset($_SESSION['survey_'.Yii::app()->getConfig('surveyID')][$myfname]))
                 {
-                    $answer .= $_SESSION['survey_'.Yii::app()->getConfig('surveyID')][$myfname];
+                    $aData['aQuestions'][$j]['myfname_value'] = $_SESSION['survey_'.Yii::app()->getConfig('surveyID')][$myfname];
                 }
-                $answer .= "\" />\n";
+                else
+                {
+                    $aData['aQuestions'][$j]['myfname_value'] = '';
+                }
+
                 $inputnames[]=$myfname;
             }
+
+            // Render question
+            $answer = Yii::app()->getController()->renderPartial(
+                '/survey/questions/arrays/column/answer',
+                $aData,
+                true
+            );
         }
         else
         {
@@ -5826,9 +5813,18 @@ function do_array_dual($ia)
     {
         $answer = "";
         $fn=1;// Used by repeat_heading
+
+        // No drop-down
         if ($useDropdownLayout === false)
         {
+            $aData = array();
+            $aData['answertypeclass'] = $answertypeclass;
+
             $columnswidth = 100 - $answerwidth;
+            $labelans0 = array();
+            $labelans1 = array();
+            $labelcode0 = array();
+            $labelcode1 = array();
             foreach ($aAnswersScale0 as $lrow)
             {
                 $labelans0[]=$lrow['answer'];
@@ -5852,119 +5848,58 @@ function do_array_dual($ia)
             $cellwidth=sprintf("%02d", $cellwidth); // No reason to do this, except to leave place for separator ?  But then table can not be the same in all browser
 
             // Header row and colgroups
-            //$mycolumns = "\t<col class=\"col-answers\" width=\"$answerwidth%\" />\n";
-            $mycolumns = "\t<col class=\"col-answers\" style='width: $answerwidth%;'/>\n";
-            $answer_head_line = "\t<th class=\"header_answer_text\">&nbsp;</th>\n\n";
-            $mycolumns .= "\t<colgroup class=\"col-responses group-1\">\n";
-            $odd_even = '';
-            foreach ($labelans0 as $ld)
-            {
-                $answer_head_line .= "\t<th  class='th-12'>".$ld."</th>\n";
-                $odd_even = alternation($odd_even);
-                //$mycolumns .= "<col class=\"$odd_even\" width=\"$cellwidth%\" />\n";
-                $mycolumns .= "<col class=\"$odd_even\" style='width: $cellwidth%;' />\n";
-            }
-            $mycolumns .= "\t</colgroup>\n";
-            if (count($labelans1)>0) // if second label set is used
-            {
-                $separatorwidth=($centerexists)? "style='width:$cellwidth%;' ":"";
-                //$separatorwidth='';
-                $mycolumns .=  "\t<col class=\"separator\" {$separatorwidth}/>\n";
-                $mycolumns .= "\t<colgroup class=\"col-responses group-2\">\n";
-                $answer_head_line .= "\n\t<td class=\"header_separator\">&nbsp;</td>\n\n"; // Separator : and No answer for accessibility for first colgroup
-                foreach ($labelans1 as $ld)
-                {
-                    $answer_head_line .= "\t<th  class='th-13'>".$ld."</th>\n";
-                    $odd_even = alternation($odd_even);
-                    //$mycolumns .= "<col class=\"$odd_even\" width=\"$cellwidth%\" />\n";
-                    $mycolumns .= "<col class=\"$odd_even\" style='width: $cellwidth%;' />\n";
-                }
-                $mycolumns .= "\t</colgroup>\n";
-            }
-            if($shownoanswer || $rightexists)
-            {
-                $rigthwidth=($rightexists)? "style='width: $cellwidth%;' ":"";
-                //$rigthwidth="";
-                $mycolumns .=  "\t<col class=\"separator rigth_separator\" {$rigthwidth}/>\n";
-                $answer_head_line .= "\n\t<td class=\"header_separator rigth_separator\">&nbsp;</td>\n";
-            }
-            if($shownoanswer)
-            {
-                //$mycolumns .=  "\t<col class=\"col-no-answer\"  width=\"$cellwidth%\" />\n";
-                $mycolumns .=  "\t<col class=\"col-no-answer\"  style='width: $cellwidth%;'/>\n";
-                $answer_head_line .= "\n\t<th class=\"header_no_answer\">".gT('No answer')."</th>\n";
-            }
-            $answer_head2 = "\n<tr class=\"array1 header_row dontread\">\n"
-            . $answer_head_line
-            . "</tr>\n";
+            $aData['answerwidth'] = $answerwidth;
+            $aData['cellwidth'] = $cellwidth;
+            $aData['labelans0'] = $labelans0;
+            $aData['labelcode0'] = $labelcode0;
+            $aData['labelans1'] = $labelans1;
+            $aData['labelcode1'] = $labelcode1;
+            $aData['separatorwidth'] = ($centerexists) ? "style='width: $cellwidth%;' ":"";
+            $aData['shownoanswer'] = $shownoanswer;
+            $aData['rightexists'] = $rightexists;
+            $aData['rigthwidth'] = ($rightexists) ? "style='width: $cellwidth%;' ":"";
+
             // build first row of header if needed
-            if ($leftheader != '' || $rightheader !='')
-            {
-                $answer_head1 = "<tr class=\"array1 groups header_row\">\n"
-                . "\t<th class=\"header_answer_text\">&nbsp;</th>\n"
-                . "\t<th colspan=\"".count($labelans0)."\" class=\"dsheader\">$leftheader</th>\n";
-                if (count($labelans1)>0)
-                {
-                    $answer_head1 .= "\t<td class=\"header_separator\">&nbsp;</td>\n" // Separator
-                    ."\t<th colspan=\"".count($labelans1)."\" class=\"dsheader\">$rightheader</th>\n";
-                }
-                if($shownoanswer || $rightexists)
-                {
-                    $rigthclass=($rightexists)?" header_answer_text_right":"";
-                    $answer_head1 .= "\t<td class=\"header_separator {$rigthclass}\">&nbsp;</td>\n";
-                    if($shownoanswer)
-                    {
-                        $answer_head1 .= "\t<th class=\"header_no_answer\">&nbsp;</th>\n";
-                    }
-                }
-                $answer_head1 .= "</tr>\n";
-            }
-            else
-            {
-                $answer_head1 = "";
-            }
-            $answer .= '<div class="no-more-tables no-more-tables-array-dual">';
-            $answer .= "\n<table class=\"no-more-tables table-dual-scale table question subquestion-list questions-list\">\n"
-            . $mycolumns
-            . "\n\t<thead>\n"
-            . $answer_head1
-            . $answer_head2
-            . "\n\t</thead>\n"
-            . "<tbody>\n";
+            $aData['leftheader'] = $leftheader;
+            $aData['rightheader'] = $rightheader;
+            $aData['rigthclass'] = ($rightexists) ? " header_answer_text_right" : "";
 
             // And no each line of body
             $trbc = '';
-            foreach ($aSubQuestions as $ansrow)
+            $aData['aSubQuestions'] = $aSubQuestions;
+            foreach ($aSubQuestions as $i => $ansrow)
             {
+
                 // Build repeat headings if needed
                 if (isset($repeatheadings) && $repeatheadings > 0 && ($fn-1) > 0 && ($fn-1) % $repeatheadings == 0)
                 {
-                    if ( ($anscount - $fn + 1) >= $minrepeatheadings )
+                    if (($anscount - $fn + 1) >= $minrepeatheadings)
                     {
-                        $answer .= "</tbody>\n<tbody>";// Close actual body and open another one
-                        //$answer .= $answer_head1;
-                        $answer .= "\n<tr class=\"hidden-xs repeat headings\">\n"
-                        . $answer_head_line
-                        . "</tr>\n";
+                        $aData['aSubQuestions'][$i]['repeatheadings'] = true;
                     }
                 }
+                else
+                {
+                    $aData['aSubQuestions'][$i]['repeatheadings'] = false;
+                }
+
                 $trbc = alternation($trbc , 'row');
-                $answertext=$ansrow['question'];
+                $answertext = $ansrow['question'];
 
                 // rigth and center answertext: not explode for ? Why not
                 if(strpos($answertext,'|'))
                 {
-                    $answertextrigth=substr($answertext,strpos($answertext,'|')+1);
+                    $answertextright=substr($answertext,strpos($answertext,'|')+1);
                     $answertext=substr($answertext,0, strpos($answertext,'|'));
                 }
                 else
                 {
-                    $answertextrigth="";
+                    $answertextright="";
                 }
                 if($centerexists)
                 {
-                    $answertextcenter=substr($answertextrigth,0, strpos($answertextrigth,'|'));
-                    $answertextrigth=substr($answertextrigth,strpos($answertextrigth,'|')+1);
+                    $answertextcenter=substr($answertextright,0, strpos($answertextright,'|'));
+                    $answertextright=substr($answertextright,strpos($answertextright,'|')+1);
                 }
                 else
                 {
@@ -5976,132 +5911,131 @@ function do_array_dual($ia)
                 $myfid0 = $ia[1].$ansrow['title'].'_0';
                 $myfname1 = $ia[1].$ansrow['title'].'#1'; // new multi-scale-answer
                 $myfid1 = $ia[1].$ansrow['title'].'_1';
+                $aData['aSubQuestions'][$i]['myfname'] = $myfname;
+                $aData['aSubQuestions'][$i]['myfname0'] = $myfname0;
+                $aData['aSubQuestions'][$i]['myfid0'] = $myfid0;
+                $aData['aSubQuestions'][$i]['myfname1'] = $myfname1;
+                $aData['aSubQuestions'][$i]['myfid1'] = $myfid1;
+
+                $aData['aSubQuestions'][$i]['answertext'] = $ansrow['question'];
+
                 /* Check the Sub Q mandatory violation */
                 if ($ia[6]=='Y' && (in_array($myfname0, $aMandatoryViolationSubQ) || in_array($myfname1, $aMandatoryViolationSubQ)))
                 {
-                    //$answertext = "<span class='errormandatory'>{$answertext}</span>";
-                    $answertext ='
-                                <div class="alert alert-danger" role="alert">'.
-                                        $answertext
-                                    .'
-                                </div>';
+                    $aData['aSubQuestions'][$i]['showmandatoryviolation'] = true;
                 }
+                else
+                {
+                    $aData['aSubQuestions'][$i]['showmandatoryviolation'] = false;
+                }
+
                 // Get array_filter stuff
-                list($htmltbody2, $hiddenfield)=return_array_filter_strings($ia, $aQuestionAttributes, $thissurvey, $ansrow, $myfname, $trbc, $myfname,"tr","$trbc answers-list radio-list");
-                $answer .= $htmltbody2;
+                list($htmltbody2, $hiddenfield) = return_array_filter_strings($ia, $aQuestionAttributes, $thissurvey, $ansrow, $myfname, $trbc, $myfname,"tr","$trbc answers-list radio-list");
+                $aData['aSubQuestions'][$i]['htmltbody2'] = $htmltbody2;
+                $aData['aSubQuestions'][$i]['hiddenfield'] = $hiddenfield;
 
+                array_push($inputnames, $myfname0);
 
-                array_push($inputnames,$myfname0);
-                $answer .= "\t<th class=\"answertext\">\n"
-                . $hiddenfield
-                . "$answertext\n";
-                // Hidden answers used by EM: sure can be added in javascript
-                $answer .= "<input type=\"hidden\" disabled=\"disabled\" name=\"java$myfid0\" id=\"java$myfid0\" value=\"";
-                if (isset($_SESSION['survey_'.Yii::app()->getConfig('surveyID')][$myfname0])) {$answer .= $_SESSION['survey_'.Yii::app()->getConfig('surveyID')][$myfname0];}
-                $answer .= "\" />\n";
-                if (count($labelans1)>0) // if second label set is used
+                if (isset($_SESSION['survey_'.Yii::app()->getConfig('surveyID')][$myfname0])) 
                 {
-                    $answer .= "<input type=\"hidden\" disabled=\"disabled\" name=\"java$myfid1\" id=\"java$myfid1\" value=\"";
-                    if (isset($_SESSION['survey_'.Yii::app()->getConfig('surveyID')][$myfname1])) {$answer .= $_SESSION['survey_'.Yii::app()->getConfig('surveyID')][$myfname1];}
-                    $answer .= "\" />\n";
+                    $aData['aSubQuestions'][$i]['sessionfname0'] = $_SESSION['survey_'.Yii::app()->getConfig('surveyID')][$myfname0];
                 }
-                $answer .= "\t</th>\n";
-                $hiddenanswers='';
-                $thiskey=0;
-                $first = true;
-                foreach ($labelcode0 as $ld)
+                else
                 {
-                    if ($first && $leftheader != '')
-                    {
-                        $answer .= "<td class='visible-xs'><em>$leftheader</em></td>";
-                        $first = false;
-                    }
+                    $aData['aSubQuestions'][$i]['sessionfname0'] = '';
+                }
 
-                    $answer .= "\t<td data-title='" . $labelans0[$thiskey] . "' class=\"answer_cell_1_$ld answer-item {$answertypeclass}-item\">\n"
-                    . "\t<label for=\"answer{$myfid0}-{$ld}\"><input class=\"radio\" type=\"radio\" name=\"$myfname0\" value=\"$ld\" id=\"answer$myfid0-$ld\" ";
-                    if (isset($_SESSION['survey_'.Yii::app()->getConfig('surveyID')][$myfname0]) && $_SESSION['survey_'.Yii::app()->getConfig('surveyID')][$myfname0] == $ld)
-                    {
-                        $answer .= CHECKED;
-                    }
-                    $answer .= "  />\n"
-                    //. "<label class=\"hide read\" for=\"answer{$myfid0}-{$ld}\">$labelans0[$thiskey]</label>\n"
-                    . "\n\t</label></td>\n";
-                    $thiskey++;
-                }
-                if (count($labelans1)>0) // if second label set is used
+                if (count($labelans1) > 0) // if second label set is used
                 {
-                    $answer .= "\t<td data-title='' class=\"dual_scale_separator information-item\">";
-                    if ($shownoanswer)// No answer for accessibility and no javascript (but hide hide even with no js: need reworking)
+                    if (isset($_SESSION['survey_'.Yii::app()->getConfig('surveyID')][$myfname1]))
                     {
-                        $answer .= "\t<label for='answer$myfid0-'><input class='radio jshide read' type='radio' name='$myfname0' value='' id='answer$myfid0-' ";
-                        if (!isset($_SESSION['survey_'.Yii::app()->getConfig('surveyID')][$myfname0]) || $_SESSION['survey_'.Yii::app()->getConfig('surveyID')][$myfname0] == "")
-                        {
-                            $answer .= CHECKED;
-                        }
-                        $answer .= " />\n";
-                    }
-                    //$answer .=  "<label for='answer$myfid0-' class= \"hide read\">".gT("No answer")."</label>";
-                    $answer .= "\t{$answertextcenter}</label></td>\n"; // separator
-                    array_push($inputnames,$myfname1);
-                    $thiskey=0;
-                    $first = true;
-                    foreach ($labelcode1 as $ld) // second label set
-                    {
-                        if ($first && $rightheader != '')
-                        {
-                            $answer .= "<td class='visible-xs'><em>$rightheader</em></td>";
-                            $first = false;
-                        }
-
-                        $answer .= "\t<td data-title='{$labelans1[$thiskey]}' class=\"answer_cell_2_$ld  answer-item radio-item\">\n"
-                        . "\t<label for=\"answer{$myfid1}-{$ld}\"><input class=\"radio\" type=\"radio\" name=\"$myfname1\" value=\"$ld\" id=\"answer$myfid1-$ld\" ";
-                        if (isset($_SESSION['survey_'.Yii::app()->getConfig('surveyID')][$myfname1]) && $_SESSION['survey_'.Yii::app()->getConfig('surveyID')][$myfname1] == $ld)
-                        {
-                            $answer .= CHECKED;
-                        }
-                        $answer .= " />\n"
-                        //. "<label class=\"hide read\" for=\"answer{$myfid1}-{$ld}\">{$labelans1[$thiskey]}</label>\n"
-                        . "\t</label></td>\n";
-                        $thiskey++;
-                    }
-                }
-                if ($shownoanswer || $rightexists)
-                {
-                    $answer .= "\t<td class=\"answertextright dual_scale_separator information-item\">{$answertextrigth}</td>\n";
-                }
-                if ($shownoanswer)
-                {
-                    $answer .= "\t<td  data-title='".gT("No answer")."' class=\"dual_scale_no_answer answer-item radio-item noanswer-item\">\n";
-                    if (count($labelans1)>0)
-                    {
-                        $answer .= "\t<label for='answer$myfid1-'><input class='radio' type='radio' name='$myfname1' value='' id='answer$myfid1-' ";
-                        if (!isset($_SESSION['survey_'.Yii::app()->getConfig('surveyID')][$myfname1]) || $_SESSION['survey_'.Yii::app()->getConfig('surveyID')][$myfname1] == "")
-                        {
-                            $answer .= CHECKED;
-                        }
-                        // --> START NEW FEATURE - SAVE
-                        $answer .= " />\n";
-                        //$answer .= "<label class='hide read' for='answer$myfid1-'>".gT("No answer")."</label>";
+                        //$answer .= $_SESSION['survey_'.Yii::app()->getConfig('surveyID')][$myfname1];
+                        $aData['aSubQuestions'][$i]['sessionfname1'] = $_SESSION['survey_'.Yii::app()->getConfig('surveyID')][$myfname1];
                     }
                     else
                     {
-                        $answer .= "\t<label for='answer$myfid0-'><input   data-title='".gT("No answer")."' class='radio' type='radio' name='$myfname0' value='' id='answer$myfid0-' ";
+                        $aData['aSubQuestions'][$i]['sessionfname1'] = '';
+                    }
+                }
+
+                foreach ($labelcode0 as $j => $ld)  // First label set
+                {
+                    if (isset($_SESSION['survey_'.Yii::app()->getConfig('surveyID')][$myfname0]) && $_SESSION['survey_'.Yii::app()->getConfig('surveyID')][$myfname0] == $ld)
+                    {
+                        $aData['labelcode0_checked'][$ansrow['title']][$ld] = CHECKED;
+                    }
+                    else
+                    {
+                        $aData['labelcode0_checked'][$ansrow['title']][$ld] = "";
+                    }
+                }
+
+                if (count($labelans1) > 0) // if second label set is used
+                {
+                    if ($shownoanswer)// No answer for accessibility and no javascript (but hide hide even with no js: need reworking)
+                    {
                         if (!isset($_SESSION['survey_'.Yii::app()->getConfig('surveyID')][$myfname0]) || $_SESSION['survey_'.Yii::app()->getConfig('surveyID')][$myfname0] == "")
                         {
                             $answer .= CHECKED;
+                            $aData['myfname0_notset'] = CHECKED;
                         }
-                        //$answer .= "<label class='hide read' for='answer$myfid0-'>".gT("No answer")."<label>\n";
-                        $answer .= " />\n";
+                        else
+                        {
+                            $aData['myfname0_notset'] = "";
+                        }
                     }
-                    $answer .= "\t</label></td>\n";
+
+                    array_push($inputnames,$myfname1);
+
+                    foreach ($labelcode1 as $j => $ld) // second label set
+                    {
+                        if (isset($_SESSION['survey_'.Yii::app()->getConfig('surveyID')][$myfname1]) && $_SESSION['survey_'.Yii::app()->getConfig('surveyID')][$myfname1] == $ld)
+                        {
+                            $aData['labelcode1_checked'][$ansrow['title']][$ld] = CHECKED;
+                        }
+                        else
+                        {
+                            $aData['labelcode1_checked'][$ansrow['title']][$ld] = "";
+                        }
+                    }
                 }
-                $answer .= "</tr>\n";
+                $aData['answertextright'] = $answertextright;
+                if ($shownoanswer)
+                {
+                    if (count($labelans1)>0)
+                    {
+                        if (!isset($_SESSION['survey_'.Yii::app()->getConfig('surveyID')][$myfname1]) || $_SESSION['survey_'.Yii::app()->getConfig('surveyID')][$myfname1] == "")
+                        {
+                            $answer .= CHECKED;
+                            $aData['myfname1_notset'] = CHECKED;
+                        }
+                        else
+                        {
+                            $aData['myfname1_checked'] = "";
+                        }
+                    }
+                    else
+                    {
+                        if (!isset($_SESSION['survey_'.Yii::app()->getConfig('surveyID')][$myfname0]) || $_SESSION['survey_'.Yii::app()->getConfig('surveyID')][$myfname0] == "")
+                        {
+                            $answer .= CHECKED;
+                            $aData['myfname0_notset'] = CHECKED;
+                        }
+                        else
+                        {
+                            $aData['myfname0_notset'] = '';
+                        }
+                    }
+                }
                 $fn++;
             }
-            $answer.="</tbody>\n";
-            $answer.="</table></div>";
-        }
 
+            $answer = Yii::app()->getController()->renderPartial(
+                '/survey/questions/arrays/dualscale/answer',
+                $aData,
+                true
+            );
+        }
 
         // Dropdown Layout
         elseif($useDropdownLayout === true)
