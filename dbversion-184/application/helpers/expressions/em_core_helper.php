@@ -153,84 +153,84 @@ class ExpressionManager {
         // If the value is -1, the function must have a least one argument but can have an unlimited number of them
         // -2 means that at least one argument is required.  -3 means at least two arguments are required, etc.
         $this->RDP_ValidFunctions = array(
-'abs' => array('abs', 'Math.abs', gT('Absolute value'), 'number abs(number)', 'http://www.php.net/manual/en/function.checkdate.php', 1),
-'acos' => array('acos', 'Math.acos', gT('Arc cosine'), 'number acos(number)', 'http://www.php.net/manual/en/function.acos.php', 1),
-'addslashes' => array('addslashes', gT('addslashes'), 'Quote string with slashes', 'string addslashes(string)', 'http://www.php.net/manual/en/function.addslashes.php', 1),
-'asin' => array('asin', 'Math.asin', gT('Arc sine'), 'number asin(number)', 'http://www.php.net/manual/en/function.asin.php', 1),
-'atan' => array('atan', 'Math.atan', gT('Arc tangent'), 'number atan(number)', 'http://www.php.net/manual/en/function.atan.php', 1),
-'atan2' => array('atan2', 'Math.atan2', gT('Arc tangent of two variables'), 'number atan2(number, number)', 'http://www.php.net/manual/en/function.atan2.php', 2),
-'ceil' => array('ceil', 'Math.ceil', gT('Round fractions up'), 'number ceil(number)', 'http://www.php.net/manual/en/function.ceil.php', 1),
-'checkdate' => array('checkdate', 'checkdate', gT('Returns true(1) if it is a valid date in gregorian calendar'), 'bool checkdate(month,day,year)', 'http://www.php.net/manual/en/function.checkdate.php', 3),
-'cos' => array('cos', 'Math.cos', gT('Cosine'), 'number cos(number)', 'http://www.php.net/manual/en/function.cos.php', 1),
+'abs' => array('abs', 'Math.abs', gT('Absolute value'), 'number abs(number)', 'http://php.net/abs', 1),
+'acos' => array('acos', 'Math.acos', gT('Arc cosine'), 'number acos(number)', 'http://php.net/acos', 1),
+'addslashes' => array('addslashes', gT('addslashes'), 'Quote string with slashes', 'string addslashes(string)', 'http://php.net/addslashes', 1),
+'asin' => array('asin', 'Math.asin', gT('Arc sine'), 'number asin(number)', 'http://php.net/asin', 1),
+'atan' => array('atan', 'Math.atan', gT('Arc tangent'), 'number atan(number)', 'http://php.net/atan', 1),
+'atan2' => array('atan2', 'Math.atan2', gT('Arc tangent of two variables'), 'number atan2(number, number)', 'http://php.net/atan2', 2),
+'ceil' => array('ceil', 'Math.ceil', gT('Round fractions up'), 'number ceil(number)', 'http://php.net/ceil', 1),
+'checkdate' => array('checkdate', 'checkdate', gT('Returns true(1) if it is a valid date in gregorian calendar'), 'bool checkdate(month,day,year)', 'http://php.net/checkdate', 3),
+'cos' => array('cos', 'Math.cos', gT('Cosine'), 'number cos(number)', 'http://php.net/cos', 1),
 'count' => array('exprmgr_count', 'LEMcount', gT('Count the number of answered questions in the list'), 'number count(arg1, arg2, ... argN)', '', -1),
 'countif' => array('exprmgr_countif', 'LEMcountif', gT('Count the number of answered questions in the list equal the first argument'), 'number countif(matches, arg1, arg2, ... argN)', '', -2),
 'countifop' => array('exprmgr_countifop', 'LEMcountifop', gT('Count the number of answered questions in the list which pass the critiera (arg op value)'), 'number countifop(op, value, arg1, arg2, ... argN)', '', -3),
-'date' => array('date', 'date', gT('Format a local date/time'), 'string date(format [, timestamp=time()])', 'http://www.php.net/manual/en/function.date.php', 1,2),
-'exp' => array('exp', 'Math.exp', gT('Calculates the exponent of e'), 'number exp(number)', 'http://www.php.net/manual/en/function.exp.php', 1),
+'date' => array('date', 'date', gT('Format a local date/time'), 'string date(format [, timestamp=time()])', 'http://php.net/date', 1,2),
+'exp' => array('exp', 'Math.exp', gT('Calculates the exponent of e'), 'number exp(number)', 'http://php.net/exp', 1),
 'fixnum' => array('exprmgr_fixnum', 'LEMfixnum', gT('Display numbers with comma as decimal separator, if needed'), 'string fixnum(number)', '', 1),
-'floor' => array('floor', 'Math.floor', gT('Round fractions down'), 'number floor(number)', 'http://www.php.net/manual/en/function.floor.php', 1),
-'gmdate' => array('gmdate', 'gmdate', gT('Format a GMT date/time'), 'string gmdate(format [, timestamp=time()])', 'http://www.php.net/manual/en/function.gmdate.php', 1,2),
-'html_entity_decode' => array('html_entity_decode', 'html_entity_decode', gT('Convert all HTML entities to their applicable characters (always uses ENT_QUOTES and UTF-8)'), 'string html_entity_decode(string)', 'http://www.php.net/manual/en/function.html-entity-decode.php', 1),
-'htmlentities' => array('htmlentities', 'htmlentities', gT('Convert all applicable characters to HTML entities (always uses ENT_QUOTES and UTF-8)'), 'string htmlentities(string)', 'http://www.php.net/manual/en/function.htmlentities.php', 1),
-'htmlspecialchars' => array('expr_mgr_htmlspecialchars', 'htmlspecialchars', gT('Convert special characters to HTML entities (always uses ENT_QUOTES and UTF-8)'), 'string htmlspecialchars(string)', 'http://www.php.net/manual/en/function.htmlspecialchars.php', 1),
-'htmlspecialchars_decode' => array('expr_mgr_htmlspecialchars_decode', 'htmlspecialchars_decode', gT('Convert special HTML entities back to characters (always uses ENT_QUOTES and UTF-8)'), 'string htmlspecialchars_decode(string)', 'http://www.php.net/manual/en/function.htmlspecialchars-decode.php', 1),
-'idate' => array('idate', 'idate', gT('Format a local time/date as integer'), 'string idate(string [, timestamp=time()])', 'http://www.php.net/manual/en/function.idate.php', 1,2),
+'floor' => array('floor', 'Math.floor', gT('Round fractions down'), 'number floor(number)', 'http://php.net/floor', 1),
+'gmdate' => array('gmdate', 'gmdate', gT('Format a GMT date/time'), 'string gmdate(format [, timestamp=time()])', 'http://php.net/gmdate', 1,2),
+'html_entity_decode' => array('html_entity_decode', 'html_entity_decode', gT('Convert all HTML entities to their applicable characters (always uses ENT_QUOTES and UTF-8)'), 'string html_entity_decode(string)', 'http://php.net/html-entity-decode', 1),
+'htmlentities' => array('htmlentities', 'htmlentities', gT('Convert all applicable characters to HTML entities (always uses ENT_QUOTES and UTF-8)'), 'string htmlentities(string)', 'http://php.net/htmlentities', 1),
+'htmlspecialchars' => array('expr_mgr_htmlspecialchars', 'htmlspecialchars', gT('Convert special characters to HTML entities (always uses ENT_QUOTES and UTF-8)'), 'string htmlspecialchars(string)', 'http://php.net/htmlspecialchars', 1),
+'htmlspecialchars_decode' => array('expr_mgr_htmlspecialchars_decode', 'htmlspecialchars_decode', gT('Convert special HTML entities back to characters (always uses ENT_QUOTES and UTF-8)'), 'string htmlspecialchars_decode(string)', 'http://php.net/htmlspecialchars-decode', 1),
+'idate' => array('idate', 'idate', gT('Format a local time/date as integer'), 'string idate(string [, timestamp=time()])', 'http://php.net/idate', 1,2),
 'if' => array('exprmgr_if', 'LEMif', gT('Conditional processing'), 'if(test,result_if_true,result_if_false)', '', 3),
-'implode' => array('exprmgr_implode', 'LEMimplode', gT('Join array elements with a string'), 'string implode(glue,arg1,arg2,...,argN)', 'http://www.php.net/manual/en/function.implode.php', -2),
-'intval' => array('intval', 'LEMintval', gT('Get the integer value of a variable'), 'int intval(number [, base=10])', 'http://www.php.net/manual/en/function.intval.php', 1,2),
-'is_empty' => array('exprmgr_empty', 'LEMempty', gT('Determine whether a variable is considered to be empty'), 'bool is_empty(var)', 'http://www.php.net/manual/en/function.empty.php', 1),
-'is_float' => array('is_float', 'LEMis_float', gT('Finds whether the type of a variable is float'), 'bool is_float(var)', 'http://www.php.net/manual/en/function.is-float.php', 1),
-'is_int' => array('exprmgr_int', 'LEMis_int', gT('Find whether the type of a variable is integer'), 'bool is_int(var)', 'http://www.php.net/manual/en/function.is-int.php', 1),
-'is_nan' => array('is_nan', 'isNaN', gT('Finds whether a value is not a number'), 'bool is_nan(var)', 'http://www.php.net/manual/en/function.is-nan.php', 1),
-'is_null' => array('is_null', 'LEMis_null', gT('Finds whether a variable is NULL'), 'bool is_null(var)', 'http://www.php.net/manual/en/function.is-null.php', 1),
-'is_numeric' => array('is_numeric', 'LEMis_numeric', gT('Finds whether a variable is a number or a numeric string'), 'bool is_numeric(var)', 'http://www.php.net/manual/en/function.is-numeric.php', 1),
-'is_string' => array('is_string', 'LEMis_string', gT('Find whether the type of a variable is string'), 'bool is_string(var)', 'http://www.php.net/manual/en/function.is-string.php', 1),
+'implode' => array('exprmgr_implode', 'LEMimplode', gT('Join array elements with a string'), 'string implode(glue,arg1,arg2,...,argN)', 'http://php.net/implode', -2),
+'intval' => array('intval', 'LEMintval', gT('Get the integer value of a variable'), 'int intval(number [, base=10])', 'http://php.net/intval', 1,2),
+'is_empty' => array('exprmgr_empty', 'LEMempty', gT('Determine whether a variable is considered to be empty'), 'bool is_empty(var)', 'http://php.net/empty', 1),
+'is_float' => array('is_float', 'LEMis_float', gT('Finds whether the type of a variable is float'), 'bool is_float(var)', 'http://php.net/is-float', 1),
+'is_int' => array('exprmgr_int', 'LEMis_int', gT('Find whether the type of a variable is integer'), 'bool is_int(var)', 'http://php.net/is-int', 1),
+'is_nan' => array('is_nan', 'isNaN', gT('Finds whether a value is not a number'), 'bool is_nan(var)', 'http://php.net/is-nan', 1),
+'is_null' => array('is_null', 'LEMis_null', gT('Finds whether a variable is NULL'), 'bool is_null(var)', 'http://php.net/is-null', 1),
+'is_numeric' => array('is_numeric', 'LEMis_numeric', gT('Finds whether a variable is a number or a numeric string'), 'bool is_numeric(var)', 'http://php.net/is-numeric', 1),
+'is_string' => array('is_string', 'LEMis_string', gT('Find whether the type of a variable is string'), 'bool is_string(var)', 'http://php.net/is-string', 1),
 'join' => array('exprmgr_join', 'LEMjoin', gT('Join strings, return joined string.This function is an alias of implode("",argN)'), 'string join(arg1,arg2,...,argN)', '', -1),
 'list' => array('exprmgr_list', 'LEMlist', gT('Return comma-separated list of values'), 'string list(arg1, arg2, ... argN)', '', -2),
-'log' => array('exprmgr_log', 'LEMlog', gT('The logarithm of number to base, if given, or the natural logarithm. '), 'number log(number,base=e)', 'http://www.php.net/manual/en/function.log.php', -2),
-'ltrim' => array('ltrim', 'ltrim', gT('Strip whitespace (or other characters) from the beginning of a string'), 'string ltrim(string [, charlist])', 'http://www.php.net/manual/en/function.ltrim.php', 1,2),
-'max' => array('max', 'Math.max', gT('Find highest value'), 'number max(arg1, arg2, ... argN)', 'http://www.php.net/manual/en/function.max.php', -2),
-'min' => array('min', 'Math.min', gT('Find lowest value'), 'number min(arg1, arg2, ... argN)', 'http://www.php.net/manual/en/function.min.php', -2),
-'mktime' => array('mktime', 'mktime', gT('Get UNIX timestamp for a date (each of the 6 arguments are optional)'), 'number mktime([hour [, minute [, second [, month [, day [, year ]]]]]])', 'http://www.php.net/manual/en/function.mktime.php', 0,1,2,3,4,5,6),
-'nl2br' => array('nl2br', 'nl2br', gT('Inserts HTML line breaks before all newlines in a string'), 'string nl2br(string)', 'http://www.php.net/manual/en/function.nl2br.php', 1,1),
-'number_format' => array('number_format', 'number_format', gT('Format a number with grouped thousands'), 'string number_format(number)', 'http://www.php.net/manual/en/function.number-format.php', 1),
+'log' => array('exprmgr_log', 'LEMlog', gT('The logarithm of number to base, if given, or the natural logarithm. '), 'number log(number,base=e)', 'http://php.net/log', -2),
+'ltrim' => array('ltrim', 'ltrim', gT('Strip whitespace (or other characters) from the beginning of a string'), 'string ltrim(string [, charlist])', 'http://php.net/ltrim', 1,2),
+'max' => array('max', 'Math.max', gT('Find highest value'), 'number max(arg1, arg2, ... argN)', 'http://php.net/max', -2),
+'min' => array('min', 'Math.min', gT('Find lowest value'), 'number min(arg1, arg2, ... argN)', 'http://php.net/min', -2),
+'mktime' => array('exprmgr_mktime', 'mktime', gT('Get UNIX timestamp for a date (each of the 6 arguments are optional)'), 'number mktime([hour [, minute [, second [, month [, day [, year ]]]]]])', 'http://php.net/mktime', 0,1,2,3,4,5,6),
+'nl2br' => array('nl2br', 'nl2br', gT('Inserts HTML line breaks before all newlines in a string'), 'string nl2br(string)', 'http://php.net/nl2br', 1,1),
+'number_format' => array('number_format', 'number_format', gT('Format a number with grouped thousands'), 'string number_format(number)', 'http://php.net/number-format', 1),
 'pi' => array('pi', 'LEMpi', gT('Get value of pi'), 'number pi()', '', 0),
-'pow' => array('pow', 'Math.pow', gT('Exponential expression'), 'number pow(base, exp)', 'http://www.php.net/manual/en/function.pow.php', 2),
-'quoted_printable_decode' => array('quoted_printable_decode', 'quoted_printable_decode', gT('Convert a quoted-printable string to an 8 bit string'), 'string quoted_printable_decode(string)', 'http://www.php.net/manual/en/function.quoted-printable-decode.php', 1),
-'quoted_printable_encode' => array('quoted_printable_encode', 'quoted_printable_encode', gT('Convert a 8 bit string to a quoted-printable string'), 'string quoted_printable_encode(string)', 'http://www.php.net/manual/en/function.quoted-printable-encode.php', 1),
-'quotemeta' => array('quotemeta', 'quotemeta', gT('Quote meta characters'), 'string quotemeta(string)', 'http://www.php.net/manual/en/function.quotemeta.php', 1),
-'rand' => array('rand', 'rand', gT('Generate a random integer'), 'int rand() OR int rand(min, max)', 'http://www.php.net/manual/en/function.rand.php', 0,2),
+'pow' => array('pow', 'Math.pow', gT('Exponential expression'), 'number pow(base, exp)', 'http://php.net/pow', 2),
+'quoted_printable_decode' => array('quoted_printable_decode', 'quoted_printable_decode', gT('Convert a quoted-printable string to an 8 bit string'), 'string quoted_printable_decode(string)', 'http://php.net/quoted-printable-decode', 1),
+'quoted_printable_encode' => array('quoted_printable_encode', 'quoted_printable_encode', gT('Convert a 8 bit string to a quoted-printable string'), 'string quoted_printable_encode(string)', 'http://php.net/quoted-printable-encode', 1),
+'quotemeta' => array('quotemeta', 'quotemeta', gT('Quote meta characters'), 'string quotemeta(string)', 'http://php.net/quotemeta', 1),
+'rand' => array('rand', 'rand', gT('Generate a random integer'), 'int rand() OR int rand(min, max)', 'http://php.net/rand', 0,2),
 'regexMatch' => array('exprmgr_regexMatch', 'LEMregexMatch', gT('Compare a string to a regular expression pattern'), 'bool regexMatch(pattern,input)', '', 2),
-'round' => array('round', 'round', gT('Rounds a number to an optional precision'), 'number round(val [, precision])', 'http://www.php.net/manual/en/function.round.php', 1,2),
-'rtrim' => array('rtrim', 'rtrim', gT('Strip whitespace (or other characters) from the end of a string'), 'string rtrim(string [, charlist])', 'http://www.php.net/manual/en/function.rtrim.php', 1,2),
-'sin' => array('sin', 'Math.sin', gT('Sine'), 'number sin(arg)', 'http://www.php.net/manual/en/function.sin.php', 1),
-'sprintf' => array('sprintf', 'sprintf', gT('Return a formatted string'), 'string sprintf(format, arg1, arg2, ... argN)', 'http://www.php.net/manual/en/function.sprintf.php', -2),
-'sqrt' => array('sqrt', 'Math.sqrt', gT('Square root'), 'number sqrt(arg)', 'http://www.php.net/manual/en/function.sqrt.php', 1),
+'round' => array('round', 'round', gT('Rounds a number to an optional precision'), 'number round(val [, precision])', 'http://php.net/round', 1,2),
+'rtrim' => array('rtrim', 'rtrim', gT('Strip whitespace (or other characters) from the end of a string'), 'string rtrim(string [, charlist])', 'http://php.net/rtrim', 1,2),
+'sin' => array('sin', 'Math.sin', gT('Sine'), 'number sin(arg)', 'http://php.net/sin', 1),
+'sprintf' => array('sprintf', 'sprintf', gT('Return a formatted string'), 'string sprintf(format, arg1, arg2, ... argN)', 'http://php.net/sprintf', -2),
+'sqrt' => array('sqrt', 'Math.sqrt', gT('Square root'), 'number sqrt(arg)', 'http://php.net/sqrt', 1),
 'stddev' => array('exprmgr_stddev', 'LEMstddev', gT('Calculate the Sample Standard Deviation for the list of numbers'), 'number stddev(arg1, arg2, ... argN)', '', -2),
-'str_pad' => array('str_pad', 'str_pad', gT('Pad a string to a certain length with another string'), 'string str_pad(input, pad_length [, pad_string])', 'http://www.php.net/manual/en/function.str-pad.php', 2,3),
-'str_repeat' => array('str_repeat', 'str_repeat', gT('Repeat a string'), 'string str_repeat(input, multiplier)', 'http://www.php.net/manual/en/function.str-repeat.php', 2),
-'str_replace' => array('str_replace', 'LEMstr_replace', gT('Replace all occurrences of the search string with the replacement string'), 'string str_replace(search,  replace, subject)', 'http://www.php.net/manual/en/function.str-replace.php', 3),
-'strcasecmp' => array('strcasecmp', 'strcasecmp', gT('Binary safe case-insensitive string comparison'), 'int strcasecmp(str1, str2)', 'http://www.php.net/manual/en/function.strcasecmp.php', 2),
-'strcmp' => array('strcmp', 'strcmp', gT('Binary safe string comparison'), 'int strcmp(str1, str2)', 'http://www.php.net/manual/en/function.strcmp.php', 2),
-'strip_tags' => array('strip_tags', 'strip_tags', gT('Strip HTML and PHP tags from a string'), 'string strip_tags(str, allowable_tags)', 'http://www.php.net/manual/en/function.strip-tags.php', 1,2),
-'stripos' => array('exprmgr_stripos', 'stripos', gT('Find position of first occurrence of a case-insensitive string'), 'int stripos(haystack, needle [, offset=0])', 'http://www.php.net/manual/en/function.stripos.php', 2,3),
-'stripslashes' => array('stripslashes', 'stripslashes', gT('Un-quotes a quoted string'), 'string stripslashes(string)', 'http://www.php.net/manual/en/function.stripslashes.php', 1),
-'stristr' => array('exprmgr_stristr', 'stristr', gT('Case-insensitive strstr'), 'string stristr(haystack, needle [, before_needle=false])', 'http://www.php.net/manual/en/function.stristr.php', 2,3),
-'strlen' => array('exprmgr_strlen', 'LEMstrlen', gT('Get string length'), 'int strlen(string)', 'http://www.php.net/manual/en/function.strlen.php', 1),
-'strpos' => array('exprmgr_strpos', 'LEMstrpos', gT('Find position of first occurrence of a string'), 'int strpos(haystack, needle [ offset=0])', 'http://www.php.net/manual/en/function.strpos.php', 2,3),
-'strrev' => array('strrev', 'strrev', gT('Reverse a string'), 'string strrev(string)', 'http://www.php.net/manual/en/function.strrev.php', 1),
-'strstr' => array('exprmgr_strstr', 'strstr', gT('Find first occurrence of a string'), 'string strstr(haystack, needle [, before_needle=false])', 'http://www.php.net/manual/en/function.strstr.php', 2,3),
-'strtolower' => array('exprmgr_strtolower', 'LEMstrtolower', gT('Make a string lowercase'), 'string strtolower(string)', 'http://www.php.net/manual/en/function.strtolower.php', 1),
-'strtotime' => array('strtotime', 'strtotime', gT('Convert a date/time string to unix timestamp'), 'int strtotime(string)', 'http://www.php.net/manual/de/function.strtotime.php', 1),
-'strtoupper' => array('exprmgr_strtoupper', 'LEMstrtoupper', gT('Make a string uppercase'), 'string strtoupper(string)', 'http://www.php.net/manual/en/function.strtoupper.php', 1),
-'substr' => array('exprmgr_substr', 'substr', gT('Return part of a string'), 'string substr(string, start [, length])', 'http://www.php.net/manual/en/function.substr.php', 2,3),
+'str_pad' => array('str_pad', 'str_pad', gT('Pad a string to a certain length with another string'), 'string str_pad(input, pad_length [, pad_string])', 'http://php.net/str-pad', 2,3),
+'str_repeat' => array('str_repeat', 'str_repeat', gT('Repeat a string'), 'string str_repeat(input, multiplier)', 'http://php.net/str-repeat', 2),
+'str_replace' => array('str_replace', 'LEMstr_replace', gT('Replace all occurrences of the search string with the replacement string'), 'string str_replace(search,  replace, subject)', 'http://php.net/str-replace', 3),
+'strcasecmp' => array('strcasecmp', 'strcasecmp', gT('Binary safe case-insensitive string comparison'), 'int strcasecmp(str1, str2)', 'http://php.net/strcasecmp', 2),
+'strcmp' => array('strcmp', 'strcmp', gT('Binary safe string comparison'), 'int strcmp(str1, str2)', 'http://php.net/strcmp', 2),
+'strip_tags' => array('strip_tags', 'strip_tags', gT('Strip HTML and PHP tags from a string'), 'string strip_tags(str, allowable_tags)', 'http://php.net/strip-tags', 1,2),
+'stripos' => array('exprmgr_stripos', 'stripos', gT('Find position of first occurrence of a case-insensitive string'), 'int stripos(haystack, needle [, offset=0])', 'http://php.net/stripos', 2,3),
+'stripslashes' => array('stripslashes', 'stripslashes', gT('Un-quotes a quoted string'), 'string stripslashes(string)', 'http://php.net/stripslashes', 1),
+'stristr' => array('exprmgr_stristr', 'stristr', gT('Case-insensitive strstr'), 'string stristr(haystack, needle [, before_needle=false])', 'http://php.net/stristr', 2,3),
+'strlen' => array('exprmgr_strlen', 'LEMstrlen', gT('Get string length'), 'int strlen(string)', 'http://php.net/strlen', 1),
+'strpos' => array('exprmgr_strpos', 'LEMstrpos', gT('Find position of first occurrence of a string'), 'int strpos(haystack, needle [ offset=0])', 'http://php.net/strpos', 2,3),
+'strrev' => array('strrev', 'strrev', gT('Reverse a string'), 'string strrev(string)', 'http://php.net/strrev', 1),
+'strstr' => array('exprmgr_strstr', 'strstr', gT('Find first occurrence of a string'), 'string strstr(haystack, needle [, before_needle=false])', 'http://php.net/strstr', 2,3),
+'strtolower' => array('exprmgr_strtolower', 'LEMstrtolower', gT('Make a string lowercase'), 'string strtolower(string)', 'http://php.net/strtolower', 1),
+'strtotime' => array('strtotime', 'strtotime', gT('Convert a date/time string to unix timestamp'), 'int strtotime(string)', 'http://php.net/manual/de/function.strtotime', 1),
+'strtoupper' => array('exprmgr_strtoupper', 'LEMstrtoupper', gT('Make a string uppercase'), 'string strtoupper(string)', 'http://php.net/strtoupper', 1),
+'substr' => array('exprmgr_substr', 'substr', gT('Return part of a string'), 'string substr(string, start [, length])', 'http://php.net/substr', 2,3),
 'sum' => array('array_sum', 'LEMsum', gT('Calculate the sum of values in an array'), 'number sum(arg1, arg2, ... argN)', '', -2),
 'sumifop' => array('exprmgr_sumifop', 'LEMsumifop', gT('Sum the values of answered questions in the list which pass the critiera (arg op value)'), 'number sumifop(op, value, arg1, arg2, ... argN)', '', -3),
-'tan' => array('tan', 'Math.tan', gT('Tangent'), 'number tan(arg)', 'http://www.php.net/manual/en/function.tan.php', 1),
+'tan' => array('tan', 'Math.tan', gT('Tangent'), 'number tan(arg)', 'http://php.net/tan', 1),
 'convert_value' => array('exprmgr_convert_value', 'LEMconvert_value', gT('Convert a numerical value using a inputTable and outputTable of numerical values'), 'number convert_value(fValue, iStrict, sTranslateFromList, sTranslateToList)', '', 4),
-'time' => array('time', 'time', gT('Return current UNIX timestamp'), 'number time()', 'http://www.php.net/manual/en/function.time.php', 0),
-'trim' => array('trim', 'trim', gT('Strip whitespace (or other characters) from the beginning and end of a string'), 'string trim(string [, charlist])', 'http://www.php.net/manual/en/function.trim.php', 1,2),
-'ucwords' => array('ucwords', 'ucwords', gT('Uppercase the first character of each word in a string'), 'string ucwords(string)', 'http://www.php.net/manual/en/function.ucwords.php', 1),
+'time' => array('time', 'time', gT('Return current UNIX timestamp'), 'number time()', 'http://php.net/time', 0),
+'trim' => array('trim', 'trim', gT('Strip whitespace (or other characters) from the beginning and end of a string'), 'string trim(string [, charlist])', 'http://php.net/trim', 1,2),
+'ucwords' => array('ucwords', 'ucwords', gT('Uppercase the first character of each word in a string'), 'string ucwords(string)', 'http://php.net/ucwords', 1),
 'unique' => array('exprmgr_unique', 'LEMunique', gT('Returns true if all non-empty responses are unique'), 'boolean unique(arg1, ..., argN)', '', -1),
         );
 
@@ -270,17 +270,17 @@ class ExpressionManager {
             return false;
         }
 
-        $bNumericArg1 = (is_numeric($arg1[0]) || $arg1[0] == '');
-        $bNumericArg2 = (is_numeric($arg2[0]) || $arg2[0] == '');
+        $bNumericArg1 = !$arg1[0] || strval(floatval($arg1[0]))===strval($arg1[0]);
+        $bNumericArg2 = !$arg2[0] || strval(floatval($arg2[0]))===strval($arg2[0]);
 
-        $bStringArg1 = (!$bNumericArg1 || $arg1[0] == '');
-        $bStringArg2 = (!$bNumericArg2 || $arg2[0] == '');
+        $bStringArg1 = !$arg1[0] || !$bNumericArg1;
+        $bStringArg2 = !$arg1[0] || !$bNumericArg2;
 
         $bBothNumeric = ($bNumericArg1 && $bNumericArg2);
         $bBothString = ($bStringArg1 && $bStringArg2);
         $bMismatchType=(!$bBothNumeric && !$bBothString);
 
-        // Set bBothString if one is forced to be string, only if bith can be numeric. Mimic JS and PHO
+        // Set bBothString if one is forced to be string, only if both can be numeric. Mimic JS and PHP
         // Not sure if needed to test if [2] is set. : TODO review
         if($bBothNumeric){
             $aForceStringArray=array('DQ_STRING','DS_STRING','STRING');// Question can return NUMERIC or WORD : DQ and DS is string entered by user, STRING is a result of a String function
@@ -1549,7 +1549,7 @@ class ExpressionManager {
                             }
 
                             if ($this->groupSeq == -1 || $groupSeq == -1 || $questionSeq == -1 || $this->questionSeq == -1) {
-                                $class = 'em-var-static'; 
+                                $class = 'em-var-static';
                             }
                             elseif ($groupSeq > $this->groupSeq) {
                                 $class = 'em-var-before em-var-diffgroup';
@@ -2106,6 +2106,14 @@ class ExpressionManager {
                             . sprintf(gT("Function supports this many arguments, where -1=unlimited: %s"), implode(',', $numArgsAllowed)), $funcNameToken);
                     return false;
                 }
+                if(function_exists("geterrors_".$funcName))
+                {
+                    if($sError=call_user_func_array("geterrors_".$funcName,$params))
+                    {
+                        $this->RDP_AddError($sError,$funcNameToken);
+                        return false;
+                    }
+                }
             }
             catch (Exception $e)
             {
@@ -2556,14 +2564,14 @@ function exprmgr_stripos($haystack , $needle ,$offset=0)
  * @param string $haystack : checked string
  * @param string $needle : string to find
  * @param boolean $before_needle : portion to return
- * @return string|false 
+ * @return string|false
  */
 function exprmgr_stristr($haystack,$needle,$before_needle=false)
 {
     return mb_stristr($haystack,$needle,$before_needle,'UTF-8');
 }
 /**
- * Get unicode string length 
+ * Get unicode string length
  * @param string $string
  * @return int
  */
@@ -2589,14 +2597,14 @@ function exprmgr_strpos($haystack , $needle ,$offset=0)
  * @param string $haystack : checked string
  * @param string $needle : string to find
  * @param boolean $before_needle : portion to return
- * @return string|false 
+ * @return string|false
  */
 function exprmgr_strstr($haystack,$needle,$before_needle=false)
 {
     return mb_strstr($haystack,$needle,$before_needle,'UTF-8');
 }
 /**
- * Make an unicode string lowercase 
+ * Make an unicode string lowercase
  * @param string $string
  * @return string
  */
@@ -2605,7 +2613,7 @@ function exprmgr_strtolower($string)
     return mb_strtolower ($string,'UTF-8');
 }
 /**
- * Make an unicode string uppercase 
+ * Make an unicode string uppercase
  * @param string $string
  * @return string
  */
@@ -2660,20 +2668,20 @@ function exprmgr_sumifop($args)
 
 /**
  * Find the closest matching numerical input values in a list an replace it by the
- * corresponding value within another list 
- * 
+ * corresponding value within another list
+ *
  * @author Johannes Weberhofer, 2013
  *
  * @param numeric $fValueToReplace
- * @param numeric $iStrict - 1 for exact matches only otherwise interpolation the 
+ * @param numeric $iStrict - 1 for exact matches only otherwise interpolation the
  * 		  closest value should be returned
  * @param string $sTranslateFromList - comma seperated list of numeric values to translate from
  * @param string $sTranslateToList - comma seperated list of numeric values to translate to
  * @return numeric
  */
-function exprmgr_convert_value($fValueToReplace, $iStrict, $sTranslateFromList, $sTranslateToList) 
+function exprmgr_convert_value($fValueToReplace, $iStrict, $sTranslateFromList, $sTranslateToList)
 {
-	if ( (is_numeric($fValueToReplace)) && ($iStrict!=null) && ($sTranslateFromList!=null) && ($sTranslateToList!=null) ) 
+	if ( (is_numeric($fValueToReplace)) && ($iStrict!=null) && ($sTranslateFromList!=null) && ($sTranslateToList!=null) )
 	{
 		$aFromValues = explode( ',', $sTranslateFromList);
 		$aToValues = explode( ',', $sTranslateToList);
@@ -2695,7 +2703,7 @@ function exprmgr_convert_value($fValueToReplace, $iStrict, $sTranslateFromList, 
 					$fMinimumDiff = $fCurrentDiff;
 					$iNearestIndex = $i;
 				}
-			}					
+			}
 			if ( $iStrict !== 1 ) {
 				return $aToValues[$iNearestIndex];
 			}
@@ -2872,23 +2880,34 @@ function expr_mgr_htmlspecialchars_decode($string)
 
 /**
  * Return true of $input matches the regular expression $pattern
- * @param <type> $pattern
- * @param <type> $input
- * @return <type>
+ * @param string $pattern
+ * @param string $input
+ * @return boolean
  */
 function exprmgr_regexMatch($pattern, $input)
 {
-    try {
-        // 'u' is the regexp modifier for unicode so that non-ASCII string will nbe validated properly
-        $result = @preg_match($pattern.'u', $input);
-    } catch (Exception $e) {
-        $result = false;
-        // How should errors be logged?
-        echo sprintf(gT('Invalid PERL Regular Expression: %s'), htmlspecialchars($pattern));
+    // Test the regexp pattern agains null : must always return 0, false if error happen
+    if(@preg_match($pattern.'u', null) === false)
+    {
+        return false; // invalid : true or false ?
     }
-    return $result;
+    // 'u' is the regexp modifier for unicode so that non-ASCII string will be validated properly
+    return preg_match($pattern.'u', $input);
 }
-
+/**
+ * Return error information from pattern of regular expression $pattern
+ * @param string $pattern
+ * @param string $input
+ * @return string|null
+ */
+function geterrors_exprmgr_regexMatch($pattern, $input)
+{
+    // @todo : use set_error_handler to get the preg_last_error
+    if(@preg_match($pattern.'u', null) === false)
+    {
+        return sprintf(gT('Invalid PERL Regular Expression: %s'), htmlspecialchars($pattern));
+    }
+}
 /**
  * Display number with comma as radix separator, if needed
  * @param type $value
@@ -2902,6 +2921,33 @@ function exprmgr_fixnum($value)
         return $newval;
     }
     return $value;
+}
+/**
+ * Get Unix timestamp for a date : false if parameters is invalid.
+ * PHP 5.3.3 send E_STRICT notice without param, then replace by time if needed
+ * @param int[] $args as [$hour,$minute,$second,$month,$day,$year]
+ * @return int|boolean
+ */
+function exprmgr_mktime($hour=null,$minute=null,$second=null,$month=null,$day=null,$year=null)
+{
+    $iNumArg=count(array_filter(array($hour,$minute,$second,$month,$day,$year),create_function('$a','return $a !== null;')));
+    switch($iNumArg)
+    {
+        case 0:
+            return time();
+        case 1:
+            return mktime($hour);
+        case 2:
+            return mktime($hour,$minute);
+        case 3:
+            return mktime($hour,$minute,$second);
+        case 4:
+            return mktime($hour,$minute,$second,$month);
+        case 5:
+            return mktime($hour,$minute,$second,$month,$day);
+        default:
+            return mktime($hour,$minute,$second,$month,$day,$year);
+    }
 }
 /**
  * Returns true if all non-empty values are unique

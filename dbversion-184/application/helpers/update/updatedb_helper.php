@@ -30,6 +30,7 @@ function db_upgrade_all($iOldDBVersion) {
     echo str_pad(gT('The LimeSurvey database is being upgraded').' ('.date('Y-m-d H:i:s').')',14096).".<br /><br />". gT('Please be patient...')."<br /><br />\n";
 
     $oDB = Yii::app()->getDb();
+    Yii::app()->setConfig('Updating',true);
     $oDB->schemaCachingDuration=0; // Deactivate schema caching
     $oTransaction = $oDB->beginTransaction();
     try
@@ -1327,6 +1328,7 @@ function db_upgrade_all($iOldDBVersion) {
     }
     catch(Exception $e)
     {
+        Yii::app()->setConfig('Updating',false);
         $oTransaction->rollback();
         // Activate schema caching
         $oDB->schemaCachingDuration=3600;
@@ -1338,6 +1340,7 @@ function db_upgrade_all($iOldDBVersion) {
         return false;
     }
     fixLanguageConsistencyAllSurveys();
+    Yii::app()->setConfig('Updating',false);
     echo '<br /><br />'.sprintf(gT('Database update finished (%s)'),date('Y-m-d H:i:s')).'<br /><br />';
     return true;
 }
@@ -1366,8 +1369,14 @@ function fixKCFinder184()
     $sThirdPartyDir=Yii::app()->getConfig('homedir').DIRECTORY_SEPARATOR.'third_party'.DIRECTORY_SEPARATOR;
     rmdirr($sThirdPartyDir.'ckeditor/plugins/toolbar');
     rmdirr($sThirdPartyDir.'ckeditor/plugins/toolbar/ls-office2003');
-    array_map('unlink', glob($sThirdPartyDir.'kcfinder/cache/*.js'));
-    array_map('unlink', glob($sThirdPartyDir.'kcfinder/cache/*.css'));
+    $aUnlink = glob($sThirdPartyDir.'kcfinder/cache/*.js');
+    if ($aUnlink !== false) {
+        array_map('unlink', $aUnlink); 
+    }
+    $aUnlink = glob($sThirdPartyDir.'kcfinder/cache/*.css'); 
+    if ($aUnlink !== false) {
+        array_map('unlink', $aUnlink);
+    }
     rmdirr($sThirdPartyDir.'kcfinder/upload/files');
     rmdirr($sThirdPartyDir.'kcfinder/upload/.thumbs');
 }
@@ -2241,6 +2250,7 @@ function dropPrimaryKey($sTablename)
             break;
         case 'pgsql':
         case 'sqlsrv':
+        case 'dblib':
         case 'mssql':
             $pkquery = "SELECT CONSTRAINT_NAME "
             ."FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS "
