@@ -77,7 +77,7 @@
         */
         public function rules()
         {
-
+            
             $aRules= array(
                         array('title','required','on' => 'update, insert'),// 140207 : Before was commented, put only on update/insert ?
                         array('title','length', 'min' => 1, 'max'=>20,'on' => 'update, insert'),
@@ -311,23 +311,26 @@
 
         /**
         * Insert an array into the questions table
-        * Returns null if insertion fails, otherwise the new QID
+        * Returns false if insertion fails, otherwise the new QID
         *
         * @param array $data
         */
         function insertRecords($data)
         {
             // This function must be deprecated : don't find a way to have getErrors after (Shnoulle on 131206)
-            $oRecord = new self;
+            $questions = new self;
             foreach ($data as $k => $v){
-                $oRecord->$k = $v;
+                $questions->$k = $v;
                 }
-            if($oRecord->validate())
+            try
             {
-                $oRecord->save();
-                return $oRecord->qid;
+                $questions->save();
+                return $questions->qid;
             }
-            tracevar($oRecord->getErrors());
+            catch(Exception $e)
+            {
+                return false;
+            }
         }
 
         public static function deleteAllById($questionsIds)
@@ -643,7 +646,7 @@
              * @todo Check if this actually does anything, since the values are arrays.
              */
             asort($questionTypes);
-
+            
             return $questionTypes;
         }
         /**

@@ -25,6 +25,7 @@ $(document).on("click","#editsubquestionsform :submit", function() {//Validate d
 });
 
 $(document).ready(function(){
+    removeCSRFDivs();
 
     $('.tab-page:first .answertable tbody').sortable({
         containment:'parent',

@@ -35,7 +35,7 @@ return array(
         
         // Uncomment the following line if you need table-based sessions
         // 'session' => array (
-            // 'class' => 'application.core.web.DbHttpSession',
+            // 'class' => 'system.web.CDbHttpSession',
             // 'connectionID' => 'db',
             // 'sessionTableName' => '{{sessions}}',
         // ),

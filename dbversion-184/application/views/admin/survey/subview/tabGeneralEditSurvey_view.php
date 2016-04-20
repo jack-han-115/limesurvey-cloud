@@ -86,7 +86,7 @@
         unset($settings['additional_languages']);
     $this->widget('ext.SettingsWidget.SettingsWidget', array(
         'id'=>'general',
-        'title'=>gT("General"),
+        'title'=>gt("General"),
         'form' => false,
         'formHtmlOptions'=>array(
             'class'=>'form-core',

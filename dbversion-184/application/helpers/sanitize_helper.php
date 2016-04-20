@@ -309,7 +309,7 @@ function sanitize_float($float, $min='', $max='')
         $fNumber = floatval($fNumber);
         if((($min != '') && ($fNumber < $min)) || (($max != '') && ($fNumber > $max)))
             return FALSE;
-        return $fNumber;
+        return $fNumber; 
     }
 }
 
@@ -395,11 +395,8 @@ function sanitize_languagecodeS($codestringtosanitize) {
     return implode(" ",$codearray);
 }
 
-/**
- * @deprecated use Token::sanitizeToken($codetosanitize);
- */
 function sanitize_token($codetosanitize) {
-    return Token::sanitizeToken($codetosanitize);
+    return preg_replace('/[^_a-z0-9]/i', '', $codetosanitize);
 }
 
 function sanitize_signedint($integer, $min='', $max='')

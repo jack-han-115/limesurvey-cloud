@@ -7,6 +7,7 @@
         <?php
         App()->getClientScript()->registerPackage('jqueryui');
         App()->getClientScript()->registerPackage('jquery-superfish');
+        App()->getClientScript()->registerCoreScript('ckeditor');
         App()->getClientScript()->registerCssFile(Yii::app()->getConfig('adminstyleurl') . "jquery-ui/jquery-ui.css" );
         ?>
 <!--        <script type="text/javascript" src="<?php echo Yii::app()->getConfig('generalscripts') . 'jquery/jquery.js'; ?>"></script> -->
@@ -37,7 +38,7 @@
                     CKEDITOR.on('instanceReady',CKeditor_OnComplete);
                     var oCKeditor = CKEDITOR.replace( 'MyTextarea' ,  { height	: '350',
                         width	: '98%',
-                         customConfig : "<?php echo Yii::app()->getConfig('adminscripts') . '/ckeditor-config.js'; ?>",
+                        customConfig : "<?php echo Yii::app()->getConfig('adminscripts') . '/ckeditor-config.js'; ?>",
                         toolbarStartupExpanded : true,
                         ToolbarCanCollapse : false,
                         toolbar : '<?php echo $toolbarname; ?>',
@@ -46,7 +47,7 @@
                         LimeReplacementFieldsQID : "<?php echo $iQuestionId; ?>",
                         LimeReplacementFieldsType: "<?php echo $sFieldType; ?>",
                         LimeReplacementFieldsAction: "<?php echo $sAction; ?>",
-                        smiley_path: "<?php echo Yii::app()->getConfig('uploadurl') . '/images/smiley/msn/'; ?>",
+                        smiley_path: "<?php echo Yii::app()->getConfig('rooturl') . '/upload/images/smiley/msn/'; ?>",
                         LimeReplacementFieldsPath : "<?php echo $this->createUrl("/admin/limereplacementfields/sa/index"); ?>",
                         language : "<?php echo $ckLanguage ?>"
                         <?php echo $htmlformatoption; ?> });

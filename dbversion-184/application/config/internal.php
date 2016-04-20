@@ -34,7 +34,13 @@ $internalConfig = array(
             'jqueryCss' => false
         ),
         'clientScript'=>array(
+/*            'class'=>'ext.ExtendedClientScript.ExtendedClientScript',
+            'combineCss'=>false,
+            'compressCss'=>false,
+            'combineJs'=>$userConfig['config']['debug']>0?false:true,
+            'compressJs'=>false,*/
             'packages' => require('third_party.php'),
+            //'excludeFiles' => array(), // empty array to add more easily files to exclude
         ),
         'urlManager' => array(
             'urlFormat' => 'get',

@@ -1308,14 +1308,13 @@ function fixSortOrderGroups($surveyid) //Function rewrites the sortorder for gro
     QuestionGroup::model()->updateGroupOrder($surveyid,$baselang);
 }
 
-function fixMovedQuestionConditions($qid,$oldgid,$newgid, $iSurveyID=NULL) //Function rewrites the cfieldname for a question after group change
+function fixMovedQuestionConditions($qid,$oldgid,$newgid) //Function rewrites the cfieldname for a question after group change
 {
-    if(!isset($iSurveyID))
-        $iSurveyID = Yii::app()->getConfig('sid');
+    $surveyid = Yii::app()->getConfig('sid');
     $qid=sanitize_int($qid);
     $oldgid=sanitize_int($oldgid);
     $newgid=sanitize_int($newgid);
-    Condition::model()->updateCFieldName($iSurveyID,$qid,$oldgid,$newgid);
+    Condition::model()->updateCFieldName($surveyid,$qid,$oldgid,$newgid);
     // TMSW Condition->Relevance:  Call LEM->ConvertConditionsToRelevance() when done
 }
 
@@ -2761,7 +2760,7 @@ function questionAttributes($returnByName=false)
         'category'=>gT('Display'),
         'sortorder'=>110,
         'inputtype'=>'text',
-        "help"=>gT('Minimum date, valide date in YYYY-MM-DD format or any English textual datetime description. Expression Managed can be used (only with YYYY-MM-DD format). For dropdown : only the year is restricted if date use variable not in same page.'),
+        "help"=>gT('Minimum date selectable in calendar (YYYY-MM-DD). Only the year is used if dropdown boxes are selected.'),
         "caption"=>gT('Minimum date'));
 
         $qattributes["date_max"]=array(
@@ -2769,7 +2768,7 @@ function questionAttributes($returnByName=false)
         'category'=>gT('Display'),
         'sortorder'=>111,
         'inputtype'=>'text',
-        "help"=>gT('Maximum date, valide date in any English textual datetime description (YYYY-MM-DD for example). Expression Managed can be used (only with YYYY-MM-DD format) value. For dropdown : only the year is restricted if date use variable not in same page.'),
+        "help"=>gT('Maximum date selectable in calendar (YYYY-MM-DD). Only the year is used if dropdown boxes are selected.'),
         "caption"=>gT('Maximum date'));
 
         $qattributes["dropdown_prepostfix"]=array(

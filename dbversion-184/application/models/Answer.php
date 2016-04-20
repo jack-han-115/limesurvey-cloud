@@ -145,12 +145,17 @@ class Answer extends LSActiveRecord
 
     function insertRecords($data)
     {
-        $oRecord = new self;
+        $ans = new self;
         foreach ($data as $k => $v)
-            $oRecord->$k = $v;
-        if($oRecord->validate())
-            return $oRecord->save();
-        tracevar($oRecord->getErrors());
+            $ans->$k = $v;
+        try
+        {
+            return $ans->save();
+        }
+        catch(Exception $e)
+        {
+            return false;
+        }
     }
 
     /**

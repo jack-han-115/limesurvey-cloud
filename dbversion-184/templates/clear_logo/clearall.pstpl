@@ -4,7 +4,8 @@
 		<td class="clearall-result">
 			<span class="warning-text">{ANSWERSCLEARED}</span><br /><br />
 	{RESTART}<br />
-        {URL}
+        {URL}<br />
+	{CLOSEWINDOW}
    </td>
   </tr>
  </table>

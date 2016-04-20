@@ -3,7 +3,8 @@
   <tr>
         <td>
             <span class="warning-text">{ANSWERSCLEARED}</span><br /><br />
-	{RESTART}
+	{RESTART}<br />
+            {CLOSEWINDOW}
    </td>
   </tr>
  </table>

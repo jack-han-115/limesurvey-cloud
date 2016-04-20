@@ -58,7 +58,8 @@ return array(
             //'css/smoothness/jquery-ui-1.10.0.custom.min.css'
         ),
         'depends' => array(
-            'jquery'
+            'jquery',
+            'bootstrap'
         )
     ),
     'jquery-bindWithDelay' => array(

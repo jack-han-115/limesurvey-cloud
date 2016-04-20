@@ -179,7 +179,7 @@ class database extends Survey_Common_Action
                         {
                             Yii::app()->setFlashMessage(gT("Failed to update answers"),'error');
                         }
-                    }
+                    } 
                     // Updating code (oldcode!==null) => update condition with the new code
                     $sOldCode=Yii::app()->request->getPost('oldcode_'.$iSortOrderID.'_'.$iScaleID);
                     if(isset($sOldCode) && $sCode !== $sOldCode) {
@@ -276,7 +276,8 @@ class database extends Survey_Common_Action
                             $oSubQuestion->title=$aCodes[$iScaleID][$iPosition];
                             $oSubQuestion->question=$subquestionvalue;
                             $oSubQuestion->scale_id=$iScaleID;
-                            $oSubQuestion->relevance=isset($aRelevance[$iScaleID][$iPosition]) ? $aRelevance[$iScaleID][$iPosition] : "";
+                            //dual matrix, text/number matrix: subQ relevance per line not per scale, so ScaleID is always 0
+                            $oSubQuestion->relevance=$aRelevance[0][$iPosition];
                         }
                         else  // new record
                         {
@@ -291,7 +292,14 @@ class database extends Survey_Common_Action
                                 $oSubQuestion->parent_qid=$iQuestionID;
                                 $oSubQuestion->language=$sLanguage;
                                 $oSubQuestion->scale_id=$iScaleID;
-                                $oSubQuestion->relevance=isset($aRelevance[$iScaleID][$iPosition]) ? $aRelevance[$iScaleID][$iPosition] : "";
+                                if(isset($aRelevance[0][$iPosition]))
+                                {
+                                    $oSubQuestion->relevance=$aRelevance[0][$iPosition];
+                                }
+                                else 
+                                {
+                                    $oSubQuestion->relevance='';
+                                }
                             }
                             else                                                //new record: additional language
                             {
@@ -307,7 +315,7 @@ class database extends Survey_Common_Action
                                 $oSubQuestion->parent_qid=$iQuestionID;
                                 $oSubQuestion->language=$sLanguage;
                                 $oSubQuestion->scale_id=$iScaleID;
-                                $oSubQuestion->relevance=isset($aRelevance[$iScaleID][$iPosition]) ? $aRelevance[$iScaleID][$iPosition] : "";
+                                $oSubQuestion->relevance=$aRelevance[$iScaleID][$iPosition];
                             }
                         }
                         $bSubQuestionResult=$oSubQuestion->save();

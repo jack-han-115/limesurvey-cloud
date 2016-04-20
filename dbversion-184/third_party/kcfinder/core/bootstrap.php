@@ -363,8 +363,7 @@ function checkLSSession()
   
     $aConfig = include($sLimesurveyFolder . '/config/config.php');
     if (isset($aConfig['components']['session']['class']) &&
-        ($aConfig['components']['session']['class'] == 'system.web.CDbHttpSession'
-          || $aConfig['components']['session']['class'] == 'application.core.web.DbHttpSession'))
+        $aConfig['components']['session']['class'] == 'system.web.CDbHttpSession') 
     {
         new LSSessionSaveHandler($aConfig);
     }

@@ -36,7 +36,7 @@ return array(
 // Make sure MySQL max_allowed_packet setting is large enough, some surveys generate over 2 MB of session data.
 /*
         'session' => array (
-            'class' => 'application.core.web.DbHttpSession',
+            'class' => 'system.web.CDbHttpSession',
             'connectionID' => 'db',
             'sessionTableName' => '{{sessions}}',
         ),
