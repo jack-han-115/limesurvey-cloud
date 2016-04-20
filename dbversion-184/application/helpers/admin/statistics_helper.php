@@ -236,7 +236,7 @@ function createChart($iQuestionID, $iSurveyID, $type=null, $lbl, $gdata, $grawda
             while (isset ($gdata[$i]))
             {
                 $aHelperArray=array_keys($lbl);
-                if ($gdata[$i] == 0 || ($sQuestionType == "O" && substr($aHelperArray[$i],0,strlen($sLanguageCode->gT("Comments")))==$sLanguageCode->gT("Comments")))
+                if ($gdata[$i] == 0 || ($sQuestionType == "O" && substr($aHelperArray[$i],0,strlen(gT("Comments")))==gT("Comments")))
                 {
                     array_splice ($gdata, $i, 1);
                 }
@@ -1469,8 +1469,7 @@ class statistics_helper {
 
 
                 case "I": //Language
-                    // Using previously defined $surveylanguagecodes array of language codes
-                    foreach ($surveylanguagecodes as $availlang)
+                    foreach (Survey::model()->findByPk($surveyid)->getAllLanguages() as $availlang)
                     {
                         $alist[]=array($availlang, getLanguageNameFromCode($availlang,false));
                     }
@@ -1613,7 +1612,6 @@ class statistics_helper {
         $tempdir = Yii::app()->getConfig("tempdir");
         $tempurl = Yii::app()->getConfig("tempurl");
         $astatdata=array();
-
         if ($usegraph==1)
         {
             //for creating graphs we need some more scripts which are included here
@@ -2843,10 +2841,6 @@ class statistics_helper {
 
         //no survey ID? -> come and get one
         if (!isset($surveyid)) {$surveyid=returnGlobal('sid');}
-
-        //Get an array of codes of all available languages in this survey
-        $surveylanguagecodes = Survey::model()->findByPk($surveyid)->additionalLanguages;
-        $surveylanguagecodes[] = Survey::model()->findByPk($surveyid)->language;
 
         $fieldmap=createFieldMap($surveyid, "full", false, false, $sLanguageCode);
 

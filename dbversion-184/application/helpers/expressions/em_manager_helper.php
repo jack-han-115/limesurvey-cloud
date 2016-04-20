@@ -722,7 +722,8 @@
             $iSessionSurveyId=self::getLEMsurveyId();
             if($aSessionSurvey=Yii::app()->session["survey_{$iSessionSurveyId}"])
             {
-                Yii::app()->session["survey_{$iSessionSurveyId}"]['LEMtokenResume']=true;
+                $aSessionSurvey['LEMtokenResume']=true;
+                Yii::app()->session["survey_{$iSessionSurveyId}"]=$aSessionSurvey;
             }
         }
 
@@ -1324,7 +1325,7 @@
                 }
 
                 // individual subquestion relevance
-                if ($hasSubqs && 
+                if ($hasSubqs &&
                     $type!='|' && $type!='!' && $type !='L' && $type !='O'
                 )
                 {
@@ -1464,30 +1465,9 @@
                             );
                         }
                         break;
-                    case 'D':  // dropdown box: validate that a complete date is entered
-                               // TODO: generic validation as to dateformat[SGQA].value
-                        if ($hasSubqs) {
-                            $subqs = $qinfo['subqs'];
-                            $sq_equs=array();
-
-                           foreach($subqs as $sq)
-                            {
-                                $sq_name = ($this->sgqaNaming)?$sq['rowdivid'].".NAOK":$sq['varName'].".NAOK";
-                                $sq_equs[] = '('.$sq_name.'!="INVALID")';
-                            }
-                            if (!isset($validationEqn[$questionNum]))
-                            {
-                                $validationEqn[$questionNum] = array();
-                            }
-                            $validationEqn[$questionNum][] = array(
-                            'qtype' => $type,
-                            'type' => 'default',
-                            'class' => 'default',
-                            'eqn' =>  implode(' and ',$sq_equs),
-                            'qid' => $questionNum,
-                            );
-                        }
-                         break;
+                    case 'D':
+                        // TODO: generic validation as to dateformat[SGQA].value : BUT not same in PHP and JS
+                        break;
                     default:
                         break;
                 }
@@ -1545,6 +1525,55 @@
                     }
                 }
 
+                // dropdown_dates
+                // dropdown box: validate that a complete date is entered
+                if (isset($qattr['dropdown_dates']) && $qattr['dropdown_dates'])
+                {
+                    $dropdown_dates = $qattr['dropdown_dates'];
+                    if ($hasSubqs) {
+                        $subqs = $qinfo['subqs'];
+                        $sq_names = array();
+                        $subqValidEqns = array();
+                        foreach ($subqs as $sq) {
+                            $sq_name = NULL;
+                            switch ($type)
+                            {
+                                case 'D': //DATE QUESTION TYPE
+                                    $sq_name = ($this->sgqaNaming)?$sq['rowdivid'].".NAOK":$sq['varName'].".NAOK";
+                                    $sq_name = '('.$sq_name.'!="INVALID")';
+                                    $subqValidSelector = '';
+                                    break;
+                                default:
+                                    break;
+                            }
+                            if (!is_null($sq_name)) {
+                                $sq_names[] = $sq_name;
+                                $subqValidEqns[$subqValidSelector] = array(
+                                'subqValidEqn' => $sq_name,
+                                'subqValidSelector' => $subqValidSelector,
+                                );
+                            }
+                        }
+                        if (count($sq_names) > 0) {
+                            if (!isset($validationEqn[$questionNum]))
+                            {
+                                $validationEqn[$questionNum] = array();
+                            }
+                            $validationEqn[$questionNum][] = array(
+                            'qtype' => $type,
+                            'type' => 'dropdown_dates',
+                            'class' => 'dropdown_dates',
+                            'eqn' => implode(' && ', $sq_names),
+                            'qid' => $questionNum,
+                            'subqValidEqns' => $subqValidEqns,
+                            );
+                        }
+                    }
+                }
+                else
+                {
+                    $dropdown_dates='';
+                }
                 // date_min
                 // Maximum date allowed in date question
                 if (isset($qattr['date_min']) && trim($qattr['date_min']) != '')
@@ -3091,15 +3120,13 @@
                     case 'R':
                         $qtips['default']=$this->gT("All your answers must be different and you must rank in order.");
                         break;
-// Helptext is added in qanda_help.php
-/*                  case 'D':
-                        $qtips['default']=$this->gT("Please complete all parts of the date.");
-                        break;
-*/
                     default:
                         break;
                 }
-
+                if($dropdown_dates)
+                {
+                    $qtips['dropdown_dates']=$this->gT("Please complete all parts of the date.");
+                }
                 if($commented_checkbox)
                 {
                     switch ($commented_checkbox)
@@ -3261,11 +3288,11 @@
                     switch ($type)
                     {
                         case 'N':
-                            $qtips['default']='';
+                            unset($qtips['default']);
                             $qtips['value_integer']=$this->gT("Only an integer value may be entered in this field.");
                             break;
                         case 'K':
-                            $qtips['default']='';
+                            unset($qtips['default']);
                             $qtips['value_integer']=$this->gT("Only integer values may be entered in these fields.");
                             break;
                         default:
@@ -4325,8 +4352,8 @@
         * @param integer $numRecursionLevels - the number of times to recursively subtitute values in this string
         * @param integer $whichPrettyPrintIteration - if want to pretty-print the source string, which recursion  level should be pretty-printed
         * @param boolean $noReplacements - true if we already know that no replacements are needed (e.g. there are no curly braces)
-        * @param boolean $timeit 
-        * @param boolean $staticReplacement - return HTML string without the system to update by javascript 
+        * @param boolean $timeit
+        * @param boolean $staticReplacement - return HTML string without the system to update by javascript
         * @return string - the original $string with all replacements done.
         */
 
@@ -4840,12 +4867,13 @@
                     switch ($knownVar['type'])
                     {
                         case 'D': //DATE
-                            if (trim($value)=="" | $value=='INVALID')
+                            if (trim($value)=="")
                             {
                                 $value = NULL;
                             }
                             else
                             {
+                                // We don't really validate date here, anyone can send anything : forced too
                                 $dateformatdatat=getDateFormatData($LEM->surveyOptions['surveyls_dateformat']);
                                 $datetimeobj = new Date_Time_Converter($value, $dateformatdatat['phpdate']);
                                 $value=$datetimeobj->convert("Y-m-d H:i");
@@ -5164,7 +5192,7 @@
                     while (true)
                     {
                         $LEM->currentQset = array();    // reset active list of questions
-                        if (++$LEM->currentQuestionSeq >= $LEM->numQuestions) // Move next with finished, but without submit. 
+                        if (++$LEM->currentQuestionSeq >= $LEM->numQuestions) // Move next with finished, but without submit.
                         {
                             $message .= $LEM->_UpdateValuesInDatabase($updatedValues,true);
                             $LEM->runtimeTimings[] = array(__METHOD__,(microtime(true) - $now));
@@ -5341,7 +5369,7 @@
                     switch($type)
                     {
                         case 'D': //DATE
-                            if (trim($val)=='')
+                            if (trim($val)=='' || $val=="INVALID")
                             {
                                 $val=NULL;  // since some databases can't store blanks in date fields
                             }
@@ -5370,6 +5398,7 @@
                     }
                     else
                     {
+                        $val=preg_replace('/[\x{10000}-\x{10FFFF}]/u', "\xEF\xBF\xBD", $val);
                         $setter[] = dbQuoteID($key) . "=" . dbQuoteAll($val);
                     }
                 }
@@ -5611,7 +5640,7 @@
                     $LEM->StartProcessingPage();
                     if ($processPOST)
                         $updatedValues=$LEM->ProcessCurrentResponses();
-                    else 
+                    else
                         $updatedValues = array();
                     $message = '';
                     if (!$force && $LEM->currentQuestionSeq != -1 && $seq > $LEM->currentQuestionSeq)
@@ -6067,7 +6096,7 @@
                         // Relevance of subquestion for ranking question depend of the count of relevance of answers.
                         $iCountRank=(isset($iCountRank) ? $iCountRank+1 : 1);
                         // Relevant count is : Total answers less Unrelevant answers. subQrelInfo give only array with relevance equation, not this without any relevance.
-                        $iCountRelevant=isset($iCountRelevant) ? $iCountRelevant : count($sgqas)-count(array_filter($LEM->subQrelInfo[$qid],function($sqRankAnwsers){ return !$sqRankAnwsers['result']; })); 
+                        $iCountRelevant=isset($iCountRelevant) ? $iCountRelevant : count($sgqas)-count(array_filter($LEM->subQrelInfo[$qid],function($sqRankAnwsers){ return !$sqRankAnwsers['result']; }));
                         if($iCountRank >  $iCountRelevant)
                         {
                             $foundSQrelevance=true;
@@ -6699,7 +6728,6 @@
                     }
                 }
             }
-
 
             //////////////////////////////////////////////////////////////////////////
             // STORE METADATA NEEDED FOR SUBSEQUENT PROCESSING AND DISPLAY PURPOSES //
@@ -8495,20 +8523,26 @@ EOD;
                         switch($type)
                         {
                             case 'D': //DATE
-                                if (isset($_POST['qattribute_answer'.$sq]))       // push validation message (see qanda_helper) to $_SESSION
-                                {
-                                    $_SESSION[$LEM->sessid]['qattribute_answer'.$sq]=($_POST['qattribute_answer'.$sq]);
-                                }
                                 $value=trim($value);
-                                if ($value!="" && $value!='INVALID')
+                                if ($value!="" && $value!="INVALID")
                                 {
                                     $aAttributes=$LEM->getQuestionAttributesForEM($LEM->sid, $qid,$_SESSION['LEMlang']);
                                     if (!isset($aAttributes[$qid])) {
                                         $aAttributes[$qid]=array();
                                     }
                                     $aDateFormatData=getDateFormatDataForQID($aAttributes[$qid],$LEM->surveyOptions);
+                                    // We don't really validate date here : if date is invalid : return 1999-12-01 00:00
                                     $oDateTimeConverter = new Date_Time_Converter(trim($value), $aDateFormatData['phpdate']);
-                                    $value=$oDateTimeConverter->convert("Y-m-d H:i"); // TODO : control if inverse function original value
+                                    $newValue=$oDateTimeConverter->convert("Y-m-d H:i");
+                                    $oDateTimeConverter = new Date_Time_Converter($newValue, "Y-m-d H:i");
+                                    if($value==$oDateTimeConverter->convert($aDateFormatData['phpdate'])) // control if inverse function original value
+                                    {
+                                        $value=$newValue;
+                                    }
+                                    else
+                                    {
+                                        $value="";// Or $value="INVALID" ? : dropdown is OK with this not default.
+                                    }
                                 }
                                 break;
 #                            case 'N': //NUMERICAL QUESTION TYPE
@@ -9057,7 +9091,7 @@ EOD;
                 );
             }
 
-            $surveyname = templatereplace('{SURVEYNAME}',array('SURVEYNAME'=>$aSurveyInfo['surveyls_title']));
+            $surveyname = viewHelper::purified(templatereplace('{SURVEYNAME}',array('SURVEYNAME'=>$aSurveyInfo['surveyls_title'])));
 
             $out = '<div id="showlogicfilediv" ><H3>' . $LEM->gT('Logic File for Survey # ') . '[' . $LEM->sid . "]: $surveyname</H3>\n";
             $out .= "<table id='logicfiletable'>";
@@ -9067,28 +9101,28 @@ EOD;
                 if ($aSurveyInfo['surveyls_description'] != '')
                 {
                     $LEM->ProcessString($aSurveyInfo['surveyls_description'],0);
-                    $sPrint= $LEM->GetLastPrettyPrintExpression();
+                    $sPrint= viewHelper::purified(viewHelper::filterScript($LEM->GetLastPrettyPrintExpression()));
                     $errClass = ($LEM->em->HasErrors() ? 'LEMerror' : '');
                     $out .= "<tr class='LEMgroup $errClass'><td colspan=2>" . $LEM->gT("Description:") . "</td><td colspan=2>" . $sPrint . "</td></tr>";
                 }
                 if ($aSurveyInfo['surveyls_welcometext'] != '')
                 {
                     $LEM->ProcessString($aSurveyInfo['surveyls_welcometext'],0);
-                    $sPrint= $LEM->GetLastPrettyPrintExpression();
+                    $sPrint= viewHelper::purified(viewHelper::filterScript($LEM->GetLastPrettyPrintExpression()));
                     $errClass = ($LEM->em->HasErrors() ? 'LEMerror' : '');
                     $out .= "<tr class='LEMgroup $errClass'><td colspan=2>" . $LEM->gT("Welcome:") . "</td><td colspan=2>" . $sPrint . "</td></tr>";
                 }
                 if ($aSurveyInfo['surveyls_endtext'] != '')
                 {
                     $LEM->ProcessString($aSurveyInfo['surveyls_endtext']);
-                    $sPrint= $LEM->GetLastPrettyPrintExpression();
+                    $sPrint= viewHelper::purified(viewHelper::filterScript($LEM->GetLastPrettyPrintExpression()));
                     $errClass = ($LEM->em->HasErrors() ? 'LEMerror' : '');
                     $out .= "<tr class='LEMgroup $errClass'><td colspan=2>" . $LEM->gT("End message:") . "</td><td colspan=2>" . $sPrint . "</td></tr>";
                 }
                 if ($aSurveyInfo['surveyls_url'] != '')
                 {
                     $LEM->ProcessString($aSurveyInfo['surveyls_urldescription']." - ".$aSurveyInfo['surveyls_url']);
-                    $sPrint= $LEM->GetLastPrettyPrintExpression();
+                    $sPrint= viewHelper::purified($LEM->GetLastPrettyPrintExpression());
                     $errClass = ($LEM->em->HasErrors() ? 'LEMerror' : '');
                     $out .= "<tr class='LEMgroup $errClass'><td colspan=2>" . $LEM->gT("End URL:") . "</td><td colspan=2>" . $sPrint . "</td></tr>";
                 }
@@ -9109,26 +9143,31 @@ EOD;
                 // SHOW GROUP-LEVEL INFO
                 //////
                 if ($gseq != $_gseq) {
+                    $bGroupHaveError=false;
+                    $errClass='';
                     $LEM->ParseResultCache=array(); // reset for each group so get proper color coding?
                     $_gseq = $gseq;
                     $ginfo = $LEM->gseq2info[$gseq];
-
-                    $grelevance = '{' . (($ginfo['grelevance']=='') ? 1 : $ginfo['grelevance']) . '}';
-                    $gtext = ((trim($ginfo['description']) == '') ? '&nbsp;' : $ginfo['description']);
-
+                    $sGroupRelevance= '{'.($ginfo['grelevance']=='' ? 1 : $ginfo['grelevance']).'}';
+                    $LEM->ProcessString($sGroupRelevance, $qid,NULL,false,1,1,false,false);
+                    $bGroupHaveError=$bGroupHaveError || $LEM->em->HasErrors();
+                    $sGroupRelevance= viewHelper::stripTagsEM($LEM->GetLastPrettyPrintExpression());
+                    $sGroupText = ((trim($ginfo['description']) == '') ? '&nbsp;' : $ginfo['description']);
+                    $LEM->ProcessString($sGroupText, $qid,NULL,false,1,1,false,false);
+                    $bGroupHaveError=$bGroupHaveError || $LEM->em->HasErrors();
+                    $sGroupText= viewHelper::purified(viewHelper::filterScript($LEM->GetLastPrettyPrintExpression()));
                     $editlink = Yii::app()->getController()->createUrl('admin/survey/sa/view/surveyid/' . $LEM->sid . '/gid/' . $gid);
-                    $groupRow = "<tr class='LEMgroup'>"
-                    . "<td>G-$gseq</td>"
-                    . "<td><b>".$ginfo['group_name']."</b><br />[<a target='_blank' href='$editlink'>GID ".$gid."</a>]</td>"
-                    . "<td>".$grelevance."</td>"
-                    . "<td>".$gtext."</td>"
-                    . "</tr>\n";
-
-                    $LEM->ProcessString($groupRow, $qid,NULL,false,1,1,false,false);
-                    $out .= $LEM->GetLastPrettyPrintExpression();
-                    if ($LEM->em->HasErrors()) {
-                        ++$errorCount;
+                    if($bGroupHaveError)
+                    {
+                        $errClass='LEMerror';
                     }
+                    $groupRow = "<tr class='LEMgroup'>"
+                    . "<td class='$errClass'>G-$gseq</td>"
+                    . "<td><b>".$ginfo['group_name']."</b><br />[<a target='_blank' href='$editlink'>GID ".$gid."</a>]</td>"
+                    . "<td>".$sGroupRelevance."</td>"
+                    . "<td>".$sGroupText."</td>"
+                    . "</tr>\n";
+                    $out .= $groupRow;
                 }
 
                 //////
@@ -9141,21 +9180,39 @@ EOD;
                 $sgqas = explode('|',$q['sgqa']);
                 if (count($sgqas) == 1 && !is_null($q['info']['default']))
                 {
-                    $LEM->ProcessString(htmlspecialchars($q['info']['default']), $qid,NULL,false,1,1,false,false);// Default value is Y or answer code or go to input/textarea, then we can filter it
-                    $_default = $LEM->GetLastPrettyPrintExpression();
-                    if ($LEM->em->HasErrors()) {
+                    $LEM->ProcessString($q['info']['default'], $qid,NULL,false,1,1,false,false);// Default value is Y or answer code or go to input/textarea, then we can filter it
+                    $_default = viewHelper::stripTagsEM($LEM->GetLastPrettyPrintExpression());
+                    if ($LEM->em->HasErrors())
+                    {
                         ++$errorCount;
                     }
-                    $default = '<br />(' . $LEM->gT('Default:') . '  ' . viewHelper::filterScript($_default) . ')';
+                    $default = '<br />(' . $LEM->gT('Default:') . '  ' . $_default . ')';
                 }
                 else
                 {
                     $default = '';
                 }
 
-                $qtext = (($q['info']['qtext'] != '') ? $q['info']['qtext'] : '&nbsp');
-                $help = (($q['info']['help'] != '') ? '<hr/>[' . $LEM->gT("Help:") . ' ' . $q['info']['help'] . ']': '');
-                $prettyValidTip = (($q['prettyValidTip'] == '') ? '' : '<hr/>(' . $LEM->gT("Tip:") . ' ' . $q['prettyValidTip'] . ')');
+                $sQuestionText = (($q['info']['qtext'] != '') ? $q['info']['qtext'] : '&nbsp');
+                $LEM->ProcessString($sQuestionText, $qid,NULL,false,1,1,false,false);
+                $sQuestionText = viewHelper::purified(viewHelper::filterScript($LEM->GetLastPrettyPrintExpression()));
+                if ($LEM->em->HasErrors())
+                {
+                    ++$errorCount;
+                }
+                $sQuestionHelp="";
+                if(trim($q['info']['help'])!="")
+                {
+                    $sQuestionHelp=$q['info']['help'];
+                    $LEM->ProcessString($sQuestionHelp, $qid,NULL,false,1,1,false,false);
+                    $sQuestionHelp = viewHelper::purified(viewHelper::filterScript($LEM->GetLastPrettyPrintExpression()));
+                    if ($LEM->em->HasErrors())
+                    {
+                        ++$errorCount;
+                    }
+                    $sQuestionHelp = '<hr/>[' . $LEM->gT("Help:") . ' ' . $sQuestionHelp . ']';
+                }
+                $prettyValidTip = (($q['prettyValidTip'] == '') ? '' : '<hr/>(' . $LEM->gT("Tip:") . ' ' . viewHelper::stripTagsEM($q['prettyValidTip']) . ')');// Unsure need to filter
 
                 //////
                 // SHOW QUESTION ATTRIBUTES THAT ARE PROCESSED BY EM
@@ -9171,7 +9228,8 @@ EOD;
                 {
                     $attrs['other'] = $LEM->questionSeq2relevance[$qseq]['other'];
                 }
-                if (count($attrs) > 0) {
+                if (count($attrs) > 0)
+                {
                     $attrTable = "<table id='logicfileattributetable'><tr><th>" . $LEM->gT("Question attribute") . "</th><th>" . $LEM->gT("Value"). "</th></tr>\n";
                     $count=0;
                     foreach ($attrs as $key=>$value) {
@@ -9222,6 +9280,12 @@ EOD;
                             case 'slider_max':
                             case 'slider_default':
                                 $value = '{' . $value . '}';
+                                $LEM->ProcessString($value, $qid,NULL,false,1,1,false,false);
+                                $value = viewHelper::stripTagsEM($LEM->GetLastPrettyPrintExpression());
+                                if ($LEM->em->HasErrors())
+                                {
+                                    ++$errorCount;
+                                }
                                 break;
                             case 'other_replace_text':
                             case 'show_totals':
@@ -9245,11 +9309,7 @@ EOD;
                     }
                 }
 
-                $LEM->ProcessString($qtext . $help . $prettyValidTip . $attrTable, $qid,NULL,false,1,1,false,false);
-                $qdetails = viewHelper::filterScript($LEM->GetLastPrettyPrintExpression());
-                if ($LEM->em->HasErrors()) {
-                    ++$errorCount;
-                }
+                $qdetails= $sQuestionText . $sQuestionHelp . $prettyValidTip . $attrTable;
 
                 //////
                 // SHOW RELEVANCE
@@ -9259,7 +9319,7 @@ EOD;
                 if (!isset($LEM->ParseResultCache[$relevanceEqn]))
                 {
                     $result = $LEM->em->ProcessBooleanExpression($relevanceEqn, $gseq, $qseq);
-                    $prettyPrint = $LEM->em->GetPrettyPrintString();
+                    $prettyPrint = viewHelper::stripTagsEM($LEM->em->GetPrettyPrintString());
                     $hasErrors =  $LEM->em->HasErrors();
                     $LEM->ParseResultCache[$relevanceEqn] = array(
                     'result' => $result,
@@ -9268,7 +9328,8 @@ EOD;
                     );
                 }
                 $relevance = $LEM->ParseResultCache[$relevanceEqn]['prettyprint'];
-                if ($LEM->ParseResultCache[$relevanceEqn]['hasErrors']) {
+                if ($LEM->ParseResultCache[$relevanceEqn]['hasErrors'])
+                {
                     ++$errorCount;
                 }
 
@@ -9282,7 +9343,7 @@ EOD;
                     if (!isset($LEM->ParseResultCache[$validationEqn]))
                     {
                         $result = $LEM->em->ProcessBooleanExpression($validationEqn, $gseq, $qseq);
-                        $prettyPrint = $LEM->em->GetPrettyPrintString();
+                        $prettyPrint = viewHelper::stripTagsEM($LEM->em->GetPrettyPrintString());
                         $hasErrors =  $LEM->em->HasErrors();
                         $LEM->ParseResultCache[$validationEqn] = array(
                         'result' => $result,
@@ -9344,7 +9405,9 @@ EOD;
                 $sawThis = array(); // array of rowdivids already seen so only show them once
                 foreach ($sgqas as $sgqa)
                 {
-                    if ($LEM->knownVars[$sgqa]['qcode'] == $rootVarName) {
+                    $bSubQhasError=false;
+                    if ($LEM->knownVars[$sgqa]['qcode'] == $rootVarName)
+                    {
                         continue;   // so don't show the main question as a sub-question too
                     }
                     $rowdivid=$sgqa;
@@ -9386,7 +9449,7 @@ EOD;
                     if (isset($LEM->subQrelInfo[$qid][$rowdivid]))
                     {
                         $sq = $LEM->subQrelInfo[$qid][$rowdivid];
-                        $subQeqn = $sq['prettyPrintEqn'];   // {' . $sq['eqn'] . '}';  // $sq['prettyPrintEqn'];
+                        $subQeqn = viewHelper::stripTagsEM($sq['prettyPrintEqn']);   // {' . $sq['eqn'] . '}';  // $sq['prettyPrintEqn'];
                         if ($sq['hasErrors']) {
                             ++$errorCount;
                         }
@@ -9394,27 +9457,27 @@ EOD;
 
                     $sgqaInfo = $LEM->knownVars[$sgqa];
                     $subqText = $sgqaInfo['subqtext'];
+                    $LEM->ProcessString($subqText, $qid,NULL,false,1,1,false,false);
+                    $subqText = viewHelper::purified(viewHelper::filterScript($LEM->GetLastPrettyPrintExpression()));
+                    if ($LEM->em->HasErrors()) {
+                        ++$errorCount;
+                    }
                     if (isset($sgqaInfo['default']) && $sgqaInfo['default'] !== '')
                     {
-                        $LEM->ProcessString(htmlspecialchars($sgqaInfo['default']), $qid,NULL,false,1,1,false,false);
-                        $_default = viewHelper::filterScript($LEM->GetLastPrettyPrintExpression());
-                        if ($LEM->em->HasErrors()) {
+                        $LEM->ProcessString($sgqaInfo['default'], $qid,NULL,false,1,1,false,false);
+                        $_default = viewHelper::stripTagsEM($LEM->GetLastPrettyPrintExpression());
+                        if ($LEM->em->HasErrors())
+                        {
                             ++$errorCount;
                         }
                         $subQeqn .= '<br />(' . $LEM->gT('Default:') . '  ' . $_default . ')';
                     }
-
                     $sqRows .= "<tr class='LEMsubq'>"
                     . "<td>SQ-$i</td>"
                     . "<td><b>" . $varName . "</b></td>"
                     . "<td>$subQeqn</td>"
                     . "<td>" .$subqText . "</td>"
                     . "</tr>";
-                }
-                $LEM->ProcessString($sqRows, $qid,NULL,false,1,1,false,false);
-                $sqRows = viewHelper::filterScript($LEM->GetLastPrettyPrintExpression());
-                if ($LEM->em->HasErrors()) {
-                    ++$errorCount;
                 }
 
                 //////
@@ -9430,6 +9493,7 @@ EOD;
                     else {
                         $ansList = $LEM->qans[$qid];
                     }
+
                     foreach ($ansList as $ans=>$value)
                     {
                         $ansInfo = explode('~',$ans);
@@ -9450,37 +9514,39 @@ EOD;
                         if (isset($LEM->subQrelInfo[$qid][$rowdivid]))
                         {
                             $sq = $LEM->subQrelInfo[$qid][$rowdivid];
-                            $subQeqn = ' ' . $sq['prettyPrintEqn'];
-                            if ($sq['hasErrors']) {
+                            $subQeqn = ' ' . viewHelper::stripTagsEM($sq['prettyPrintEqn']);
+                            if ($sq['hasErrors'])
+                            {
                                 ++$errorCount;
                             }
                         }
-
+                        $sAnswerText=$valInfo[1];
+                        $LEM->ProcessString($sAnswerText, $qid,NULL,false,1,1,false,false);
+                        $sAnswerText = viewHelper::purified(viewHelper::filterScript($LEM->GetLastPrettyPrintExpression()));
+                        if ($LEM->em->HasErrors()) {
+                            ++$errorCount;
+                        }
                         $answerRows .= "<tr class='LEManswer'>"
                         . "<td>A[" . $ansInfo[0] . "]-" . $i++ . "</td>"
                         . "<td><b>" . $ansInfo[1]. "</b></td>"
                         . "<td>[VALUE: " . $valInfo[0] . "]".$subQeqn."</td>"
-                        . "<td>" . $valInfo[1] . "</td>"
+                        . "<td>" . $sAnswerText . "</td>"
                         . "</tr>\n";
-                    }
-                    $LEM->ProcessString($answerRows, $qid,NULL,false,1,1,false,false);
-                    $answerRows = viewHelper::filterScript($LEM->GetLastPrettyPrintExpression());
-                    if ($LEM->em->HasErrors()) {
-                        ++$errorCount;
                     }
                 }
 
                 //////
                 // FINALLY, SHOW THE QUESTION ROW(S), COLOR-CODING QUESTIONS THAT CONTAIN ERRORS
                 //////
-                $errclass = ($errorCount > 0) ? "class='LEMerror' title='" . sprintf($LEM->ngT("This question has at least %s error.|This question has at least %s errors.",$errorCount), $errorCount) . "'" : '';
-
+                $errclass = ($errorCount > 0) ? 'LEMerror': '';
+                $errText=($errorCount > 0) ? "<br><em class='error'>".sprintf($LEM->ngT("This question has at least %s error.|This question has at least %s errors.",$errorCount), $errorCount)."<em>" : "";
                 $questionRow = "<tr class='LEMquestion'>"
-                . "<td $errclass>Q-" . $q['info']['qseq'] . "</td>"
+                . "<td class='$errclass'>Q-" . $q['info']['qseq'] . "</td>"
                 . "<td><b>" . $mandatory;
 
                 if ($varNameErrorMsg == '')
                 {
+                    $editlink = Yii::app()->getController()->createUrl('admin/survey/sa/view/surveyid/' . $sid . '/gid/' . $gid . '/qid/' . $qid);
                     $questionRow .= $rootVarName;
                 }
                 else
@@ -9490,8 +9556,7 @@ EOD;
                     . "onclick='window.open(\"$editlink\",\"_blank\")'>"
                     . $rootVarName . "</span>";
                 }
-                $editlink = Yii::app()->getController()->createUrl('admin/survey/sa/view/surveyid/' . $sid . '/gid/' . $gid . '/qid/' . $qid);
-                $questionRow .= "</b><br />[<a target='_blank' href='$editlink'>QID $qid</a>]<br/>$typedesc [$type]</td>"
+                $questionRow .= "</b><br />[<a target='_blank' href='$editlink'>QID $qid</a>]<br/>$typedesc [$type] $errText</td>"
                 . "<td>" . $relevance . $prettyValidEqn . $default . "</td>"
                 . "<td>" . $qdetails . "</td>"
                 . "</tr>\n";
@@ -10027,7 +10092,7 @@ EOD;
             $oToken = Token::model($iSurveyId)->findByAttributes(array(
                 'token' => $sToken
             ));
-            
+
             if ($oToken)
             {
                 foreach ($oToken->attributes as $attribute => $value)

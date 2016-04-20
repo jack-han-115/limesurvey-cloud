@@ -127,13 +127,6 @@ function retrieveAnswers($ia)
             break;
         case 'D': //DATE
             $values = do_date($ia);
-            // if a drop box style date was answered incompletely (dropbox), print an error/help message
-            if (($_SESSION['survey_'.Yii::app()->getConfig('surveyID')]['step'] != $_SESSION['survey_'.Yii::app()->getConfig('surveyID')]['maxstep']) ||
-                ($_SESSION['survey_'.Yii::app()->getConfig('surveyID')]['step'] == $_SESSION['survey_'.Yii::app()->getConfig('surveyID')]['prevstep']))
-            {
-                if (isset($_SESSION['survey_'.Yii::app()->getConfig('surveyID')]['qattribute_answer'.$ia[1]]))
-                $question_text['help'] = '<span class="error">'.$_SESSION['survey_'.Yii::app()->getConfig('surveyID')]['qattribute_answer'.$ia[1]].'</span>';
-            }
             break;
         case 'L': //LIST drop-down/radio-button list
             $values = do_list_radio($ia);
@@ -931,7 +924,6 @@ function do_date($ia)
     $aQuestionAttributes=getQuestionAttributeValues($ia[0],$ia[4]);
     $sDateLangvarJS=" translt = {
          alertInvalidDate: '" . gT('Date entered is invalid!','js') . "',
-         infoCompleteAll: '" . gT('Please complete all parts of the date!','js') . "'
         };";
     App()->getClientScript()->registerScript("sDateLangvarJS",$sDateLangvarJS,CClientScript::POS_HEAD);
     App()->getClientScript()->registerScriptFile(Yii::app()->getConfig("generalscripts").'date.js');
@@ -944,15 +936,20 @@ function do_date($ia)
     // date_min: Determine whether we have an expression, a full date (YYYY-MM-DD) or only a year(YYYY)
     if (trim($aQuestionAttributes['date_min'])!='')
     {
-        $date_min=$aQuestionAttributes['date_min'];
-        if (preg_match("/^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])/",$date_min))
-        {
-            $mindate=$date_min;
-        }
-        elseif (ctype_digit($date_min) && (strlen($date_min)==4) && ($date_min>=1900) && ($date_min<=2099))
+        $date_min=trim($aQuestionAttributes['date_min']);
+        $date_time_em=strtotime(LimeExpressionManager::ProcessString("{".$date_min."}",$ia[0]));
+        if(ctype_digit($date_min) && (strlen($date_min)==4) && ($date_min>=1900) && ($date_min<=2099))
         {
             // backward compatibility: if only a year is given, add month and day
             $mindate=$date_min.'-01-01';
+        }
+        elseif (preg_match("/^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])/",$date_min))// it's a YYYY-MM-DD date (use http://www.yiiframework.com/doc/api/1.1/CDateValidator ?)
+        {
+            $mindate=$date_min;
+        }
+        elseif($date_time_em)
+        {
+            $mindate=date("Y-m-d",$date_time_em);
         }
         else
         {
@@ -961,21 +958,25 @@ function do_date($ia)
     }
     else
     {
-        $mindate='1900-01-01'; // Why 1900 ? 
+        $mindate='1900-01-01'; // Why 1900 ?
     }
-
     // date_max: Determine whether we have an expression, a full date (YYYY-MM-DD) or only a year(YYYY)
     if (trim($aQuestionAttributes['date_max'])!='')
     {
-        $date_max=$aQuestionAttributes['date_max'];
-        if (preg_match("/^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])/",$date_max))
-        {
-            $maxdate=$date_max;
-        }
-        elseif (ctype_digit($date_max) && (strlen($date_max)==4) && ($date_max>=1900) && ($date_max<=2099))
+        $date_max=trim($aQuestionAttributes['date_max']);
+        $date_time_em=strtotime(LimeExpressionManager::ProcessString("{".$date_max."}",$ia[0]));
+        if (ctype_digit($date_max) && (strlen($date_max)==4) && ($date_max>=1900) && ($date_max<=2099))
         {
             // backward compatibility: if only a year is given, add month and day
             $maxdate=$date_max.'-12-31';
+        }
+        elseif (preg_match("/^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])/",$date_max))// it's a YYYY-MM-DD date (use http://www.yiiframework.com/doc/api/1.1/CDateValidator ?)
+        {
+            $maxdate=$date_max;
+        }
+        elseif($date_time_em)
+        {
+            $maxdate=date("Y-m-d",$date_time_em);
         }
         else
         {
@@ -984,9 +985,8 @@ function do_date($ia)
     }
     else
     {
-        $maxdate='2037-12-31'; // Why 2037 ? 
+        $maxdate='2037-12-31'; // Why 2037 ?
     }
-
     if (trim($aQuestionAttributes['dropdown_dates'])==1) {
         if (!empty($_SESSION['survey_'.Yii::app()->getConfig('surveyID')][$ia[1]]) &
            ($_SESSION['survey_'.Yii::app()->getConfig('surveyID')][$ia[1]]!='INVALID'))
@@ -997,12 +997,15 @@ function do_date($ia)
             $currentdate = $datetimeobj->days;
             $currenthour = $datetimeobj->hours;
             $currentminute = $datetimeobj->minutes;
-        } else {
-            $currentdate='';
-            $currentmonth='';
-            $currentyear='';
-            $currenthour = '';
-            $currentminute = '';
+        }
+        else
+        {
+            // If date is invalid get the POSTED value
+            $currentdate = App()->request->getPost("day{$ia[1]}",'');
+            $currentmonth = App()->request->getPost("month{$ia[1]}",'');
+            $currentyear = App()->request->getPost("year{$ia[1]}",'');
+            $currenthour = App()->request->getPost("hour{$ia[1]}",'');
+            $currentminute = App()->request->getPost("minute{$ia[1]}",'');
         }
 
         $dateorder = preg_split('/([-\.\/ :])/', $dateformatdetails['phpdate'],-1,PREG_SPLIT_DELIM_CAPTURE );
@@ -1205,9 +1208,7 @@ function do_date($ia)
 
         $answer .= '<input class="text" type="text" size="10" name="'.$ia[1].'" style="display: none" id="answer'.$ia[1].'" value="'.htmlspecialchars($dateoutput,ENT_QUOTES,'utf-8').'" maxlength="10" alt="'.gT('Answer').'" onchange="'.$checkconditionFunction.'(this.value, this.name, this.type)" title="'.sprintf(gT('Date in the format : %s'),$dateformatdetails['dateformat']).'" />
         </p>';
-        $answer .= '
-        <input type="hidden" id="qattribute_answer'.$ia[1].'" name="qattribute_answer'.$ia[1].'" value="'.$ia[1].'"/>
-        <input type="hidden" id="dateformat'.$ia[1].'" value="'.$dateformatdetails['jsdate'].'"/>';
+        $answer .= '<input type="hidden" id="dateformat'.$ia[1].'" value="'.$dateformatdetails['jsdate'].'"/>';
         App()->getClientScript()->registerScript("doDropDownDate{$ia[0]}","doDropDownDate({$ia[0]});",CClientScript::POS_HEAD);
         // MayDo:
         // add js code to
@@ -1789,7 +1790,7 @@ function do_list_radio($ia)
 
     if ($ia[6] != 'Y' && SHOW_NO_ANSWER == 1)
     {
-        if ((!$_SESSION['survey_'.Yii::app()->getConfig('surveyID')][$ia[1]] || $_SESSION['survey_'.Yii::app()->getConfig('surveyID')][$ia[1]] == '') || ($_SESSION['survey_'.Yii::app()->getConfig('surveyID')][$ia[1]] == ' ' ))
+        if ((!isset($_SESSION['survey_'.Yii::app()->getConfig('surveyID')][$ia[1]]) || $_SESSION['survey_'.Yii::app()->getConfig('surveyID')][$ia[1]] == '') || ($_SESSION['survey_'.Yii::app()->getConfig('surveyID')][$ia[1]] == ' ' ))
         {
             $check_ans = CHECKED; //Check the "no answer" radio button if there is no answer in session.
         }
@@ -1893,7 +1894,7 @@ function do_listwithcomment($ia)
 
         if ($ia[6] != 'Y' && SHOW_NO_ANSWER == 1)
         {
-            if ((!$_SESSION['survey_'.Yii::app()->getConfig('surveyID')][$ia[1]] || $_SESSION['survey_'.Yii::app()->getConfig('surveyID')][$ia[1]] == '') ||($_SESSION['survey_'.Yii::app()->getConfig('surveyID')][$ia[1]] == ' ' ))
+            if ((!isset($_SESSION['survey_'.Yii::app()->getConfig('surveyID')][$ia[1]]) || $_SESSION['survey_'.Yii::app()->getConfig('surveyID')][$ia[1]] == '') ||($_SESSION['survey_'.Yii::app()->getConfig('surveyID')][$ia[1]] == ' ' ))
             {
                 $check_ans = CHECKED;
             }
@@ -1925,7 +1926,7 @@ function do_listwithcomment($ia)
         // --> END NEW FEATURE - SAVE
         if (isset($_SESSION['survey_'.Yii::app()->getConfig('surveyID')][$fname2]) && $_SESSION['survey_'.Yii::app()->getConfig('surveyID')][$fname2])
         {
-            $answer .= str_replace("\\", "", $_SESSION['survey_'.Yii::app()->getConfig('surveyID')][$fname2]);
+            $answer .= htmlspecialchars($_SESSION['survey_'.Yii::app()->getConfig('surveyID')][$fname2]);
         }
         $answer .= '</textarea>
         </p>
@@ -1982,7 +1983,7 @@ function do_listwithcomment($ia)
         // --> END NEW FEATURE - SAVE
         if (isset($_SESSION['survey_'.Yii::app()->getConfig('surveyID')][$fname2]) && $_SESSION['survey_'.Yii::app()->getConfig('surveyID')][$fname2])
         {
-            $answer .= str_replace("\\", "", $_SESSION['survey_'.Yii::app()->getConfig('surveyID')][$fname2]);
+            $answer .= htmlspecialchars( $_SESSION['survey_'.Yii::app()->getConfig('surveyID')][$fname2]);
         }
         $answer .= '</textarea>
         <input class="radio" type="hidden" name="java'.$ia[1].'" id="java'.$ia[1].'" value="'.$_SESSION['survey_'.Yii::app()->getConfig('surveyID')][$ia[1]].'" /></p>';
@@ -2109,7 +2110,7 @@ function do_ranking($ia)
     }
     // hide_tip is managed by css with EM
     $rank_help = gT("Double-click or drag-and-drop items in the left list to move them to the right - your highest ranking item should be on the top right, moving through to your lowest ranking item.",'js');
-    
+
     $answer .= "<script type='text/javascript'>\n"
     . "  <!--\n"
     . "var aRankingTranslations = {
@@ -2633,6 +2634,10 @@ function do_multiplechoice_withcomments($ia)
             }
             $answer_main .= ' value="'.htmlspecialchars($dispVal,ENT_QUOTES).'"';
         }
+        else
+        {
+            $value = '';
+        }
         $fn++;
         // --> START NEW FEATURE - SAVE
         $answer_main .= " />\n\t</label>\n</span>\n"
@@ -2715,8 +2720,8 @@ function do_file_upload($ia)
              headTitle: '" . gT('Title','js') . "',
              headComment: '" . gT('Comment','js') . "',
              headFileName: '" . gT('File name','js') . "',
-             deleteFile : '".gt('Delete')."',
-             editFile : '".gt('Edit')."'
+             deleteFile : '".gT('Delete')."',
+             editFile : '".gT('Edit')."'
             };
         var imageurl =  '".Yii::app()->getConfig('imageurl')."';
         var uploadurl =  '".$scriptloc."';
@@ -2931,7 +2936,7 @@ function do_multipleshorttext($ia)
                     {
                         $dispVal = str_replace('.',$sSeparator,$dispVal);
                     }
-                    $answer_main .= $dispVal;
+                    $answer_main .= htmlspecialchars($dispVal);
                 }
 
                 $answer_main .= "</textarea>\n".$suffix."\n\t</span>\n"
@@ -3450,7 +3455,7 @@ function do_shortfreetext($ia)
             {
                 $dispVal = str_replace('.',$sSeparator,$dispVal);
             }
-            $answer .= $dispVal;
+            $answer .= htmlspecialchars($dispVal);
         }
 
         $answer .= "</textarea></p>\n";
@@ -3577,11 +3582,8 @@ function do_shortfreetext($ia)
             'zoomLevel'=>$aQuestionAttributes['location_mapzoom'],
             'latitude'=>$currentCenter[0],
             'longitude'=>$currentCenter[1],
-            
+
         );
-        $oClientScript=App()->getComponent('clientScript');
-        array_push($oClientScript->excludeFiles,App()->baseUrl."/third_party/leaflet/leaflet.js",Yii::app()->getConfig('generalscripts')."map.js");
-        App()->setComponent('clientScript',$oClientScript);
         App()->getClientScript()->registerPackage('leaflet');
         Yii::app()->getClientScript()->registerScript('sGlobalMapScriptVar',"LSmap=".ls_json_encode($aGlobalMapScriptVar).";\nLSmaps= new Array();",CClientScript::POS_HEAD);
         Yii::app()->getClientScript()->registerScript('sThisMapScriptVar'.$ia[1],"LSmaps['{$ia[1]}']=".ls_json_encode($aThisMapScriptVar),CClientScript::POS_HEAD);
@@ -3594,22 +3596,22 @@ function do_shortfreetext($ia)
             <input type=\"hidden\" class=\"location\" name=\"$ia[1]_c\" id=\"answer$ia[1]_c\" value=\"{$currentLatLong[0]} {$currentLatLong[1]}\" />
 
             <ul class=\"coordinates-list\">
-                <li class=\"coordinate-item\">".gt("Latitude:")."<input class=\"coords text\" type=\"text\" name=\"$ia[1]_c1\" id=\"answer_lat$ia[1]_c\"  value=\"{$currentLatLong[0]}\" /></li>
-                <li class=\"coordinate-item\">".gt("Longitude:")."<input class=\"coords text\" type=\"text\" name=\"$ia[1]_c2\" id=\"answer_lng$ia[1]_c\" value=\"{$currentLatLong[1]}\" /></li>
+                <li class=\"coordinate-item\">".gT("Latitude:")."<input class=\"coords text\" type=\"text\" name=\"$ia[1]_c1\" id=\"answer_lat$ia[1]_c\"  value=\"{$currentLatLong[0]}\" /></li>
+                <li class=\"coordinate-item\">".gT("Longitude:")."<input class=\"coords text\" type=\"text\" name=\"$ia[1]_c2\" id=\"answer_lng$ia[1]_c\" value=\"{$currentLatLong[1]}\" /></li>
             </ul>
 
-            <input type=\"hidden\" name=\"boycott_$ia[1]\" id=\"boycott_$ia[1]\" value = \"{$strBuild}\" > 
+            <input type=\"hidden\" name=\"boycott_$ia[1]\" id=\"boycott_$ia[1]\" value = \"{$strBuild}\" >
             <input type=\"hidden\" name=\"mapservice_$ia[1]\" id=\"mapservice_$ia[1]\" class=\"mapservice\" value = \"{$aQuestionAttributes['location_mapservice']}\" >
 
             <div>
                 <div class=\"geoname_restrict\">
-                    <input type=\"checkbox\" id=\"restrictToExtent_{$ia[1]}\"> <label for=\"restrictToExtent_{$ia[1]}\">".gt("Restrict search place to map extent")."</label>
+                    <input type=\"checkbox\" id=\"restrictToExtent_{$ia[1]}\"> <label for=\"restrictToExtent_{$ia[1]}\">".gT("Restrict search place to map extent")."</label>
                 </div>
                 <div class=\"geoname_search\" >
-                    <input id=\"searchbox_{$ia[1]}\" placeholder=\"".gt("Search")."\" width=\"15\">
+                    <input id=\"searchbox_{$ia[1]}\" placeholder=\"".gT("Search")."\" width=\"15\">
                 </div>
             </div>
-            <div id=\"map_{$ia[1]}\" style=\"width: 100%; height: {$aQuestionAttributes['location_mapheight']}px;\">
+            <div id=\"map_{$ia[1]}\" style=\"width: 100%; height: {$aQuestionAttributes['location_mapheight']}px;\"></div>
         </div>
         ";
 
@@ -3728,7 +3730,10 @@ function do_longfreetext($ia)
     .'rows="'.$drows.'" cols="'.$tiwidth.'" '.$maxlength.' onkeyup="'.$checkconditionFunction.'(this.value, this.name, this.type)" >';
     // --> END NEW FEATURE - SAVE
 
-    if ($_SESSION['survey_'.Yii::app()->getConfig('surveyID')][$ia[1]]) {$answer .= str_replace("\\", "", $_SESSION['survey_'.Yii::app()->getConfig('surveyID')][$ia[1]]);}
+    if ($_SESSION['survey_'.Yii::app()->getConfig('surveyID')][$ia[1]])
+    {
+        $answer .= htmlspecialchars($_SESSION['survey_'.Yii::app()->getConfig('surveyID')][$ia[1]]);
+    }
 
     $answer .= "</textarea></p>\n";
 
@@ -3802,7 +3807,10 @@ function do_hugefreetext($ia)
     .'rows="'.$drows.'" cols="'.$tiwidth.'" '.$maxlength.' onkeyup="'.$checkconditionFunction.'(this.value, this.name, this.type)" >';
     // --> END NEW FEATURE - SAVE
 
-    if ($_SESSION['survey_'.Yii::app()->getConfig('surveyID')][$ia[1]]) {$answer .= str_replace("\\", "", $_SESSION['survey_'.Yii::app()->getConfig('surveyID')][$ia[1]]);}
+    if ($_SESSION['survey_'.Yii::app()->getConfig('surveyID')][$ia[1]])
+    {
+        $answer .= htmlspecialchars($_SESSION['survey_'.Yii::app()->getConfig('surveyID')][$ia[1]]);
+    }
     $answer .= "</textarea>\n";
     $answer .="</p>";
     if (trim($aQuestionAttributes['time_limit']) != '')

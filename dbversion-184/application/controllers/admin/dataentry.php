@@ -251,20 +251,20 @@ class dataentry extends Survey_Common_Action
                 $baseSchema = SurveyDynamic::model($iSurveyId)->getTableSchema();
                 $tables = App()->getApi()->getOldResponseTables($iSurveyId);
                 $compatible = array();
-				$coercible = array();
+                $coercible = array();
                 foreach ($tables as $table)
                 {
                     $schema = PluginDynamic::model($table)->getTableSchema();
                     if (PluginDynamic::model($table)->count() > 0)
                     {
-						if ($this->isCompatible($baseSchema, $schema))
-						{
-							$compatible[] = $table;
-						}
-						elseif ($this->isCompatible($baseSchema, $schema, false))
-						{
-							$coercible[] = $table;
-						}
+                        if ($this->isCompatible($baseSchema, $schema))
+                        {
+                            $compatible[] = $table;
+                        }
+                        elseif ($this->isCompatible($baseSchema, $schema, false))
+                        {
+                            $coercible[] = $table;
+                        }
                     }
                 }
 
@@ -274,9 +274,9 @@ class dataentry extends Survey_Common_Action
                     'label' => gT('Source table'),
                     'type' => 'select',
                     'options' => array(
-						gT('Compatible') => $this->tableList($compatible),
-						gT('Compatible with type coercion') => $this->tableList($coercible)
-					)
+                        gT('Compatible') => $this->tableList($compatible),
+                        gT('Compatible with type coercion') => $this->tableList($coercible)
+                    )
                 );
 
 
@@ -325,7 +325,7 @@ class dataentry extends Survey_Common_Action
                     }
                 }
                 $imported = 0;
-				$sourceResponses = new CDataProviderIterator(new CActiveDataProvider($sourceTable), 500);
+                $sourceResponses = new CDataProviderIterator(new CActiveDataProvider($sourceTable), 500);
                 foreach ($sourceResponses as $sourceResponse)
                 {
                    $iOldID=$sourceResponse->id;
@@ -500,13 +500,15 @@ class dataentry extends Survey_Common_Action
                 $ipaddr=$fnrow['ipaddr'];
             } // Get table output into array
 
-
             // Perform a case insensitive natural sort on group name then question title of a multidimensional array
             // $fnames = (Field Name in Survey Table, Short Title of Question, Question Type, Field Name, Question Code, Predetermined Answer if exist)
 
             $fnames['completed'] = array('fieldname'=>"completed", 'question'=>gT("Completed"), 'type'=>'completed');
 
             $fnames=array_merge($fnames,createFieldMap($surveyid,'full',false,false,$sDataEntryLanguage));
+            // Fix private if disallowed to view token
+            if(!Permission::model()->hasSurveyPermission($surveyid,'tokens','read'))
+                unset($fnames['token']);
             $nfncount = count($fnames)-1;
 
             //SHOW INDIVIDUAL RECORD
@@ -592,7 +594,6 @@ class dataentry extends Survey_Common_Action
                     $nfncount--;
                 }
             }
-
             $aDataentryoutput = '';
             foreach ($results as $idrow)
             {
@@ -1279,7 +1280,15 @@ class dataentry extends Survey_Common_Action
                             $fname=prev($fnames);
                             $aDataentryoutput .= "</table>\n";
                             break;
-                        default: //This really only applies to tokens for non-private surveys
+                        case "token":
+                            if(Permission::model()->hasSurveyPermission($surveyid,'tokens','update'))
+                                $aDataentryoutput .= CHtml::textField($fname['fieldname'],$idrow[$fname['fieldname']]);
+                            else
+                                $aDataentryoutput .= CHtml::textField($fname['fieldname'],$idrow[$fname['fieldname']],array('disabled'=>'disabled'));
+                            break;
+                        case "submitdate":
+                        case "startlanguage":
+                        default:
                             $aDataentryoutput .= "\t<input type='text' name='{$fname['fieldname']}' value='"
                             .$idrow[$fname['fieldname']] . "' />\n";
                             break;
@@ -1375,7 +1384,11 @@ class dataentry extends Survey_Common_Action
             $aDataentryoutput = "<div class='header ui-widget-header'>".gT("Data entry")."</div>\n";
 
             $fieldmap = createFieldMap($surveyid,'full',false,false,getBaseLanguageFromSurveyID($surveyid));
-
+            // restet token if user is not allowed to update
+            if(!Permission::model()->hasSurveyPermission($surveyid,'tokens','update')) // If not allowed to read: remove it
+            {
+                unset($fieldmap['token']);
+            }
             // unset timings
             foreach ($fieldmap as $fname)
             {
@@ -1504,7 +1517,7 @@ class dataentry extends Survey_Common_Action
                 $lastanswfortoken = ''; // check if a previous answer has been submitted or saved
                 $rlanguage = '';
 
-                if (isset($_POST['token']))
+                if (Yii::app()->request->getPost('token') && Permission::model()->hasSurveyPermission($surveyid,'tokens','update'))
                 {
                     $tokencompleted = "";
                     $tcquery = "SELECT completed from {{tokens_{$surveyid}}} WHERE token=".dbQuoteAll($_POST['token']);
@@ -1816,11 +1829,10 @@ class dataentry extends Survey_Common_Action
                                     $message .= gT("Name").": ".$saver['identifier']."\n";
                                     $message .= gT("Password").": ".$saver['password']."\n\n";
                                     $message .= gT("Reload your survey by clicking on the following link (or pasting it into your browser):")."\n";
-                                    $message .= Yii::app()->getController()->createAbsoluteUrl("/survey/index/sid/{$iSurveyID}/loadall/reload/scid/{$scid}/loadname/".rawurlencode ($saver['identifier'])."/loadpass/".rawurlencode ($saver['password'])."/lang/".rawurlencode($saver['language']));
-                                    if (isset($tokendata['token'])) { $message .= "/token/".rawurlencode($tokendata['token']); }
-
+                                    $aParams=array('lang'=>$saver['language'],'loadname'=>$saver['identifier'],'loadpass'=>$saver['password']);
+                                    if (isset($tokendata['token'])) { $aParams['token']= $tokendata['token']; }
+                                    $message .= Yii::app()->getController()->createAbsoluteUrl("/survey/index/sid/{$iSurveyID}/loadall/reload/scid/{$scid}/",$aParams);
                                     $from = $thissurvey['adminemail'];
-
                                     if (SendEmailMessage($message, $subject, $saver['email'], $from, $sitename, false, getBounceEmail($surveyid)))
                                     {
                                         $emailsent="Y";
@@ -1865,8 +1877,6 @@ class dataentry extends Survey_Common_Action
 
         if (Permission::model()->hasSurveyPermission($surveyid, 'responses', 'create'))
         {
-
-
             $sDataEntryLanguage = Survey::model()->findByPk($surveyid)->language;
             $surveyinfo=getSurveyInfo($surveyid);
 
@@ -2346,7 +2356,7 @@ class dataentry extends Survey_Common_Action
         {
             $newquestiontext = Question::model()->findByAttributes(array('title' => $qidattributes['array_filter'], 'language' => $surveyprintlang, 'sid' => $surveyid))->getAttribute('question');
             $output .= "\n<p class='extrahelp'>
-            ".sprintf(gT("Only answer this question for the items you selected in question %s ('%s')"),$qidattributes['array_filter'], flattenText(breakToNewline($newquestiontext['question'])))."
+            ".sprintf(gT("Only answer this question for the items you selected in question %s ('%s')"),$qidattributes['array_filter'], flattenText(breakToNewline($newquestiontext)))."
             </p>\n";
         }
         if(!empty($qidattributes['array_filter_exclude']))
@@ -2354,7 +2364,7 @@ class dataentry extends Survey_Common_Action
             $newquestiontext = Question::model()->findByAttributes(array('title' => $qidattributes['array_filter_exclude'], 'language' => $surveyprintlang, 'sid' => $surveyid))->getAttribute('question');
 
             $output .= "\n    <p class='extrahelp'>
-            ".sprintf(gT("Only answer this question for the items you did not select in question %s ('%s')"),$qidattributes['array_filter_exclude'], breakToNewline($newquestiontext['question']))."
+            ".sprintf(gT("Only answer this question for the items you did not select in question %s ('%s')"),$qidattributes['array_filter_exclude'], breakToNewline($newquestiontext))."
             </p>\n";
         }
         return $output;
@@ -2377,5 +2387,3 @@ class dataentry extends Survey_Common_Action
     }
 
 }
-
-

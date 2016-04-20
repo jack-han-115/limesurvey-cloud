@@ -45,8 +45,7 @@ class LSYii_Application extends CWebApplication
         $ls_config = require(__DIR__ . '/../config/config-defaults.php');
         $email_config = require(__DIR__ . '/../config/email.php');
         $version_config = require(__DIR__ . '/../config/version.php');
-
-	$updater_version_config = require(__DIR__ . '/../config/updater_version.php');
+        $updater_version_config = require(__DIR__ . '/../config/updater_version.php');
         $settings = array_merge($ls_config, $version_config, $email_config, $updater_version_config);
 
 
@@ -66,14 +65,14 @@ class LSYii_Application extends CWebApplication
     }
 
 
-	public function init() {
-		parent::init();
+    public function init() {
+        parent::init();
         $this->initLanguage();
         // These take care of dynamically creating a class for each token / response table.
-		Yii::import('application.helpers.ClassFactory');
-		ClassFactory::registerClass('Token_', 'Token');
-		ClassFactory::registerClass('Response_', 'Response');
-	}
+        Yii::import('application.helpers.ClassFactory');
+        ClassFactory::registerClass('Token_', 'Token');
+        ClassFactory::registerClass('Response_', 'Response');
+    }
 
     public function initLanguage()
     {
@@ -182,6 +181,7 @@ class LSYii_Application extends CWebApplication
     */
     public function setLanguage( $sLanguage )
     {
+        $sLanguage=preg_replace('/[^a-z0-9-]/i', '', $sLanguage);
         $this->messages->catalog = $sLanguage;
         parent::setLanguage($sLanguage);
     }
@@ -209,4 +209,3 @@ class LSYii_Application extends CWebApplication
 
 
 }
-
