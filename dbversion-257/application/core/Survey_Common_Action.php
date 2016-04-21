@@ -764,7 +764,7 @@ class Survey_Common_Action extends CAction
             // Survey permission item
             $aData['surveysecurity'] = Permission::model()->hasSurveyPermission($iSurveyID, 'surveysecurity', 'read');
             // CHANGE QUESTION GROUP ORDER BUTTON
-            $aData['surveycontent'] = Permission::model()->hasSurveyPermission($iSurveyID, 'surveycontent', 'read');
+            $aData['surveycontentread'] = Permission::model()->hasSurveyPermission($iSurveyID, 'surveycontent', 'read');
             $aData['groupsum'] = (getGroupSum($iSurveyID, $surveyinfo['language']) > 1);
             // SET SURVEY QUOTAS BUTTON
             $aData['quotas'] = Permission::model()->hasSurveyPermission($iSurveyID, 'quotas', 'read');
@@ -781,6 +781,21 @@ class Survey_Common_Action extends CAction
             //$sumquery6 = "SELECT count(*) FROM ".db_table_name('conditions')." as c, ".db_table_name('questions')."
             // as q WHERE c.qid = q.qid AND q.sid=$iSurveyID"; //Getting a count of conditions for this survey
             // TMSW Condition->Relevance:  How is conditionscount used?  Should Relevance do the same?
+
+            // Only show survey properties menu if at least one item is permitted
+            $aData['showSurveyPropertiesMenu'] =
+                   $aData['surveylocale']
+                || $aData['surveysettings']
+                || $aData['surveysecurity']
+                || $aData['surveycontentread']
+                || $aData['quotas']
+                || $aData['assessments'];
+
+            // Only show tools menu if at least one item is permitted
+            $aData['showToolsMenu'] =
+                   $aData['surveydelete']
+                || $aData['surveytranslate']
+                || Permission::model()->hasSurveyPermission($iSurveyID, 'surveycontent', 'update');
 
             $iConditionCount = Condition::model()->with(Array('questions'=>array('condition'=>'sid ='.$iSurveyID)))->count();
 
@@ -918,6 +933,7 @@ class Survey_Common_Action extends CAction
             }
             $aData['aGroups'] = $aGroups;
             $aData['surveycontent'] = Permission::model()->hasSurveyPermission($aData['surveyid'], 'surveycontent', 'read');
+            $aData['surveycontentupdate'] = Permission::model()->hasSurveyPermission($aData['surveyid'], 'surveycontent', 'update');
             $this->getController()->renderPartial("/admin/super/sidemenu", $aData);
         }
         else

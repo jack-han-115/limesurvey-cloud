@@ -414,6 +414,13 @@ class questions extends Survey_Common_Action
     */
     public function answeroptions($surveyid, $gid, $qid)
     {
+        // Abort if user lacks permission to update survey content
+        if (!Permission::model()->hasSurveyPermission($surveyid,'surveycontent','update'))
+        {
+            Yii::app()->user->setFlash('error', gT("Access denied"));
+            $this->getController()->redirect(Yii::app()->request->urlReferrer);
+        }
+
         $surveyid = sanitize_int($surveyid);
         $qid = sanitize_int($qid);
         $gid = sanitize_int($gid);
@@ -616,6 +623,13 @@ class questions extends Survey_Common_Action
     */
     public function subquestions($surveyid, $gid, $qid)
     {
+        // Abort if user lacks permission to update survey content
+        if (!Permission::model()->hasSurveyPermission($surveyid,'surveycontent','update'))
+        {
+            Yii::app()->user->setFlash('error', gT("Access denied"));
+            $this->getController()->redirect(Yii::app()->request->urlReferrer);
+        }
+
         $aData['surveyid'] = $surveyid = sanitize_int($surveyid);
         $aData['gid'] = $gid = sanitize_int($gid);
         $aData['qid'] = $qid = sanitize_int($qid);
@@ -658,6 +672,13 @@ class questions extends Survey_Common_Action
     */
     public function _editsubquestion($surveyid, $gid, $qid)
     {
+        // Abort if user lacks permission to update survey content
+        if (!Permission::model()->hasSurveyPermission($surveyid,'surveycontent','update'))
+        {
+            Yii::app()->user->setFlash('error', gT("Access denied"));
+            $this->getController()->redirect(Yii::app()->request->urlReferrer);
+        }
+
         $surveyid = sanitize_int($surveyid);
         $qid = sanitize_int($qid);
         $gid = sanitize_int($gid);
@@ -861,6 +882,12 @@ class questions extends Survey_Common_Action
      */
     public function newquestion($surveyid)
     {
+        if (!Permission::model()->hasSurveyPermission($surveyid,'surveycontent','create'))
+        {
+            Yii::app()->user->setFlash('error', gT("Access denied"));
+            $this->getController()->redirect(Yii::app()->request->urlReferrer);
+        }
+
         Yii::app()->loadHelper('admin/htmleditor');
         $surveyid = $iSurveyID = $aData['surveyid'] = sanitize_int($surveyid);
         App()->getClientScript()->registerPackage('qTip2');
@@ -1031,6 +1058,13 @@ class questions extends Survey_Common_Action
             // Prepare selector Mode TODO: with and without image
             if (!$adding)
             {
+                // Abort if user lacks update permission
+                if (!Permission::model()->hasSurveyPermission($surveyid,'surveycontent','update'))
+                {
+                    Yii::app()->user->setFlash('error', gT("Access denied"));
+                    $this->getController()->redirect(Yii::app()->request->urlReferrer);
+                }
+
                 Yii::app()->session['FileManagerContext'] = "edit:question:{$surveyid}";
                 $aData['display']['menu_bars']['qid_action'] = 'editquestion';
 

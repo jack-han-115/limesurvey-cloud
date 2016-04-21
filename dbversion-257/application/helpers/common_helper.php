@@ -3233,7 +3233,7 @@ function questionAttributes($returnByName=false)
         //    "caption"=>gT('Value equals SGQA'));
 
         $qattributes["num_value_int_only"]=array(
-        "types"=>"N",
+        "types"=>"NK",
         'category'=>gT('Input'),
         'sortorder'=>100,
         'inputtype'=>'singleselect',

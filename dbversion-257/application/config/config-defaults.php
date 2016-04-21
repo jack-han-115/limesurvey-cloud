@@ -527,6 +527,12 @@ $config['GeoNamesUsername'] = 'limesurvey';
 $googletranslateapikey = '';
 
 /**
+ * characterset (string)
+ * Default character set for file import/export
+ */
+$config['characterset'] = 'auto';
+
+/**
 * This variable defines the total space available to the file upload question across all surveys. If set to 0 then no limit applies.
 *
 * @var $config['iFileUploadTotalSpaceMB']  Integer number to determine the available space in MB - Default: 0
@@ -624,7 +630,6 @@ $config['styleurl']                = $config['publicurl'].'styles/';
 
 $config['publicstyleurl']          = $config['publicurl'].'styles-public/';
 $config['sCKEditorURL']            = $config['third_party'].'ckeditor';
-//$config['sCKEditorURL']            = '/scripts/admin/ckeditor.36';
 $config['usertemplaterooturl']     = $config['uploadurl'].'/templates';     // Location of the user templates
 
 $config['adminimageurl']           = $config['styleurl'].$config['admintheme'].'/images/';         // Location of button bar files for admin script

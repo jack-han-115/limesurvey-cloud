@@ -2615,7 +2615,7 @@
                                     $subqValidSelector = $sq['jsVarName_on'];
                                 case 'N': //NUMERICAL QUESTION TYPE
                                     $sq_name = ($this->sgqaNaming)?$sq['rowdivid'].".NAOK":$sq['varName'].".NAOK";
-                                    $sq_eqn = 'is_int('.$sq_name.') || is_empty('.$sq_name.')';
+                                    $sq_eqn = '( is_int('.$sq_name.') || is_empty('.$sq_name.') )';
                                     break;
                                 default:
                                     break;
@@ -3288,11 +3288,11 @@
                     switch ($type)
                     {
                         case 'N':
-                            $qtips['default']='';
+                            unset($qtips['default']);
                             $qtips['value_integer']=$this->gT("Only an integer value may be entered in this field.");
                             break;
                         case 'K':
-                            $qtips['default']='';
+                            unset($qtips['default']);
                             $qtips['value_integer']=$this->gT("Only integer values may be entered in these fields.");
                             break;
                         default:
@@ -6383,7 +6383,10 @@
             $mandatoryTip = '';
             if ($qrel && !$qhidden && ($qInfo['mandatory'] == 'Y'))
             {
-                $mandatoryTip = "<p class='errormandatory alert alert-danger' role='alert'><span class='glyphicon glyphicon-exclamation-sign'></span>&nbsp" . $LEM->gT('This question is mandatory') . "</p>";
+                //$mandatoryTip = "<p class='errormandatory alert alert-danger' role='alert'><span class='glyphicon glyphicon-exclamation-sign'></span>&nbsp" . $LEM->gT('This question is mandatory') . "</p>";
+                $mandatoryTip = Yii::app()->getController()->renderPartial('/survey/system/questionhelp/mandatory_tip', array(
+                        'sMandatoryText'=>$LEM->gT('This question is mandatory'),
+                ), true);
                 switch ($qInfo['type'])
                 {
                     case 'M':
@@ -6397,7 +6400,10 @@
                         }
                         if (!($qInfo['type'] == '!' || $qInfo['type'] == 'L'))
                         {
-                            $mandatoryTip .= $LEM->gT('Please check at least one item.');
+                            $sMandatoryText = $LEM->gT('Please check at least one item.');
+                            $mandatoryTip .= Yii::app()->getController()->renderPartial('/survey/system/questionhelp/mandatory_tip', array(
+                                    'sMandatoryText'=>$sMandatoryText,
+                            ), true);
                         }
                         if ($qInfo['other']=='Y')
                         {
@@ -6408,7 +6414,12 @@
                             else {
                                 $othertext = $LEM->gT('Other:');
                             }
-                            $mandatoryTip .= "\n".sprintf($this->gT("If you choose '%s' please also specify your choice in the accompanying text field."),$othertext);
+                            //$mandatoryTip .= "\n".sprintf($this->gT("If you choose '%s' please also specify your choice in the accompanying text field."),$othertext);
+                            $sMandatoryText = "\n".sprintf($this->gT("If you choose '%s' please also specify your choice in the accompanying text field."),$othertext);
+                            $mandatoryTip .= Yii::app()->getController()->renderPartial('/survey/system/questionhelp/mandatory_tip', array(
+                                    'sMandatoryText'=>$sMandatoryText,
+                            ), true);
+
                         }
                         break;
                     case 'X':   // Boilerplate can never be mandatory
@@ -6430,7 +6441,10 @@
                         {
                             $qmandViolation = true; // TODO - what about 'other'?
                         }
-                        $mandatoryTip .= $LEM->gT('Please complete all parts').'.';
+                        $sMandatoryText = $LEM->gT('Please complete all parts').'.';
+                        $mandatoryTip .= Yii::app()->getController()->renderPartial('/survey/system/questionhelp/mandatory_tip', array(
+                                'sMandatoryText'=>$sMandatoryText,
+                        ), true);
                         break;
                     case ':':
                         $qattr = isset($LEM->qattr[$qid]) ? $LEM->qattr[$qid] : array();
@@ -6459,7 +6473,11 @@
                                     }
                                 }
                             }
-                            $mandatoryTip .= $LEM->gT('Please check at least one box per row').'.';
+                            $sMandatoryText = $LEM->gT('Please check at least one box per row').'.';
+                            $mandatoryTip .= Yii::app()->getController()->renderPartial('/survey/system/questionhelp/mandatory_tip', array(
+                                    'sMandatoryText'=>$sMandatoryText,
+                            ), true);
+
                         }
                         else
                         {
@@ -6467,7 +6485,10 @@
                             {
                                 $qmandViolation = true; // TODO - what about 'other'?
                             }
-                            $mandatoryTip .= $LEM->gT('Please complete all parts').'.';
+                            $sMandatoryText = $LEM->gT('Please complete all parts').'.';
+                            $mandatoryTip .= Yii::app()->getController()->renderPartial('/survey/system/questionhelp/mandatory_tip', array(
+                                    'sMandatoryText'=>$sMandatoryText,
+                            ), true);
                         }
                         break;
                     case 'R':
@@ -6475,7 +6496,10 @@
                         {
                             $qmandViolation = true; // TODO - what about 'other'?
                         }
-                        $mandatoryTip .= $LEM->gT('Please rank all items').'.';
+                        $sMandatoryText = $LEM->gT('Please rank all items').'.';
+                        $mandatoryTip .= Yii::app()->getController()->renderPartial('/survey/system/questionhelp/mandatory_tip', array(
+                                'sMandatoryText'=>$sMandatoryText,
+                        ), true);
                         break;
                     case 'O': //LIST WITH COMMENT drop-down/radio-button list + textarea
                         $_count=0;
@@ -6498,7 +6522,6 @@
                         }
                         break;
                 }
-                $mandatoryTip .= "</span></strong>\n";
             }
 
             /////////////////////////////////////////////////////////////
@@ -6557,12 +6580,16 @@
                     $stringToParse = '';
                     foreach ($LEM->qid2validationEqn[$qid]['tips'] as $vclass=>$vtip)
                     {
-                        $tipsDatas = array(
-                            'qid'   =>$qid,
-                            'vclass'=>$vclass,
-                            'vtip'  =>$vtip,
-                        );
-                        $stringToParse .= Yii::app()->getController()->renderPartial('/survey/system/questionhelp/tips', $tipsDatas, true);
+                        // Only add non-empty tip
+                        if (trim($vtip) != "")
+                        {
+                            $tipsDatas = array(
+                                'qid'   =>$qid,
+                                'vclass'=>$vclass,
+                                'vtip'  =>$vtip,
+                            );
+                            $stringToParse .= Yii::app()->getController()->renderPartial('/survey/system/questionhelp/tips', $tipsDatas, true);
+                        }
                     }
 
                     $prettyPrintValidTip = $stringToParse;

@@ -274,11 +274,14 @@ function makeLanguageChanger($sSelectedLanguage)
             $aListLang[$sLangCode]=html_entity_decode($aLanguage['nativedescription'], ENT_COMPAT,'UTF-8').' - '.$aLanguage['description'];
         $sSelected=$sSelectedLanguage;
 
-        $sHTMLCode= CHtml::beginForm(App()->createUrl('surveys/publiclist'),'get');
-        $sHTMLCode.=CHtml::label(gT("Select your language"), 'lang',array('class'=>'hide label'));
+        $sHTMLCode= CHtml::beginForm(App()->createUrl('surveys/publiclist'),'get', array('class' => 'form-horizontal'));
+        $sHTMLCode.=CHtml::label(gT("Language:"), 'lang',array('class'=>'control-label col-xs-4 col-sm-8'));
+        $sHTMLCode .= "<div class='col-xs-7 col-sm-2'>";
         $sHTMLCode.= CHtml::dropDownList('lang', $sSelected,$aListLang,array('class'=>$sClass));
-        //$sHTMLCode.= CHtml::htmlButton(gT("Change the language"),array('type'=>'submit','id'=>"changelangbtn",'value'=>'changelang','name'=>'changelang','class'=>'jshide'));
+        $sHTMLCode .= "</div>";
+        $sHTMLCode .= "<div class='col-xs-1 col-sm-2'>";
         $sHTMLCode.="<button class='changelang jshide' value='changelang' id='changelangbtn' type='submit'>".gT("Change the language")."</button>";
+        $sHTMLCode .= "</div>";
         $sHTMLCode.= CHtml::endForm();
         return $sHTMLCode;
     }
