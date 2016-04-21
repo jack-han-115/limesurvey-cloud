@@ -10,13 +10,12 @@ CKEDITOR.editorConfig = function( config )
     config.filebrowserFlashUploadUrl = CKEDITOR.basePath+'../kcfinder/upload.php?type=flash';
     config.removeDialogTabs = 'link:upload;image:Upload';
 
-    config.skin = 'BootstrapCK-Skin';
-    config.toolbarCanCollapse = false;
-    config.resize_enabled = false;
+    config.skin = 'bootstrapck';
+    //config.toolbarCanCollapse = true;
     config.autoParagraph = false;
     config.basicEntities = false; // For <, >, & ( and nbsp)
     config.entities = false; // For ' ( and a lot of other but not <>&)
-    config.uiColor = '#FFFFFF';
+    config.uiColor = '#F1f1f1';
     if($('html').attr('dir') == 'rtl') {
         config.contentsLangDirection = 'rtl';
     }
@@ -43,17 +42,16 @@ CKEDITOR.editorConfig = function( config )
         ['Maximize','Createlimereplacementfields'],
         ['Cut','Copy','Paste','PasteText','PasteFromWord'],
         ['Undo','Redo','-','Find','Replace','-','SelectAll','RemoveFormat','Source'],
-        ['Image','Flash','Table','HorizontalRule','Smiley','SpecialChar'],
-        '/',
-        ['Bold','Italic','Underline','Strike','-','Subscript','Superscript'],
-        ['NumberedList','BulletedList','-','Outdent','Indent','Blockquote','CreateDiv'],
+        ['Image','Flash'],['Table','HorizontalRule','Smiley','SpecialChar'],
+        ['Bold','Italic','Underline','Strike'],['Subscript','Superscript'],
+        ['NumberedList','BulletedList'],['Outdent','Indent','Blockquote','CreateDiv'],
         ['JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock'],
         ['BidiLtr', 'BidiRtl'],
-        ['Link','Unlink','Anchor','Iframe'],
-        '/',
+        [ 'ShowBlocks','Templates'],
+        ['Link','Unlink'],
         ['Styles','Format','Font','FontSize'],
-        ['TextColor','BGColor'],
-        [ 'ShowBlocks','Templates']
+        ['Anchor','Iframe'],
+        ['TextColor','BGColor']
     ];
    config.toolbar_inline2 =
     [
@@ -64,7 +62,7 @@ CKEDITOR.editorConfig = function( config )
         ['Link','Unlink','Image'],
         ['Source']
     ];
-    config.extraPlugins = "ajax,limereplacementfields";
+   config.extraPlugins = "xml,ajax,limereplacementfields";
 };
 
 (function () {

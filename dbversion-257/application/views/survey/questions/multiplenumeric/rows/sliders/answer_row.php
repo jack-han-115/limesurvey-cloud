@@ -31,7 +31,7 @@
 
 <div  id='javatbd<?php echo $myfname; ?>' class="question-item answer-item numeric-item  text-item <?php echo $extraclass;?>" <?php echo $sDisplayStyle;?>>
     <?php if($alert):?>
-        <div class="alert alert-danger errormandatory"  role="alert">
+        <div class="label label-danger errormandatory"  role="alert">
             <?php echo $labelText;?>
         </div> <!-- alert -->
     <?php endif;?>
@@ -97,8 +97,8 @@
                     </div>
                     <?php if ($slider_reset): ?>
                         <div class='col-xs-2'>
-                            <div class='pull-left'>
-                                <span id="answer<?php echo $myfname; ?>_resetslider" class='btn btn-default fa fa-times slider-reset'>&nbsp;<?php eT("Reset"); ?></span>
+                            <div id="answer<?php echo $myfname; ?>_resetslider" class='pull-left btn btn-default'>
+                                <span class='fa fa-times slider-reset' aria-hidden='true'></span>&nbsp;<?php eT("Reset"); ?>
                             </div>
                         </div>
                     <?php endif; ?>
@@ -158,7 +158,7 @@
                     // When user change the value of the slider :
                     // we need to show the tooltip (if it was hidden)
                     // and to update the value of the input element with correct format
-                    theSlider.on('slideStop', function(){
+                    theSlider.on('slideStart', function(){
                         $('#javatbd' + myfname).find('div.tooltip').show(); // Show the tooltip
                         $sliderNoActionEl.val(0); // The user did an action
                         value = $inputEl.val(); // We get the current value of the bootstrapSlider

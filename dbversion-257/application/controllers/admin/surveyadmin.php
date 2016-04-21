@@ -39,11 +39,11 @@ class SurveyAdmin extends Survey_Common_Action
     }
 
     /**
-    * Loads list of surveys and it's few quick properties.
-    *
-    * @access public
-    * @return void
-    */
+     * Loads list of surveys and its few quick properties.
+     *
+     * @access public
+     * @return void
+     */
     public function index()
     {
         $this->getController()->redirect(array('admin/survey/sa/listsurveys'));
@@ -131,7 +131,10 @@ class SurveyAdmin extends Survey_Common_Action
     {
         App()->getClientScript()->registerPackage('jqgrid');
         if (!Permission::model()->hasGlobalPermission('surveys','create'))
-            $this->getController()->error('No permission');
+        {
+            Yii::app()->user->setFlash('error', gT("Access denied"));
+            $this->getController()->redirect(Yii::app()->request->urlReferrer);
+        }
 
         $this->_registerScriptFiles();
         Yii::app()->loadHelper('surveytranslator');
@@ -175,7 +178,11 @@ class SurveyAdmin extends Survey_Common_Action
             $this->getController()->error('Invalid survey ID');
 
         if (!Permission::model()->hasSurveyPermission($iSurveyID, 'surveysettings', 'read') && !Permission::model()->hasGlobalPermission('surveys','read'))
-            $this->getController()->error('No permission');
+        {
+            Yii::app()->user->setFlash('error', gT("Access denied"));
+            $this->getController()->redirect(Yii::app()->request->urlReferrer);
+        }
+
         if(Yii::app()->request->isPostRequest)
             $this->update($iSurveyID);
         $this->_registerScriptFiles();
@@ -942,7 +949,11 @@ class SurveyAdmin extends Survey_Common_Action
             }
         }
         else
-            $this->getController()->error('Access denied');
+        {
+            Yii::app()->user->setFlash('error', gT("Access denied"));
+            $this->getController()->redirect(Yii::app()->request->urlReferrer);
+        }
+
 
         $this->_renderWrappedTemplate('survey', $aViewUrls, $aData);
     }
@@ -1044,7 +1055,14 @@ class SurveyAdmin extends Survey_Common_Action
 
             $aData['surveybar']['savebutton']['form'] = 'globalsetting';
             $aData['surveybar']['savebutton']['useformid'] = 'true';
-            $aData['surveybar']['saveandclosebutton']['form'] = true;
+            if (Permission::model()->hasSurveyPermission($iSurveyID, 'surveycontent', 'update'))
+            {
+                $aData['surveybar']['saveandclosebutton']['form'] = true;
+            }
+            else
+            {
+                unset($aData['surveybar']['savebutton']['form']);
+            }
 
             $aData['surveybar']['closebutton']['url'] = 'admin/survey/sa/view/surveyid/'.$iSurveyID;  // Close button
 
@@ -1052,7 +1070,8 @@ class SurveyAdmin extends Survey_Common_Action
         }
         else
         {
-            $this->getController()->error('Access denied');
+            Yii::app()->user->setFlash('error', gT("Access denied"));
+            $this->getController()->redirect(Yii::app()->request->urlReferrer);
         }
 
         $this->_renderWrappedTemplate('survey', $aViewUrls, $aData);
@@ -1222,7 +1241,13 @@ class SurveyAdmin extends Survey_Common_Action
         $thereIsPostData = $request->getPost('orgdata') !== null;
         $userHasPermissionToUpdate = Permission::model()->hasSurveyPermission($iSurveyID, 'surveycontent', 'update');
 
-        if ($thereIsPostData && $userHasPermissionToUpdate)
+        if (!$userHasPermissionToUpdate)
+        {
+            Yii::app()->user->setFlash('error', gT("Access denied"));
+            $this->getController()->redirect(Yii::app()->request->urlReferrer);
+        }
+
+        if ($thereIsPostData)
         {
             // Save the new ordering
             $this->_reorderGroup($iSurveyID);

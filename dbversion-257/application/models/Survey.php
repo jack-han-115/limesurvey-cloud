@@ -731,16 +731,16 @@ class Survey extends LSActiveRecord
         }
         else
         {
-            $table = '{{survey_' . $this->sid . '}}';
+            $sResponseTable = '{{survey_' . $this->sid . '}}';
             Yii::app()->cache->flush();
-            if (!Yii::app()->db->schema->getTable($table))
+            if ($this->active!='Y')
             {
                 $this->fac = 0;
                 return '0';
             }
             else
             {
-                $answers = Yii::app()->db->createCommand('select count(*) from '.$table.' where submitdate IS NOT NULL')->queryScalar();
+                $answers = Yii::app()->db->createCommand('select count(*) from '.$sResponseTable.' where submitdate IS NOT NULL')->queryScalar();
                 $this->fac = $answers;
                 return $answers;
             }
@@ -757,7 +757,7 @@ class Survey extends LSActiveRecord
         {
             $table = '{{survey_' . $this->sid . '}}';
             Yii::app()->cache->flush();
-            if (!Yii::app()->db->schema->getTable($table))
+            if ($this->active!='Y')
             {
                 $this->pac = 0;
                 return 0;
@@ -793,24 +793,35 @@ class Survey extends LSActiveRecord
         $sAddquestion = App()->createUrl("/admin/questions/sa/newquestion/surveyid/".$this->sid);;
 
         $button = '<a class="btn btn-default" href="'.$sSummaryUrl.'" role="button" data-toggle="tooltip" title="'.gT('Survey summary').'"><span class="glyphicon glyphicon-list-alt" ></span></a>';
-        $button .= '<a class="btn btn-default" href="'.$sEditUrl.'" role="button" data-toggle="tooltip" title="'.gT('General settings & texts').'"><span class="glyphicon glyphicon-pencil" ></span></a>';
-        $button .= '<a class="btn btn-default" href="'.$sDeleteUrl.'" role="button" data-toggle="tooltip" title="'.gT('Delete').'"><span class="text-danger glyphicon glyphicon-trash" ></span></a>';
+
+        if (Permission::model()->hasSurveyPermission($this->sid, 'survey', 'update'))
+        {
+            $button .= '<a class="btn btn-default" href="'.$sEditUrl.'" role="button" data-toggle="tooltip" title="'.gT('General settings & texts').'"><span class="glyphicon glyphicon-pencil" ></span></a>';
+        }
+
+        if (Permission::model()->hasSurveyPermission($this->sid, 'survey', 'delete'))
+        {
+            $button .= '<a class="btn btn-default" href="'.$sDeleteUrl.'" role="button" data-toggle="tooltip" title="'.gT('Delete').'"><span class="text-danger glyphicon glyphicon-trash" ></span></a>';
+        }
 
         if(Permission::model()->hasSurveyPermission($this->sid, 'statistics', 'read') && $this->active=='Y' )
         {
             $button .= '<a class="btn btn-default" href="'.$sStatUrl.'" role="button" data-toggle="tooltip" title="'.gT('Statistics').'"><span class="glyphicon glyphicon-stats text-success" ></span></a>';
         }
 
-        if($this->active!='Y')
+        if (Permission::model()->hasSurveyPermission($this->sid, 'survey', 'create'))
         {
-            $groupCount = QuestionGroup::model()->countByAttributes(array('sid' => $this->sid, 'language' => $this->language)); //Checked
-            if($groupCount > 0)
+            if($this->active!='Y')
             {
-                $button .= '<a class="btn btn-default" href="'.$sAddquestion.'" role="button" data-toggle="tooltip" title="'.gT('Add new question').'"><span class="icon-add text-success" ></span></a>';
-            }
-            else
-            {
-                $button .= '<a class="btn btn-default" href="'.$sAddGroup.'" role="button" data-toggle="tooltip" title="'.gT('Add new group').'"><span class="icon-add text-success" ></span></a>';
+                $groupCount = QuestionGroup::model()->countByAttributes(array('sid' => $this->sid, 'language' => $this->language)); //Checked
+                if($groupCount > 0)
+                {
+                    $button .= '<a class="btn btn-default" href="'.$sAddquestion.'" role="button" data-toggle="tooltip" title="'.gT('Add new question').'"><span class="icon-add text-success" ></span></a>';
+                }
+                else
+                {
+                    $button .= '<a class="btn btn-default" href="'.$sAddGroup.'" role="button" data-toggle="tooltip" title="'.gT('Add new group').'"><span class="icon-add text-success" ></span></a>';
+                }
             }
         }
 
@@ -832,8 +843,8 @@ class Survey extends LSActiveRecord
             'desc'=>'sid desc',
           ),
           'title'=>array(
-            'asc'=>'surveys_languagesettings.surveyls_title',
-            'desc'=>'surveys_languagesettings.surveyls_title desc',
+            'asc'=>'defaultlanguage.surveyls_title',
+            'desc'=>'defaultlanguage.surveyls_title desc',
           ),
 
           'creation_date'=>array(
@@ -842,8 +853,8 @@ class Survey extends LSActiveRecord
           ),
 
           'owner'=>array(
-            'asc'=>'users.users_name',
-            'desc'=>'users.users_name desc',
+            'asc'=>'owner.users_name',
+            'desc'=>'owner.users_name desc',
           ),
 
           'anonymized_responses'=>array(
@@ -859,8 +870,7 @@ class Survey extends LSActiveRecord
         );
 
         $criteria = new CDbCriteria;
-        $criteria->join  = 'LEFT JOIN {{surveys_languagesettings}} AS surveys_languagesettings ON ( surveys_languagesettings.surveyls_language = t.language AND t.sid = surveys_languagesettings.surveyls_survey_id )';
-        $criteria->join .= 'LEFT JOIN {{users}} AS users ON ( users.uid = t.owner_id )';
+        $criteria->with=array('defaultlanguage','owner');
 
         // Permission
         if(!Permission::model()->hasGlobalPermission("surveys",'read'))
@@ -874,7 +884,7 @@ class Survey extends LSActiveRecord
         $criteria2 = new CDbCriteria;
         $sid_reference = (Yii::app()->db->getDriverName() == 'pgsql' ?' t.sid::varchar' : 't.sid');
         $criteria2->compare($sid_reference, $this->searched_value, true, 'OR');
-        $criteria2->compare('surveys_languagesettings.surveyls_title', $this->searched_value, true, 'OR');
+        $criteria2->compare('defaultlanguage.surveyls_title', $this->searched_value, true, 'OR');
         $criteria2->compare('t.admin', $this->searched_value, true, 'OR');
 
         // Active filter
