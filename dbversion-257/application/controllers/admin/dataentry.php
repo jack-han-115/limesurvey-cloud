@@ -730,6 +730,21 @@ class dataentry extends Survey_Common_Action
                                 'onkeypress' => 'return goodchars(event,\''.$goodchars.'\')'
                                 )
                                 );
+                                /*
+                                Yii::app()->getController()->widget('yiiwheels.widgets.datetimepicker.WhDateTimePicker', array(
+                                    'name' => $fname['fieldname'],
+                                    'value' => $thisdate,
+                                    'pluginOptions' => array(
+                                        'format' => reverseDateToFitDatePicker($dateformatdetails['dateformat']) . " HH:mm",
+                                        'singleDatePicker' => true,
+                                        'startDate' => date("Y-m-d", time()),
+                                        'drops' => 'up',  // TODO: Does not work. Why?
+                                        'timePicker' => true,
+                                        'timePicker12Hour' => false,  // NB: timePicker24Hour = true does not work
+                                        'timePickerIncrement' => 1
+                                    )
+                                ));
+                                */
                                 $aDataentryoutput .= CHtml::hiddenField('dateformat'.$fname['fieldname'], $dateformatdetails['jsdate'],
                                 array( 'id' => "dateformat{$fname['fieldname']}" )
                                 );

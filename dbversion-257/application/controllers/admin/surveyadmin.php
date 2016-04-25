@@ -1020,6 +1020,7 @@ class SurveyAdmin extends Survey_Common_Action
                 $aData['esrow'] = $esrow;
                 $aData['action'] = "editsurveylocalesettings";
                 $aData['i'] = $i;
+                $aData['dateformatdetails'] = getDateFormatData(Yii::app()->session['dateformat']);
                 $aTabContents[$sLang] = $this->getController()->renderPartial('/admin/survey/editLocalSettings_view', $aData, true);
             }
 
@@ -1510,7 +1511,7 @@ class SurveyAdmin extends Survey_Common_Action
     */
     private function _tabPublicationAccess($esrow)
     {
-        $dateformatdetails = getDateFormatData(Yii::app()->session['dateformat']);
+        $aData['dateformatdetails'] = getDateFormatData(Yii::app()->session['dateformat']);
         $startdate = '';
         if ($esrow['startdate'])
         {

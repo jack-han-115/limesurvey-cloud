@@ -1088,14 +1088,8 @@ function do_date($ia)
     else
     {
         //register timepicker extension
-        App()->getClientScript()->registerPackage('jqueryui-timepicker');
+        App()->getClientScript()->registerPackage('bootstrap-daterangepicker');
 
-        // Locale for datepicker and timpicker extension
-        if (App()->language !== 'en')
-        {
-            Yii::app()->getClientScript()->registerScriptFile(App()->getConfig('third_party')."/jqueryui/development-bundle/ui/i18n/jquery.ui.datepicker-".App()->language.".js");
-            Yii::app()->getClientScript()->registerScriptFile(App()->getConfig('third_party')."/jquery-ui-timepicker-addon/i18n/jquery-ui-timepicker-".App()->language.".js");
-        }
         // Format the date  for output
         $dateoutput = trim($_SESSION['survey_'.Yii::app()->getConfig('surveyID')][$ia[1]]);
         if ($dateoutput!='' & $dateoutput!='INVALID')
@@ -1110,6 +1104,16 @@ function do_date($ia)
         // "+1" makes room for a trailing space in date/time values
         $iLength   = strlen(date($dateformatdetails['phpdate'],mktime(23,59,59,12,30,1999)))+1;
 
+        // For WhDateTimePicker, case is for some reason reversed in date format
+        $dateformat = $dateformatdetails['jsdate'];
+        // Reverse case, trick from here: http://stackoverflow.com/a/6612519/2138090
+        $dateformatReversed = reverseDateToFitDatePicker($dateformat);
+
+        // Hide calendar if there's no year, month or day in format
+        $hideCalendar = strpos($dateformatReversed, 'Y') === false
+            && strpos($dateformatReversed, 'D') === false
+            && strpos($dateformatReversed, 'M') === false;
+
         // HTML for date question using datepicker
         $answer = Yii::app()->getController()->renderPartial('/survey/questions/date/selector/answer', array(
             'name'                   => $ia[1],
@@ -1117,6 +1121,7 @@ function do_date($ia)
             'mindate'                => $mindate,
             'maxdate'                => $maxdate,
             'dateformatdetails'      => $dateformatdetails['dateformat'],
+            'dateformatReversed'     => $dateformatReversed,
             'dateformatdetailsjs'    => $dateformatdetails['jsdate'],
             'goodchars'              => "return goodchars(event,'".$goodchars."')",
             'checkconditionFunction' => $checkconditionFunction.'(this.value, this.name, this.type)',
@@ -1124,6 +1129,7 @@ function do_date($ia)
             'hidetip'                => trim($aQuestionAttributes['hide_tip'])==0,
             'dateoutput'             => $dateoutput,
             'qid'                    => $ia[0],
+            'hideCalendar'           => $hideCalendar
         ), true);
     }
     $inputnames[]=$ia[1];
@@ -2861,11 +2867,11 @@ function do_multiplenumeric($ia)
     {
         $tiwidth     = $aQuestionAttributes['text_input_width'];
         $col         = ($aQuestionAttributes['text_input_width']<=12)?$aQuestionAttributes['text_input_width']:12;
-        $extraclass .= " col-sm-".trim($col);
+        //$extraclass .= " col-sm-".trim($col);
     }
     else
     {
-        $tiwidth = 10;
+        $tiwidth = 6;
     }
 
     $prefixclass = "numeric";
@@ -2916,6 +2922,12 @@ function do_multiplenumeric($ia)
 
         $slider_separator= (trim($aQuestionAttributes['slider_separator'])!='')?$aQuestionAttributes['slider_separator']:"";
         $slider_reset=($aQuestionAttributes['slider_reset'])?1:0;
+
+        // If the slider reset is ON, slider should be max 10 columns
+        if($slider_reset)
+        {
+            $tiwidth = ($tiwidth < 10)?$tiwidth:10;
+        }
 
     }
     else
@@ -3163,7 +3175,7 @@ function do_multiplenumeric($ia)
 
     if($aQuestionAttributes['slider_layout']==1)
     {
-        Yii::app()->getClientScript()->registerScriptFile(Yii::app()->getConfig('generalscripts')."bootstrap-slider.js");
+        Yii::app()->getClientScript()->registerScriptFile(App()->baseUrl . "/third_party/bootstrap-slider/bootstrap-slider.js");
     }
 
     $sSeparator = getRadixPointData($thissurvey['surveyls_numberformat']);

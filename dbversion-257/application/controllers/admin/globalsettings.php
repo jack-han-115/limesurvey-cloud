@@ -26,8 +26,10 @@ class GlobalSettings extends Survey_Common_Action
     {
         parent::__construct($controller, $id);
 
-        if (!Permission::model()->hasGlobalPermission('settings','read')) {
-            die();
+        if (! Permission::model()->hasGlobalPermission('settings', 'read') )
+        {
+            Yii::app()->session['flashmessage'] =gT('Access denied!');
+            $this->getController()->redirect(App()->createUrl("/admin"));
         }
     }
 

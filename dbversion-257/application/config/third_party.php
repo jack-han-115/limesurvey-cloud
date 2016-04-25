@@ -31,6 +31,14 @@ return array(
         )
     ),
 
+    'fontawesome' => array(
+        //'basePath' => 'third_party.bootstrap', // Need fix third_party alias
+        'baseUrl' => 'third_party/fontawesome/',
+        'css'=> array(
+            'css/font-awesome.min.css',
+        ),
+    ),
+
     // jQuery UI
     'jqueryui' => array(
         'baseUrl' => 'third_party/jqueryui/',
@@ -278,4 +286,19 @@ return array(
             'leaflet.css'
         ),
     ),
+
+    // Bootstrap DateRangePicker
+    'bootstrap-daterangepicker' => array(
+        'baseUrl' => 'third_party/bootstrap-daterangepicker-2.1.19/',
+        'js' => array(
+            'moment.js',
+            'daterangepicker.js'
+        ),
+        'css' => array(
+            'daterangepicker.css'
+        ),
+        'depends' => array(
+            'bootstrap'
+        )
+    )
 );
