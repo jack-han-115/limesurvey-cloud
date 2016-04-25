@@ -40,6 +40,8 @@ class Survey_Common_Action extends CAction
     */
     public function runWithParams($params)
     {
+        App()->getClientScript()->registerPackage('bootstrap-daterangepicker');
+
         // Default method that would be called if the subaction and run() do not exist
         $sDefault = 'index';
 
@@ -687,7 +689,10 @@ class Survey_Common_Action extends CAction
             if(isset($aData['questiongroupbar']['closebutton']['url']))
             {
                 $sAlternativeUrl = $aData['questiongroupbar']['closebutton']['url'];
-                $aData['questiongroupbar']['closebutton']['url'] = Yii::app()->request->getUrlReferrer( Yii::app()->createUrl($sAlternativeUrl) );
+                $aForbiddenWordsInUrl = array(
+                    'add'
+                );
+                $aData['questiongroupbar']['closebutton']['url'] = Yii::app()->request->getUrlReferrer(Yii::app()->createUrl($sAlternativeUrl), $aForbiddenWordsInUrl);
             }
 
             $this->getController()->renderPartial("/admin/survey/QuestionGroups/questiongroupbar_view", $aData);
@@ -860,6 +865,7 @@ class Survey_Common_Action extends CAction
                 $aForbiddenWordsInUrl[]='assessmentedit';
                 $aForbiddenWordsInUrl[]='setsurveysecurity';
                 $aForbiddenWordsInUrl[]='importsurveyresources';
+                $aForbiddenWordsInUrl[]='add';
                 $aData['surveybar']['closebutton']['url'] = Yii::app()->request->getUrlReferrer( Yii::app()->createUrl($sAlternativeUrl), $aForbiddenWordsInUrl );
             }
 
@@ -931,6 +937,7 @@ class Survey_Common_Action extends CAction
                     }
                 }
             }
+            $aData['quickmenu'] = $this->renderQuickmenu($aData);
             $aData['aGroups'] = $aGroups;
             $aData['surveycontent'] = Permission::model()->hasSurveyPermission($aData['surveyid'], 'surveycontent', 'read');
             $aData['surveycontentupdate'] = Permission::model()->hasSurveyPermission($aData['surveyid'], 'surveycontent', 'update');
@@ -941,6 +948,36 @@ class Survey_Common_Action extends CAction
             Yii::app()->session['flashmessage'] = gT("Invalid survey ID");
             $this->getController()->redirect(array("admin/index"));
         }
+    }
+
+    /**
+     * Render the quick-menu that is shown
+     * when side-menu is hidden.
+     *
+     * Only show home-icon for now.
+     *
+     * Add support for plugin to attach
+     * icon elements using event afterQuickMenuLoad
+     *
+     * @param array $aData
+     * @return string
+     * @todo Make quick-menu user configurable
+     */
+    private function renderQuickmenu(array $aData)
+    {
+        $event = new PluginEvent('afterQuickMenuLoad', $this);
+        $event->set('aData', $aData);
+        $result = App()->getPluginManager()->dispatchEvent($event);
+
+        $aData['quickMenuItems'] = $result->get('quickMenuItems');
+
+        if ($aData['quickMenuItems'] === null)
+        {
+            $aData['quickMenuItems'] = array();
+        }
+
+        $html = $this->getController()->renderPartial('/admin/super/quickmenu', $aData, true);
+        return $html;
     }
 
     /**

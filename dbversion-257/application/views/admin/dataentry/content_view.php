@@ -55,10 +55,19 @@
                 ?>
             <div class="col-sm-10">
                 <?php if(canShowDatePicker($dateformatdetails)): ?>
-                    <?php
-                    $goodchars = str_replace( array("m","d","y", "H", "M"), "", $dateformatdetails['dateformat']);
-                    $goodchars = "0123456789".$goodchars[0]; ?>
-                    <input type='text' class='popupdate' size='12' name='<?php echo $fieldname; ?>' onkeypress="return goodchars(event,'<?php echo $goodchars; ?>')"/>
+                    <?php Yii::app()->getController()->widget('yiiwheels.widgets.datetimepicker.WhDateTimePicker', array(
+                        'name' => $fieldname,
+                        'pluginOptions' => array(
+                            'format' => reverseDateToFitDatePicker($dateformatdetails['dateformat']) . " HH:mm",
+                            'singleDatePicker' => true,
+                            'startDate' => date("Y-m-d", time()),
+                            'drops' => 'up',  // TODO: Does not work. Why?
+                            'timePicker' => true,
+                            'timePicker12Hour' => false,  // NB: timePicker24Hour = true does not work?
+                            'timePicker24Hour' => true,
+                            'timePickerIncrement' => 1
+                        )
+                    )); ?>
                     <input type='hidden' name='dateformat<?php echo $fieldname; ?>' id='dateformat<?php echo $fieldname; ?>' value='<?php echo $dateformatdetails['jsdate']; ?>'  />
                 <?php else:?>
                     <input type='text' name='<?php echo $fieldname; ?>'/>

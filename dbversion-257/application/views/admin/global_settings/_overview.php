@@ -14,22 +14,22 @@
 
 <br /><table class='statisticssummary table table-bordered'>
     <tr>
-        <td ><?php eT("Users"); ?>:</th><td><?php echo $usercount; ?></td>
+        <th ><?php eT("Users"); ?>:</th><td><?php echo $usercount; ?></td>
     </tr>
     <tr>
-        <td ><?php eT("Surveys"); ?>:</th><td><?php echo $surveycount; ?></td>
+        <th ><?php eT("Surveys"); ?>:</th><td><?php echo $surveycount; ?></td>
     </tr>
     <tr>
-        <td ><?php eT("Active surveys"); ?>:</th><td><?php echo $activesurveycount; ?></td>
+        <th ><?php eT("Active surveys"); ?>:</th><td><?php echo $activesurveycount; ?></td>
     </tr>
     <tr>
-        <td ><?php eT("Deactivated result tables"); ?>:</th><td><?php echo $deactivatedsurveys; ?></td>
+        <th ><?php eT("Deactivated result tables"); ?>:</th><td><?php echo $deactivatedsurveys; ?></td>
     </tr>
     <tr>
-        <td ><?php eT("Active token tables"); ?>:</th><td><?php echo $activetokens; ?></td>
+        <th ><?php eT("Active token tables"); ?>:</th><td><?php echo $activetokens; ?></td>
     </tr>
     <tr>
-        <td ><?php eT("Deactivated token tables"); ?>:</th><td><?php echo $deactivatedtokens; ?></td>
+        <th ><?php eT("Deactivated token tables"); ?>:</th><td><?php echo $deactivatedtokens; ?></td>
     </tr>
     <?php
         if (Yii::app()->getConfig('iFileUploadTotalSpaceMB')>0)

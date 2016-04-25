@@ -113,9 +113,7 @@ function addinput()
             '       <input class="assessment" type="'+assessment_type+'" maxlength="5" size="5" value="1"/>'+
             '   </td>'+
             '   <td>'+
-            '       <div class="col-sm-12">'+
             '           <input type="text" size="20" class="answer first-inanswerjs form-control input-lg" placeholder="'+htmlspecialchars(newansweroption_text)+'" value="" />'+
-            '       </div>'+
             '   </td>'+
             '   <td>'+
             '           <a class="editorLink">'+
@@ -135,9 +133,7 @@ function addinput()
             '   <td>'+htmlspecialchars(sNextCode)+'</td>'+
 
             '   <td>'+
-            '       <div class="col-sm-12">'+
             '           <input type="text" size="20" class="answer second-in-answerjs form-control input-lg" placeholder="'+htmlspecialchars(newansweroption_text)+'" value="" />'+
-            '       </div>'+
             '   </td>'+
             '   <td>'+
             '           <a class="editorLink">'+
@@ -253,40 +249,32 @@ function updatecodes()
 
 function getNextCode(sSourceCode)
 {
+    sourcecode = sSourceCode;
     i=1;
     found=true;
-    mNumberFound=-1;
-    while (i<=sSourceCode.length && found)
+    foundnumber=-1;
+    sclength = sourcecode.length;
+    while (i<=sclength && found == true)
     {
-        found=is_numeric(sSourceCode.substr(-i));
+        found=is_numeric(sourcecode.substr(sclength-i,i));
         if (found)
-            {
-            mNumberFound=sSourceCode.substr(-i);
+        {
+            foundnumber=sourcecode.substr(sclength-i,i);
             i++;
         }
     }
-    if (mNumberFound==-1)
+    if (foundnumber==-1)
     {
-        sBaseCode=sSourceCode;
-        mNumberFound=0
+        return(sourcecode);
     }
     else
     {
-        sBaseCode=sSourceCode.substr(0,sSourceCode.length-mNumberFound.length);
+        foundnumber++;
+        foundnumber=foundnumber+'';
+        result=sourcecode.substr(0,sclength-foundnumber.length)+foundnumber;
+        return(result);
     }
-    var iNumberFound=+mNumberFound;
-    do
-    {
-        iNumberFound=iNumberFound+1;
-        sNewNumber=iNumberFound+'';
-        sResult=sBaseCode+sNewNumber;
-        if (sResult.length>5)
-        {
-          sResult=sResult.substr(sResult.length - 5);
-        }
-    }
-    while (areCodesUnique(sResult)==false);
-    return(sResult);
+
 }
 
 function is_numeric (mixed_var) {
@@ -580,9 +568,7 @@ function transferlabels()
                                 '   </td>'+
 
                                 '   <td>'+
-                                '       <div class="col-sm-12">'+
                                 '           <input type="text" size="20" class="answer third-in-answerjs  form-control input-lg" value="'+htmlspecialchars(lsrows[k].title)+'"></input>'+
-                                '       </div>'+
                                 '   </td>'+
 
                                 '   <td>'+
@@ -606,9 +592,7 @@ function transferlabels()
                                 '   </td>'+
 
                                 '   <td>'+
-                                '       <div class="col-sm-12">'+
                                 '           <input type="text" size="20" class="answer fourth-in-answerjs form-control input-lg" value="'+htmlspecialchars(lsrows[k].title)+'"></input>'+
-                                '       </div>'+
                                 '   </td>'+
 
                                 '   <td>'+
@@ -637,9 +621,7 @@ function transferlabels()
                         '   <td>'+htmlspecialchars(lsrows[k].code)+'</td>'+
 
                         '   <td>'+
-                        '       <div class="col-sm-12">'+
                         '           <input type="text" size="20" class="answer fifth-in-answerjs form-control input-lg" value="'+htmlspecialchars(lsrows[k].title)+'"></input>'+
-                        '       </div>'+
                         '   </td>'+
 
                         '   <td>'+
@@ -752,9 +734,7 @@ function quickaddlabels()
                 '       <input class="assessment" type="'+assessment_type+'" maxlength="5" size="5" value="1"/>'+
                 '   </td>'+
                 '   <td style="vertical-align: middle;">'+
-                '       <div class="col-sm-12">'+
                 '           <input type="text" size="20" class="answer form-control input-lg" value="'+escaped_value+'"></input>'+
-                '       </div>'+
                 '   </td>'+
                 '   <td>'+
                 '           <a class="editorLink">'+
@@ -774,9 +754,7 @@ function quickaddlabels()
                 '   <td>&nbsp;</td>'+
                 '   <td>&nbsp;</td>'+
                 '   <td>'+
-                '       <div class="col-sm-12">'+
                 '           <input type="text" size="20" class="answer sixt-in-answerjs form-control input-lg" value="'+escaped_value+'"></input>'+
-                '       </div>'+
                 '   </td>'+
                 '   <td>'+
                 '           <a class="editorLink">'+
