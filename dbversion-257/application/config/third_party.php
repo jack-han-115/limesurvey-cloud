@@ -254,20 +254,6 @@ return array(
         )
     ),
 
-    // jQuery timepicker
-    'jqueryui-timepicker' => array(
-        'baseUrl' => 'third_party/jquery-ui-timepicker-addon/',
-        'js' => array(
-            'jquery-ui-timepicker-addon.js'
-        ),
-        'css' => array(
-            'jquery-ui-timepicker-addon.css'
-        ),
-        'depends' => array(
-            'jqueryui'
-        )
-    ),
-
     // select2
     'select2' => array(
         'baseUrl' => 'styles/limebootstrap/assets/',
@@ -285,20 +271,5 @@ return array(
         'css' => array(
             'leaflet.css'
         ),
-    ),
-
-    // Bootstrap DateRangePicker
-    'bootstrap-daterangepicker' => array(
-        'baseUrl' => 'third_party/bootstrap-daterangepicker-2.1.19/',
-        'js' => array(
-            'moment.js',
-            'daterangepicker.js'
-        ),
-        'css' => array(
-            'daterangepicker.css'
-        ),
-        'depends' => array(
-            'bootstrap'
-        )
     )
 );
