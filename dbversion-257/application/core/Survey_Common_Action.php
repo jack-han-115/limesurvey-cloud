@@ -40,6 +40,8 @@ class Survey_Common_Action extends CAction
     */
     public function runWithParams($params)
     {
+        App()->getClientScript()->registerPackage('bootstrap-daterangepicker');
+
         // Default method that would be called if the subaction and run() do not exist
         $sDefault = 'index';
 
@@ -506,9 +508,6 @@ class Survey_Common_Action extends CAction
             $updateModel = new UpdateForm();
             $updateNotification = $updateModel->updateNotification;
             $aData['showupdate'] = Yii::app()->getConfig('updatable') && $updateNotification->result && ! $updateNotification->unstable_update ;
-
-            // Fetch extra menus from plugins, e.g. last visited surveys
-            $aData['extraMenus'] = $this->fetchExtraMenus($aData);
 
             $this->getController()->renderPartial("/admin/super/adminmenu", $aData);
         }
@@ -1376,28 +1375,6 @@ class Survey_Common_Action extends CAction
         while (!mkdir($path, $mode));
 
         return $path;
-    }
-
-    /**
-     * Get extra menus from plugins that are using event beforeAdminMenuRender
-     *
-     * @param array $aData
-     * @return array<ExtraMenu>
-     */
-    protected function fetchExtraMenus(array $aData)
-    {
-        $event = new PluginEvent('beforeAdminMenuRender', $this);
-        $event->set('data', $aData);
-        $result = App()->getPluginManager()->dispatchEvent($event);
-
-        $extraMenus = $result->get('extraMenus');
-
-        if ($extraMenus === null)
-        {
-            $extraMenus = array();
-        }
-
-        return $extraMenus;
     }
 
 }

@@ -1,3 +1,6 @@
+<?php
+App()->getClientScript()->registerPackage('jqueryui-timepicker');
+?>
 <div class='menubar surveybar' id="tokenbarid">
     <div class='row container-fluid'>
 

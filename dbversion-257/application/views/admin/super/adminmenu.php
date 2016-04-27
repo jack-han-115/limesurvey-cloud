@@ -145,7 +145,6 @@
             $sSubdomain=substr($sDomain,0,strpos($sDomain,'.'));
             $sDomain=substr($sDomain,strpos($sDomain,'.')+1);
 
-<<<<<<< HEAD
             $iResponses = Yii::app()->dbstats->createCommand("select responses_avail from limeservice_system.balances where user_id=".substr(Yii::app()->db->username,6))->queryScalar();
             echo " <li><a href='http://www.limeservice.com/en/buy-survey-responses'>".sprintf(gT('Response balance: %s'),$iResponses).'</a></li>';
 
@@ -158,32 +157,17 @@
                     <?php endif;?>
                     <i class="nav-icon fa fa-bullhorn"></i>
                 </a>
-=======
-            <!-- Extra menus from plugins -->
-            <?php // TODO: This views should be in same module as ExtraMenu and ExtraMenuItem classes (not plugin) ?>
-            <?php foreach ($extraMenus as $menu): ?>
-                <li class="dropdown">
-                    <?php if ($menu->isDropDown()): ?>
-                        <a class="dropdown-toggle" data-toggle="dropdown" href="#"><?php echo $menu->getLabel(); ?>&nbsp;<span class="caret"></span></a>
-                        <ul class="dropdown-menu" role="menu">
-                            <?php foreach ($menu->getMenuItems() as $menuItem): ?>
-                                <?php if ($menuItem->isDivider()): ?>
-                                    <li class="divider"></li>
-                                <?php else: ?>
-                                    <li>
-                                        <a href="<?php echo $menuItem->getHref(); ?>"><?php echo $menuItem->getLabel(); ?></a>
-                                    </li>
-                                <?php endif; ?>
-                            <?php endforeach; ?>
-                        </ul>
-                    <?php else: ?>
-                        <a href="<?php echo $menu->getHref(); ?>"><?php echo $menu->getLabel(); ?></a>
-                    <?php endif; ?>
-                </li>
-            <?php endforeach; ?>
 
->>>>>>> 41fbb2a... Update to 160427
-
+                <!-- NOTIFICATIONS -->
+                <?php if($showupdate): ?>
+                <ul class="dropdown-menu update-small-notification <?php if(Yii::app()->session['notificationstate']=='1' || Yii::app()->session['unstable_update'] ){echo 'hidden';};?>" role="menu">
+                    <li class="hidden-xs  notifications-list " id="main-navbar-notifications" >
+                        <strong><?php eT("A new update is available.");?> </strong> <a href="<?php echo Yii::app()->createUrl("admin/update"); ?>"><?php eT('Click here to use ComfortUpdate.');?></a>
+                    </li>
+                </ul> <!-- / .dropdown-menu -->
+                <?php endif;?>
+            </li>
+            <?php endif;?>
         </ul>
     </div><!-- /.nav-collapse -->
 </nav>

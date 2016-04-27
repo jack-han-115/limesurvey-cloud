@@ -25,6 +25,7 @@
     </label>
 
     <span class='col-xs-12 col-sm-4'>
+        <i class='fa fa-calendar form-control-feedback' aria-hidden='true'></i>
 
         <?php /* Old input, not used since switching to Bootstrap DateTimePicker
         <input
@@ -46,37 +47,17 @@
                 'id' => "answer" . $name,
                 'value' => $dateoutput,
                 'pluginOptions' => array(
-                    'format' => $dateformatdetailsjs,
-                    'allowInputToggle' =>true,
-                    'showClear' => true,
-                            'tooltips' => array(
-                                'clear'=> gT('Clear selection'),
-                                'prevMonth'=> gT('Previous month'),
-                                'nextMonth'=> gT('Next month'),
-                                'selectYear'=> gT('Select year'),
-                                'prevYear'=> gT('Previous year'),
-                                'nextYear'=> gT('Next year'),
-                                'selectDecade'=> gT('Select decade'),
-                                'prevDecade'=> gT('Previous decade'),
-                                'nextDecade'=> gT('Next decade'),
-                                'prevCentury'=> gT('Previous century'),
-                                'nextCentury'=> gT('Next century'),
-                                'selectTime'=> gT('Select time')
-                            ),
-                    'locale' => convertLStoDateTimePickerLocale($language),
-                    'maxDate' => $maxdate,
-                    'minDate' => $mindate,
-                    'sideBySide' => true
-                    /*
-                    Min/max Date implementation missing?
+                    'class' => 'test',
+                    'format' => $dateformatReversed,
                     'singleDatePicker' => true,
                     'startDate' => date("Y-m-d H:i", time()),
+                    'drops' => 'up',  // TODO: Does not work. Why?
                     // Show hour and minute picker if we have HH or MM in date format
                     'pickTime' => (strpos($dateformatdetails, "HH") !== false || strpos($dateformatdetails, "MM") !== false),
                     'pickDate' => !$hideCalendar,
                     'timePicker12Hour' => false,
                     'timePicker24Hour' => true,
-                    'timePickerIncrement' => 1,*/
+                    'timePickerIncrement' => 1,
                 ),
                 'htmlOptions' => array(
                     'onkeypress' => $goodchars,
@@ -85,12 +66,6 @@
             ));
         ?>
     </span>
-    <script>
-        $(document).ready(function() {
-            // Min and max date sets default value, so use this to override it
-            $('#answer<?php echo $name; ?>').val('<?php echo $dateoutput; ?>');
-        });
-    </script>
 
     <input
         type='hidden'

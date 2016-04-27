@@ -1079,7 +1079,7 @@ function do_date($ia)
             'name'                   => $ia[1],
             'dateoutput'             => htmlspecialchars($dateoutput,ENT_QUOTES,'utf-8'),
             'checkconditionFunction' => $checkconditionFunction.'(this.value, this.name, this.type)',
-            'dateformatdetails'      => $dateformatdetails['jsdate_original'],
+            'dateformatdetails'      => $dateformatdetails['jsdate'],
             'dateformat'             => $dateformatdetails['dateformat'],
         ), true);
 
@@ -1087,6 +1087,9 @@ function do_date($ia)
     }
     else
     {
+        //register timepicker extension
+        App()->getClientScript()->registerPackage('bootstrap-daterangepicker');
+
         // Format the date  for output
         $dateoutput = trim($_SESSION['survey_'.Yii::app()->getConfig('surveyID')][$ia[1]]);
         if ($dateoutput!='' & $dateoutput!='INVALID')
@@ -1101,10 +1104,15 @@ function do_date($ia)
         // "+1" makes room for a trailing space in date/time values
         $iLength   = strlen(date($dateformatdetails['phpdate'],mktime(23,59,59,12,30,1999)))+1;
 
-        // Hide calendar (but show hour/minute) if there's no year, month or day in format
-        $hideCalendar = strpos($dateformatdetails['jsdate'], 'Y') === false
-            && strpos($dateformatdetails['jsdate'], 'D') === false
-            && strpos($dateformatdetails['jsdate'], 'M') === false;
+        // For WhDateTimePicker, case is for some reason reversed in date format
+        $dateformat = $dateformatdetails['jsdate'];
+        // Reverse case, trick from here: http://stackoverflow.com/a/6612519/2138090
+        $dateformatReversed = reverseDateToFitDatePicker($dateformat);
+
+        // Hide calendar if there's no year, month or day in format
+        $hideCalendar = strpos($dateformatReversed, 'Y') === false
+            && strpos($dateformatReversed, 'D') === false
+            && strpos($dateformatReversed, 'M') === false;
 
         // HTML for date question using datepicker
         $answer = Yii::app()->getController()->renderPartial('/survey/questions/date/selector/answer', array(
@@ -1113,6 +1121,7 @@ function do_date($ia)
             'mindate'                => $mindate,
             'maxdate'                => $maxdate,
             'dateformatdetails'      => $dateformatdetails['dateformat'],
+            'dateformatReversed'     => $dateformatReversed,
             'dateformatdetailsjs'    => $dateformatdetails['jsdate'],
             'goodchars'              => "return goodchars(event,'".$goodchars."')",
             'checkconditionFunction' => $checkconditionFunction.'(this.value, this.name, this.type)',
@@ -1414,6 +1423,7 @@ function do_list_radio($ia)
     //// Init variables
 
     // General variables
+    global $dropdownthreshold;
     global $thissurvey;
     $kpclass                = testKeypad($thissurvey['nokeyboard']);                                             // Virtual keyboard (probably obsolete today)
     $checkconditionFunction = "checkconditions";                                                                 // name of the function to check condition TODO : check is used more than once
@@ -1672,7 +1682,9 @@ function do_listwithcomment($ia)
     //// Init variables
 
     // General variables
+    global $dropdownthreshold;
     global $thissurvey;
+    $dropdownthreshold      = Yii::app()->getConfig("dropdownthreshold");
     $kpclass                = testKeypad($thissurvey['nokeyboard']); // Virtual keyboard (probably obsolete today)
     $checkconditionFunction = "checkconditions";
     $iSurveyId              = Yii::app()->getConfig('surveyID'); // survey id
@@ -1692,7 +1704,7 @@ function do_listwithcomment($ia)
     $anscount     = count($ansresult);
     $hint_comment = gT('Please enter your comment here');
 
-    if ($aQuestionAttributes['use_dropdown']!=1)
+    if ($aQuestionAttributes['use_dropdown']!=1 && $anscount <= $dropdownthreshold)
     {
 
         $sRows = '';

@@ -30,30 +30,19 @@
     <!-- Start date/time -->
     <div class="form-group">
         <label class="col-sm-6 control-label" for='startdate'><?php  eT("Start date/time:"); ?></label>
-        <div class="col-sm-6 has-feedback">
+        <div class="col-sm-6">
             <?php Yii::app()->getController()->widget('yiiwheels.widgets.datetimepicker.WhDateTimePicker', array(
                     'name' => "startdate",
                     'id' => 'startdate',
                     'value' => $startdate,
                     'pluginOptions' => array(
-                        'format' => $dateformatdetails['jsdate'] . " HH:mm",
-                        'allowInputToggle' =>true,
-                        'showClear' => true,
-                        'tooltips' => array(
-                            'clear'=> gT('Clear selection'),
-                            'prevMonth'=> gT('Previous month'),
-                            'nextMonth'=> gT('Next month'),
-                            'selectYear'=> gT('Select year'),
-                            'prevYear'=> gT('Previous year'),
-                            'nextYear'=> gT('Next year'),
-                            'selectDecade'=> gT('Select decade'),
-                            'prevDecade'=> gT('Previous decade'),
-                            'nextDecade'=> gT('Next decade'),
-                            'prevCentury'=> gT('Previous century'),
-                            'nextCentury'=> gT('Next century'),
-                            'selectTime'=> gT('Select time')
-                        ),
-                        'locale' => convertLStoDateTimePickerLocale(Yii::app()->session['adminlang'])
+                        'format' => reverseDateToFitDatePicker($dateformatdetails['dateformat']) . " HH:mm",
+                        'singleDatePicker' => true,
+                        'startDate' => date("Y-m-d hh:ii", time()),
+                        'drops' => 'up',  // TODO: Does not work. Why?
+                        'timePicker' => true,
+                        'timePicker12Hour' => false,  // NB: timePicker24Hour = true does not work
+                        'timePickerIncrement' => 1
                     )
                 ));
             ?>
@@ -63,30 +52,19 @@
     <!-- Expiry date/time -->
     <div class="form-group">
         <label class="col-sm-6 control-label" for='expires'><?php  eT("Expiry date/time:"); ?></label>
-        <div class="col-sm-6 has-feedback">
+        <div class="col-sm-6">
             <?php Yii::app()->getController()->widget('yiiwheels.widgets.datetimepicker.WhDateTimePicker', array(
                     'name' => "expires",
                     'id' => 'expires',
                     'value' => $expires,
                     'pluginOptions' => array(
-                        'format' => $dateformatdetails['jsdate'] . " HH:mm",
-                        'allowInputToggle' =>true,
-                        'showClear' => true,
-                        'tooltips' => array(
-                            'clear'=> gT('Clear selection'),
-                            'prevMonth'=> gT('Previous month'),
-                            'nextMonth'=> gT('Next month'),
-                            'selectYear'=> gT('Select year'),
-                            'prevYear'=> gT('Previous year'),
-                            'nextYear'=> gT('Next year'),
-                            'selectDecade'=> gT('Select decade'),
-                            'prevDecade'=> gT('Previous decade'),
-                            'nextDecade'=> gT('Next decade'),
-                            'prevCentury'=> gT('Previous century'),
-                            'nextCentury'=> gT('Next century'),
-                                'selectTime'=> gT('Select time')
-                        ),
-                        'locale' => convertLStoDateTimePickerLocale(Yii::app()->session['adminlang'])
+                        'format' => reverseDateToFitDatePicker($dateformatdetails['dateformat']) . " HH:mm",
+                        'singleDatePicker' => true,
+                        'startDate' => date("Y-m-d", time()),
+                        'drops' => 'up',  // TODO: Does not work. Why?
+                        'timePicker' => true,
+                        'timePicker12Hour' => false,  // NB: timePicker24Hour = true does not work
+                        'timePickerIncrement' => 1
                     )
                 ));
             ?>

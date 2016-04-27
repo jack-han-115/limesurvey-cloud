@@ -18,6 +18,7 @@
 
 
 
+
 <!-- The form launching the update of the updater. -->
 <?php echo CHtml::beginForm(Yii::app()->getController()->createUrl('admin/update/sa/updateUpdater'), 'post', array('id'=>'launchUpdateUpdaterForm')); ?>
     <?php  echo CHtml::hiddenField('destinationBuild' , $serverAnswer->destinationBuild); ?>
