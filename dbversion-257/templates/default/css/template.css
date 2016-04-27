@@ -762,12 +762,7 @@ td.answer-item.text-center
 
 .table-10-point-array  td.answer-item.text-center
 {
-    padding-left: 40px;
-}
-
-.table-10-point-array  thead tr th.text-center
-{
-    padding-left: 0px;
+    padding-left: 52px;
 }
 
 
@@ -902,10 +897,4 @@ body div.row .question-container {
 }
 .asterisk:before {
     content: "\f069";
-}
-
-
-/* Check javascript */
-#checkjavascript {
-    margin-top: 100px;
 }

@@ -725,16 +725,15 @@ td.answer-item.text-center
     padding-left: 39px;
 }
 
+.table-5-point-array td.answer-item.text-center
+{
+    padding-left: 54px;
+}
+
 .table-10-point-array  td.answer-item.text-center
 {
-    padding-left: 40px;
+    padding-left: 52px;
 }
-
-.table-10-point-array  thead tr th.text-center
-{
-    padding-left: 0px;
-}
-
 
 
 /* center the label text in no more table mode */
@@ -787,24 +786,4 @@ table.numbers-only th, table.numbers-only input {
 
 .geoname_search {
     margin-bottom: 10px;
-}
-
-
-/* Asterix */
-.asterisk {
-    display: inline-block;
-    font: normal normal normal 14px/1 FontAwesome;
-    font-size: inherit;
-    text-rendering: auto;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-}
-.asterisk:before {
-    content: "\f069";
-}
-
-
-/* Check javascript */
-#checkjavascript {
-    margin-top: 100px;
 }

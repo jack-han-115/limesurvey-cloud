@@ -33,21 +33,19 @@
     */
     function getDateFormatData($iDateFormat=0,$sLanguageCode='en')
     {
-        // Bootstrap DateTimePicker uses capital letters, but
-        // we still need small jsdate letters for dropdown client side.
         $aDateFormats= array(
-        1=> array ('phpdate' => 'd.m.Y', 'jsdate' => 'DD.MM.YYYY', 'jsdate_original' => 'dd.mm.yyyy', 'dateformat' => gT('dd.mm.yyyy')),
-        2=> array ('phpdate' => 'd-m-Y', 'jsdate' => 'DD-MM-YYYY', 'jsdate_original' => 'dd-mm-yyyy', 'dateformat' => gT('dd-mm-yyyy')),
-        3=> array ('phpdate' => 'Y.m.d', 'jsdate' => 'YYYY.MM.DD', 'jsdate_original' => 'yyyy.mm.dd', 'dateformat' => gT('yyyy.mm.dd')),
-        4=> array ('phpdate' => 'j.n.Y', 'jsdate' => 'D.M.YYYY',   'jsdate_original' => 'd.m.yyyy',   'dateformat' => gT('d.m.yyyy')),
-        5=> array ('phpdate' => 'd/m/Y', 'jsdate' => 'DD/MM/YYYY', 'jsdate_original' => 'dd/mm/yyyy', 'dateformat' => gT('dd/mm/yyyy')),
-        6=> array ('phpdate' => 'Y-m-d', 'jsdate' => 'YYYY-MM-DD', 'jsdate_original' => 'yyyy-mm-dd', 'dateformat' => gT('yyyy-mm-dd')),
-        7=> array ('phpdate' => 'Y/m/d', 'jsdate' => 'YYYY/MM/DD', 'jsdate_original' => 'yyyy/mm/dd', 'dateformat' => gT('yyyy/mm/dd')),
-        8=> array ('phpdate' => 'j/n/Y', 'jsdate' => 'D/M/YYYY',   'jsdate_original' => 'd/m/yyyy',   'dateformat' => gT('d/m/yyyy')),
-        9=> array ('phpdate' => 'm-d-Y', 'jsdate' => 'MM-DD-YYYY', 'jsdate_original' => 'mm-dd-yyyy', 'dateformat' => gT('mm-dd-yyyy')),
-        10=>array ('phpdate' => 'm.d.Y', 'jsdate' => 'MM.DD.YYYY', 'jsdate_original' => 'mm.dd.yyyy', 'dateformat' => gT('mm.dd.yyyy')),
-        11=>array ('phpdate' => 'm/d/Y', 'jsdate' => 'MM/DD/YYYY', 'jsdate_original' => 'mm/dd/yyyy', 'dateformat' => gT('mm/dd/yyyy')),
-        12=>array ('phpdate' => 'j-n-Y', 'jsdate' => 'D-M-YYYY',   'jsdate_original' => 'd-m-yyyy',   'dateformat' => gT('d-m-yyyy'))
+        1=> array ('phpdate' => 'd.m.Y', 'jsdate' => 'dd.mm.yyyy', 'dateformat' => gT('dd.mm.yyyy')),
+        2=> array ('phpdate' => 'd-m-Y', 'jsdate' => 'dd-mm-yyyy', 'dateformat' => gT('dd-mm-yyyy')),
+        3=> array ('phpdate' => 'Y.m.d', 'jsdate' => 'yyyy.mm.dd', 'dateformat' => gT('yyyy.mm.dd')),
+        4=> array ('phpdate' => 'j.n.Y', 'jsdate' => 'd.m.yyyy',   'dateformat' => gT('d.m.yyyy')),
+        5=> array ('phpdate' => 'd/m/Y', 'jsdate' => 'dd/mm/yyyy', 'dateformat' => gT('dd/mm/yyyy')),
+        6=> array ('phpdate' => 'Y-m-d', 'jsdate' => 'yyyy-mm-dd', 'dateformat' => gT('yyyy-mm-dd')),
+        7=> array ('phpdate' => 'Y/m/d', 'jsdate' => 'yyyy/mm/dd', 'dateformat' => gT('yyyy/mm/dd')),
+        8=> array ('phpdate' => 'j/n/Y', 'jsdate' => 'd/m/yyyy',   'dateformat' => gT('d/m/yyyy')),
+        9=> array ('phpdate' => 'm-d-Y', 'jsdate' => 'mm-dd-yyyy', 'dateformat' => gT('mm-dd-yyyy')),
+        10=>array ('phpdate' => 'm.d.Y', 'jsdate' => 'mm.dd.yyyy', 'dateformat' => gT('mm.dd.yyyy')),
+        11=>array ('phpdate' => 'm/d/Y', 'jsdate' => 'mm/dd/yyyy', 'dateformat' => gT('mm/dd/yyyy')),
+        12=>array ('phpdate' => 'j-n-Y', 'jsdate' => 'd-m-yyyy',   'dateformat' => gT('d-m-yyyy'))
         );
 
         if ($iDateFormat > 12 || $iDateFormat<0) {
@@ -783,20 +781,16 @@
 
 
     /**
-     * Convert a 'dateformat' format string to a 'jsdate' format.
-     * For Bootstrap, that means using capital letters, e.g.
-     * MM/DD/YYYY instead of mm/dd/yyyy.
-     *
-     * @param $sDateformat string
-     * @returns string
-     *
-     */
+    * Convert a 'dateformat' format string to a 'jsdate' format.
+    *
+    * @param $sDateformat string
+    * @returns string
+    *
+    */
     function getJSDateFromDateFormat($sDateformat)
     {
-        // Reverse case, trick from here: http://stackoverflow.com/a/6612519/2138090
-        $newDateFormat = strtolower($sDateformat) ^ strtoupper($sDateformat) ^ $sDateformat;
-        $newDateFormat = str_replace("hh", "HH", $newDateFormat);  // HH (hours) need still be in upper-case for 00-23 representation (not AM/PM)
-        return $newDateFormat;
+        // No constraints for Bootstrap time-picker
+        return $sDateformat;
     }
 
 
@@ -816,7 +810,6 @@
             $aDateFormatDetails['dateformat'] = trim($aQidAttributes['date_format']);
             $aDateFormatDetails['phpdate'] = getPHPDateFromDateFormat($aDateFormatDetails['dateformat']);
             $aDateFormatDetails['jsdate'] = getJSDateFromDateFormat($aDateFormatDetails['dateformat']);
-            $aDateFormatDetails['jsdate_original'] = $aDateFormatDetails['dateformat'];  // In dropdown, this is fed to Date in Javascript, not Bootstrap
         }
         else
         {
@@ -956,19 +949,14 @@
     }
 
     /**
-    * This functions translates LimeSurvey specific locale code to a matching datetimepicker locale
+    * This functions translates LimeSurvey specific locale code to match a Yii locale
     *
     * @param mixed $sLocale LimeSurvey locale code
     */
-    function convertLStoDateTimePickerLocale($sLocale)
+    function translateLStoYiiLocale($sLocale)
     {
-        // Strip informal string always for easier matching
+        // Strip informal string
         $sLocale=str_replace('-informal','',$sLocale);
-
-        $aConversions=array();
-        if (isset($aConversions[$sLocale])){
-            $sLocale=$aConversions[$sLocale];
-        }
         return $sLocale;
     }
 
