@@ -333,6 +333,9 @@ class SurveyAdmin extends Survey_Common_Action
 
                 $aData['tnewtable'] = $tnewtable;
                 $aData['toldtable'] = $toldtable;
+
+                // Reset the session of the survey when deactivating it
+                killSurveySession($iSurveyID);
             }
 
             //Remove any survey_links to the CPDB
@@ -840,16 +843,15 @@ class SurveyAdmin extends Survey_Common_Action
 
             if ($action == 'importsurvey')
             {
-
-                $sFullFilepath = Yii::app()->getConfig('tempdir') . DIRECTORY_SEPARATOR . randomChars(20).'.'.$sExtension;
-                if (!@move_uploaded_file($_FILES['the_file']['tmp_name'], $sFullFilepath))
-                {
-                    $aData['sErrorMessage'] = sprintf(gT("An error occurred uploading your file. This may be caused by incorrect permissions in your %s folder."), Yii::app()->getConfig('tempdir'));
-                    $aData['bFailed'] = true;
-                }
-                if (!$aData['bFailed'] && (strtolower($sExtension) != 'csv' && strtolower($sExtension) != 'lss' && strtolower($sExtension) != 'txt' && strtolower($sExtension) != 'lsa'))
+                $sFullFilepath = Yii::app()->getConfig('tempdir') . DIRECTORY_SEPARATOR . randomChars(30).'.'.$sExtension;
+                if (!in_array(strtolower($sExtension),array('lss','txt','tsv','lsa')))
                 {
                     $aData['sErrorMessage'] = sprintf(gT("Import failed. You specified an invalid file type '%s'."), $sExtension);
+                    $aData['bFailed'] = true;
+                }
+                elseif (!$aData['bFailed'] && !@move_uploaded_file($_FILES['the_file']['tmp_name'], $sFullFilepath))
+                {
+                    $aData['sErrorMessage'] = sprintf(gT("An error occurred uploading your file. This may be caused by incorrect permissions in your %s folder."), Yii::app()->getConfig('tempdir'));
                     $aData['bFailed'] = true;
                 }
             }
@@ -910,7 +912,7 @@ class SurveyAdmin extends Survey_Common_Action
                 $aImportResults=importSurveyFile($sFullFilepath,(isset($_POST['translinksfields'])));
                 if (is_null($aImportResults) || !empty($aImportResults['error']))
                 {
-                    $aData['sErrorMessage']=isset($aImportResults['error']) ? $aImportResults['error'] : gt("Unknow error.");
+                    $aData['sErrorMessage']=isset($aImportResults['error']) ? $aImportResults['error'] : gT("Unknow error.");
                     $aData['bFailed'] = true;
                 }
             }
@@ -1014,6 +1016,7 @@ class SurveyAdmin extends Survey_Common_Action
     {
         $AOrgData = array();
         parse_str($_POST['orgdata'], $AOrgData);
+
         $grouporder = 0;
         foreach ($AOrgData['list'] as $ID => $parent)
         {
@@ -1023,14 +1026,21 @@ class SurveyAdmin extends Survey_Common_Action
             }
             elseif ($ID[0] == 'q')
             {
-                if (!isset($questionorder[(int)substr($parent, 1)]))
-                    $questionorder[(int)substr($parent, 1)] = 0;
+                $qid = (int)substr($ID, 1);
+                $gid = (int)substr($parent, 1);
+                if (!isset($aQuestionOrder[$gid]))
+                    $aQuestionOrder[$gid] = 0;
 
-                Question::model()->updateAll(array('question_order' => $questionorder[(int)substr($parent, 1)], 'gid' => (int)substr($parent, 1)), 'qid=:qid', array(':qid' => (int)substr($ID, 1)));
+				$sBaseLanguage = Survey::model()->findByPk($iSurveyID)->language;
+				$oQuestion = Question::model()->findByPk(array("qid"=>$qid,'language'=>$sBaseLanguage));
+                $oldGid = $oQuestion['gid'];
 
-                Question::model()->updateAll(array('gid' => (int)substr($parent, 1)), 'parent_qid=:parent_qid', array(':parent_qid' => (int)substr($ID, 1)));
-
-                $questionorder[(int)substr($parent, 1)]++;
+                if($oldGid != $gid) {
+                        fixMovedQuestionConditions($qid,$oldGid,$gid,$iSurveyID);
+                }
+                Question::model()->updateAll(array('question_order' => $aQuestionOrder[$gid], 'gid' => $gid), 'qid=:qid', array(':qid' => $qid));
+                Question::model()->updateAll(array('gid' => $gid), 'parent_qid=:parent_qid', array(':parent_qid' => $qid));
+                $aQuestionOrder[$gid]++;
             }
         }
         LimeExpressionManager::SetDirtyFlag(); // so refreshes syntax highlighting

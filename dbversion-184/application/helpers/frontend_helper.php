@@ -77,7 +77,7 @@ function loadanswers()
         // If survey come from reload (GET or POST); some value need to be found on saved_control, not on survey
         if (Yii::app()->request->getParam('loadall') == "reload")
         {
-            $oSavedSurvey=SavedControl::model()->find("identifier=:identifier AND sid=:surveyid AND (access_code=:access_code OR access_code=:sha256_code)",array(':identifier'=>$sLoadName,':access_code'=>md5($sLoadPass),':sha256_code'=>hash('sha256',$sLoadPass),':surveyid'=>$surveyid));
+            $oSavedSurvey=SavedControl::model()->find("sid = :sid AND identifier=:identifier AND (access_code=:access_code OR access_code=:sha256_code)",array(':sid' => $surveyid, ':identifier'=>$sLoadName,':access_code'=>md5($sLoadPass),':sha256_code'=>hash('sha256',$sLoadPass)));
             // We don't need to control if we have one, because we do the test before
             $_SESSION['survey_'.$surveyid]['scid'] = $oSavedSurvey->scid;
             $_SESSION['survey_'.$surveyid]['step'] = ($oSavedSurvey->saved_thisstep>1)?$oSavedSurvey->saved_thisstep:1;
@@ -614,9 +614,10 @@ function sendSubmitNotifications($surveyid)
 
     $aReplacementVars=array();
 
-    if ($thissurvey['allowsave'] == "Y" && isset($_SESSION['survey_'.$surveyid]['scid']))
+    // TODO: What is holdpass, and is it OK to skip these lines if it is set? Related to 'Resume later' functionality
+    if ($thissurvey['allowsave'] == "Y" && isset($_SESSION['survey_'.$surveyid]['scid']) && isset($_SESSION['survey_'.$surveyid]['holdpass']))
     {
-        $aReplacementVars['RELOADURL']="".Yii::app()->getController()->createUrl("/survey/index/sid/{$surveyid}/loadall/reload/scid/".$_SESSION['survey_'.$surveyid]['scid']."/loadname/".urlencode($_SESSION['survey_'.$surveyid]['holdname'])."/loadpass/".urlencode($_SESSION['survey_'.$surveyid]['holdpass'])."/lang/".urlencode(App()->language));
+        $aReplacementVars['RELOADURL']=Yii::app()->getController()->createUrl("/survey/index/sid/{$surveyid}/loadall/reload/scid/".$_SESSION['survey_'.$surveyid]['scid']."/lang/".urlencode(App()->language),array('loadname'=>$_SESSION['survey_'.$surveyid]['holdname'],'loadpass'=>$_SESSION['survey_'.$surveyid]['holdpass']));
         if ($bIsHTML)
         {
             $aReplacementVars['RELOADURL']="<a href='{$aReplacementVars['RELOADURL']}'>{$aReplacementVars['RELOADURL']}</a>";
@@ -1938,11 +1939,15 @@ function checkCompletedQuota($surveyid,$return=false)
             $aQuotaFields=array();
             // Array of fieldnames with relevance value : EM fill $_SESSION with default value even is unrelevant (em_manager_helper line 6548)
             $aQuotaRelevantFieldnames=array();
+            // To count number of hidden questions
+            $aQuotaQid=array();
             foreach ($aQuotaInfo['members'] as $aQuotaMember)
             {
                 $aQuotaFields[$aQuotaMember['fieldname']][] = $aQuotaMember['value'];
                 $aQuotaRelevantFieldnames[$aQuotaMember['fieldname']]=isset($_SESSION['survey_'.$surveyid]['relevanceStatus'][$aQuotaMember['qid']]) && $_SESSION['survey_'.$surveyid]['relevanceStatus'][$aQuotaMember['qid']];
+                $aQuotaQid[]=$aQuotaMember['qid'];
             }
+            $aQuotaQid=array_unique($aQuotaQid);
             // For each field : test if actual responses is in quota (and is relevant)
             foreach ($aQuotaFields as $sFieldName=>$aValues)
             {
@@ -1954,12 +1959,16 @@ function checkCompletedQuota($surveyid,$return=false)
                 if(in_array($sFieldName,$aPostedFields))// Need only one posted value
                     $bPostedField=true;
             }
-            // Count only needed quotas
-            if($iMatchedAnswers==count($aQuotaFields) && ( $aQuotaInfo['action']!=2 || $bPostedField ) )
+            // Condition to count quota : Answers are the same in quota + an answer is submitted at this time (bPostedField) OR all questions is hidden (bAllHidden)
+            $bAllHidden=QuestionAttribute::model()->countByAttributes(array('qid'=>$aQuotaQid),'attribute=:attribute',array(':attribute'=>'hidden'))==count($aQuotaQid);
+            if($iMatchedAnswers==count($aQuotaFields) && ( $bPostedField || $bAllHidden) )
             {
-                if($aQuotaInfo['qlimit'] == 0){ // Always add the quota if qlimit==0
+                if($aQuotaInfo['qlimit'] == 0)
+                { // Always add the quota if qlimit==0
                     $aMatchedQuotas[]=$aQuotaInfo;
-                }else{
+                }
+                else
+                {
                     $iCompleted=getQuotaCompletedCount($surveyid, $aQuotaInfo['id']);
                     if(!is_null($iCompleted) && ((int)$iCompleted >= (int)$aQuotaInfo['qlimit'])) // This remove invalid quota and not completed
                         $aMatchedQuotas[]=$aQuotaInfo;
