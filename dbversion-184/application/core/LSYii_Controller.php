@@ -30,7 +30,7 @@ abstract class LSYii_Controller extends CController
     public function __construct($id, $module = null)
     {
         parent::__construct($id, $module);
-        $this->_checkInstallation();
+        // $this->_checkInstallation();
 
         Yii::app()->session->init();
         $this->loadLibrary('LS.LS');
