@@ -145,14 +145,26 @@
             <?php foreach ($extraMenus as $menu): ?>
                 <li class="dropdown">
                     <?php if ($menu->isDropDown()): ?>
-                        <a class="dropdown-toggle" data-toggle="dropdown" href="#"><?php echo $menu->getLabel(); ?>&nbsp;<span class="caret"></span></a>
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                          <?php echo $menu->getLabel(); ?>
+                          &nbsp;
+                          <span class="caret"></span>
+                        </a>
                         <ul class="dropdown-menu" role="menu">
                             <?php foreach ($menu->getMenuItems() as $menuItem): ?>
                                 <?php if ($menuItem->isDivider()): ?>
                                     <li class="divider"></li>
+                                <?php elseif ($menuItem->isSmallText()): ?>
+                                    <li class="dropdown-header"><?php echo $menuItem->getLabel();?></li>
                                 <?php else: ?>
                                     <li>
-                                        <a href="<?php echo $menuItem->getHref(); ?>"><?php echo $menuItem->getLabel(); ?></a>
+                                        <a href="<?php echo $menuItem->getHref(); ?>">
+                                            <!-- Spit out icon if present -->
+                                            <?php if ($menuItem->getIconClass() != ''): ?>
+                                              <span class="<?php echo $menuItem->getIconClass(); ?>">&nbsp;</span>
+                                            <?php endif; ?>
+                                            <?php echo $menuItem->getLabel(); ?>
+                                        </a>
                                     </li>
                                 <?php endif; ?>
                             <?php endforeach; ?>
