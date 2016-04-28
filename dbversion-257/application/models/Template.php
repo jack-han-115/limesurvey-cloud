@@ -302,14 +302,6 @@ class Template extends LSActiveRecord
      */
     public static function forceAssets()
     {
-        $standardTemplatesPath = Yii::app()->getConfig("standardtemplaterootdir").DIRECTORY_SEPARATOR;
-        $Resource = opendir($standardTemplatesPath);
-        while ($Item = readdir($Resource))
-        {
-            if (is_dir($standardTemplatesPath . $Item) && $Item != "." && $Item != "..")
-            {
-                touch($standardTemplatesPath . $Item);
-            }
-        }
+
     }
 }
