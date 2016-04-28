@@ -266,7 +266,7 @@
                 . "<li><label for='googleanalyticsapikey'>".$clang->gT("Google Analytics API key:")."</label>\n"
                 . "<input type='text' size='35' id='googleanalyticsapikey' name='googleanalyticsapikey' value=\"".htmlspecialchars(getGlobalSetting('googleanalyticsapikey'))."\" /></li>"
                 . "<li><label for='googletranslateapikey'>".$clang->gT("Google Translate API key:")."</label>\n"
-                . "<input type='text' size='35' id='googletranslateapikey' name='googletranslateapikey' value=\"".htmlspecialchars(getGlobalSetting('googletranslateapikey'))."\" /></li>"                    
+                . "<input type='text' size='35' id='googletranslateapikey' name='googletranslateapikey' value=\"".htmlspecialchars(getGlobalSetting('googletranslateapikey'))."\" /></li>"
                 ;
 
 
@@ -517,11 +517,11 @@
                 {
                     $editsurvey .= '<p>'.$clang->gT("Note: Demo mode is activated. Marked (*) settings can't be changed.").'</p>\n';
                 }
-               
-                
+
+
                 // ============ Update LimeService Begin =======================================================
-                $destinationversion=177;
-                $upgradeversion='2.05+';
+                $destinationversion=257;
+                $upgradeversion='2.50';
                 global $statdatabasetype, $statdbport, $statdatabaseuser, $statdatabasepass, $statdatabasename, $statdatabaseport, $statdatabaselocation;
                 // Check if already scheduled for upgrade
                 $statconnect=ADONewConnection($statdatabasetype);
@@ -561,9 +561,9 @@
                             Yes. Your data is safe. During the upgrade process itself there will be a short downtime of 2 minutes. You will also need to update any templates you customized.<br />
                             <br />
                             <span style="font-weight: bold;">Do I need to check anything first? Can I upgrade while having active surveys?</span><br />
-                            Please note that the <b>browser requirement for the LimeSurvey administration has changed</b>: <br>For the administration part we currently support IE9 and all newer comparable browsers like FF, Chrome, Opera, etc. We do not support any IE version running in Intranet-mode or Compatibility-mode!<br>
-                            In LimeSurvey '.$upgradeversion.' there have been many improvements. It is in general possible to upgrade while having running surveys but <span style="font-weight: bold;">existing links to your surveys will be changed by the upgrade
-                            and so we recommend that you only run this upgrade while not having any active surveys</span>. If you have customized templates we will try to upgrade these, too - this might not always work. In that case we recommend to use our template upgrade service.<br />  
+                            Please note that the <b>browser requirement for the LimeSurvey administration has changed</b>: <br>For the administration part we currently support IE11 and all newer comparable browsers like FF, Chrome, Opera, etc. We do not support any IE version running in Intranet-mode or Compatibility-mode!<br>
+                            In LimeSurvey '.$upgradeversion.' there have been many improvements. <span style="font-weight: bold;">Existing links to your surveys will be changed by the upgrade and old survey design templates will not work anymore
+                            and so we recommend to upgrade your survey while participants are filling them out.</span>.
                             <br />
                             <span style="font-weight: bold;">What happens after the upgrade is done?</span><br />
                             After the upgrade is done you will receive an automatic notification email. Please login and check your surveys and templates after you received the email. As a bonus for upgrading we will even <b>credit your account with 20 Survey Responses!</b><br />
@@ -571,7 +571,7 @@
                             <span style="font-weight: bold;">Can I undo the upgrade?</span><br />
                             The upgrade cannot be undone. When it has finished you will receive an automatic email.<br />
                             <br />
-                            If you have read the paragraphs above please press the button below to schedule your installation for upgrade. Upgrade cycles run on every full hour. The current server time is '.date('g:i a').'.<br />
+                            If you have read the paragraphs above please press the button below to schedule your installation for upgrade. Usually the upgrade will be completed within a few minutes.<br />
                             <br />
                             <span style="font-weight: bold;"></span><br /></div>';
 
