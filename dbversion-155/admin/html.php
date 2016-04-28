@@ -2117,7 +2117,7 @@ function showadminmenu()
         . "</strong>\n";
     }
     $adminmenu  .="</div>\n";
-    
+
     if($_SESSION['USER_RIGHT_CONFIGURATOR'] == 1 && isset($updatelastcheck) && $updatelastcheck>0 && isset($updateavailable) && $updateavailable==1)
     {
         $adminmenu  .="<div class='menubar-title-right'><a href='{$scriptname}?action=globalsettings'>".sprintf($clang->gT('Update available: %s'),$updateversion."($updatebuild)").'</a></div>';
@@ -2132,7 +2132,7 @@ function showadminmenu()
         {
             $iResponses = $statconnect->GetOne("select responses_avail from limeservice_system.balances where user_id=".substr($databasename,6));
             $adminmenu  .="<div class='menubar-title-right'><small>".sprintf($clang->gT('Your response balance: %s'),$iResponses)." <a href='http://www.limeservice.com/en/buy-survey-responses'>(Buy more)</a>
-            - New update (2.05+) available: <a href='$scriptname?action=globalsettings'>".sprintf($clang->gT('Update now and get 20 free responses!' )."</small>",$updateversion).'</a>            
+            - New update (2.50+) available: <a href='$scriptname?action=globalsettings'>".sprintf($clang->gT('Update now and get 20 free responses!' )."</small>",$updateversion).'</a>
             </div>';
         }
     }

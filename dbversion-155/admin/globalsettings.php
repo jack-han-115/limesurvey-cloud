@@ -555,7 +555,7 @@
                         else //explain the upgrade
                         {
                             $editsurvey.= '<div style="width:600px;text-align: left;padding-top:50px; margin:0 auto;"><span style="font-weight: bold; font-size: 14pt;">New version available - <br />upgrade now and get 20 free responses!</span><br />
-                            There is a new LimeSurvey version available with many new features, version '.$upgradeversion.'. <span style="font-weight: bold;">Important:</span> Before you press the "Upgrade" button please read the following lines - it is not the usual blah blah:<br />
+                            There is a new LimeSurvey version available with many new features, version '.$upgradeversion.'. <span style="font-weight: bold;">Important:</span> Before you press the "Upgrade" button please read the following lines - it is important:<br />
                             <br />
                             <span style="font-weight: bold;">Is my data safe when upgrading?</span><br />
                             Yes. Your data is safe. During the upgrade process itself there will be a short downtime of 2 minutes. You will also need to update any templates you customized.<br />
@@ -564,7 +564,7 @@
                             Please note that the <b>browser requirement for the LimeSurvey administration has changed</b>: <br>For the administration part we currently support IE11 and all newer comparable browsers like FF, Chrome, Opera, etc. We do not support any IE version running in Intranet-mode or Compatibility-mode!<br>
                             In LimeSurvey '.$upgradeversion.' there have been many improvements. <span style="font-weight: bold;">Existing links to your surveys will be changed by the upgrade and old survey design templates will not work anymore
                             and so we recommend to upgrade your survey while participants are filling them out.</span>.
-                            <br />
+                            <br /><br />
                             <span style="font-weight: bold;">What happens after the upgrade is done?</span><br />
                             After the upgrade is done you will receive an automatic notification email. Please login and check your surveys and templates after you received the email. As a bonus for upgrading we will even <b>credit your account with 20 Survey Responses!</b><br />
                             <br />
