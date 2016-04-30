@@ -473,7 +473,7 @@ body .navbar-default .navbar-brand:hover {
  * (Both in portrait mode.)
  * We don't have to collapse tables on pads.
  */
-@media only screen and (max-width: 767px) {
+@media only screen and (max-width: 801px) {
 
     /* Remove margin */
     .row {
@@ -739,9 +739,8 @@ td.answer-item.text-center
 
 /* center the label text in no more table mode */
 .label-text{
-    display: inline;
-    position: relative;
-    bottom: 0px;
+    margin-top: -24px;
+    margin-left: 20px;
 }
 
 .label-clickable:hover
@@ -807,4 +806,9 @@ table.numbers-only th, table.numbers-only input {
 /* Check javascript */
 #checkjavascript {
     margin-top: 100px;
+}
+
+/*label font weight*/
+label, th {
+    font-weight: normal;
 }

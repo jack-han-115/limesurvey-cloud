@@ -797,11 +797,18 @@ class Survey_Common_Action extends CAction
                 || $aData['quotas']
                 || $aData['assessments'];
 
+            $event = new PluginEvent('beforeToolsMenuRender', $this);
+            $event->set('surveyId', $iSurveyID);
+            App()->getPluginManager()->dispatchEvent($event);
+            $extraToolsMenuItems = $event->get('menuItems');
+            $aData['extraToolsMenuItems'] = $extraToolsMenuItems;
+
             // Only show tools menu if at least one item is permitted
             $aData['showToolsMenu'] =
                    $aData['surveydelete']
                 || $aData['surveytranslate']
-                || Permission::model()->hasSurveyPermission($iSurveyID, 'surveycontent', 'update');
+                || Permission::model()->hasSurveyPermission($iSurveyID, 'surveycontent', 'update')
+                || !is_null($extraToolsMenuItems);
 
             $iConditionCount = Condition::model()->with(Array('questions'=>array('condition'=>'sid ='.$iSurveyID)))->count();
 
@@ -864,6 +871,8 @@ class Survey_Common_Action extends CAction
                 $sAlternativeUrl = $aData['surveybar']['closebutton']['url'];
                 $aForbiddenWordsInUrl = isset($aData['surveybar']['closebutton']['forbidden'])?$aData['surveybar']['closebutton']['forbidden']:array();
                 $aForbiddenWordsInUrl[]='assessmentedit';
+                $aForbiddenWordsInUrl[]='newsurvey';
+                $aForbiddenWordsInUrl[]='editlocalsettings';
                 $aForbiddenWordsInUrl[]='setsurveysecurity';
                 $aForbiddenWordsInUrl[]='importsurveyresources';
                 $aForbiddenWordsInUrl[]='add';
@@ -942,6 +951,7 @@ class Survey_Common_Action extends CAction
             $aData['aGroups'] = $aGroups;
             $aData['surveycontent'] = Permission::model()->hasSurveyPermission($aData['surveyid'], 'surveycontent', 'read');
             $aData['surveycontentupdate'] = Permission::model()->hasSurveyPermission($aData['surveyid'], 'surveycontent', 'update');
+            $aData['sideMenuBehaviour'] = getGlobalSetting('sideMenuBehaviour');
             $this->getController()->renderPartial("/admin/super/sidemenu", $aData);
         }
         else
@@ -964,7 +974,7 @@ class Survey_Common_Action extends CAction
      * @return string
      * @todo Make quick-menu user configurable
      */
-    private function renderQuickmenu(array $aData)
+    protected function renderQuickmenu(array $aData)
     {
         $event = new PluginEvent('afterQuickMenuLoad', $this);
         $event->set('aData', $aData);
@@ -1216,9 +1226,13 @@ class Survey_Common_Action extends CAction
         // If the survey is new (ie: it has no group), it is opened by default
         $setting_entry = 'quickaction_'.Yii::app()->user->getId();
         $aData['quickactionstate'] = ($sumcount2<1)?1:getGlobalSetting($setting_entry);
+        $sideMenuBehaviour = getGlobalSetting('sideMenuBehaviour');
 
-
-        $this->getController()->renderPartial("/admin/survey/surveySummary_view", $aData);
+        $content = $this->getController()->renderPartial("/admin/survey/surveySummary_view", $aData, true);
+        $this->getController()->renderPartial("/admin/super/sidebody", array(
+            'content' => $content,
+            'sideMenuBehaviour' => $sideMenuBehaviour
+        ));
     }
 
     /**

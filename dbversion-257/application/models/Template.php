@@ -302,6 +302,7 @@ class Template extends LSActiveRecord
      */
     public static function forceAssets()
     {
+        // Don't touch symlinked assets because it won't work
         if (App()->getAssetManager()->linkAssets) return;
         $standardTemplatesPath = Yii::app()->getConfig("standardtemplaterootdir").DIRECTORY_SEPARATOR;
         $Resource = opendir($standardTemplatesPath);
