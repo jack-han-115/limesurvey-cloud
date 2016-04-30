@@ -7,6 +7,8 @@
  * @var $bAnswer
  */
 ?>
+<!-- _statisticsoutput_header -->
+<div class="col-lg-6 sol-sm-12">
 <table class='statisticstable table table-bordered'>
     <thead>
         <tr class='success'>
@@ -32,13 +34,17 @@
                 </strong>
             </th>
 
-            <th width='' align='center' >
-                <strong><?php eT("Count"); ?></strong>
-            </th>
+            <?php if ($bShowCount  = true): ?>
+                <th width='' align='center' >
+                    <strong><?php eT("Count"); ?></strong>
+                </th>
+            <?php endif;?>
 
-            <th width='' align='center' >
-                <strong><?php eT("Percentage");?></strong>
-            </th>
+            <?php if ($bShowPercentage  = true): ?>
+                <th width='' align='center' >
+                    <strong><?php eT("Percentage");?></strong>
+                </th>
+            <?php endif;?>
 
             <?php if($bSum): ?>
                 <th width='' align='center' >
@@ -49,3 +55,4 @@
             <?php endif; ?>
         </tr>
     </thead>
+<!-- end of _statisticsoutput_header -->

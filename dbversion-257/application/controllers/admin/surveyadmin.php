@@ -221,7 +221,6 @@ class SurveyAdmin extends Survey_Common_Action
         $aData['surveybar']['savebutton']['form'] = 'frmeditgroup';
         $aData['surveybar']['closebutton']['url'] = 'admin/survey/sa/view/surveyid/'.$iSurveyID;  // Close button
 
-        $this->_renderWrappedTemplate('survey', 'editSurvey_view', $aData);
     }
 
     /**
@@ -2054,11 +2053,15 @@ class SurveyAdmin extends Survey_Common_Action
             Permission::model()->giveAllSurveyPermissions(Yii::app()->session['loginID'], $iNewSurveyid);
 
             Yii::app()->session['flashmessage'] = $warning.gT("Survey was successfully added.");
-            if (App()->request->getPost('save'))
+            if (App()->request->getPost('saveandclose'))
+            {
+                $this->getController()->redirect(array('admin/survey/sa/view/surveyid/' . $iNewSurveyid));
+            }
+            else
             {
                 $this->getController()->redirect(array('admin/survey/sa/editlocalsettings/surveyid/' . $iNewSurveyid));
             }
-            $this->getController()->redirect(array('admin/survey/sa/view/surveyid/' . $iNewSurveyid));
+
         }
     }
 
