@@ -1,4 +1,5 @@
-<div class="side-body col-lg-8">
+<div class='side-body <?php echo getSideBodyClass(false); ?>'>
+    <div class='col-lg-8'>
     <div class="row">
         <div class="col-lg-12 content-right">
             <h3>
@@ -45,7 +46,18 @@
                         ?>
                     </div>
                 </div>
-
+                <div class="form-group">
+                    <label class="col-sm-2 control-label" for="active"><?php eT("Active:");?></label>
+                    <div class="col-sm-10">
+                        <?php $this->widget('yiiwheels.widgets.switch.WhSwitch', array(
+                            'name' => 'active',
+                            'id'=>'active',
+                            'value' => 1,
+                            'onLabel'=>gT('Yes'),
+                            'offLabel' => gT('No')));
+                        ?>
+                    </div>
+                </div>
                 <!--
                 <div class="form-group">
                     <div class="col-sm-10">
@@ -101,4 +113,4 @@
             </form>
         </div>
     </div>
-</div></div>
+</div></div></div>

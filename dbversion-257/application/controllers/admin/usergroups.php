@@ -219,7 +219,8 @@ class Usergroups extends Survey_Common_Action
 
         $action = (isset($_POST['action'])) ? $_POST['action'] : '';
         if (Permission::model()->hasGlobalPermission('usergroups','update')) {
-            if ($action == "editusergroupindb") {
+            if ($action == "editusergroupindb")
+             {
 
                 $ugid = (int)$_POST['ugid'];
 
@@ -449,8 +450,7 @@ class Usergroups extends Survey_Common_Action
     protected function _renderWrappedTemplate($sAction = 'usergroup', $aViewUrls = array(), $aData = array())
     {
         App()->getClientScript()->registerPackage('jquery-tablesorter');
-        App()->getClientScript()->registerScriptFile( App()->getAssetManager()->publish( ADMIN_SCRIPT_PATH.'users.js' ));
-
+        $this->registerScriptFile( 'ADMIN_SCRIPT_PATH', 'users.js');
         $aData['display']['menu_bars']['user_group'] = true;
 
         parent::_renderWrappedTemplate($sAction, $aViewUrls, $aData);

@@ -294,7 +294,7 @@ class responses extends Survey_Common_Action
             {
                 Yii::app()->session['flashmessage'] = gT("This response ID is invalid.");
             }
-			
+
             $aViewUrls[] = 'browseidfooter_view';
             $aData['sidemenu']['state'] = false;
             $aData['menu']['edition'] = true;
@@ -369,8 +369,8 @@ class responses extends Survey_Common_Action
         }
         App()->getClientScript()->registerPackage('jqgrid');
 
-        App()->getClientScript()->registerScriptFile( App()->getAssetManager()->publish( ADMIN_SCRIPT_PATH . "listresponse.js" ));
-        App()->getClientScript()->registerCssFile(Yii::app()->getConfig('adminstyleurl') . "css/jqgrid.css" );
+        $this->registerScriptFile( 'ADMIN_SCRIPT_PATH', 'listresponse.js');
+        $this->registerCssFile( 'ADMIN', 'jqgrid.css' );
 
         $aData = $this->_getData($iSurveyId);
         $bHaveToken=$aData['surveyinfo']['anonymized'] == "N" && tableExists('tokens_' . $iSurveyId) && Permission::model()->hasSurveyPermission($iSurveyId,'tokens','read');// Boolean : show (or not) the token
@@ -410,7 +410,7 @@ class responses extends Survey_Common_Action
             'width'=>'100',
             'resizable' => true,
             'align'=>'right',
-            'label'=>viewHelper::getFieldText($fields['id']),
+            'title'=>viewHelper::getFieldText($fields['id']),
             'hidedlg'=>true,
         );
         $column_model[] = array(
@@ -421,7 +421,7 @@ class responses extends Survey_Common_Action
             'width'=>'100',
             'resizable' => true,// Strangely : don't work
             'align'=>'right',
-            'label'=>viewHelper::getFieldText($fields['lastpage']),
+            'title'=>viewHelper::getFieldText($fields['lastpage']),
         );
 
         $bHidden=false;
@@ -446,7 +446,7 @@ class responses extends Survey_Common_Action
             'hidden'=>$bHidden,
             'width'=>'100',
             'align'=>'left',
-            'label' => gT("Completed"),
+            'title' => gT("Completed"),
         );
 
         // defaultSearch is the default search done before send request in json. Actually : completed and token only. Can be extended ( js is ready) ?
@@ -472,7 +472,7 @@ class responses extends Survey_Common_Action
                 'sorttype'=>'string',
                 'sortable'=>true, 'width'=>'150',
                 'align'=>'left',
-                'label'=>gT('Token')
+                'title'=>gT('Token')
             );
             $column_model[] = array(
                 'name'=>'firstname',
@@ -481,7 +481,7 @@ class responses extends Survey_Common_Action
                 'sortable'=>true,
                 'width'=>'150',
                 'align'=>'left',
-                'label'=>gT('First name'),
+                'title'=>gT('First name'),
             );
             $column_model[] = array(
                 'name'=>'lastname',
@@ -490,7 +490,7 @@ class responses extends Survey_Common_Action
                 'sortable'=>true,
                 'width'=>'150',
                 'align'=>'left',
-                'label'=>gT('Last Name'),
+                'title'=>gT('Last Name'),
             );
             $column_model[] = array(
                 'name'=>'email',
@@ -499,7 +499,7 @@ class responses extends Survey_Common_Action
                 'sortable'=>true,
                 'width'=>'150',
                 'align'=>'left',
-                'label'=>gT('Email')
+                'title'=>gT('Email')
             );
             // If token exist, test if token is set in params, add it to defaultSearch
             if($sTokenSearch= Yii::app()->request->getQuery('token'))
@@ -515,7 +515,7 @@ class responses extends Survey_Common_Action
             'width'=>'50',
             'resizable' => true,// Strangely : don't work
             'align'=>'left',
-            'label'=>viewHelper::getFieldText($fields['startlanguage']),
+            'title'=>viewHelper::getFieldText($fields['startlanguage']),
         );
 
         // All other columns are based on the questions.
@@ -1524,17 +1524,15 @@ class responses extends Survey_Common_Action
     */
     protected function _renderWrappedTemplate($sAction='', $aViewUrls = array(), $aData = array())
     {
-        App()->getClientScript()->registerScriptFile( App()->getAssetManager()->publish( ADMIN_SCRIPT_PATH . 'browse.js' ));
+        $this->registerScriptFile( 'ADMIN_SCRIPT_PATH', 'browse.js');
+        App()->getClientScript()->registerCssFile(Yii::app()->getConfig('styleurl') . 'browse.css');// Don't find the way to register a css file in /styles/ (global css)
 
         $iSurveyId = $aData['iSurveyId'];
-
         $aData['display']['menu_bars'] = false;
         $aData['display']['menu_bars']['browse'] = gT('Browse responses'); // browse is independent of the above
-
         $surveyinfo = Survey::model()->findByPk($iSurveyId)->surveyinfo;
         $aData["surveyinfo"] = $surveyinfo;
         $aData['title_bar']['title'] = gT('Browse responses').': '.$surveyinfo['surveyls_title'];
-
         parent::_renderWrappedTemplate('responses', $aViewUrls, $aData);
     }
 

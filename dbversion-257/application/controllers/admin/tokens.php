@@ -273,24 +273,26 @@ class tokens extends Survey_Common_Action
             self::_newtokentable($iSurveyId);
         }
 
-    /* build JS variable to hide buttons forbidden for the current user */
-    $aData['showDelButton'] = Permission::model()->hasSurveyPermission($iSurveyId, 'tokens', 'delete')?'true':'false';
-    $aData['showInviteButton'] = Permission::model()->hasSurveyPermission($iSurveyId, 'tokens', 'update')?'true':'false';
-    $aData['showBounceButton'] = Permission::model()->hasSurveyPermission($iSurveyId, 'tokens', 'update')?'true':'false';
-    $aData['showRemindButton'] = Permission::model()->hasSurveyPermission($iSurveyId, 'tokens', 'update')?'true':'false';
+        /* build JS variable to hide buttons forbidden for the current user */
+        $aData['showDelButton'] = Permission::model()->hasSurveyPermission($iSurveyId, 'tokens', 'delete')?'true':'false';
+        $aData['showInviteButton'] = Permission::model()->hasSurveyPermission($iSurveyId, 'tokens', 'update')?'true':'false';
+        $aData['showBounceButton'] = Permission::model()->hasSurveyPermission($iSurveyId, 'tokens', 'update')?'true':'false';
+        $aData['showRemindButton'] = Permission::model()->hasSurveyPermission($iSurveyId, 'tokens', 'update')?'true':'false';
 
         // Javascript
         App()->getClientScript()->registerPackage('jqgrid');
-        App()->getClientScript()->registerScriptFile(Yii::app()->getConfig('adminscripts') . "tokens.js");
+        $this->registerScriptFile( 'ADMIN_SCRIPT_PATH', 'tokens.js');
+
+
         // CSS
         // Right to Left
         if (getLanguageRTL($_SESSION['adminlang']))
         {
-            App()->getClientScript()->registerCssFile(Yii::app()->getConfig('adminstyleurl') . "css/jqgrid-rtl.css" );
+            $this->registerCssFile( 'ADMIN', 'jqgrid-rtl.css' );
         }
         else
         {
-            App()->getClientScript()->registerCssFile(Yii::app()->getConfig('adminstyleurl') . "css/jqgrid.css" );
+            $this->registerCssFile( 'ADMIN', 'jqgrid.css' );
         }
 
         Yii::app()->loadHelper('surveytranslator');
@@ -521,6 +523,20 @@ class tokens extends Survey_Common_Action
 
             $action .= '</div>';
 
+            $sReminderSent  = $token['remindersent'];
+            $sCompleted     = $token['completed'];
+
+            if($sReminderSent!='N')
+            {
+                $sReminderSent  = convertToGlobalSettingFormat($sReminderSent );
+            }
+
+            if($sCompleted!='N')
+            {
+                $sCompleted  = convertToGlobalSettingFormat( $sCompleted );
+            }
+
+
             $aRowToAdd['cell'] = array($token['tid'],
                 $action,
                 htmlspecialchars($token['firstname'],ENT_QUOTES),
@@ -530,9 +546,9 @@ class tokens extends Survey_Common_Action
                 htmlspecialchars($token['token'],ENT_QUOTES),
                 htmlspecialchars($token['language'],ENT_QUOTES),
                 htmlspecialchars($token['sent'],ENT_QUOTES),
-                htmlspecialchars($token['remindersent'],ENT_QUOTES),
+                htmlspecialchars($sReminderSent,ENT_QUOTES),
                 htmlspecialchars($token['remindercount'],ENT_QUOTES),
-                htmlspecialchars($token['completed'],ENT_QUOTES),
+                htmlspecialchars($sCompleted,ENT_QUOTES),
                 htmlspecialchars($token['usesleft'],ENT_QUOTES),
                 htmlspecialchars($token['validfrom'],ENT_QUOTES),
                 htmlspecialchars($token['validuntil'],ENT_QUOTES));
@@ -908,13 +924,18 @@ class tokens extends Survey_Common_Action
             self::_newtokentable($iSurveyID);
         }
 
+        /*
+         * Broken, caused by commit e8f6f767
+         * $sTokenIDs can be a comma-separated list, which will cause
+         * a SQL error
         $token = Token::model($iSurveyID)->find('tid=' . $sTokenIDs);
 
         $beforeParticipantDelete = new PluginEvent('beforeParticipantDelete');
         $beforeParticipantDelete->set('model',$token );
         $beforeParticipantDelete->set('iSurveyID',$iSurveyID );
         App()->getPluginManager()->dispatchEvent($beforeParticipantDelete);
-        
+        */
+
         if (Permission::model()->hasSurveyPermission($iSurveyID, 'tokens', 'delete'))
         {
             $aTokenIds = explode(',', $sTokenIDs); //Make the tokenids string into an array
@@ -1206,9 +1227,7 @@ class tokens extends Survey_Common_Action
         $cancel=Yii::app()->request->getPost('cancel','');
         $tokenfields = getAttributeFieldNames($iSurveyId);
         $sAttributeToDelete=Yii::app()->request->getPost('deleteattribute','');
-        tracevar($sAttributeToDelete);
         if(!in_array($sAttributeToDelete,$tokenfields)) $sAttributeToDelete=false;
-        tracevar($sAttributeToDelete);
         if ($cancel=='cancel')
         {
             Yii::app()->getController()->redirect(Yii::app()->getController()->createUrl("/admin/tokens/sa/managetokenattributes/surveyid/$iSurveyId"));
@@ -2118,8 +2137,7 @@ class tokens extends Survey_Common_Action
         $aData['title_bar']['title'] = $surveyinfo['surveyls_title']."(".gT("ID").":".$iSurveyId.")";
         $aData['sidemenu']["token_menu"]=TRUE;
         $aData['token_bar']['closebutton']['url'] = 'admin/tokens/sa/index/surveyid/'.$iSurveyId;
-
-        App()->getClientScript()->registerScriptFile(Yii::app()->getConfig('adminscripts') . 'tokensimport.js');
+        $this->registerScriptFile( 'ADMIN_SCRIPT_PATH', 'tokensimport.js');
         $aEncodings =aEncodingsArray();
 
         if (Yii::app()->request->isPostRequest) // && Yii::app()->request->getPost('subaction')=='upload')

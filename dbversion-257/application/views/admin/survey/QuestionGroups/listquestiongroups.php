@@ -8,7 +8,7 @@
 */
 ?>
 <?php $pageSize=Yii::app()->user->getState('pageSize',Yii::app()->params['defaultPageSize']);?>
-<div class="side-body">
+<div class='side-body <?php echo getSideBodyClass(true); ?>'>
     <h3><?php eT('Question groups in this survey'); ?></h3>
     <div class="row">
         <div class="col-lg-12 content-right">
@@ -84,7 +84,7 @@
                                 'header'=>gT('Description'),
                                 'name'=>'description',
                                 'type'=>'raw',
-                                'value'=>'$data->description',
+                                'value'=>'viewHelper::flatEllipsizeText($data->description,true,0)',
                                 'htmlOptions' => array('class' => 'col-md-6'),
                             ),
 

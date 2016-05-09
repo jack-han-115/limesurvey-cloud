@@ -1,9 +1,7 @@
 <?php PrepareEditorScript(true, $this); ?>
 <?php $this->renderPartial("./survey/Question/question_subviews/_ajax_variables", $ajaxDatas); ?>
 
-
-
-<div class="side-body" id="edit-question-body">
+<div id='edit-question-body' class='side-body <?php echo getSideBodyClass(false); ?>'>
 
     <!-- Page Title-->
     <h3>
@@ -143,8 +141,8 @@
                                                     }
                                                     ?>
                                                     <input type="hidden" id="question_type" name="type" value="<?php echo $eqrow['type']; ?>" />
-                                                    <div class="col-sm-8 btn-group" id="question_type_button" style="z-index: 1000">
-                                                        <button type="button" class="btn btn-default dropdown-toggle " <?php if ($activated == "Y"){echo " disabled ";} ?>  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="z-index: 1000">
+                                                    <div class="col-sm-8 btn-group" id="question_type_button">
+                                                        <button type="button" class="btn btn-default dropdown-toggle " <?php if ($activated == "Y"){echo " disabled ";} ?>  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" >
                                                             <?php foreach($groups as $name => $group):?>
                                                                 <?php foreach($group as $type => $option):?>
                                                                     <?php if($type == $eqrow['type']):?>
