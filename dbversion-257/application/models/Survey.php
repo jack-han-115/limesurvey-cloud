@@ -25,8 +25,12 @@ class Survey extends LSActiveRecord
      * @var array
      */
     protected $findByPkCache = array();
-    /* Set some setting not by default database */
+    /* Default settings for new survey */
+    /* This settings happen for whole new Survey, not only admin/survey/sa/newsurvey */
     public $format = 'G';
+    public $htmlemail='Y';
+
+
     public $full_answers_account=null;
     public $partial_answers_account=null;
     public $searched_value;
@@ -711,6 +715,9 @@ class Survey extends LSActiveRecord
 
             $bExpired = ($oStop < $oNow);
             $bWillRun = ($oStart > $oNow);
+
+            $sStop = convertToGlobalSettingFormat( $sStop );
+            $sStart = convertToGlobalSettingFormat( $sStart );
 
             // Icon generaton (for CGridView)
             $sIconRunning = '<a href="'.App()->createUrl('/admin/survey/sa/view/surveyid/'.$this->sid).'" class="survey-state" data-toggle="tooltip" title="'.gT('Expire').': '.$sStop.'"><span class="fa  fa-clock-o text-success"></span></a>';

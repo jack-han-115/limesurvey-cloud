@@ -70,19 +70,10 @@ class update extends Survey_Common_Action
         $serverAnswer = $updateModel->getUpdateInfo($buttons);
         $aData['serverAnswer'] = $serverAnswer;
 
-        // If debug mode is on, we don't use asset manager to register the update script files
-        if (YII_DEBUG)
-        {
-            App()->getClientScript()->registerScriptFile(Yii::app()->baseUrl.'/scripts/admin/comfortupdate/comfortupdate.js');
-            App()->getClientScript()->registerScriptFile(Yii::app()->baseUrl.'/scripts/admin/comfortupdate/buildComfortButtons.js');
-            App()->getClientScript()->registerScriptFile(Yii::app()->baseUrl.'/scripts/admin/comfortupdate/displayComfortStep.js');
-        }
-        else
-        {
-            App()->getClientScript()->registerScriptFile( App()->getAssetManager()->publish( dirname(Yii::app()->request->scriptFile). '/scripts/admin/comfortupdate/comfortupdate.js')       );
-            App()->getClientScript()->registerScriptFile( App()->getAssetManager()->publish( dirname(Yii::app()->request->scriptFile). '/scripts/admin/comfortupdate/buildComfortButtons.js') );
-            App()->getClientScript()->registerScriptFile( App()->getAssetManager()->publish( dirname(Yii::app()->request->scriptFile). '/scripts/admin/comfortupdate/displayComfortStep.js')  );
-        }
+        $this->registerScriptFile( 'ADMIN_SCRIPT_PATH', 'comfortupdate/comfortupdate.js');
+        $this->registerScriptFile( 'ADMIN_SCRIPT_PATH', 'comfortupdate/buildComfortButtons.js');
+        $this->registerScriptFile( 'ADMIN_SCRIPT_PATH', 'comfortupdate/displayComfortStep.js');
+
         $this->_renderWrappedTemplate('update', '_updateContainer', $aData);
     }
 
@@ -316,7 +307,6 @@ class update extends Survey_Common_Action
                                 $updateModel->removeTmpFile('comfort_updater_cookie.txt');
 
                                 // Force asset manager to republish the assets for all templates
-                                //$updateModel->republishAssets();
                                 Template::model()->forceAssets();
 
                                 Yii::app()->session['update_result'] = null;
@@ -543,7 +533,12 @@ class update extends Survey_Common_Action
             $views = array('welcome', 'subscribe', 'key_updated', 'updater_update');
             if (in_array($serverAnswer->view, $views) )
             {
-                return $this->controller->renderPartial('//admin/update/updater/welcome/_'.$serverAnswer->view, array('serverAnswer' => $serverAnswer),  false, false);
+                $sValidityDate = '';
+                if (isset($serverAnswer->key_infos->validuntil))
+                {
+                    $sValidityDate = convertToGlobalSettingFormat( $sValidityDate );
+                }
+                return $this->controller->renderPartial('//admin/update/updater/welcome/_'.$serverAnswer->view, array('serverAnswer' => $serverAnswer, 'sValidityDate'=>$sValidityDate),  false, false);
             }
             else
             {

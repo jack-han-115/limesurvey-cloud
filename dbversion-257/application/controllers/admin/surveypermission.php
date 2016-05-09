@@ -49,9 +49,9 @@ class surveypermission extends Survey_Common_Action {
         $aBaseSurveyPermissions=Permission::model()->getSurveyBasePermissions();
         $userList=getUserList('onlyuidarray'); // Limit the user list for the samegrouppolicy
         App()->getClientScript()->registerPackage('jquery-tablesorter');
-        App()->getClientScript()->registerScriptFile( App()->getAssetManager()->publish( ADMIN_SCRIPT_PATH . "surveypermissions.js" ));
+        $this->registerScriptFile( 'ADMIN_SCRIPT_PATH', 'surveypermissions.js');
 
-        $surveysecurity = '<div class="side-body" id="edit-permissions">';
+        $surveysecurity = "<div id='edit-permission' class='side-body " . getSideBodyClass(false) . "'>";
         $surveysecurity .="<h3>".gT("Survey permissions")."</h3>\n";
         $surveysecurity .= '<div class="row"><div class="col-lg-12 content-right">';
         $result2 = Permission::model()->getUserDetails($iSurveyID);
@@ -167,20 +167,20 @@ class surveypermission extends Survey_Common_Action {
                     $sTooltip = "";
                     foreach ($aPDetails as $sPDetailKey=>$sPDetailValue)
                     {
-                        if ($sPDetailValue 
-                            && Permission::model()->hasSurveyPermission($iSurveyID,$sPKey,$sPDetailKey,$PermissionRow['uid']) 
-                            && !($sPKey=='survey' && $sPDetailKey=='read')) 
+                        if ($sPDetailValue
+                            && Permission::model()->hasSurveyPermission($iSurveyID,$sPKey,$sPDetailKey,$PermissionRow['uid'])
+                            && !($sPKey=='survey' && $sPDetailKey=='read'))
                         {
                             $iCount++;
                             $sTooltip .= $sPDetailKey . ", ";
                         }
-                        if ($sPDetailValue) 
+                        if ($sPDetailValue)
                         {
                             $iPermissionCount++;
                         }
                     }
 
-                    if ($sPKey=='survey') 
+                    if ($sPKey=='survey')
                     {
                         $iPermissionCount--;
                     }
@@ -268,7 +268,7 @@ class surveypermission extends Survey_Common_Action {
         if($action == "addusergroupsurveysecurity")
         {
             //////////////////
-            $addsummary = '<div class="side-body" id="edit-permissions">';
+            $addsummary = "<div id='edit-permission' class='side-body " . getSideBodyClass(false) . "'>";
             $addsummary .= '<div class="row"><div class="col-lg-12 content-right">';
 
             $result = Survey::model()->findAll('sid = :surveyid AND owner_id = :owner_id',array(':surveyid' => $surveyid, ':owner_id' => Yii::app()->session['loginID']));
@@ -377,7 +377,7 @@ class surveypermission extends Survey_Common_Action {
         if($action == "addsurveysecurity")
         {
 
-            $addsummary = '<div class="side-body" id="edit-permissions">';
+            $addsummary = "<div id='edit-permission' class='side-body " . getSideBodyClass(false) . "'>";
             $addsummary .= '<div class="row"><div class="col-lg-12 content-right">';
 
 
@@ -481,10 +481,10 @@ class surveypermission extends Survey_Common_Action {
 
         if( Permission::model()->hasSurveyPermission($surveyid, 'surveysecurity', 'update') )
         {
-            $usersummary = '<div class="side-body" id="edit-permissions">';
+            $usersummary = "<div id='edit-permission' class='side-body " . getSideBodyClass(false) . "'>";
 
-            App()->getClientScript()->registerPackage('jquery-tablesorter');
-            App()->getClientScript()->registerScriptFile( App()->getAssetManager()->publish( ADMIN_SCRIPT_PATH . "surveypermissions.js" ));
+            App()->getClientScript()->registerPackage('jquery-tablesorter');            
+            $this->registerScriptFile( 'ADMIN_SCRIPT_PATH', 'surveypermissions.js');
             if ($action == "setsurveysecurity")
             {
                 $query = "select users_name from {{users}} where uid=:uid";
@@ -611,7 +611,7 @@ class surveypermission extends Survey_Common_Action {
         if($action == "delsurveysecurity")
         {
 
-            $addsummary = '<div class="side-body" id="edit-permissions">';
+            $addsummary = "<div id='edit-permission' class='side-body " . getSideBodyClass(false) . "'>";
             $addsummary .= '<div class="row"><div class="col-lg-12 content-right">';
             $addsummary .= "<div class=\"jumbotron message-box\">\n";
             $addsummary .= "<h2>".gT("Deleting User")."</h2>\n";
@@ -678,7 +678,7 @@ class surveypermission extends Survey_Common_Action {
         if ($action == "surveyrights" && Permission::model()->hasSurveyPermission($surveyid, 'surveysecurity', 'update'))
         {
 
-            $addsummary = '<div class="side-body" id="edit-permissions">';
+            $addsummary = "<div id='edit-permission' class='side-body " . getSideBodyClass(false) . "'>";
             $addsummary .= '<div class="row"><div class="col-lg-12 content-right">';
 
             $addsummary .= "<div class=\"jumbotron message-box\">\n";

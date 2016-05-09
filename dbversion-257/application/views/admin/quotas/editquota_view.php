@@ -1,5 +1,6 @@
-<div class="side-body col-lg-8">
-    <div class="row">                             
+<div class='side-body <?php echo getSideBodyClass(false); ?>'>
+    <div class='col-lg-8'>
+    <div class="row">
         <div class="col-lg-12 content-right">
             <h3>
                 <?php eT("Edit quota");?>
@@ -40,7 +41,18 @@
                 ?>
             </div>
         </div>
-
+        <div class='form-group'>
+            <label class='control-label col-sm-2' for='active'><?php eT("Active:");?></label>
+            <div class='col-sm-5'>
+                <?php $this->widget('yiiwheels.widgets.switch.WhSwitch', array(
+                    'name' => 'active',
+                    'id'=>'active',
+                    'value' => $quotainfo['active'],
+                    'onLabel'=>gT('Yes'),
+                    'offLabel' => gT('No')));
+                ?>
+            </div>
+        </div>
         <!-- Language tabs -->
         <ul class="nav nav-tabs">
             <?php foreach ($langs as $lang): ?>
@@ -56,11 +68,11 @@
         <?php foreach ($aTabContents as $i => $sTabContent)
         {
             echo CHtml::tag(
-                'div', 
+                'div',
                 array(
                     'id' => 'edittxtele' . $i,
                     'class' => 'tab-pane fade in' . ($i == $baselang ? ' active ' : ''),
-                ), 
+                ),
                 $sTabContent
             );
         }?>
@@ -73,4 +85,4 @@
         <input type="hidden" name="quota_id" value="<?php echo $quotainfo['id'];?>" />
     </form>
 
-</div></div></div>
+</div></div></div></div>

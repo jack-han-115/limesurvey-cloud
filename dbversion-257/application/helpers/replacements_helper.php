@@ -134,6 +134,7 @@ function templatereplace($line, $replacements = array(), &$redata = array(), $de
         }
         else
         {
+
             // In debug mode, the Asset Manager is not used
             // So, dev don't need to update the directory date to get the new version of their template.
             // They must think about refreshing their brower's cache (ctrl + F5)
@@ -141,6 +142,8 @@ function templatereplace($line, $replacements = array(), &$redata = array(), $de
             $aCssFiles = $oTemplate->config->files->css->filename;
             $aJsFiles = $oTemplate->config->files->js->filename;
             $aOtherFiles = $oTemplate->otherFiles;
+
+            //var_dump($aCssFiles);var_dump($aJsFiles);die();
 
             foreach($aCssFiles as $sCssFile)
             {
@@ -628,14 +631,13 @@ EOD;
         $_endtext = $thissurvey['surveyls_endtext'];
     }
 
-    //$sitelogo = (!empty($oTemplate->siteLogo))?'<img class="img-responsive" src="'.App()->getAssetManager()->publish( $oTemplate->path.'/'.$oTemplate->siteLogo).'"/>':'';
     $sitelogo = '';
 
     if(!empty($oTemplate->siteLogo))
     {
         if (file_exists ($oTemplate->path.'/'.$oTemplate->siteLogo ))
         {
-            $sitelogo= '<img class="img-responsive" src="'.App()->getAssetManager()->publish( $oTemplate->path.'/'.$oTemplate->siteLogo).'"/>';
+            $sitelogo= '<img class="img-responsive" src="'.App()->getAssetManager()->publish( $oTemplate->path.'/'.$oTemplate->siteLogo).'" alt="site-logo"/>';
         }
     }
 
@@ -700,7 +702,7 @@ EOD;
     $coreReplacements['SURVEYLANGUAGE'] = App()->language;
     $coreReplacements['SURVEYLIST'] = (isset($surveylist))?$surveylist['list']:'';
     $coreReplacements['SURVEYLISTHEADING'] =  (isset($surveylist))?$surveylist['listheading']:'';
-    $coreReplacements['SURVEYNAME'] = (isset($thissurvey['name']) ? $thissurvey['name'] : '');
+    $coreReplacements['SURVEYNAME'] = (isset($thissurvey['name']) ? $thissurvey['name'] : 'Surveys list');
     $coreReplacements['SURVEYRESOURCESURL'] = (isset($thissurvey['sid']) ? Yii::app()->getConfig("uploadurl").'/surveys/'.$thissurvey['sid'].'/' : '');
     $coreReplacements['TEMPLATECSS'] = $_templatecss;
     $coreReplacements['TEMPLATEJS'] = $_templatejs;

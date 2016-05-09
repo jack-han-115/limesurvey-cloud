@@ -35,6 +35,101 @@ Thank you to everyone who helped with this new release!
 CHANGE LOG
 ------------------------------------------------------
 
+Changes from 2.50+ (build 160504) to 2.50+ (build 160506) May 6, 2016
+-Fixed issue #10103: W3C compatiblity check fails (LouisGac)
+-Fixed issue #10792: Date format which is used in the bubble help in survey list is not formatted according to global settings (LouisGac)
+-Fixed issue #10822: Groups Edit-Form while no Rights to edit? When accessing the User-Groups Lists, a User can see the "Edit User-Group" Button and (after clicking) the Form, even if he has no rights for that group. (LouisGac)
+-Fixed issue #10859: Wronge date format in ComfortUpdate, 	The date for the Expiry is not in correct date format according to global settings. See screenshot. My global format is dd.mm.yyyy (LouisGac)
+-Fixed issue #11001: Selecting a theme in the theme editor does not function properly (Carsten Schmitz)
+-Fixed issue #11081: Select box in condition manager too low (Carsten Schmitz)
+-Fixed issue #11106: Question type dropdown overlays question menu bar (Carsten Schmitz)
+-Fixed issue #11109: labels.js error (LouisGac)
+-Fixed issue #11113: Wrong date format in use in token table (LouisGac)
+-Fixed issue: After editing profile, user was redirected to User control even if no right to access it. (LouisGac)
+#Updated translation: Catalan by qualitatuvic
+#Updated translation: Danish by antispam
+#Updated translation: French (France) by arnaud21
+#Updated translation: German by c_schmitz
+#Updated translation: Indonesian by radhwaw
+#Updated translation: Norwegian (Bokmal) by pmonstad
+#Updated translation: Norwegian (Nynorsk) by pmonstad
+#Updated translation: Polish by elisa
+#Updated translation: Polish (Informal) by elisa
+
+Changes from 2.50+ (build 160503) to 2.50+ (build 160504) May 3, 2016
+-Fixed issue #11089: When side-menu is closed, the side-body shifts from right to left at page load (Olle Haerstedt)
+-Fixed issue #11107: Display tokens/responses/CPDB participants doesn't work anymore (LouisGac)
+-New feature: Added a config setting to disable by default the possibility for templates to overwrite the views (LouisGac)
+-New feature: In template editor, added a tip to explain how to display pictures in pstpl/css files (LouisGac)
+-New feature: Templates can now overwrite the question views (LouisGac)
+#Updated translation: Catalan by qualitatuvic
+#Updated translation: French (France) by arnaud21
+#Updated translation: Indonesian by radhwaw
+#Updated translation: Norwegian (BokmÃ¥l) by pmonstad
+#Updated translation: Norwegian (Nynorsk) by pmonstad
+
+Changes from 2.50+ (build 160430) to 2.50+ (build 160503) May 3, 2016
+-Fixed issue #10589: OSM - Aerial View Limited To Specific Zoom Level 10 (tpartner)
+-Fixed issue #10794: Missing translation in template editor (LouisGac)
+-Fixed issue #10918: Template example not styled, the correct fonts are not loaded (LouisGac)
+-Fixed issue #11088: Do not show all javascript in question overview (Denis Chenu)
+-Fixed issue #11094: Database update does not kick in on authentication (Carsten Schmitz)
+-Fixed issue #11095: Group Names not displayed (Olle Haerstedt)
+-Fixed issue #11098: Error on survey creation when languages are restricted to only one (Carsten Schmitz)
+-Fixed issue: JS hint when saving survey settings even if additional languages were empty (Carsten Schmitz)
+-Fixed issue: Navigator rendering was wrong in template editor (welcome page) (LouisGac)
+-Fixed issue: Template editor question page not up to date with current templates (LouisGac)
+-Fixed issue: Template editor survey list page not up to date with current templates (LouisGac)
+-Fixed issue: Update fails if we don't have plugins table (Denis Chenu)
+-New feature: Disable asset management for admin gui when debug mode is on, included for CSS and JS files loaded from the subcontrollers (LouisGac)
+#Updated translation: Catalan by qualitatuvic
+#Updated translation: French (France) by arnaud21
+#Updated translation: German by c_schmitz
+#Updated translation: Greek by kiolalis
+#Updated translation: Indonesian by radhwaw
+#Updated translation: Norwegian (BokmÃ¥l) by pmonstad
+#Updated translation: Norwegian (Nynorsk) by pmonstad
+#Updated translation: Polish by elisa
+#Updated translation: Polish (Informal) by elisa
+#Updated translation: Russian by vipgroup
+
+Changes from 2.50+ (build 160428) to 2.50+ (build 160430) Apr 30, 2016
+-Fixed issue #10944: Replace language selector in survey settings with a more space-saving select box (Carsten Schmitz)
+-Fixed issue #10998: Simple statistic graphics wrong when label is too long (LouisGac)
+-Fixed issue #11016: 10 point array does not fit on tablet screen (LouisGac)
+-Fixed issue #11024: missing a translation for close button in modal (survey taking) (LouisGac)
+-Fixed issue #11035: Group name and group description styling shown (Olle Haerstedt)
+-Fixed issue #11039: Labels are of non-equal weigth (LouisGac)
+-Fixed issue #11042: Sorting of questions in the limesurvey view (LouisGac)
+-Fixed issue #11051: wrong alignment of label when multilines (LouisGac)
+-Fixed issue #11058: endless loop between assesments and edit settings (LouisGac)
+-Fixed issue #11067: Number of active surveys is shown to a user without own surveys (Carsten Schmitz)
+-Fixed issue #11072: slider numerical input does not update expression (Olle Haerstedt)
+-Fixed issue #11080: Minor spelling mistake (Carsten Schmitz)
+-Fixed issue: Admin survey list not displaying owned surveys (Carsten Schmitz)
+-Fixed issue: Checkjavascript alert wasn't hidden enough quickly (LouisGac)
+-Fixed issue: Close button looping after creating a survey (LouisGac)
+-Fixed issue: Incorrect rendering of advanced statistics for Sum Answers and extralines (LouisGac)
+-Fixed issue: Loop on save and close button on new survey creation. (LouisGac)
+-Fixed issue: Simple stats wasn't loading all graphs when too many questions (LouisGac)
+-Fixed issue: Statistics, "Subtotals based on displayed questions" switch not respected (LouisGac)
+-Fixed issue: Sum(Answers) shown twice in statistics (LouisGac)
+-Fixed issue: Survey list not properly paginating when using MSSQL (Carsten Schmitz)
+-Fixed issue: When editing users the buttons don't display correctly for non-admin users (Carsten Schmitz)
+-New feature: Choose if side-menu should be always hidden, always closed or adaptive (default) (Olle Harstedt)
+-New feature: Double column to display advanced statistics (LouisGac)
+#Updated translation: Catalan by qualitatuvic
+#Updated translation: Dutch by Han
+#Updated translation: Dutch (Informal) by Han
+#Updated translation: French (France) by arnaud21
+#Updated translation: German by c_schmitz
+#Updated translation: Indonesian by radhwaw
+#Updated translation: Italian by lfanfoni
+#Updated translation: Italian (Informal) by lfanfoni
+#Updated translation: Norwegian (Bokmål) by pmonstad
+#Updated translation: Norwegian (Nynorsk) by pmonstad
+#Updated translation: Polish by elisa
+#Updated translation: Polish (Informal) by elisa
 
 Changes from 2.50+ (build 160426) to 2.50+ (build 160428) Apr 28, 2016
 -Fixed issue #10997: Update-message corrupts menu on top of the page (LouisGac)
