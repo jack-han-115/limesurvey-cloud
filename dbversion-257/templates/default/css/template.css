@@ -290,7 +290,7 @@ li.responsive-content
 }
 
 html, body {
-    height: 100%;
+    height: 90%;
 }
 
 /**
@@ -917,4 +917,20 @@ label, th {
 #surveys-list-container
 {
     margin-top: 50px;
+}
+
+/* text overflows, ellipsis and hyphens */
+.navbar-brand {
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+#outerframeContainer {
+    min-height: 100%;
+    word-wrap: break-word;
+    -webkit-hyphens: auto;
+    -moz-hyphens: auto;
+    -ms-hyphens: auto;
+    -o-hyphens: auto;
+    hyphens: auto;
 }

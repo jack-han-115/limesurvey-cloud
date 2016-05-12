@@ -203,7 +203,7 @@ function isStandardTemplate($sTemplateName)
 function getSurveyList($returnarray=false, $surveyid=false)
 {
     static $cached = null;
-
+    $bCheckIntegrity = false;
     $timeadjust = getGlobalSetting('timeadjust');
     App()->setLanguage((isset(Yii::app()->session['adminlang']) ? Yii::app()->session['adminlang'] : 'en'));
 
@@ -220,11 +220,11 @@ function getSurveyList($returnarray=false, $surveyid=false)
             {
                 $surveynames[] = array_merge($result->attributes, $result->defaultlanguage->attributes);
             }
-            elseif(empty($bCheckIntegrity))
+            elseif(!($bCheckIntegrity))
             {
                 $bCheckIntegrity=true;
                 Yii::app()->setFlashMessage(
-                    CHtml::link(gT("One or more surveys seem to be broken, please check data integrity of the LimeSurvey database."),array("admin/checkintegrity"))
+                    CHtml::link(gT("One or more surveys seem to be broken - please use the data integrity check tool to fix this."),array("admin/checkintegrity"))
                     ,
                     'error');
             }
@@ -325,29 +325,6 @@ function getTemplateListWithPreviews()
 {
     return Template::getTemplateListWithPreviews();
 }
-
-
-
-function getAdminThemeList()
-{
-    $sStandardTemplateRootDir=Yii::app()->getConfig("styledir");
-    $aListOfFiles = array();
-    if ($sStandardTemplateRootDir && $pHandle = opendir($sStandardTemplateRootDir))
-    {
-        while (false !== ($file = readdir($pHandle)))
-        {
-            if (is_dir($sStandardTemplateRootDir.DIRECTORY_SEPARATOR.$file) && is_file($sStandardTemplateRootDir.DIRECTORY_SEPARATOR.$file.DIRECTORY_SEPARATOR.'config.xml'))
-            {
-                $oTemplateConfig = simplexml_load_file($sStandardTemplateRootDir.DIRECTORY_SEPARATOR.$file.'/config.xml');
-                $aListOfFiles[$file] = $oTemplateConfig;
-            }
-        }
-        closedir($pHandle);
-    }
-    ksort($aListOfFiles);
-    return $aListOfFiles;
-}
-
 
 /**
 * getQuestions() queries the database for an list of all questions matching the current survey and group id
@@ -996,7 +973,7 @@ function getGroupList3($gid,$surveyid)
         $gv = $gv->attributes;
         $groupselecter .= "<option";
         if ($gv['gid'] == $gid) {$groupselecter .= " selected='selected'"; }
-        $groupselecter .= " value='".$gv['gid']."'>".htmlspecialchars($gv['group_name'])."</option>\n";
+        $groupselecter .= " value='".$gv['gid']."'>".htmlspecialchars($gv['group_name'])." (ID:".$gv['gid'].")</option>\n";
     }
 
 
@@ -3580,38 +3557,73 @@ function questionAttributes($returnByName=false)
         "caption"=>gT('Answer suffix'));
 
         $qattributes["text_input_width"]=array(
-        "types"=>"KNSTUQ;",
+        "types"=>"KNSTU;",
         'category'=>gT('Display'),
         'sortorder'=>100,
-        //'inputtype'=>'text',
-        'inputtype'=>'columns',
+        'inputtype'=>'singleselect',
         'default'=>'12',
-        'min'=>'1',
-        'max'=>'12',
-        "help"=>gT('Number of Bootstrap columns for the input box'),
-        "caption"=>gT('Input box columns'));
+        'options'=>array(
+            1=>'8%',
+            2=>'17%',
+            3=>'25%',
+            4=>'33%',
+            5=>'41%',
+            6=>'50%',
+            7=>'58%',
+            8=>'67%',
+            9=>'75%',
+            10=>'83%',
+            11=>'92%',
+            12=>'100%'
+        ),
+        "help"=>gT('Relative width of the input element'),
+        "caption"=>gT('Input box width'));
 
         $qattributes["text_input_columns"]=array(
         "types"=>"Q",
         'category'=>gT('Display'),
         'sortorder'=>90,
-        'inputtype'=>'columns',
+        'inputtype'=>'singleselect',
         'default'=>'6',
-        'min'=>'1',
-        'max'=>'12',
-        "help"=>gT('Number of Bootstrap columns for the input box'),
-        "caption"=>gT('Input box columns'));
+        'options'=>array(
+            1=>'8%',
+            2=>'17%',
+            3=>'25%',
+            4=>'33%',
+            5=>'41%',
+            6=>'50%',
+            7=>'58%',
+            8=>'67%',
+            9=>'75%',
+            10=>'83%',
+            11=>'92%',
+            12=>'100%'
+        ),
+        "help"=>gT('Relative width of then input element'),
+        "caption"=>gT('Input box width'));
 
         $qattributes["label_input_columns"]=array(
         "types"=>"Q",
         'category'=>gT('Display'),
         'sortorder'=>90,
-        'inputtype'=>'columns',
+        'inputtype'=>'singleselect',
         'default'=>'6',
-        'min'=>'1',
-        'max'=>'12',
-        "help"=>gT('Number of Bootstrap columns for the label'),
-        "caption"=>gT('Label columns'));
+        'options'=>array(
+            1=>'8%',
+            2=>'17%',
+            3=>'25%',
+            4=>'33%',
+            5=>'41%',
+            6=>'50%',
+            7=>'58%',
+            8=>'67%',
+            9=>'75%',
+            10=>'83%',
+            11=>'92%',
+            12=>'100%'
+        ),
+        "help"=>gT('Relative width of the labels'),
+        "caption"=>gT('Label column width'));
 
 
         $qattributes["use_dropdown"]=array(
