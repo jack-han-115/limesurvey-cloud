@@ -354,8 +354,12 @@ class Survey_Common_Action extends CAction
         }
 
         //// TODO : Move this div inside each correct view ASAP !
-        echo '</div></div>' ;
+        echo '</div>' ;
 
+        if (!empty($aData['surveyid']))
+        {
+            echo '</div>' ;
+        }
 
 
         //// THe footer will be called directly from the layout.
@@ -1330,6 +1334,9 @@ class Survey_Common_Action extends CAction
      */
     public function registerScriptFile( $cPATH, $sFile )
     {
+        $oAdminTheme = AdminTheme::getInstance();
+        $oAdminTheme->registerScriptFile( $cPATH, $sFile );
+        /*
         if (!YII_DEBUG)
         {
             $path = ($cPATH == 'ADMIN_SCRIPT_PATH')?ADMIN_SCRIPT_PATH:SCRIPT_PATH;                                  // We get the wanted constant
@@ -1340,6 +1347,7 @@ class Survey_Common_Action extends CAction
             $url = ($cPATH == 'ADMIN_SCRIPT_PATH')?Yii::app()->getConfig('adminscripts'):Yii::app()->getConfig('generalscripts');   // We get the wanted url defined in config
             App()->getClientScript()->registerScriptFile( $url . $sFile );                                                          // We publish the script
         }
+        */
     }
 
     /**
@@ -1350,8 +1358,11 @@ class Survey_Common_Action extends CAction
      */
     public function registerCssFile( $sPath, $sFile )
     {
+        $oAdminTheme = AdminTheme::getInstance();
+        $oAdminTheme->registerCssFile( $sPath, $sFile );
+        /*
         if (!YII_DEBUG)
-        {            
+        {
             $path = ($sPath == 'PUBLIC')?dirname(Yii::app()->request->scriptFile).'/styles-public/':ADMIN_CSS_PATH;                             // We get the wanted constant
             App()->getClientScript()->registerCssFile(  App()->getAssetManager()->publish($path.$sFile) );                         // We publish the asset
         }
@@ -1361,6 +1372,7 @@ class Survey_Common_Action extends CAction
             App()->getClientScript()->registerCssFile( $url.$sFile );                                                               // We publish the css file
 
         }
+        */
     }
 
     protected function _filterImportedResources($extractdir, $destdir)

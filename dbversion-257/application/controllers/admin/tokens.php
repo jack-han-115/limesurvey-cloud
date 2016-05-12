@@ -471,7 +471,7 @@ class tokens extends Survey_Common_Action
             // Check is we have an answer
             if (in_array($token['token'], $answeredTokens) && $bReadPermission) {
                 // @@TODO change link
-                $url = $this->getController()->createUrl("admin/responses/sa/browse/surveyid/{$iSurveyId}", array('token'=>$token['token']));
+                $url = $this->getController()->createUrl("admin/responses/sa/viewbytoken/surveyid/{$iSurveyId}", array('token'=>$token['token']));
                 $title = gT("View response details");
                 $action .= CHtml::link(
                                         '<span class="inputbuttons-square glyphicon glyphicon-list-alt text-success" title="'.$title.'"></span>',
@@ -498,9 +498,9 @@ class tokens extends Survey_Common_Action
             if (strtolower($token['emailstatus']) == 'ok' && $token['email'] && $bTokenUpdatePermission) {
                 if ($token['completed'] == 'N' && $token['usesleft'] > 0) {
                     if ($token['sent'] == 'N') {
-                        $action .= viewHelper::getIconLink('inputbuttons-square icon-invite text-success', "admin/tokens/sa/email/surveyid/{$iSurveyId}/tokenids/" . $token['tid'], gT("Send invitation email to this person (if they have not yet been sent an invitation email)"), "_blank");
+                        $action .= viewHelper::getIconLink('inputbuttons-square icon-invite text-success', "admin/tokens/sa/email/surveyid/{$iSurveyId}/tokenids/" . $token['tid'], gT("Send invitation email to this person (if they have not yet been sent an invitation email)"), "");
                     } else {
-                        $action .= viewHelper::getIconLink('inputbuttons-square icon-remind text-success', "admin/tokens/sa/email/action/remind/surveyid/{$iSurveyId}/tokenids/" . $token['tid'], gT("Send reminder email to this person (if they have already received the invitation email)"), "_blank");
+                        $action .= viewHelper::getIconLink('inputbuttons-square icon-remind text-success', "admin/tokens/sa/email/action/remind/surveyid/{$iSurveyId}/tokenids/" . $token['tid'], gT("Send reminder email to this person (if they have already received the invitation email)"), "");
                     }
                 } else {
                     $action .= '<div style="width: 20px; height: 16px; float: left;"></div>';
@@ -1354,6 +1354,15 @@ class tokens extends Survey_Common_Action
         $aData['title_bar']['title'] = $surveyinfo['surveyls_title']."(".gT("ID").":".$iSurveyId.")";
         $aData['sidemenu']["token_menu"]=TRUE;
         $aData['token_bar']['closebutton']['url'] = 'admin/tokens/sa/index/surveyid/'.$iSurveyId;  // Close button
+
+        if(Yii::app()->request->getParam('action')=="remind")
+        {
+            $aData['token_bar']['sendreminderbutton'] = true;
+        }
+        else
+        {
+            $aData['token_bar']['sendinvitationbutton'] = true;  // Invitation button
+        }
 
         $aTokenIds=$tokenids;
         if (empty($tokenids))

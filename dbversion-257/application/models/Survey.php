@@ -30,7 +30,6 @@ class Survey extends LSActiveRecord
     public $format = 'G';
     public $htmlemail='Y';
 
-
     public $full_answers_account=null;
     public $partial_answers_account=null;
     public $searched_value;
@@ -986,6 +985,8 @@ class Survey extends LSActiveRecord
                 'pageSize'=>$pageSize,
             ),
         ));
+
+        $dataProvider->setTotalItemCount(count($this->findAll($criteria)));
 
         return $dataProvider;
     }

@@ -3,7 +3,6 @@
  * This view display the result of the update
  * @var int $destinationBuild the destination build
  */
-opcache_reset();
 ?>
 
 <h2 class="maintitle"><?php eT('Update complete!'); ?></h2>
@@ -14,14 +13,14 @@ opcache_reset();
     ?>
     <br/>
     <?php
-        eT("if needed the database will be updated as a last step.");
+        eT("If necessary the database will be updated in a final step.");
     ?>
-    <br />
-<?php  eT('As a last step you should clear your browser cache now.'); ?>
+    <br /><?php
+        eT('However it is very important that you clear your browser cache now. After that please click the button below.'); ?>
   <br />
 
   <a id="backToMainMenu" class="btn btn-default" href="<?php echo Yii::app()->createUrl("admin/authentication/sa/logout"); ?>" role="button" aria-disabled="false">
-      <?php eT('Click this button to log out.'); ?>
+      <?php eT('Finish'); ?>
   </a>
 </div>
 

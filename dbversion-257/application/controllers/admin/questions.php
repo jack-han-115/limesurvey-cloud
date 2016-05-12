@@ -64,11 +64,14 @@ class questions extends Survey_Common_Action
         $surveyinfo = array_map('flattenText', $surveyinfo);
         $aData['activated'] = $surveyinfo['active'];
 
+        $oQuestion = $qrrow;
+        $aData['oQuestion'] = $oQuestion;
         $qrrow = $qrrow->attributes;
         $aData['languagelist'] = Survey::model()->findByPk($iSurveyID)->getAllLanguages();
         $aData['qtypes'] = $qtypes = getQuestionTypeList('', 'array');
 
             $qshowstyle = "";
+
 
         $aData['qshowstyle'] = $qshowstyle;
         $aData['surveyid'] = $iSurveyID;
@@ -874,6 +877,113 @@ class questions extends Survey_Common_Action
 
         return $aViewUrls;
     }
+
+
+
+    public function getSubquestionRowForAllLanguages($surveyid, $gid, $qid, $codes, $languages)
+    {
+        $languages = explode ( ';', json_decode($languages));
+        //var_dump($languages ); die();
+        $html = array();
+        $first = true;
+        foreach($languages as $language)
+        {
+            $html[$language] = $this->getSubquestionRow( $surveyid, $gid, $qid, $codes, $language, $first);
+            $first = false;
+        }
+
+        //echo htmlentities(json_encode($html));
+        echo json_encode($html);
+    }
+
+    /**
+     * This function should be called via ajax request
+     * It returns a EMPTY subquestion row HTML for a given ....
+     */
+
+    public function getSubquestionRow( $surveyid, $gid, $qid, $codes, $language, $first  )
+    {
+        // index.php/admin/questions/sa/getSubquestionRow/position/1/scale_id/1/surveyid/691948/gid/76/qid/1611/language/en/first/true
+        $stringCodes = json_decode($codes); // All the codes of the displayed subquestions
+
+        // TODO: calcul correct value
+        $oldCode = false;
+        $position = '';
+        $scale_id = 0;
+
+        $qid = 'new'.rand ( 0 , 99999 );
+
+        // We get the numerical part of each code and we store them in Arrays
+        // One array is to store the pure numerical values (so we can search in it for the greates value, and increment it)
+        // Another array is to store the string values (so we keep all the prefixed "0")
+        $numCodes = array();
+        foreach($stringCodes as $key => $stringCode)
+        {
+            // This will loop into the code, from the last character to the first letter
+            $numericSuffix = ''; $n = 1; $numeric = true;
+            while($numeric == true && $n <= strlen($stringCode))
+            {
+                $currentCharacter = substr($stringCode, -$n, 1);                // get the current character
+
+                if ( ctype_digit($currentCharacter) )                           // check if it's numerical
+                {
+                    $numericSuffix    = $currentCharacter.$numericSuffix;       // store it in a string
+                    $n=$n+1;
+                }
+                else
+                {
+                    $numeric = false;                                           // At first non numeric character found, the loop is stoped
+                }
+            }
+            $numCodesWithZero[$key] = (string) $numericSuffix ;                 // In string type, we can have   : "0001"
+            $numCodes[$key]         = (int) $numericSuffix ;                    // In int type, we can only have : "1"
+        }
+
+        // Let's get the greatest code
+        $greatestNumCode          = max ($numCodes);                            // greatest code
+        $key                      = array_keys($numCodes, max($numCodes));      // its key (same key in all tables)
+        $greatesNumCodeWithZeros  = $numCodesWithZero[$key[0]];                 // its value with prefixed 0 (like : 001)
+        $stringCodeOfGreatestCode = $stringCodes[$key[0]];                      // its original submited  string (like: SQ001)
+
+        // We get the string part of it: it's the original string code, without the greates code with its 0 :
+        // like  substr ("SQ001", (strlen(SQ001)) - strlen(001) ) ==> "SQ"
+        $stringPartOfNewCode    = substr( $stringCodeOfGreatestCode,0, ( strlen($stringCodeOfGreatestCode) - strlen($greatesNumCodeWithZeros)  ) );
+
+        // We increment by one the greatest code
+        $numericalPartOfNewCode = $greatestNumCode+1;
+
+        // We get the list of 0 : (using $numericalPartOfNewCode will remove the excedent 0 ; SQ009 will be followed by SQ010 )
+        $listOfZero = substr( $greatesNumCodeWithZeros,0, ( strlen($greatesNumCodeWithZeros) - strlen($numericalPartOfNewCode)  ) );
+
+        // When no more zero are available we want to be sure that the last 9 unit will not left
+        // (like in SQ01 => SQ99 ; should become SQ100, not SQ9100)
+        $listOfZero = ($listOfZero == "9")?'':$listOfZero;
+
+        // We finaly build the new code
+        $code = $stringPartOfNewCode.$listOfZero.$numericalPartOfNewCode ;
+
+        $activated=false;                                                       // You can't add ne subquestion when survey is active
+        Yii::app()->loadHelper('admin/htmleditor');                             // Prepare the editor helper for the view
+
+        $html = '<!-- Inserted Row -->';
+        $html .= $this->getController()->renderPartial('/admin/survey/Question/subquestionsAndAnswers/_subquestion', array(
+            'position'  => $position,
+            'scale_id'  => $scale_id,
+            'activated' => $activated,
+            'first'     => $first,
+            'surveyid'  => $surveyid,
+            'gid'       => $gid,
+            'qid'       => $qid,
+            'language'  => $language,
+            'title'     => $code,
+            'question'  => '',
+            'relevance' => '',
+            'oldCode'   => $oldCode,
+        ), true, false);
+        $html .= '<!-- end of Inserted Row -->';
+        return $html;
+    }
+
 
     /**
      * Add a new question
