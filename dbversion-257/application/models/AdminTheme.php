@@ -262,7 +262,7 @@ class AdminTheme extends CFormModel
     public static function forceAssets()
     {
         // Don't touch symlinked assets because it won't work
-        if (App()->getAssetManager()->linkAssets) return;
+        return;
         $standardTemplatesPath = Yii::app()->getConfig("styledir");
         $Resource = opendir($standardTemplatesPath);
         // TODO : getThemeList ?
