@@ -267,11 +267,14 @@ class questions extends Survey_Common_Action
         $baselang = Survey::model()->findByPk($surveyid)->language;
         array_unshift($questlangs, $baselang);
 
-        $questionrow = Question::model()->findByAttributes(array(
+        $oQuestion = Question::model()->findByAttributes(array(
         'qid' => $qid,
         'gid' => $gid,
         'language' => $baselang
-        ))->attributes;
+        ));
+
+        $questionrow = $oQuestion->attributes;
+
         $qtproperties = getQuestionTypeList('', 'array');
 
         $langopts = array();
@@ -375,6 +378,7 @@ class questions extends Survey_Common_Action
         }
 
         $aData = array(
+        'oQuestion' => $oQuestion,
         'qid' => $qid,
         'surveyid' => $surveyid,
         'langopts' => $langopts,
@@ -473,7 +477,7 @@ class questions extends Survey_Common_Action
         $anslangs = Survey::model()->findByPk($surveyid)->additionalLanguages;
         $baselang = Survey::model()->findByPk($surveyid)->language;
 
-        $qrow = Question::model()->findByAttributes(array('qid' => $qid, 'language' => $baselang));
+        $oQuestion = $qrow = Question::model()->findByAttributes(array('qid' => $qid, 'language' => $baselang));
         $qtype = $qrow['type'];
 
         $qtypes = getQuestionTypeList('', 'array');
@@ -563,6 +567,7 @@ class questions extends Survey_Common_Action
         else
             $maxsortorder = 1;
 
+        $aData['oQuestion'] = $oQuestion;
         $aData['surveyid'] = $surveyid;
         $aData['gid'] = $gid;
         $aData['qid'] = $qid;
@@ -690,7 +695,8 @@ class questions extends Survey_Common_Action
         $anslangs = Survey::model()->findByPk($surveyid)->additionalLanguages;
         $baselang = Survey::model()->findByPk($surveyid)->language;
 
-        $aParentQuestion = Question::model()->findByPk(array('qid' => $qid, 'language' => $baselang))->attributes;
+        $oQuestion      = Question::model()->findByPk(array('qid' => $qid, 'language' => $baselang));
+        $aParentQuestion = $oQuestion->attributes;
 
         $sQuestiontype = $aParentQuestion['type'];
         $aQuestiontypeInfo = getQuestionTypeList($sQuestiontype, 'array');
@@ -760,19 +766,6 @@ class questions extends Survey_Common_Action
                         $question->scale_id = $iScale;
                         $question->relevance = $row->relevance;
                         $question->save();
-                        /** //activerecord is not not new bugfix!
-                        Question::model()->insert(array(
-                        'qid' => $row->qid,
-                        'sid' => $surveyid,
-                        'gid' => $row->gid,
-                        'parent_qid' => $qid,
-                        'title' => $row->title,
-                        'question' => $row->question,
-                        'question_order' => $row->question_order,
-                        'language' => $language,
-                        'scale_id' => $iScale,
-                        ));
-                        */
                         switchMSSQLIdentityInsert('questions', false);
                     }
                 }
@@ -835,14 +828,14 @@ class questions extends Survey_Common_Action
         $surveyinfo = array_merge($surveyinfo, $sumresult1->defaultlanguage->attributes);
         $surveyinfo = array_map('flattenText', $surveyinfo);
 
-        $aData['activated'] = $activated = $surveyinfo['active'];
-        $aData['surveyid'] = $surveyid;
-        $aData['gid'] = $gid;
-        $aData['qid'] = $qid;
+        $aData['activated']       = $activated = $surveyinfo['active'];
+        $aData['surveyid']        = $surveyid;
+        $aData['gid']             = $gid;
+        $aData['qid']             = $qid;
         $aData['aParentQuestion'] = $aParentQuestion;
-        $aData['anslangs'] = $anslangs;
-        $aData['maxsortorder'] = $maxsortorder;
-
+        $aData['anslangs']        = $anslangs;
+        $aData['maxsortorder']    = $maxsortorder;
+        $aData['oQuestion']       = $oQuestion;
 
         foreach ($anslangs as $anslang)
         {
@@ -880,7 +873,7 @@ class questions extends Survey_Common_Action
 
 
 
-    public function getSubquestionRowForAllLanguages($surveyid, $gid, $qid, $codes, $languages)
+    public function getSubquestionRowForAllLanguages($surveyid, $gid, $qid, $codes, $scale_id, $type, $languages, $position, $assessmentvisible='')
     {
         $languages = explode ( ';', json_decode($languages));
         //var_dump($languages ); die();
@@ -888,7 +881,7 @@ class questions extends Survey_Common_Action
         $first = true;
         foreach($languages as $language)
         {
-            $html[$language] = $this->getSubquestionRow( $surveyid, $gid, $qid, $codes, $language, $first);
+            $html[$language] = $this->getSubquestionRow( $surveyid, $gid, $qid, $codes, $language, $first, $scale_id, $type, $position, $assessmentvisible);
             $first = false;
         }
 
@@ -901,15 +894,15 @@ class questions extends Survey_Common_Action
      * It returns a EMPTY subquestion row HTML for a given ....
      */
 
-    public function getSubquestionRow( $surveyid, $gid, $qid, $codes, $language, $first  )
+    public function getSubquestionRow( $surveyid, $gid, $qid, $codes, $language, $first, $scale_id, $type, $position, $assessmentvisible )
     {
         // index.php/admin/questions/sa/getSubquestionRow/position/1/scale_id/1/surveyid/691948/gid/76/qid/1611/language/en/first/true
         $stringCodes = json_decode($codes); // All the codes of the displayed subquestions
 
         // TODO: calcul correct value
         $oldCode = false;
-        $position = '';
-        $scale_id = 0;
+        $position = $position;
+        $scale_id = $scale_id ;
 
         $qid = 'new'.rand ( 0 , 99999 );
 
@@ -950,7 +943,7 @@ class questions extends Survey_Common_Action
         $stringPartOfNewCode    = substr( $stringCodeOfGreatestCode,0, ( strlen($stringCodeOfGreatestCode) - strlen($greatesNumCodeWithZeros)  ) );
 
         // We increment by one the greatest code
-        $numericalPartOfNewCode = $greatestNumCode+1;
+        $numericalPartOfNewCode = $newPosition = $greatestNumCode+1;
 
         // We get the list of 0 : (using $numericalPartOfNewCode will remove the excedent 0 ; SQ009 will be followed by SQ010 )
         $listOfZero = substr( $greatesNumCodeWithZeros,0, ( strlen($greatesNumCodeWithZeros) - strlen($numericalPartOfNewCode)  ) );
@@ -965,21 +958,49 @@ class questions extends Survey_Common_Action
         $activated=false;                                                       // You can't add ne subquestion when survey is active
         Yii::app()->loadHelper('admin/htmleditor');                             // Prepare the editor helper for the view
 
+        if($type=='subquestion')
+        {
+            $view = '_subquestion';
+            $aData = array(
+                'position'  => $position,
+                'scale_id'  => $scale_id,
+                'activated' => $activated,
+                'first'     => $first,
+                'surveyid'  => $surveyid,
+                'gid'       => $gid,
+                'qid'       => $qid,
+                'language'  => $language,
+                'title'     => $code,
+                'question'  => '',
+                'relevance' => '',
+                'oldCode'   => $oldCode,
+            );
+        }
+        else
+        {
+            $view ='_answer_option';
+            $aData = array(
+                'assessmentvisible' => $assessmentvisible,
+                'assessment_value'  => '',
+                'answer'            => '',
+                'sortorder'         => $newPosition,
+                'position'          => $newPosition,
+                'scale_id'          => $scale_id,
+                'activated'         => $activated,
+                'first'             => $first,
+                'surveyid'          => $surveyid,
+                'gid'               => $gid,
+                'qid'               => $qid,
+                'language'          => $language,
+                'title'             => $code,
+                'question'          => '',
+                'relevance'         => '',
+                'oldCode'           => $oldCode,
+            );
+        }
+
         $html = '<!-- Inserted Row -->';
-        $html .= $this->getController()->renderPartial('/admin/survey/Question/subquestionsAndAnswers/_subquestion', array(
-            'position'  => $position,
-            'scale_id'  => $scale_id,
-            'activated' => $activated,
-            'first'     => $first,
-            'surveyid'  => $surveyid,
-            'gid'       => $gid,
-            'qid'       => $qid,
-            'language'  => $language,
-            'title'     => $code,
-            'question'  => '',
-            'relevance' => '',
-            'oldCode'   => $oldCode,
-        ), true, false);
+        $html .= $this->getController()->renderPartial('/admin/survey/Question/subquestionsAndAnswers/'.$view, $aData, true, false);
         $html .= '<!-- end of Inserted Row -->';
         return $html;
     }
@@ -1079,6 +1100,10 @@ class questions extends Survey_Common_Action
         // NB: gid won't be set if user clicks quick-button Add question
         if (isset($_GET['gid']))
         {
+
+            $oQuestionGroup = QuestionGroup::model()->find('gid=:gid', array(':gid'=>$_GET['gid']));
+            //$oqresult = $oQuestionGroup->questions;
+            /*
             $oqresult = Question::model()->findAllByAttributes(array(
                 'sid' => $surveyid,
                 'gid' => $_GET['gid'],
@@ -1087,12 +1112,14 @@ class questions extends Survey_Common_Action
             ), array(
                 'order' => 'question_order'
             ));
-            $aData['oqresult'] = $oqresult;
+            */
+            //$aData['oqresult'] = $oqresult;
         }
         else
         {
             $aData['oqresult'] = array();
         }
+        $aData['oQuestionGroup'] = $oQuestionGroup;
         $this->registerScriptFile( 'ADMIN_SCRIPT_PATH', 'questions.js');
 
         $aViewUrls['editQuestion_view'][] = $aData;
@@ -1134,7 +1161,11 @@ class questions extends Survey_Common_Action
         if (isset($qid))
             $qid = sanitize_int($qid);
 
+
         $aViewUrls = array();
+
+        $oQuestionGroup = QuestionGroup::model()->find('gid=:gid', array(':gid'=>$gid));
+        $aData['oQuestionGroup'] = $oQuestionGroup;
         $aData['surveyid'] = $surveyid;
         $aData['gid'] = $gid;
         $aData['qid'] = $qid;
@@ -1177,6 +1208,9 @@ class questions extends Survey_Common_Action
 
                 Yii::app()->session['FileManagerContext'] = "edit:question:{$surveyid}";
                 $aData['display']['menu_bars']['qid_action'] = 'editquestion';
+
+                $oQuestion = Question::model()->find('qid=:qid', array(':qid'=>$qid));
+                $aData['oQuestion']=$oQuestion;
 
                 $egresult = Question::model()->findAllByAttributes(array('sid' => $surveyid, 'gid' => $gid, 'qid' => $qid));
 
@@ -1282,14 +1316,6 @@ class questions extends Survey_Common_Action
             }
             $eqrow['conditions_number'] = Condition::Model()->count("qid=:qid", array('qid' => $qid));
 
-            if($eqrow['modulename'] != null)
-            {
-                $oQuestionModule = Question::getQuestionModule($esrow['modulename']);
-                $questionTitle = (array) $oQuestionModule->title;
-                $questionModuleName = (array) $oQuestionModule->modulename;
-                $eqrow['modulename'] = $questionModuleName[0];
-                $eqrow['moduletitle'] = $questionTitle[0];
-            }
 
             $aData['eqrow'] = $eqrow;
             $aData['surveyid'] = $surveyid;
@@ -1453,6 +1479,19 @@ class questions extends Survey_Common_Action
         {
             Yii::app()->session['flashmessage'] = gT("You are not authorized to delete questions.");
             $this->getController()->redirect(array('admin/survey/sa/listquestions/surveyid/' . $surveyid ));
+        }
+    }
+
+
+    public function ajaxReloadPositionWidget($gid)
+    {
+        $oQuestionGroup = QuestionGroup::model()->find('gid=:gid', array(':gid'=>$gid));
+        if ( is_a($oQuestionGroup, 'QuestionGroup') && Permission::model()->hasSurveyPermission($oQuestionGroup->sid, 'surveycontent', 'read'))
+        {
+            return App()->getController()->widget('ext.admin.survey.question.PositionWidget.PositionWidget', array(
+                        'display'           => 'form_group',
+                        'oQuestionGroup'    => $oQuestionGroup,
+                ));
         }
     }
 

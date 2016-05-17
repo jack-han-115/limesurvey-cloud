@@ -24,19 +24,6 @@ $(document).ready(function(){
     initializeAjaxProgress();
     tableCellAdapters();
     linksInDialog();
-
-    if($('.htmleditor').length>0)
-    {
-        setTimeout(function(){
-            $('.cke_contents').width('580px');
-            $iframes = $('.htmleditor').find('iframe');
-            //console.log('OK '+JSON.stringify($iframes));
-            $iframes.each(function(){
-                $(this).width('500px').zIndex('10000');
-            });
-        },500);
-    }
-
     doToolTip();
 
     $('button,input[type=submit],input[type=button],input[type=reset],.button').button();
@@ -94,8 +81,10 @@ $(document).ready(function(){
 
             // html contains the buttons
             success : function(html, statut){
-                $('#survey-action-container').toggle();
-                $('#survey-action-chevron').toggleClass('glyphicon-chevron-up').toggleClass('glyphicon-chevron-down');
+                $('#survey-action-container').animate({
+            "height": "toggle", "opacity": "toggle"
+        });
+                $('#survey-action-chevron').toggleClass('glyphicon-chevron-right').toggleClass('glyphicon-chevron-down');
             },
             error :  function(html, statut){
                 alert('error');

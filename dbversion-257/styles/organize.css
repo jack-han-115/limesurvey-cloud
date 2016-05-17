@@ -38,4 +38,35 @@ display:none;
 display:none;
 }
 
+/* To be able to drag-n-drop to empty question group */
+.question-list {
+    min-height: 50px;
+}
 
+.organizer .panel-heading {
+    cursor: move;
+}
+
+.organizer .question-list .well {
+    cursor: move;
+}
+
+li.mjs-nestedSortable-collapsed > ol {
+    display: none;
+}
+
+.organiser .caret {
+    cursor: pointer;
+}
+
+.organizer .well {
+    margin-bottom: 5px;
+}
+
+.organizer .well-sm {
+    padding: 5px;
+}
+
+.organizer .panel {
+    margin-bottom: 10px;
+}
