@@ -13,12 +13,12 @@
             ),
             'AuditLog_Log_UserLogin' => array(
                 'type' => 'checkbox',
-                'label' => 'Log if a user is logged successfully',
+                'label' => 'Log if a user has logged in successfully',
                 'default' => '1',
             ),
             'AuditLog_Log_UserLogout' => array(
                 'type' => 'checkbox',
-                'label' => 'Log if user has logout',
+                'label' => 'Log if user has logged out',
                 'default' => '1',
             ),
             'AuditLog_Log_UserFailedLoginAttempt' => array(
@@ -43,7 +43,7 @@
             ),
             'AuditLog_Log_UserPermissionsChanged' => array(
                 'type' => 'checkbox',
-                'label' => 'Log if a user permissions changes',
+                'label' => 'Log if a user permission changes',
                 'default' => '1',
             ),
             'AuditLog_Log_SurveySettings' => array(
