@@ -570,4 +570,67 @@
 <?php if (Yii::app()->getConfig("demoMode")==true)
     { ?>
     <p><?php $clang->eT("Note: Demo mode is activated. Marked (*) settings can't be changed."); ?></p>
-    <?php } ?>
+        <?php }
+
+    // ============ Update LimeService Begin =======================================================
+    $iDestinationVersion=257;
+    $sUpgradeVersion='2.50+';
+    // Check if already scheduled for upgrade
+    $sDomain=$_SERVER['SERVER_NAME'];
+    $sSubDomain=substr($sDomain,0,strpos($sDomain,'.'));
+    $sRootDomain=substr($sDomain,strpos($sDomain,'.')+1);
+    $iUpgradeDBVersion = Yii::app()->dbstats->createCommand("select upgradedbversion from pageviews where subdomain='$sSubDomain' and rootdomain='$sRootDomain'")->queryScalar();
+    if (intval($iUpgradeDBVersion)<$iDestinationVersion)
+    {
+        if (Yii::app()->request->getPost('subaction')=='scheduleupgrade')
+        {
+            // Schedule for upgrade
+            Yii::app()->dbstats->createCommand("Update pageviews set upgradedbversion=$iDestinationVersion where subdomain='$sSubDomain' and rootdomain='$sRootDomain'")->execute();
+            ?>
+            <div style="width:600px;text-align: left;padding-top:50px; margin:0 auto;">
+                <span style="font-weight: bold; font-size: 14pt;">Upgrade to <?php echo $sUpgradeVersion; ?> is now scheduled!</span><br /><br />
+                <b>Your LimeService installation was scheduled for upgrade.</b> Upgrade cycles run every full hour. The current server time is <?php echo date('g:i a');?>.<br> 
+                This action cannot be undone. When the update process has finished you will receive an email.<p /></div>
+            <?php 
+        }
+        else //explain the upgrade
+        { ?>
+            <div style="width:600px;text-align: left;padding-top:50px; margin:0 auto;"><span style="font-weight: bold; font-size: 14pt;">New version available - <br />upgrade now and get 20 free responses!</span>
+            <br><br>
+                There is a new LimeSurvey version available with many new features, version <?php echo $sUpgradeVersion; ?>. <span style="font-weight: bold;">Important:</span> Before you press the "Upgrade" button please read the following lines - it is not the usual blah blah:<br />
+                <br />
+                <span style="font-weight: bold;">Is my data safe when upgrading?</span><br />
+                Yes. Your data is safe. During the upgrade process itself there will be a short downtime of 2 minutes.<br />
+                <br />
+                <span style="font-weight: bold;">Do I need to check anything first? Can I upgrade while having active surveys?</span><br />
+                Please note that the <b>browser requirement for the LimeSurvey administration has changed</b>: <br>For the administration part we currently support IE11 and all newer comparable browsers like Firefox, Chrome, Opera, etc. We do not support any IE version running in Intranet-mode or Compatibility-mode!<br>
+                In LimeSurvey <?php echo $sUpgradeVersion; ?> there have been many improvements in the design templates - they are fully responsive now and so survey taking now works great on smartphone, tablets and big screens alike.<br>
+                We recommend that you only run this upgrade while not having any active surveys because if you have customized templates these will probably not work anymore. If you use custom Javascript you will most porbably need to update it.<br />  
+                <br />
+                <span style="font-weight: bold;">What happens after the upgrade is done?</span><br />
+                After the upgrade is done you will receive an automatic notification email. Please login and check your surveys and templates after you received the email. As a bonus for upgrading we will even <b>credit your account with 20 Survey Responses!</b><br />
+                <br />
+                <span style="font-weight: bold;">Can I undo the upgrade?</span><br />
+                The upgrade cannot be undone. When it has finished you will receive an automatic email.<br />
+                <br />
+                If you have read the paragraphs above please press the button below to schedule your installation for upgrade. Upgrade cycles run on every full hour. The current server time is <?php echo date('g:i a');?>.<br />
+                <br />
+                <span style="font-weight: bold;"></span><br /></div>
+
+            <?php echo CHtml::form(array("admin/globalsettings"), 'post', array('class'=>'form30','id'=>'frmglobalsettings','name'=>'frmglobalsettings', 'onsubmit'=>'return confirm("Are you sure you want to upgrade to version '.$sUpgradeVersion.'?");'));?>
+                <p><input type='hidden' id='subaction' name='subaction' value='scheduleupgrade' /><input type='submit' value='Upgrade to <?php echo $sUpgradeVersion; ?>!'/>
+            </form><p>
+            <?php 
+        }
+    }
+    else
+    { ?>
+        <div style="width:600px;text-align: left;padding-top:50px; margin:0 auto;">
+            <span style="font-weight: bold; font-size: 14pt;">Upgrade to <?php echo $sUpgradeVersion; ?> is in progress!</span><br /><br />
+            Your LimeService installation is already scheduled for upgrade. Upgrade cycles run on every full hour and can take up to 15 minutes - please be patient. The current server time is '<?php echo date('g:i T');?>.
+            This action cannot be undone. <br /><b>Please be patient. When the upgrade has finished you will receive an automatic email.</b><p /></div>
+        <?php
+    } 
+
+    // ============ Update LimeService End=======================================================
+    ?>

@@ -512,8 +512,8 @@
         <?php }
 
     // ============ Update LimeService Begin =======================================================
-    $iDestinationVersion=177;
-    $sUpgradeVersion='2.05+';
+    $iDestinationVersion=257;
+    $sUpgradeVersion='2.50+';
     // Check if already scheduled for upgrade
     $sDomain=$_SERVER['SERVER_NAME'];
     $sSubDomain=substr($sDomain,0,strpos($sDomain,'.'));
@@ -539,12 +539,12 @@
                 There is a new LimeSurvey version available with many new features, version <?php echo $sUpgradeVersion; ?>. <span style="font-weight: bold;">Important:</span> Before you press the "Upgrade" button please read the following lines - it is not the usual blah blah:<br />
                 <br />
                 <span style="font-weight: bold;">Is my data safe when upgrading?</span><br />
-                Yes. Your data is safe. During the upgrade process itself there will be a short downtime of 2 minutes. Also you might need to update any customized survey templates.<br />
+                Yes. Your data is safe. During the upgrade process itself there will be a short downtime of 2 minutes.<br />
                 <br />
                 <span style="font-weight: bold;">Do I need to check anything first? Can I upgrade while having active surveys?</span><br />
                 Please note that the <b>browser requirement for the LimeSurvey administration has changed</b>: <br>For the administration part we currently support IE9 and all newer comparable browsers like FF, Chrome, Opera, etc. We do not support any IE version running in Intranet-mode or Compatibility-mode!<br>
                 In LimeSurvey <?php echo $sUpgradeVersion; ?> there have been many improvements. It is in general possible to upgrade while having running surveys but existing links to your surveys will be changed by the upgrade
-                and so we recommend that you only run this upgrade while not having any active surveys. If you have customized templates they will not properly work anymore and you will need to upgrade them. In that case we recommend to use our template upgrade service.<br />  
+                and so we recommend that you only run this upgrade while not having any active surveys. If you have customized templates they will not properly work anymore. If you have customized Javascript it most probably will need to be adjusted.<br />  
                 <br />
                 <span style="font-weight: bold;">What happens after the upgrade is done?</span><br />
                 After the upgrade is done you will receive an automatic notification email. Please login and check your surveys and templates after you received the email. As a bonus for upgrading we will even <b>credit your account with 20 Survey Responses!</b><br />
