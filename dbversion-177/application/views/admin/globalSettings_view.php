@@ -87,7 +87,7 @@
                     if (isset($updateavailable) && $updateavailable==1)
                     { ?>
                     <li><label><span style="font-weight: bold;"><?php echo $clang->gT('The following LimeSurvey updates are available:');?></span></label><table>
-                        <?php 
+                        <?php
                         foreach ($aUpdateVersions as $aUpdateVersion)
                         {?>
                            <tr><td>
@@ -95,10 +95,10 @@
                            </td>
                            <td>
                                 <input type='button' onclick="window.open('<?php echo $this->createUrl("admin/update/sa/index",array('build'=>$aUpdateVersion['build'])); ?>', '_top')" value='<?php $clang->eT("Use ComfortUpdate"); ?>' />
-                                <?php if ($aUpdateVersion['branch']!='master') {?> <input type='button' onclick="window.open('http://www.limesurvey.org/en/unstable-release/viewcategory/26-unstable-releases', '_blank')" value='<?php $clang->eT("Download"); ?>' /> <?php } 
+                                <?php if ($aUpdateVersion['branch']!='master') {?> <input type='button' onclick="window.open('http://www.limesurvey.org/en/unstable-release/viewcategory/26-unstable-releases', '_blank')" value='<?php $clang->eT("Download"); ?>' /> <?php }
                                 else {?> <input type='button' onclick="window.open('http://www.limesurvey.org/en/stable-release', '_blank')" value='<?php $clang->eT("Download"); ?>' /> <?php }?>
                            </td></tr>
-                        <?php    
+                        <?php
                         };?>
                         </table>
                     </ul>
@@ -135,8 +135,8 @@
 
                 ?>
 
-                <li><label for="defaulttemplate"><?php $clang->eT("Default template:"); echo ((Yii::app()->getConfig("demoMode")==true)?'*':''); 
-                
+                <li><label for="defaulttemplate"><?php $clang->eT("Default template:"); echo ((Yii::app()->getConfig("demoMode")==true)?'*':'');
+
                 ?></label>
                     <select name="defaulttemplate" id="defaulttemplate">
                         <?php
@@ -210,7 +210,7 @@
 <?php /* LimeService mod start
                 <li <?php if( ! isset(Yii::app()->session->connectionID)) echo 'style="display: none"';?>><label for='iSessionExpirationTime'><?php $clang->eT("Session lifetime for surveys (seconds):"); ?></label>
                     <input type='text' size='10' id='iSessionExpirationTime' name='iSessionExpirationTime' value="<?php echo htmlspecialchars(getGlobalSetting('iSessionExpirationTime')); ?>" /></li>
-                    
+
  LimeService mod end */
 ?>
                 <li><label for='ipInfoDbAPIKey'><?php $clang->eT("IP Info DB API Key:"); ?></label>
@@ -361,7 +361,7 @@
                     $opt_force_ssl_on = $opt_force_ssl_off = $opt_force_ssl_neither = '';
                     // LimeService Mod Start
                     $warning_force_ssl =  $clang->gT("Attention: SSL is only available for *.limequery.com domains. If the setting 'Force https' (SSL) is enabled/enforced then 0.5 responses are counted additionally if a survey is started and using SSL encryption (a complete responses will cost then 1.5 LimeService responses).");
-/*                    
+/*
                     switch($thisforce_ssl)
                     {
                         case 'on':
@@ -589,9 +589,9 @@
             ?>
             <div style="width:600px;text-align: left;padding-top:50px; margin:0 auto;">
                 <span style="font-weight: bold; font-size: 14pt;">Upgrade to <?php echo $sUpgradeVersion; ?> is now scheduled!</span><br /><br />
-                <b>Your LimeService installation was scheduled for upgrade.</b> Upgrade cycles run every full hour. The current server time is <?php echo date('g:i a');?>.<br> 
+                <b>Your LimeService installation was scheduled for upgrade.</b> Upgrade cycles run every full hour. The current server time is <?php echo date('g:i a');?>.<br>
                 This action cannot be undone. When the update process has finished you will receive an email.<p /></div>
-            <?php 
+            <?php
         }
         else //explain the upgrade
         { ?>
@@ -603,9 +603,9 @@
                 Yes. Your data is safe. During the upgrade process itself there will be a short downtime of 2 minutes.<br />
                 <br />
                 <span style="font-weight: bold;">Do I need to check anything first? Can I upgrade while having active surveys?</span><br />
-                Please note that the <b>browser requirement for the LimeSurvey administration has changed</b>: <br>For the administration part we currently support IE11 and all newer comparable browsers like Firefox, Chrome, Opera, etc. We do not support any IE version running in Intranet-mode or Compatibility-mode!<br>
+                Please note that the <b>browser requirement for the LimeSurvey administration has changed</b>: <br>For the administration part we currently support IE11 and all newer comparable browsers like Firefox, Chrome, Opera, etc. We do not support any IE version running in Intranet-mode or Compatibility-mode!<br><br>
                 In LimeSurvey <?php echo $sUpgradeVersion; ?> there have been many improvements in the design templates - they are fully responsive now and so survey taking now works great on smartphone, tablets and big screens alike.<br>
-                We recommend that you only run this upgrade while not having any active surveys because if you have customized templates these will probably not work anymore. If you use custom Javascript you will most porbably need to update it.<br />  
+                We recommend that you only run this upgrade while not having any active surveys because if you have customized templates these will probably not work anymore. If you use custom Javascript you will most probably need to update it.<br />
                 <br />
                 <span style="font-weight: bold;">What happens after the upgrade is done?</span><br />
                 After the upgrade is done you will receive an automatic notification email. Please login and check your surveys and templates after you received the email. As a bonus for upgrading we will even <b>credit your account with 20 Survey Responses!</b><br />
@@ -620,7 +620,7 @@
             <?php echo CHtml::form(array("admin/globalsettings"), 'post', array('class'=>'form30','id'=>'frmglobalsettings','name'=>'frmglobalsettings', 'onsubmit'=>'return confirm("Are you sure you want to upgrade to version '.$sUpgradeVersion.'?");'));?>
                 <p><input type='hidden' id='subaction' name='subaction' value='scheduleupgrade' /><input type='submit' value='Upgrade to <?php echo $sUpgradeVersion; ?>!'/>
             </form><p>
-            <?php 
+            <?php
         }
     }
     else
@@ -630,7 +630,7 @@
             Your LimeService installation is already scheduled for upgrade. Upgrade cycles run on every full hour and can take up to 15 minutes - please be patient. The current server time is '<?php echo date('g:i T');?>.
             This action cannot be undone. <br /><b>Please be patient. When the upgrade has finished you will receive an automatic email.</b><p /></div>
         <?php
-    } 
+    }
 
     // ============ Update LimeService End=======================================================
     ?>
