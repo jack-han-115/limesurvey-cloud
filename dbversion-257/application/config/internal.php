@@ -14,7 +14,7 @@ if (!file_exists(dirname(__FILE__) .  '/config.php')) {
 @date_default_timezone_set(@date_default_timezone_get());
 if (!isset($_SERVER['SERVER_NAME']))
 {
-    $_SERVER['SERVER_NAME']=$argv[2];
+    $_SERVER['SERVER_NAME']=$argv[1];
 }
 $userdir=str_replace('instances','installations',dirname(dirname(dirname(dirname(__FILE__))))).'/'.$_SERVER['SERVER_NAME'].'/userdata';
 if (function_exists('mb_internal_encoding')) {
