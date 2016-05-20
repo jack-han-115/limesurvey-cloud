@@ -1,5 +1,5 @@
 #!/usr/bin/php
-<?php   
+<?php
     /*
     * LimeSurvey (tm)
     * Copyright (C) 2011 The LimeSurvey Project Team / Carsten Schmitz
@@ -11,7 +11,7 @@
     * other free or open source software licenses.
     * See COPYRIGHT.php for copyright notices and details.
     *
-    * 
+    *
     * File edited by Sam Mousa for Marcel Minke.
     * This loader bypasses the default Yii loader and loads a custom console class instead.
     */
@@ -29,18 +29,21 @@
   // Load configuration.
   $sCurrentDir=dirname(__FILE__);
   $config=require (dirname($sCurrentDir).DIRECTORY_SEPARATOR.'config'.DIRECTORY_SEPARATOR.'internal.php');
+  // Remove the host name
+  unset($argv[1]);
+  $_SERVER['argv']=array_values($argv);
   $core = dirname($sCurrentDir) . DIRECTORY_SEPARATOR . 'core' . DIRECTORY_SEPARATOR;
   unset ($config['defaultController']);
   unset ($config['config']);
-  
-  
+
+
 
     // fix for fcgi
     defined('STDIN') or define('STDIN', fopen('php://stdin', 'r'));
 
     defined('YII_DEBUG') or define('YII_DEBUG',true);
 
-    
+
 
     if(isset($config))
     {
