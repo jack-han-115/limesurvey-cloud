@@ -3597,7 +3597,7 @@ function questionAttributes($returnByName=false)
             11=>'92%',
             12=>'100%'
         ),
-        "help"=>gT('Relative width of then input element'),
+        "help"=>gT('Relative width of the input element'),
         "caption"=>gT('Input box width'));
 
         $qattributes["label_input_columns"]=array(
@@ -7474,11 +7474,9 @@ function json_decode_ls($jsonString)
  */
 function aEncodingsArray()
     {
-
-        return array(
+        $aEncodings= array(
         "armscii8" => gT("ARMSCII-8 Armenian"),
         "ascii" => gT("US ASCII"),
-        "auto" => gT("Automatic"),
         "big5" => gT("Big5 Traditional Chinese"),
         "binary" => gT("Binary pseudo charset"),
         "cp1250" => gT("Windows Central European (Windows-1250)"),
@@ -7514,6 +7512,10 @@ function aEncodingsArray()
         "ujis" => gT("EUC-JP Japanese"),
         "utf8" => gT("UTF-8 Unicode"),
         );
+        // Sort list of encodings
+        asort($aEncodings);
+        $aEncodings=array("auto" => gT("(Automatic)"))+$aEncodings;
+        return $aEncodings;
     }
 /**
 * Swaps two positions in an array

@@ -49,10 +49,19 @@
         -->
         <rtl>
             <css>
+                <filename>css/jquery-ui-custom-rtl.css</filename>
+                <filename>css/bootstrap-slider-rtl.css</filename>
+                <filename>css/awesome-bootstrap-checkbox/awesome-bootstrap-checkbox-rtl.css</filename>
+                <filename>css/news_paper-rtl.css</filename>
                 <filename>css/template-rtl.css</filename>
             </css>
             <js>
+                <filename>scripts/template.js</filename>
+                <filename>scripts/bootstrap-slider.js</filename>
             </js>
+            <print_css>
+                <filename>css/print_template-rtl.css</filename>
+            </print_css>
         </rtl>
 
         <!-- The logo is used for now only for Surveys List  -->

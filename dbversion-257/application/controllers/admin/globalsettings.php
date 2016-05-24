@@ -108,9 +108,6 @@ class GlobalSettings extends Survey_Common_Action
         // List of available encodings
         $data['aEncodings'] = aEncodingsArray();
 
-        // Sort list of encodings
-        asort($data['aEncodings']);
-
         // Get current setting from DB
         $data['thischaracterset'] = getGlobalSetting('characterset');
         $data['sideMenuBehaviour'] = getGlobalSetting('sideMenuBehaviour');
@@ -224,7 +221,7 @@ class GlobalSettings extends Survey_Common_Action
         setGlobalSetting('iSessionExpirationTime', $iSessionExpirationTime);
         setGlobalSetting('ipInfoDbAPIKey', $_POST['ipInfoDbAPIKey']);
         setGlobalSetting('pdffontsize', $iPDFFontSize);
-        setGlobalSetting('pdfshowheader', $_POST['pdfshowheader']);
+        setGlobalSetting('pdfshowheader', $_POST['pdfshowheader']=='1'?'Y':'N');
         setGlobalSetting('pdflogowidth', $iPDFLogoWidth);
         setGlobalSetting('pdfheadertitle', $_POST['pdfheadertitle']);
         setGlobalSetting('pdfheaderstring', $_POST['pdfheaderstring']);

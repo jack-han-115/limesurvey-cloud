@@ -20,7 +20,7 @@
     <?php if(count($labels) < 70): ?>
         <!-- Charts -->
         <div class="row">
-            <div class="col-sm-9 vcenter chartjs-container" id="chartjs-container-<?php echo $qqid; ?>"
+            <div class="col-lg-8 col-md-12 chartjs-container" id="chartjs-container-<?php echo $qqid; ?>"
                 data-chartname="<?php echo $sChartname; // The name of the jschart object ?>"
                 data-qid="<?php echo $qqid; // the question id ?>"
                 data-type="<?php echo $charttype; // the chart start type (bar, donut, etc.) ?>"
@@ -28,13 +28,15 @@
             >
 
 
-                <canvas class="canvas-chart " id="chartjs-<?php echo $qqid; ?>" width="500" height="500"
+
+                <!-- a default width/height is provided from the server side. But it's overwritten by javascript-->
+                <canvas class="canvas-chart " id="chartjs-<?php echo $qqid; ?>" width="<?php echo $canvaWidth?>" height="<?php echo $canvaHeight?>"
                     data-color="<?php echo $color; // the background color for bar, etc. ?>"></canvas>
 
 <!-- maintainAspectRatio: false -->
             </div>
             <!-- legends -->
-            <div class="legend col-sm-2 vcenter">
+            <div class="legend col-lg-4  col-md-12">
                 <?php foreach($labels as $i=>$label): ?>
                     <?php $colorindex = $color+$i; $colorindex = ($colorindex < 72)?$colorindex:0;?>
                     <div class="row" style="margin-bottom: 10px;">
@@ -110,6 +112,6 @@
 </tr>
 
 <script>
-    var labels_<?php echo $qqid; ?>=<?php echo json_encode($labels); // the array of labels ?>;
+    var labels_<?php echo $qqid; ?>=<?php echo json_encode($graph_labels); // the array of labels ?>;
     var grawdata_<?php echo $qqid;?>=<?php echo json_encode($grawdata); // the datas to generate the graph ?>;
 </script>

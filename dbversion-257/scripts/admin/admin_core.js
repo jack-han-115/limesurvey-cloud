@@ -44,6 +44,102 @@ $(document).ready(function(){
     });
 
 
+
+    if($('#survey-grid').length>0)
+    {
+        $(document).on('click', '.has-link', function () {
+            $linkUrl = $(this).find('a').attr('href');
+            window.location.href=$linkUrl;
+            console.log($linkUrl);
+        });
+    }
+
+    /*
+     * Survey List mass actions
+     */
+    if($('#surveyListActions').length>0){
+        // Define what should be done when clicking on a action link
+        $(document).on('click', '#surveyListActions a', function () {
+                $that        = $(this);
+                $action      = $that.data('action');                                                // The action string, to display in the modal body (eg: sure you wann $action?)
+                $actionTitle = $that.data('action-title');                                          // The action title, to display in the modal title
+                $actionUrl   = $that.data('url');                                                   // The url of the Survey Controller action to call
+                $oCheckedSid = $.fn.yiiGridView.getChecked('survey-grid', 'sid');                   // List of the clicked checkbox
+                $checkedSid  = JSON.stringify($oCheckedSid);
+
+                $modal       = $('#confirmation-modal');                        // The modal we want to use
+
+                $actionUrl   = $actionUrl;
+                $postDatas   = {sSurveys:$checkedSid};
+
+                $modal.data('keepopen', true);                                  // We want to update the modal content after confirmation
+
+                // Needed modal elements
+                $modalTitle    = $modal.find('.modal-title');                   // Modal Title
+                $modalBody     = $modal.find('.modal-body-text');               // Modal Body
+                $modalYesNo    = $modal.find('.modal-footer-yes-no');           // Modal footer with yes/no buttons
+                $modalClose    = $modal.find('.modal-footer-close');            // Modal footer with close button
+                $ajaxLoader    = $("#ajaxContainerLoading");                    // Ajax loader
+
+                // Original modal state
+                $oldModalTitle  = $modalTitle.text();
+                $oldModalBody   = $modalBody.html();
+
+                // New modal contents
+                $modalWarningTitle  = $that.data('modal-warning-title');        // The action string, to display in the modal body (eg: sure you wann $action?)
+                $modalWarningText   = $that.data('modal-warning-text');
+
+                // We update the modal
+                $modal.find('.modal-title').text($modalWarningTitle);
+                $modal.find('.modal-body-text').text($modalWarningText);
+
+                // When user close the modal, we put it back to its original state
+                $modal.on('hidden.bs.modal', function (e) {
+                    $modal.data('onclick', null);                   // We reset the onclick event
+                    $modalTitle.text($oldModalTitle);               // the modal title
+                    $modalBody.empty().append($oldModalBody);       // modal body
+                    $modalClose.hide();                             // Hide the 'close' button
+                    $modalYesNo.show();                             // Show the 'Yes/No' buttons
+                })
+
+                // Define what should be done when user confirm the mass action
+                $modal.data('onclick', function(){
+                    // Update the modal elements
+                    $modalTitle.text($actionTitle);                             // Change the modal title to the action title
+                    $modalBody.empty();                                         // Empty the modal body
+                    $modalYesNo.hide();                                         // Hide the 'Yes/No' buttons
+                    $modalClose.show();                                         // Show the 'close' button
+                    $ajaxLoader.show();                                         // Show the ajax loader
+
+                    // Ajax request
+                    $.ajax({
+                        url : $actionUrl,
+                        type : 'POST',
+                        data :  $postDatas,
+
+                        // html contains the buttons
+                        success : function(html, statut){
+                            $.fn.yiiGridView.update('survey-grid');             // Update the surveys list
+                            $ajaxLoader.hide();                                 // Hide the ajax loader
+                            $modalBody.empty().html(html);                      // Inject the returned HTML in the modal body
+                        },
+                        error :  function(html, statut){
+                            $ajaxLoader.hide();
+                            $modal.find('.modal-body-text').empty().html(html.responseText);
+                            console.log(html);
+                        }
+                    });
+                });
+
+                // open the modal
+                if(!$.isEmptyObject($oCheckedSid))
+                {
+                    $modal.modal();
+                }
+            });
+    }
+
+
     /* Switch format group */
     if ($('#switchchangeformat').length>0){
         $('#switchchangeformat button').on('click', function(event, state) {
@@ -165,20 +261,43 @@ $(document).ready(function(){
      * or data-onclick to be run when OK is clicked.
      */
     $('#confirmation-modal').on('show.bs.modal', function(e) {
-        // .btn-ok is the confirm <a> in the modal
-        var href = $(e.relatedTarget).data('href');
-        var onclick = $(e.relatedTarget).data('onclick');
 
-        if (href != '' && href !== undefined) {
-            $(this).find('.btn-ok').attr('href', $(e.relatedTarget).data('href'));
+        var onclick = null;
+        var href = null;
+        if($(this).data('href'))
+        {
+            var href = $(this).data('href');    // When calling modal from javascript
+        }
+        else
+        {
+            var href = $(e.relatedTarget).data('href');
+        }
+
+        if($(this).data('onclick'))
+        {
+            var onclick = $(this).data('onclick');
+        }
+        else
+        {
+            var onclick = $(e.relatedTarget).data('onclick');
+        }
+
+        $keepopen = $(this).data('keepopen');
+        if (href != '' && href !== undefined)
+        {
+            $(this).find('.btn-ok').attr('href', href);
         }
         else if (onclick != '' && onclick !== undefined) {
 
             var onclick_fn = eval(onclick);
 
             if (typeof onclick_fn == 'function') {
+                $(this).find('.btn-ok').off('click');
                 $(this).find('.btn-ok').on('click', function(ev) {
-                    $('#confirmation-modal').modal('hide');
+                    if(! $keepopen )
+                    {
+                        $('#confirmation-modal').modal('hide');
+                    }
                     onclick_fn();
                 });
             }
