@@ -43,7 +43,7 @@
             ),
             'AuditLog_Log_UserPermissionsChanged' => array(
                 'type' => 'checkbox',
-                'label' => 'Log if a user permission changes',
+                'label' => 'Log if a user permissions changes',
                 'default' => '1',
             ),
             'AuditLog_Log_SurveySettings' => array(
@@ -380,7 +380,7 @@
                         'default' => 1,
                         'tab' => 'notification', // @todo: Setting no used yet
                         'category' => 'Auditing for person-related data', // @todo: Setting no used yet
-                        'label' => 'Audit log for this survey',
+                        'label' => 'Audit log for this survey:',
                         'current' => $this->get('auditing', 'Survey', $event->get('survey'))
                     )
                 )

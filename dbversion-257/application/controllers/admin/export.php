@@ -886,6 +886,122 @@ class export extends Survey_Common_Action {
     }
 
     /**
+     * Export multiple surveys structure. Called via ajax from surveys list massive action
+     * @param string $sSurveys  :json string containing the list of survey to delete
+     */
+    public function exportMultipleStructureSurveys()
+    {
+        $sSurveys = $_POST['sSurveys'];
+        $exportResult = $this->exportMultipleSurveys($sSurveys, 'structure');
+        Yii::app()->getController()->renderPartial('/admin/survey/massive_actions/_export_archive_results', array('aResults'=>$exportResult['aResults'], 'sZip'=>$exportResult['sZip'], 'bArchiveIsEmpty'=>$exportResult['bArchiveIsEmpty']));
+    }
+
+    /**
+     * Export multiple surveys archives. Called via ajax from surveys list massive action
+     * @param string $sSurveys  :json string containing the list of survey to delete
+     */
+    public function exportMultipleArchiveSurveys()
+    {
+        $sSurveys = $_POST['sSurveys'];
+        $exportResult = $this->exportMultipleSurveys($sSurveys, 'archive');
+        Yii::app()->getController()->renderPartial('/admin/survey/massive_actions/_export_archive_results', array('aResults'=>$exportResult['aResults'], 'sZip'=>$exportResult['sZip'], 'bArchiveIsEmpty'=>$exportResult['bArchiveIsEmpty']));
+    }
+
+
+    public function exportMultipleSurveys($sSurveys, $sExportType)
+    {
+        $aSurveys = json_decode($sSurveys);
+        $aResults = array();
+        Yii::import('application.libraries.admin.pclzip', TRUE);
+        $bArchiveIsEmpty = true;
+        $sTempDir        = Yii::app()->getConfig("tempdir");
+        $sZip            = randomChars(30);
+        $aZIPFilePath    = $sTempDir . DIRECTORY_SEPARATOR . $sZip;
+        $zip             = new PclZip($aZIPFilePath);
+
+        foreach($aSurveys as $iSurveyID)
+        {
+            if(Permission::model()->hasSurveyPermission($iSurveyID, 'responses', 'export'))
+            {
+                $archiveName                    = "";
+                $oSurvey                        = Survey::model()->findByPk($iSurveyID);
+                $aResults[$iSurveyID]['title']  = ellipsize($oSurvey->correct_relation_defaultlanguage->surveyls_title,30);
+                $aResults[$iSurveyID]['result'] = false;
+
+                // Specific to each kind of export
+                switch ($sExportType)
+                {
+                    // Export archives for active surveys
+                    case 'archive':
+                        if($oSurvey->active == "Y")
+                        {
+                            $archiveName = $this->_exportarchive($iSurveyID, false);
+
+                            if (is_file($archiveName))
+                            {
+                                $aResults[$iSurveyID]['result'] = true;
+                                $aResults[$iSurveyID]['file']   = $archiveName;
+                                $bArchiveIsEmpty                = false;
+                                $archiveFile                    = $archiveName;
+                                $newArchiveFileFullName         = 'survey_archive_'.$iSurveyID.'.lsa';
+                                $this->_addToZip($zip, $archiveFile, $newArchiveFileFullName);
+                                unlink($archiveFile);
+                            }
+                            else
+                            {
+                                $aResults[$iSurveyID]['error'] = gT("Unknown error");
+                            }
+                        }
+                        else
+                        {
+                            $aResults[$iSurveyID]['error'] = gT("Not active.");
+                        }
+                    break;
+
+                    // Export structure for survey
+                    default:
+                        $aResults[$iSurveyID]['result'] = true;
+                        $bArchiveIsEmpty                = false;
+
+                        $lssFileName = "limesurvey_survey_{$iSurveyID}.lss";
+                        $archiveFile = $sTempDir . DIRECTORY_SEPARATOR . randomChars(30);
+                        file_put_contents($archiveFile, surveyGetXMLData($iSurveyID));
+                        $this->_addToZip($zip, $archiveFile, $lssFileName);
+                        unlink($archiveFile);
+                    break;
+                }
+            }
+            else
+            {
+                $aResults[$iSurveyID]['error'] = gT("We are sorry but you don't have permissions to do this.");
+            }
+        }
+        return array('aResults'=>$aResults, 'sZip'=>$sZip, 'bArchiveIsEmpty'=>$bArchiveIsEmpty);
+    }
+
+    /**
+     * Download an archive file
+     * @param string $sZip name of zip file to download (will be downloaded as "surveys_archive.zip")
+     */
+    public function downloadZip($sZip)
+    {
+        $sTempDir     = Yii::app()->getConfig("tempdir");
+        $aZIPFileName = $sTempDir . DIRECTORY_SEPARATOR . $sZip;
+
+        if ( is_file( $aZIPFileName ) )
+        {
+            $fn = "surveys_archive.zip";
+
+            //Send the file for download!
+            $this->_addHeaders($fn, "application/force-download", 0);
+
+            @readfile($aZIPFileName);
+
+            return;
+        }
+    }
+
+    /**
     * Exports a archive (ZIP) of the current survey (structure, responses, timings, tokens)
     *
     * @param integer $iSurveyID  The ID of the survey to export

@@ -1295,8 +1295,8 @@ class tokens extends Survey_Common_Action
         {
             $fieldcontents[$fieldname] = array(
             'description' => strip_tags(Yii::app()->request->getPost('description_' . $fieldname)),
-            'mandatory' => Yii::app()->request->getPost('mandatory_' . $fieldname) == 'Y' ? 'Y' : 'N',
-            'show_register' => Yii::app()->request->getPost('show_register_' . $fieldname) == 'Y' ? 'Y' : 'N',
+            'mandatory' => Yii::app()->request->getPost('mandatory_' . $fieldname) == '1' ? 'Y' : 'N',
+            'show_register' => Yii::app()->request->getPost('show_register_' . $fieldname) == '1' ? 'Y' : 'N',
             'cpdbmap' => Yii::app()->request->getPost('cpdbmap_' . $fieldname)
             );
             foreach ($languages as $language)
@@ -1400,7 +1400,7 @@ class tokens extends Survey_Common_Action
         $aData['ishtml'] = $bHtml;
         $iMaxEmails = Yii::app()->getConfig('maxemails');
 
-        if (Yii::app()->request->getPost('bypassbademails') == 'Y')
+        if (Yii::app()->request->getPost('bypassbademails') == '1')
         {
             $SQLemailstatuscondition = "emailstatus = 'OK'";
         }
@@ -1532,12 +1532,12 @@ class tokens extends Survey_Common_Action
                     $modsubject = Replacefields($modsubject, $fieldsarray);
                     $modmessage = Replacefields($modmessage, $fieldsarray);
 
-                    if (!App()->request->getPost('bypassdatecontrol') && trim($emrow['validfrom']) != '' && convertDateTimeFormat($emrow['validfrom'], 'Y-m-d H:i:s', 'U') * 1 > date('U') * 1)
+                    if (!App()->request->getPost('bypassdatecontrol')=='1' && trim($emrow['validfrom']) != '' && convertDateTimeFormat($emrow['validfrom'], 'Y-m-d H:i:s', 'U') * 1 > date('U') * 1)
                     {
                         $tokenoutput .= $emrow['tid'] . " " . htmlspecialchars(ReplaceFields(gT("Email to {FIRSTNAME} {LASTNAME} ({EMAIL}) delayed: Token is not yet valid.",'unescaped'), $fieldsarray)). "<br />";
                         $bInvalidDate=true;
                     }
-                    elseif (!App()->request->getPost('bypassdatecontrol') && trim($emrow['validuntil']) != '' && convertDateTimeFormat($emrow['validuntil'], 'Y-m-d H:i:s', 'U') * 1 < date('U') * 1)
+                    elseif (!App()->request->getPost('bypassdatecontrol')=='1' && trim($emrow['validuntil']) != '' && convertDateTimeFormat($emrow['validuntil'], 'Y-m-d H:i:s', 'U') * 1 < date('U') * 1)
                     {
                         $tokenoutput .= $emrow['tid'] . " " . htmlspecialchars(ReplaceFields(gT("Email to {FIRSTNAME} {LASTNAME} ({EMAIL}) skipped: Token is not valid anymore.",'unescaped'), $fieldsarray)). "<br />";
                         $bInvalidDate=true;
@@ -1861,8 +1861,8 @@ class tokens extends Survey_Common_Action
         }
         else
         {
-            $filterduplicatetoken = (Yii::app()->request->getPost('filterduplicatetoken') && Yii::app()->request->getPost('filterduplicatetoken') == 'on');
-            $filterblankemail = (Yii::app()->request->getPost('filterblankemail') && Yii::app()->request->getPost('filterblankemail') == 'on');
+            $filterduplicatetoken = Yii::app()->request->getPost('filterduplicatetoken') == '1';
+            $filterblankemail = Yii::app()->request->getPost('filterblankemail') == '1';
 
             $ldap_queries = Yii::app()->getConfig('ldap_queries');
             $ldap_server = Yii::app()->getConfig('ldap_server');

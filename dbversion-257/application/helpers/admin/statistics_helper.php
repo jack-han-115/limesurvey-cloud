@@ -2387,7 +2387,6 @@ class statistics_helper {
     */
     protected function displayResults($outputs, $results, $rt, $outputType, $surveyid, $sql, $usegraph, $browse, $sLanguage)
     {
-
         /* Set up required variables */
         $TotalCompleted     = 0; //Count of actually completed answers
         $statisticsoutput   = "";
@@ -2822,6 +2821,8 @@ class statistics_helper {
                 {
                     $flatLabel = $al[0];
                 }
+
+                // For legend
                 $lbl[$flatLabel] = $tempcount;
 
             }
@@ -2837,6 +2838,23 @@ class statistics_helper {
 
                 $lbl[$flatLabel] = $row;
             }
+
+            // For Graph labels
+            switch($_POST['graph_labels'])
+            {
+                case 'qtext':
+                    $aGraphLabels[] = $flatLabel;
+                break;
+
+                case 'both':
+                    $aGraphLabels[] = $al[0].': '.$flatLabel;
+                break;
+
+                default:
+                    $aGraphLabels[] = $al[0];
+                break;
+            }
+
 
 
         }    //end foreach -> loop through answer data
@@ -3009,19 +3027,45 @@ class statistics_helper {
             }
         }
 
+        // Columns
+        $statsColumns = $_POST['stats_columns'];
 
+        switch($statsColumns)
+        {
+            case "1":
+                $nbcols      = "12";
+                $canvaWidth  = "1150";
+                $canvaHeight = "800";
+            break;
+
+            case "3":
+                $nbcols = "4";
+                $canvaWidth = "333";
+                $canvaHeight = "500";
+            break;
+
+            default:
+                $nbcols = "6";
+                $canvaWidth = "500";
+                $canvaHeight = "500";
+            break;
+        }
+
+        //
         //counter
         $i=0;
-
         //we need to know which item we are editing
         $itemcounter = 1;
 
-        $aData['outputs'] = (isset($outputs))?$outputs:'';
-        $aData['bSum'] = (isset($bSum))?$bSum:false;
-        $aData['bAnswer'] = (isset($bAnswer))?$bAnswer:false;
-        $aData['bShowCount'] = (isset($bShowCount))?$bShowCount:false;
+        $aData['nbcols']          = $nbcols;
+        $aData['canvaWidth']      = $canvaWidth;
+        $aData['canvaHeight']     = $canvaHeight;
+        $aData['outputs']         = (isset($outputs))?$outputs:'';
+        $aData['bSum']            = (isset($bSum))?$bSum:false;
+        $aData['bAnswer']         = (isset($bAnswer))?$bAnswer:false;
+        $aData['bShowCount']      = (isset($bShowCount))?$bShowCount:false;
         $aData['bShowPercentage'] = (isset($bShowPercentage))?$bShowPercentage:false;
-        $statisticsoutput =  Yii::app()->getController()->renderPartial('/admin/export/generatestats/_statisticsoutput_header', $aData, true);
+        $statisticsoutput         =  Yii::app()->getController()->renderPartial('/admin/export/generatestats/_statisticsoutput_header', $aData, true);
 
         //loop through all available answers
         ////
@@ -3649,12 +3693,23 @@ class statistics_helper {
                 // We clean the labels
                 $iMaxLabelLength = 0;
 
+                // We clean the labels
+
+                // Labels for graphs
+                $iMaxLabelLength = 0;
+                foreach($aGraphLabels as $key => $label)
+                {
+                    $cleanLabel = $label;
+                    $cleanLabel = viewHelper::flatEllipsizeText($cleanLabel, true, 20);
+                    $graph_labels[$key] = $cleanLabel;
+                    $iMaxLabelLength = (strlen( $cleanLabel ) > $iMaxLabelLength)?strlen( $cleanLabel ):$iMaxLabelLength;
+                }
+
+                // Labels for legend
                 foreach($labels as $key => $label)
                 {
-                    $cleanLabel = str_replace('"', " ", $label);
-                    $cleanLabel = preg_replace( "/\r|\n/", "", $cleanLabel );
+                    $cleanLabel = $label;
                     $labels[$key] = $cleanLabel;
-                    $iMaxLabelLength = (strlen( $cleanLabel ) > $iMaxLabelLength)?strlen( $cleanLabel ):$iMaxLabelLength;
                 }
 
                 $iCanvaHeight = $iMaxLabelLength * 3;
@@ -3663,6 +3718,7 @@ class statistics_helper {
                 $qqid = str_replace ('#', '_', $qqid);
                 $aData['rt'] = $rt;
                 $aData['qqid'] = $qqid;
+                $aData['graph_labels'] = $graph_labels;
                 $aData['labels'] = $labels;
                 //$aData['COLORS_FOR_SURVEY'] = COLORS_FOR_SURVEY;
                 $aData['charttype'] = (isset($charttype))?$charttype:'Bar';
@@ -3676,7 +3732,7 @@ class statistics_helper {
                 $statisticsoutput .=  Yii::app()->getController()->renderPartial('/admin/export/generatestats/_statisticsoutput_graphs', $aData, true);
 
             }
-            $statisticsoutput .= "</table></div><br /> <!-- in statistics helper --> \n";
+            $statisticsoutput .= "</table></div> <!-- in statistics helper --> \n";
         }
 
         return array("statisticsoutput"=>$statisticsoutput, "pdf"=>$this->pdf, "astatdata"=>$astatdata);
