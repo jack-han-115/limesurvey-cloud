@@ -1608,7 +1608,7 @@
                                     }
 
                                     $sq_name = ($this->sgqaNaming)?$sq['rowdivid'].".NAOK":$sq['varName'].".NAOK";
-                                    //$sq_name = '(is_empty(' . $sq_name . ') || ('. $sq_name . ' >= date("Y-m-d H:i", strtotime(' . $date_min . ')) ))';
+                                    $sq_name = '(is_empty(' . $sq_name . ') || ('. $sq_name . ' >= date("Y-m-d H:i", strtotime(' . $date_min . ')) ))';
                                     $subqValidSelector = '';
                                     break;
                                 default:
@@ -9813,7 +9813,6 @@ EOD;
             'time_limit_warning_display_time',
             'time_limit_warning_message',
             'time_limit_warning_style',
-            'thousands_separator',
             'use_dropdown',
 
             );

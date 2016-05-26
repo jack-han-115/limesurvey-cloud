@@ -3951,6 +3951,8 @@ function questionAttributes($returnByName=false)
         'default'=>1,
         "help"=>gT("Is no answer (missing) allowed when either 'Equals sum value' or 'Minimum sum value' are set?"),
         "caption"=>gT("Value range allows missing"));
+        /*
+        Deactivated because it does not work properly
         $qattributes["thousands_separator"] = array(
             'types' => 'NK',
             "help" => gT("Show a thousands separator when the user enters a value"),
@@ -3964,6 +3966,7 @@ function questionAttributes($returnByName=false)
             ),
             'default'=>0,
         );
+        */
 
         $qattributes["display_type"]=array(
         "types"=>"YG",
@@ -7140,10 +7143,7 @@ function doHeader()
 function getPrintableHeader()
 {
     global $rooturl,$homeurl;
-    $headelements = '
-    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-    <script type="text/javascript" src="'.Yii::app()->getConfig('adminscripts').'printablesurvey.js"></script>
-    ';
+    $headelements = App()->getController()->renderPartial('/survey/system/print_survey/header', array(), true, true);
     return $headelements;
 }
 
