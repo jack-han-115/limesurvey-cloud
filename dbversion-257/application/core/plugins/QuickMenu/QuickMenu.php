@@ -131,39 +131,41 @@ class QuickMenu extends \ls\pluginmanager\PluginBase
      */
     public function beforeActivate()
     {
+        // Create sort order table if it doesn't exist
+        if (!$this->api->tableExists($this, 'sortorder'))
+        {
+            try {
+                $this->createSortorderTable();
+            }
+            catch(Exception $e)
+            {
+                $event = $this->getEvent();
+                $event->set('success', false);
+                $event->set(
+                    'message',
+                    gT('An non-recoverable error happened during the update. Error details:')
+                    . "<p>"
+                    . htmlspecialchars($e->getMessage())
+                    . "</p>"
+                );
+            }
+        }
+    }
+
+    /**
+     * Create the table to store quick-menu sort order
+     *
+     * @return void
+     */
+    protected function createSortorderTable()
+    {
         $aFields = array(
             'uid' => 'integer NOT NULL',
             'button_name' => 'string(64)',
             'sort_order' => 'integer',
             'PRIMARY KEY (button_name, uid)'
         );
-        try {
-            $this->api->createTable($this, 'plugin_extraquickmenuitems_sortorder', $aFields);
-            //$oDB->createCommand()->createTable('{{plugin_extraquickmenuitems_sortorder}}', $aFields);
-            /* Carsten says no to foreign keys because of different db
-            $oDB->createCommand()->addForeignKey(
-                'fk_survey_id',
-                '{{plugin_extraquickmenuitems_sortorder}}',
-                'uid',
-                '{{users}}',
-                'uid',
-                'CASCADE',
-                'CASCADE'
-            );
-            */
-        }
-        catch(Exception $e)
-        {
-            $event = $this->getEvent();
-            $event->set('success', false);
-            $event->set(
-                'message',
-                gT('An non-recoverable error happened during the update. Error details:')
-                . "<p>"
-                . htmlspecialchars($e->getMessage())
-                . "</p>"
-            );
-        }
+        $this->api->createTable($this, 'sortorder', $aFields);
     }
 
     /**
@@ -479,10 +481,11 @@ class QuickMenu extends \ls\pluginmanager\PluginBase
     protected function deleteOldSortings($userId)
     {
         // Delete all old sortings
+        $tableName = '{{quickmenu_sortorder}}';  // TODO: Should not be hard-coded
         $db = Yii::app()->db;
         $db->createCommand()
             ->delete(
-                '{{plugin_extraquickmenuitems_sortorder}}',
+                $tableName,
                 'uid=:uid',
                 array(':uid' => $userId)
             );
@@ -498,10 +501,11 @@ class QuickMenu extends \ls\pluginmanager\PluginBase
     protected function insertNewSortings($userId, $buttons)
     {
         $db = Yii::app()->db;
+        $tableName = '{{quickmenu_sortorder}}';  // TODO: Should not be hard-coded
         foreach ($buttons as $buttonName => $buttonIndex)
         {
             $db->createCommand()->insert(
-                '{{plugin_extraquickmenuitems_sortorder}}',
+                $tableName,
                 array(
                     'uid' => $userId,
                     'button_name' => $buttonName,
@@ -519,10 +523,21 @@ class QuickMenu extends \ls\pluginmanager\PluginBase
      */
     public static function getOrder($userId)
     {
+        $tableName = '{{quickmenu_sortorder}}';  // TODO: Should not be hard-coded
         $db = Yii::app()->db;
+
+        $tableSchema = $db->schema->getTable($tableName);
+
+        // TODO: Should be handled by plugin version system
+        if ($tableSchema === null)
+        {
+            Yii::app()->user->setFlash('error', 'Quick-menu plugin has been updated. Please deactivate and activate it again.');
+            return;
+        }
+
         $orders = $db->createCommand()
             ->select(array('button_name', 'sort_order'))
-            ->from('{{plugin_extraquickmenuitems_sortorder}}')
+            ->from($tableName)
             ->where('uid=:uid', array(':uid' => $userId))
             ->order('sort_order')
             ->queryAll();
