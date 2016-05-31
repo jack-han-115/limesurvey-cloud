@@ -18,11 +18,6 @@ class TokenDynamic extends LSActiveRecord
     protected static $sid = 0;
     public $emailstatus='OK'; // Default value for email status
 
-    /*
-    public $compare; //compare value
-    public $compareOp; //compare operator, for example [>,<,>=,<=]
-    */
-
     /**
      * Returns the static model of Settings table
      *
@@ -108,9 +103,8 @@ class TokenDynamic extends LSActiveRecord
     */
     public function relations()
     {
-        Yii::app()->user->setState('SurveyDynamicSid', self::$sid);
         return array(
-            'survey'      => array(self::BELONGS_TO, 'Survey', array(), 'condition'=>'sid='.Yii::app()->user->getState('SurveyDynamicSid'), 'together' => true),
+            'survey'      => array(self::BELONGS_TO, 'Survey', array(), 'condition'=>'sid='.self::$sid, 'together' => true),
             'responses'   => array(self::HAS_MANY, 'SurveyDynamic', array('token'=>'token')),
         );
     }
@@ -537,6 +531,50 @@ class TokenDynamic extends LSActiveRecord
         return $attributes;
     }
 
+    public function getSentFormated()
+    {
+        $field = $this->sent;
+        return $this->getYesNoDateFormated($field);
+    }
+
+    public function getRemindersentFormated()
+    {
+        $field = $this->remindersent;
+        return $this->getYesNoDateFormated($field);
+    }
+
+    public function getCompletedFormated()
+    {
+        $field = $this->completed;
+        return $this->getYesNoDateFormated($field);
+    }
+
+    public function getValidfromFormated()
+    {
+        $field = $this->validfrom;
+        return $this->getYesNoDateFormated($field);
+    }
+
+    public function getValiduntilFormated()
+    {
+        $field = $this->validuntil;
+        return $this->getYesNoDateFormated($field);
+    }
+
+    private function getYesNoDateFormated($field)
+    {
+        if ( $field != 'N' && $field != '')
+        {
+            $field = convertToGlobalSettingFormat($field);
+            $field = '<span class="text-success">'.$field.'</span>';
+        }
+        elseif( $field != '')
+        {
+            $field = '<i class="fa fa-minus text-warning"></i>';
+        }
+        return $field;
+    }
+
     public function getStandardColsForGrid()
     {
         return array(
@@ -563,11 +601,8 @@ class TokenDynamic extends LSActiveRecord
                 'value'=>'$data->tid',
                 'headerHtmlOptions'=>array('class' => 'hidden-xs'),
                 'htmlOptions' => array('class' => 'hidden-xs'),
-                /*'filter'=> CHtml::dropDownList('User[compareOp]', $this->compareOp,
-                        array('>'=>'>','<'=>'<','>='=>'>=','<='=>'<=','='=>'='),array('style'=>'width:50px;')) .
-                        CHtml::textField('User[compare]',$this->compare,array('style'=>'width:100px;'))
-                */
             ),
+
 
             array(
                 'header' => gT('First name'),
@@ -620,17 +655,19 @@ class TokenDynamic extends LSActiveRecord
             array(
                 'header' => gT('Invitation sent?'),
                 'name' => 'sent',
-                'value'=>'$data->sent',
+                'type'=>'raw',
+                'value'=>'$data->sentFormated',
                 'headerHtmlOptions'=>array('class' => 'hidden-xs'),
-                'htmlOptions' => array('class' => 'hidden-xs'),
+                'htmlOptions' => array('class' => 'hidden-xs  text-center'),
             ),
 
             array(
                 'header' => gT('Reminder sent?'),
                 'name' => 'remindersent',
-                'value'=>'$data->remindersent',
+                'type'=>'raw',
+                'value'=>'$data->remindersentFormated',
                 'headerHtmlOptions'=>array('class' => 'hidden-xs'),
-                'htmlOptions' => array('class' => 'hidden-xs'),
+                'htmlOptions' => array('class' => 'hidden-xs text-center'),
             ),
 
             array(
@@ -644,9 +681,10 @@ class TokenDynamic extends LSActiveRecord
             array(
                 'header' => gT('Completed?'),
                 'name' => 'completed',
-                'value'=>'$data->completed',
+                'type'=>'raw',
+                'value'=>'$data->completedFormated',
                 'headerHtmlOptions'=>array('class' => 'hidden-xs'),
-                'htmlOptions' => array('class' => 'hidden-xs'),
+                'htmlOptions' => array('class' => 'hidden-xs text-center'),
             ),
 
             array(
@@ -654,19 +692,21 @@ class TokenDynamic extends LSActiveRecord
                 'name' => 'usesleft',
                 'value'=>'$data->usesleft',
                 'headerHtmlOptions'=>array('class' => 'hidden-xs'),
-                'htmlOptions' => array('class' => 'hidden-xs'),
+                'htmlOptions' => array('class' => 'hidden-xs text-center'),
             ),
             array(
                 'header' => gT('Valid from'),
                 'name' => 'validfrom',
-                'value'=>'$data->validfrom',
+                'type'=>'raw',
+                'value'=>'$data->validfromFormated',
                 'headerHtmlOptions'=>array('class' => 'hidden-xs'),
-                'htmlOptions' => array('class' => 'hidden-xs'),
+                'htmlOptions' => array('class' => 'hidden-xs text-center'),
             ),
             array(
                 'header' => gT('Valid until'),
+                'type'=>'raw',
                 'name' => 'validuntil',
-                'value'=>'$data->validuntil',
+                'value'=>'$data->validuntilFormated',
                 'headerHtmlOptions'=>array('class' => 'hidden-xs'),
                 'htmlOptions' => array('class' => 'hidden-xs'),
             ),
@@ -701,13 +741,13 @@ class TokenDynamic extends LSActiveRecord
     public function getbuttons()
     {
         $sPreviewUrl  = App()->createUrl("/survey/index/sid/".self::$sid."/token/".$this->token.'/lang/'.$this->language.'/newtest/Y');
-        $sEditUrl     = App()->createUrl("/admin/tokens/sa/edit/iSurveyId/".self::$sid."/iTokenId/$this->tid");
+        $sEditUrl     = App()->createUrl("/admin/tokens/sa/edit/iSurveyId/".self::$sid."/iTokenId/$this->tid/ajax/true");
         $sInviteUrl   = App()->createUrl("/admin/tokens/sa/email/surveyid/".self::$sid."/tokenids/$this->tid");
         $sRemindUrl   = App()->createUrl("admin/tokens/sa/email/action/remind/surveyid/".self::$sid."/tokenids/$this->tid");
         $button = '';
 
         // View response details
-        if ($this->survey->isActive && Permission::model()->hasSurveyPermission(self::$sid, 'responses', 'read'))
+        if ($this->survey->isActive && Permission::model()->hasSurveyPermission(self::$sid, 'responses', 'read') && $this->survey->anonymized != 'Y')
         {
             if (count($this->responses)>0)
             {
@@ -763,20 +803,21 @@ class TokenDynamic extends LSActiveRecord
         }
         else
         {
-            $button .= '<span class="btn btn-default btn-xs disabled blank_button" href="#"><span class="fa-fw fa" ></span></span>';
+            $button .= '<span class="btn btn-default btn-xs disabled blank_button" href="#"><span class="fa-fw fa" ></span><!-- Invite or Remind --></span>';
         }
 
         // TODO: permission check
-
         if (Permission::model()->hasSurveyPermission(self::$sid, 'tokens', 'update'))
         {
-            $button .= '<a class="btn btn-default btn-xs" href="'.$sEditUrl.'" role="button" data-toggle="tooltip" title="'.gT('Edit this token').'"><span class="icon-edit" ></span></a>';
+            // $sEditUrl     = App()->createUrl("/admin/tokens/sa/edit/iSurveyId/".self::$sid."/iTokenId/$this->tid");
+            $button .= '<a class="btn btn-default btn-xs edit-token" href="#" data-sid="'.self::$sid.'" data-tid="'.$this->tid.'" data-url="'.$sEditUrl.'" role="button" data-toggle="tooltip" title="'.gT('Edit this token').'"><span class="icon-edit" ></span></a>';
         }
         else
         {
-            $button .= '<span class="btn btn-default btn-xs disabled blank_button" href="#"><span class="fa-fw fa" ></span></span>';
+            $button .= '<span class="btn btn-default btn-xs disabled blank_button" href="#"><span class="fa-fw fa" ></span><!-- Edit --></span>';
         }
 
+        // Display participant in CPDB
         if (!empty($this->participant_id) && $this->participant_id != "" && Permission::model()->hasGlobalPermission('participantpanel','read'))
         {
             $onClick = "sendPost('".App()->createUrl('admin/participants/sa/displayParticipants')."','',['searchcondition'],['participant_id||equal||{$this->participant_id}']);";
@@ -784,7 +825,7 @@ class TokenDynamic extends LSActiveRecord
         }
         else
         {
-            $button .= '<span class="btn btn-default btn-xs disabled blank_button" href="#"><span class="fa-fw fa" ></span></span>';
+            $button .= '<span class="btn btn-default btn-xs disabled blank_button" href="#"><span class="fa-fw fa" ><!-- Display participant in CPDB--></span></span>';
         }
         return $button;
     }
