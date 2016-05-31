@@ -278,6 +278,8 @@ class Survey extends LSActiveRecord
     * @access public
     * @param int $loginID
     * @return CActiveRecord
+    *
+    * TODO: replace this by a correct relation
     */
     public function permission($loginID)
     {
@@ -773,6 +775,11 @@ class Survey extends LSActiveRecord
         }
     }
 
+    public function getIsActive()
+    {
+        return ($this->active === 'Y');
+    }
+
     public function getFullAnswers()
     {
         $table = '{{survey_' . $this->sid . '}}';
@@ -944,11 +951,11 @@ class Survey extends LSActiveRecord
         $criteria->with='correct_relation_defaultlanguage';
 
         // Permission
+        // Rem : the addCondition reflect Permission::hasPermission
         if(!Permission::model()->hasGlobalPermission("surveys",'read'))
         {
             $criteria->with='permissions';
-            $criteria->addCondition("permissions.permission='survey' AND permissions.entity='survey'");
-            $criteria->compare('permissions.uid', Yii::app()->user->id);
+            $criteria->addCondition( " ( owner_id=".Yii::app()->user->id."  ) OR (permissions.permission='survey' AND permissions.entity='survey' AND permissions.uid=".Yii::app()->user->id." )" );
         }
 
 

@@ -55,24 +55,75 @@ $(document).ready(function(){
     }
 
     /*
-     * Survey List mass actions
+     * List mass actions
+     * TODO: refactore it to handle the different possible actions (modal, redirect with post, redirect with session,etc. ) in cleanest way
      */
-    if($('#surveyListActions').length>0){
+    if($('.listActions').length>0){
         // Define what should be done when clicking on a action link
-        $(document).on('click', '#surveyListActions a', function () {
+        $(document).on('click', '.listActions a', function () {
                 $that        = $(this);
                 $action      = $that.data('action');                                                // The action string, to display in the modal body (eg: sure you wann $action?)
                 $actionTitle = $that.data('action-title');                                          // The action title, to display in the modal title
                 $actionUrl   = $that.data('url');                                                   // The url of the Survey Controller action to call
-                $oCheckedSid = $.fn.yiiGridView.getChecked('survey-grid', 'sid');                   // List of the clicked checkbox
-                $checkedSid  = JSON.stringify($oCheckedSid);
+                $gridid      = $('.listActions').data('grid-id');
 
+                $oCheckedItems = $.fn.yiiGridView.getChecked($gridid, $('.listActions').data('pk'));                   // List of the clicked checkbox
+
+
+                // For actions without modal, doing a redirection
+                if($that.data('post-redirect'))
+                {
+                    var newForm = jQuery('<form>', {
+                        'action': $actionUrl,
+                        'target': '_blank',
+                        'method': 'POST'
+                    }).append(jQuery('<input>', {
+                        'name': $that.data('input-name'),
+                        'value': $oCheckedItems.join("|"),
+                        'type': 'hidden'
+                    })).append(jQuery('<input>', {
+                        'name': 'YII_CSRF_TOKEN',
+                        'value': LS.data.csrfToken,
+                        'type': 'hidden'
+                    })).appendTo('body');
+                    newForm.submit();
+                    return;
+                }
+
+                if($that.data('fill-session-and-redirect'))
+                {
+                    // postUrl is defined as a var in the View
+                    $(this).load(postUrl, {
+                        participantid:$oCheckedItems},function(){
+                            $(location).attr('href',$actionUrl);
+                    });
+                    return;
+                }
+
+                $oCheckedItems  = JSON.stringify($oCheckedItems);
                 $modal       = $('#confirmation-modal');                        // The modal we want to use
-
                 $actionUrl   = $actionUrl;
-                $postDatas   = {sSurveys:$checkedSid};
+                // Do we need to post sid?
+                if($that.data('sid'))
+                {
+                    $iSid = $that.data('sid');
+                    $postDatas   = {sItems:$oCheckedItems, iSid:$iSid};
+                }
+                else
+                {
+                    $postDatas   = {sItems:$oCheckedItems};
+                }
 
-                $modal.data('keepopen', true);                                  // We want to update the modal content after confirmation
+                // Do we want to update the modal content after confirmation?
+                if($that.data('keepopen'))
+                {
+                    $keepopen = ($that.data('keepopen')==='yes');
+                }
+                else
+                {
+                    $keepopen = true;
+                }
+                $modal.data('keepopen', $keepopen);
 
                 // Needed modal elements
                 $modalTitle    = $modal.find('.modal-title');                   // Modal Title
@@ -119,7 +170,7 @@ $(document).ready(function(){
 
                         // html contains the buttons
                         success : function(html, statut){
-                            $.fn.yiiGridView.update('survey-grid');             // Update the surveys list
+                            $.fn.yiiGridView.update($gridid);                   // Update the surveys list
                             $ajaxLoader.hide();                                 // Hide the ajax loader
                             $modalBody.empty().html(html);                      // Inject the returned HTML in the modal body
                         },
@@ -132,7 +183,7 @@ $(document).ready(function(){
                 });
 
                 // open the modal
-                if(!$.isEmptyObject($oCheckedSid))
+                if(!$.isEmptyObject($oCheckedItems))
                 {
                     $modal.modal();
                 }
