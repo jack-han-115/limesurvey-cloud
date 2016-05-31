@@ -3,7 +3,7 @@
  */
 $(document).ready(function(){
     $('.scrolling-wrapper').scroll(function(){
-        $('#pager').css({
+        $('#tokenListPager').css({
             'left': $(this).scrollLeft() ,
         });
     });
@@ -175,7 +175,7 @@ $(document).ready(function() {
                 jQuery('#displaytokens').editRow(row.attr('id'), true, null, null, null, null, func);
                 row.find('.inputbuttons').hide();
                 window.editing = true;
-                var validfrom = row.find('[aria-describedby="displaytokens_validfrom"]');
+                /*var validfrom = row.find('[aria-describedby="displaytokens_validfrom"]');
                 validfrom.find('input').css('width', '119px').datetimepicker({
                     showOn: 'button',
                     dateFormat: userdateformat
@@ -184,7 +184,7 @@ $(document).ready(function() {
                 validuntil.find('input').css('width', '119px').datetimepicker({
                     showOn: 'button',
                     dateFormat: userdateformat
-                });
+                });*/
 
                 jQuery('<span class="drop_editing ui-pg-button glyphicon glyphicon-remove" title="'+cancelBtn+'"></span>')
                 .appendTo(jQuery(this).parent().parent())
@@ -430,6 +430,7 @@ $(document).ready(function() {
             onClickButton:addSelectedParticipantsToCPDB
         });
     }
+    /*
     $(".gridsearch").bindWithDelay("keyup", function(e) {
         var sSearchString=$.trim($(this).val());
         if(sSearchString != ""){
@@ -445,13 +446,13 @@ $(document).ready(function() {
             oGrid.jqGrid('setGridParam', {url: jsonUrl, postData: { }}).trigger('reloadGrid', [{current: true, page: 1}]);
         }
     }, 500);
-
+*/
     $.extend(jQuery.jgrid.edit,{
         closeAfterAdd: true,
         reloadAfterSubmit: true,
         closeOnEspace:true
     });
-	// Center modal dialogs
+    // Center modal dialogs
     $.jgrid.jqModal = $.extend($.jgrid.jqModal || {}, {
         beforeOpen: centerInfoDialog
     });
@@ -510,4 +511,5 @@ function updatePageAfterGrid(){
         $(".dataforward").click(function(){});
         $(".gridcontrol.dataforward").addClass("disabled");
     }
+
 }

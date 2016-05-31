@@ -4,15 +4,15 @@
  *
  */
 ?>
-<div class="col-sm-4 pull-left dropup" id="surveyListActions">
+<div class="col-sm-4 pull-left dropup listActions" data-pk="sid" data-grid-id="survey-grid" id="surveyListActions">
     <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
       <?php eT('Selected survey(s)...');?>
     <span class="caret"></span>
     </button>
-    <ul class="dropdown-menu" aria-labelledby="surveyListActions">
+    <ul class="dropdown-menu listActions" aria-labelledby="surveyListActions">
         <li>
             <a href="#"
-            data-url="<?php echo App()->createUrl('/admin/survey/sa/deleteMultipleSurveys/');?>"
+            data-url="<?php echo App()->createUrl('/admin/survey/sa/deleteMultiple/');?>"
             data-action="delete"
             data-action-title="<?php eT('Delete surveys'); ?>"
             data-modal-warning-title="<?php eT('Warning');?>"
