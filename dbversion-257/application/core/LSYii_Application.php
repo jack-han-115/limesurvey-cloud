@@ -181,7 +181,7 @@ class LSYii_Application extends CWebApplication
     {
         $sLanguage=preg_replace('/[^a-z0-9-]/i', '', $sLanguage);
         /// LimeService modification start
-        if (file_exists(Yii::app()->getConfig('uploaddir').'/locale250/'.sLanguage.'.mo'))
+        if (file_exists(Yii::app()->getConfig('uploaddir').'/locale250/'.$sLanguage.'.mo'))
         {
             $this->messages->basePath=Yii::app()->getConfig('uploaddir').'/locale250';
         }
