@@ -81,13 +81,17 @@ class questions extends Survey_Common_Action
         $aData['baselang'] = $baselang;
         $aAttributesWithValues = Question::model()->getAdvancedSettingsWithValues($qid, $qrrow['type'], $iSurveyID, $baselang);
         $DisplayArray = array();
+
         foreach ($aAttributesWithValues as $aAttribute)
         {
             if (($aAttribute['i18n'] == false && isset($aAttribute['value']) && $aAttribute['value'] != $aAttribute['default']) || ($aAttribute['i18n'] == true && isset($aAttribute['value'][$baselang]) && $aAttribute['value'][$baselang] != $aAttribute['default']))
             {
                 if ($aAttribute['inputtype'] == 'singleselect')
                 {
-                    $aAttribute['value'] = $aAttribute['options'][$aAttribute['value']];
+                    if(isset($aAttribute['options'][$aAttribute['value']]))
+                    {
+                        $aAttribute['value'] = $aAttribute['options'][$aAttribute['value']];
+                    }
                 }
                 $DisplayArray[] = $aAttribute;
             }
@@ -1420,11 +1424,8 @@ class questions extends Survey_Common_Action
                 if (isset($qidarray))
                     $qidlist = implode(", ", $qidarray);
                 $message =gT("Question could not be deleted. There are conditions for other questions that rely on this question. You cannot delete this question until those conditions are removed.");
-                $message .="<br /><a href='". $this->getController()->createUrl("admin/expressions/sa/survey_logic_file/sid/{$surveyid}")."' >".gT("Look at survey logic files")."</a>.";
-                $this->getController()->error(
-                    $message,
-                    $this->getController()->createUrl("admin/survey/sa/view/surveyid/{$surveyid}/gid/{$gid}/qid/{$qid}")
-                    );
+                 Yii::app()->setFlashMessage($message,'error');
+                 $this->getController()->redirect(array('admin/survey/sa/listquestions/surveyid/' . $surveyid ));
             }
             else
             {

@@ -370,10 +370,26 @@ class UpdateForm extends CFormModel
      */
     public function republishAssets()
     {
-        // Republish the template assets
+        // Don't touch symlinked assets because it won't work
+        if (App()->getAssetManager()->linkAssets) return;
+
+        // Republish the assets
         Template::model()->forceAssets();
         AdminTheme::forceAssets();
+
+        // Delete all the content in the asset directory, but not the directory itself nor the index.html file at its root ^^
+        $sAssetsDir = Yii::app()->getConfig('tempdir') . '/assets/';
+        $dir = dir($sAssetsDir);
+        while (false !== $entry = $dir->read())
+        {
+            if ($entry == '.' || $entry == '..' ||  $entry == 'index.html' )
+            {
+                continue;
+            }
+            rmdirr($sAssetsDir . DIRECTORY_SEPARATOR . $entry);
+        }
     }
+
 
     /**
      * Update the version file to the destination build version
@@ -568,11 +584,13 @@ class UpdateForm extends CFormModel
         $iAssetVersionNumber  = Yii::app()->getConfig('assetsversionnumber');        // From version.php
         $iCurrentAssetVersion = GetGlobalSetting('AssetsVersion');                       // From setting_global table
 
-        if ( intval($iAssetVersionNumber) > intval($iCurrentAssetVersion) )
+        if ( $iAssetVersionNumber != $iCurrentAssetVersion )
         {
             self::republishAssets();
             setGlobalSetting('AssetsVersion',$iAssetVersionNumber);
+            App()->getController()->redirect(array("admin/"));
         }
+        return false;
     }
 
 
