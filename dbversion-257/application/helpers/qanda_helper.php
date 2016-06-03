@@ -1114,7 +1114,7 @@ function do_date($ia)
             'maxdate'                => $maxdate,
             'dateformatdetails'      => $dateformatdetails['dateformat'],
             'dateformatdetailsjs'    => $dateformatdetails['jsdate'],
-            'goodchars'              => "return goodchars(event,'".$goodchars."')",
+            'goodchars'              => "",  // "return goodchars(event,'".$goodchars."')", //  This won't work with non-latin keyboards
             'checkconditionFunction' => $checkconditionFunction.'(this.value, this.name, this.type)',
             'language'               => App()->language,
             'hidetip'                => trim($aQuestionAttributes['hide_tip'])==0,
@@ -2402,7 +2402,7 @@ function do_multiplechoice_withcomments($ia)
             $value = '';
         }
 
-        $sRows .= doRender('/survey/questions/multiplechoice_with_comments/rows/answer_row', array(
+        $sRows .= doRender('/survey/questions/multiplechoice_with_comments/rows/answer_row_other', array(
             'liclasses'                     => 'other question-item answer-item checkbox-text-item other-item',
             'liid'                          => 'javatbd'.$myfname,
             'kpclass'                       => $kpclass,

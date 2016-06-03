@@ -86,12 +86,19 @@ $(document).ready(function(){
 
     if($('#sent-yes-no-date-container').length > 0)
     {
+        $('#general').stickLabelOnLeft();
         $('#sent-yes-no-date-container').YesNoDate();
         $('#remind-yes-no-date-container').YesNoDate();
         $('#completed-yes-no-date-container').YesNoDate();
 
         $('#validfrom').datetimepicker({locale: $('#validfrom').data('locale')});
         $('#validuntil').datetimepicker({locale: $('#validuntil').data('locale')});
+
+        $('.date .input-group-addon').on('click', function(){
+            $prev = $(this).siblings();
+            console.log($prev.attr('class'));
+            $prev.data("DateTimePicker").show();
+        });
     }
 
     $('.scrolling-wrapper').scroll(function(){
@@ -133,6 +140,12 @@ $(document).ready(function(){
 
                 $('#validfrom').datetimepicker({locale: $('#validfrom').data('locale')});
                 $('#validuntil').datetimepicker({locale: $('#validuntil').data('locale')});
+
+                $('.date .input-group-addon').on('click', function(){
+                    $prev = $(this).siblings();
+                    console.log($prev.attr('class'));
+                    $prev.data("DateTimePicker").show();
+                });
 
                 var elGeneral  = $('#general');
 

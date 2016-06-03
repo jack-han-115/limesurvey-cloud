@@ -876,11 +876,6 @@ class Survey extends LSActiveRecord
             $button .= '<a class="btn btn-default" href="'.$sEditUrl.'" role="button" data-toggle="tooltip" title="'.gT('General settings & texts').'"><span class="glyphicon glyphicon-cog" ></span></a>';
         }
 
-        if (Permission::model()->hasSurveyPermission($this->sid, 'survey', 'delete'))
-        {
-            $button .= '<a class="btn btn-default" href="'.$sDeleteUrl.'" role="button" data-toggle="tooltip" title="'.gT('Delete').'"><span class="text-danger glyphicon glyphicon-trash" ></span></a>';
-        }
-
         if(Permission::model()->hasSurveyPermission($this->sid, 'statistics', 'read') && $this->active=='Y' )
         {
             $button .= '<a class="btn btn-default" href="'.$sStatUrl.'" role="button" data-toggle="tooltip" title="'.gT('Statistics').'"><span class="glyphicon glyphicon-stats text-success" ></span></a>';
@@ -954,7 +949,7 @@ class Survey extends LSActiveRecord
         // Rem : the addCondition reflect Permission::hasPermission
         if(!Permission::model()->hasGlobalPermission("surveys",'read'))
         {
-            $criteria->with='permissions';
+            $criteria->with=array('permissions', 'correct_relation_defaultlanguage' );
             $criteria->addCondition( " ( owner_id=".Yii::app()->user->id."  ) OR (permissions.permission='survey' AND permissions.entity='survey' AND permissions.uid=".Yii::app()->user->id." )" );
         }
 
@@ -962,7 +957,7 @@ class Survey extends LSActiveRecord
         // Search filter
         $criteria2 = new CDbCriteria;
         $sid_reference = (Yii::app()->db->getDriverName() == 'pgsql' ?' t.sid::varchar' : 't.sid');
-        $criteria2->with=array('owner');
+        $criteria2->with=array('owner', 'correct_relation_defaultlanguage');
         $criteria2->compare($sid_reference, $this->searched_value, true, 'OR');
         $criteria2->compare('correct_relation_defaultlanguage.surveyls_title', $this->searched_value, true, 'OR');
         $criteria2->compare('t.admin', $this->searched_value, true, 'OR');

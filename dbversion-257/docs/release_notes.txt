@@ -35,6 +35,51 @@ Thank you to everyone who helped with this new release!
 CHANGE LOG
 ------------------------------------------------------
 
+Changes from 2.50+ (build 160602) to 2.50+ (build 160603) June 3, 2016
+-Fixed issue #11038: Change of attribute content from <some content> to <blank/nothing> doesn't stick (LouisGac)
+-Fixed issue #11218: Statistics general filters does not remember base language of the survey (LouisGac)
+-Fixed issue #11254: wrong default language in statistics expert mode (LouisGac)
+-Fixed issue #11273: Theme permissions still show restricted themes in Survey quick actions (LouisGac)
+-Fixed issue #11274: PHP notice after template import (LouisGac)
+-Fixed issue #11287: Cannot Delete Users From User Groups Unless Having Superadministrator Permission (LouisGac)
+-Fixed issue #11298: Endless loop. From survey list, add question (+ icon in right part of the screen) -> Import question -> Close -> Close (LouisGac)
+-Fixed issue #11324: Sorting of "last 50" answers is wrong (LouisGac)
+-Fixed issue #11326: Copy surveys: dropdown menu is not wide enough to show the whole title of the source survey (LouisGac)
+-Fixed issue #11327: Number of avtive surveys for non admin users (LouisGac)
+-Fixed issue #11328: Unable to select mandatory date field if the survey is viewed in Arabic Language (Olle Haerstedt)
+-Fixed issue #11331: Statistics show error (LouisGac)
+#Updated translation: Catalan by qualitatuvic
+#Updated translation: Dutch by Han
+#Updated translation: Dutch (Informal) by Han
+#Updated translation: French (France) by arnaud21
+#Updated translation: Indonesian by radhwaw
+#Updated translation: Polish by elisa
+#Updated translation: Polish (Informal) by elisa
+
+
+Changes from 2.50+ (build 160529) to 2.50+ (build 160602) June 2, 2016
+-New feature: Edit participant (former token) information in popup window, revamped browsing (LouisGac)
+-Fixed issue #10299: template preview not found on Survey quick actions (Bert Hankes)
+-Fixed issue #11280: Multiple choice with comments - Other option breaks if comment is entered (LouisGac)
+-Fixed issue #11281: Missing translation (Carsten Schmitz)
+-Fixed issue #11289: User can't see their own surveys anymore (admin can't filter) (LouisGac)
+-Fixed issue #11295: Response for a ranking question cannot be edited by admin (LouisGac)
+-Fixed issue #11296: Asset directory clearing
+-Fixed issue #11300: Switches not used in advanced question settings (Carsten Schmitz)
+-Fixed issue #11311: Label set quick insert popup display is garbled. (LouisGac)
+-Fixed issue: HTML editor too wide when sending invitations (Carsten Schmitz)
+-Fixed issue: On survey copy fields are translinked even when chosen not to (Carsten Schmitz)
+#Updated translation: Catalan by qualitatuvic
+#Updated translation: Danish by SigneT, antispam
+#Updated translation: French (France) by arnaud21
+#Updated translation: German by c_schmitz
+#Updated translation: Indonesian by radhwaw
+#Updated translation: Norwegian (Bokmal) by pmonstad
+#Updated translation: Norwegian (Nynorsk) by pmonstad
+#Updated translation: Polish by elisa
+#Updated translation: Polish (Informal) by elisa
+#Updated translation: Portuguese (Brazil) by thiagosmartins, mauriciofurtado
+
 Changes from 2.50+ (build 160526) to 2.50+ (build 160529) May 30, 2016
 -Fixed issue #10838: Wrong decimal separator for total in "array text" (Carsten Schmitz)
 -Fixed issue #11124: AuditLog breaks when delete multiple list particpants. (Alfredo Esteban)
