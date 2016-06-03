@@ -176,6 +176,9 @@ $result['defaultController']=($result['defaultController']=='survey') ? $interna
  */
 $result['components']['urlManager']['rules']['<_controller:\w+>/<_action:\w+>']='<_controller>/<_action>';
 
+// LimeService Mod Start
+$result['components']['urlManager']['showScriptName'] = false;
+// LimeService Mod End
 return $result;
 /* End of file internal.php */
 /* Location: ./application/config/internal.php */
