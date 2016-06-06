@@ -72,17 +72,14 @@ var COLORS_FOR_SURVEY = new Array('20,130,200','232,95,51','34,205,33','210,211,
 
            // chartjs
 
-               if($type == 'Bar' || $type == 'Radar' || $type == 'Line' )
-               {
-
-                   init_chart_js_graph_with_datasets($type,$qid);
-               }
-               else
-               {
-                   init_chart_js_graph_with_datas($type, $qid);
-               }
-
-
+           if($type == 'Bar' || $type == 'Radar' || $type == 'Line' )
+           {
+               init_chart_js_graph_with_datasets($type,$qid);
+           }
+           else
+           {
+               init_chart_js_graph_with_datas($type, $qid);
+           }
        });
        return this;
     };
@@ -100,6 +97,9 @@ function init_chart_js_graph_with_datasets($type,$qid)
     var $labels   = eval("labels_"+$qid);
     var $grawdata = eval("grawdata_"+$qid);
     var $color    = $canva.data('color');
+
+    $('#legend-no-percent-'+$qid).show();
+    $('#legend-percent-'+$qid).hide();
 
     if (typeof chartjs != "undefined") {
         if (typeof chartjs[$qid] != "undefined") {
@@ -137,17 +137,20 @@ function init_chart_js_graph_with_datasets($type,$qid)
 }
 
 /**
- * This function load the graphs needing datas (pie chart, etc)
+ * This function load the graphs needing datas (pie chart, polar, Doughnut)
  */
 function init_chart_js_graph_with_datas($type,$qid)
 {
-    var canvasId = 'chartjs-'+$qid;
-    var $canvas = document.getElementById(canvasId).getContext("2d");
-    var $canva = $('#'+canvasId);
-    var $color = $canva.data('color');
-    var $labels = eval("labels_"+$qid);
-    var $grawdata = eval("grawdata_"+$qid);
+    var canvasId  = 'chartjs-'+$qid;
+    var $canvas   = document.getElementById(canvasId).getContext("2d");
+    var $canva    = $('#'+canvasId);
+    var $color    = $canva.data('color');
+    var $labels   = eval("labels_percent_"+$qid);
+    var $grawdata = eval("grawdata_percent_"+$qid);
     var $chartDef = new Array();
+
+    $('#legend-no-percent-'+$qid).hide();
+    $('#legend-percent-'+$qid).show();
 
     $.each($labels, function($i, $label) {
         $colori = (parseInt($i)+$color);
@@ -159,15 +162,19 @@ function init_chart_js_graph_with_datas($type,$qid)
         };
     });
 
+    var $options = {
+        tooltipTemplate: "<%if (label){%><%=label %>: <%}%><%= value + '%' %>",
+    };
+
     if (typeof chartjs != "undefined") {
         if (typeof chartjs[$qid] != "undefined") {
             window.chartjs[$qid].destroy();
         }
     }
 
-    console.log($type);
     window.chartjs[$qid] = new Chart($canvas)[$type](
-        $chartDef
+        $chartDef,
+        $options
     );
 }
 
@@ -216,15 +223,18 @@ $(document).ready(function() {
     });
 
     // If the graph are displayed
-    if($('.chartjs-container').length>1){
+    if($('.chartjs-container').length>0){
 
         // On scroll, display the graph
         $('.chartjs-container').loadGraphOnScroll();
 
         // Buttons changing the graph type
         $('.chart-type-control').click(function() {
+
             $type = $(this).data('type');
             $qid = $(this).data('qid');
+
+            console.log($type);
 
             // chartjs
             if($type == 'Bar' || $type == 'Radar' || $type == 'Line' )

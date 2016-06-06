@@ -755,67 +755,6 @@ class SurveyAdmin extends Survey_Common_Action
     }
 
     /**
-    * This get the userlist in surveylist screen.
-    *
-    * @access public
-    * @return void
-    */
-    public function ajaxgetusers()
-    {
-        header('Content-type: application/json');
-        $result = getUserList();
-        $aUsers = array();
-        if (count($result) > 0)
-        {
-            foreach ($result as $rows)
-                $aUsers[$rows['user']]=$rows['uid'];
-        }
-        ksort($aUsers);
-        $ajaxoutput = ls_json_encode($aUsers) . "\n";
-        echo $ajaxoutput;
-    }
-
-    /**
-    * This function change the owner of a survey.
-    *
-    * @access public
-    * @param int $newowner
-    * @param int $iSurveyID
-    * @return void
-    */
-    public function ajaxowneredit()
-    {
-        header('Content-type: application/json');
-        $intNewOwner = sanitize_int(Yii::app()->request->getPost("newowner"));
-        $intSurveyId = sanitize_int(Yii::app()->request->getPost("surveyid"));
-        $owner_id = Yii::app()->session['loginID'];
-        $query_condition = 'sid=:sid';
-        $params[':sid']=$intSurveyId;
-        if (!Permission::model()->hasGlobalPermission('superadmin','create'))
-        {
-            $query_condition .= ' AND owner_id=:uid';
-            $params[':uid']=$owner_id;
-        }
-
-        $result = Survey::model()->updateAll(array('owner_id'=>$intNewOwner), $query_condition, $params);
-
-        $result = Survey::model()->with('owner')->findAllByAttributes(array('sid' => $intSurveyId, 'owner_id' => $intNewOwner));
-
-        $intRecordCount = count($result);
-
-        $aUsers = array(
-            'record_count' => $intRecordCount,
-        );
-
-        foreach ($result as $row)
-            $aUsers['newowner'] = $row->owner->users_name;
-
-        $ajaxoutput = ls_json_encode($aUsers) . "\n";
-
-        echo $ajaxoutput;
-    }
-
-    /**
     * Returns surveys in json format
     *
     * @access public
@@ -1155,13 +1094,19 @@ class SurveyAdmin extends Survey_Common_Action
 
             if ($action == 'importsurvey')
             {
+
                 $sFullFilepath = Yii::app()->getConfig('tempdir') . DIRECTORY_SEPARATOR . randomChars(30).'.'.$sExtension;
-                if (!in_array(strtolower($sExtension),array('lss','txt','tsv','lsa')))
+                if ($_FILES['the_file']['error']==1 || $_FILES['the_file']['error']==2)
+                {
+                    $aData['sErrorMessage']=sprintf(gT("Sorry, this file is too large. Only files up to %01.2f MB are allowed."), getMaximumFileUploadSize()/1024/1024).'<br>';
+                    $aData['bFailed'] = true;
+                }
+                elseif (!in_array(strtolower($sExtension),array('lss','txt','tsv','lsa')))
                 {
                     $aData['sErrorMessage'] = sprintf(gT("Import failed. You specified an invalid file type '%s'."), $sExtension);
                     $aData['bFailed'] = true;
                 }
-                elseif (!$aData['bFailed'] && !@move_uploaded_file($_FILES['the_file']['tmp_name'], $sFullFilepath))
+                elseif ($aData['bFailed'] || !@move_uploaded_file($_FILES['the_file']['tmp_name'], $sFullFilepath))
                 {
                     $aData['sErrorMessage'] = sprintf(gT("An error occurred uploading your file. This may be caused by incorrect permissions in your %s folder."), Yii::app()->getConfig('tempdir'));
                     $aData['bFailed'] = true;
@@ -1245,12 +1190,10 @@ class SurveyAdmin extends Survey_Common_Action
             {
                 $aData['bFailed'] = true;
             }
-            if ($action == 'importsurvey' && isset($sFullFilepath))
+            if ($action == 'importsurvey' && isset($sFullFilepath) && file_exists($sFullFilepath))
             {
                 unlink($sFullFilepath);
             }
-
-
             if (!$aData['bFailed'])
             {
                 $aData['action'] = $action;
@@ -1503,12 +1446,10 @@ class SurveyAdmin extends Survey_Common_Action
         $aData['users'] = array();
         foreach ($users as $user)
         {
-            $aData['users'][] = array(
-                'username' => $user['user'],
-                'uid' => $user['uid'],
-            );
+            $aData['users'][$user['uid']] = $user['user'];
         }
-
+        // Sort users by name
+        asort($aData['users']);
         $beforeSurveySettings = new PluginEvent('beforeSurveySettings');
         $beforeSurveySettings->set('survey', $iSurveyID);
         App()->getPluginManager()->dispatchEvent($beforeSurveySettings);
@@ -1547,22 +1488,23 @@ class SurveyAdmin extends Survey_Common_Action
     */
     private function _tabPublicationAccess($esrow)
     {
-        $aData['dateformatdetails'] = getDateFormatData(Yii::app()->session['dateformat']);
+        $aDateFormatDetails = getDateFormatData(Yii::app()->session['dateformat']);
         $startdate = '';
         if ($esrow['startdate'])
         {
             Yii::app()->loadLibrary('Date_Time_Converter');
-            $datetimeobj = new date_time_converter($esrow["startdate"],"Y-m-d H:i:s"); //new Date_Time_Converter($esrow['startdate'] , "Y-m-d H:i:s");
-            $startdate = $datetimeobj->convert("Y-m-d H:i"); //$datetimeobj->convert($dateformatdetails['phpdate'].' H:i');
+            $datetimeobj = new Date_Time_Converter($esrow["startdate"],"Y-m-d H:i:s"); //new Date_Time_Converter($esrow['startdate'] , "Y-m-d H:i:s");
+            $startdate = $datetimeobj->convert($aDateFormatDetails['phpdate'].' H:i');
         }
 
         $expires = '';
         if ($esrow['expires'])
         {
             Yii::app()->loadLibrary('Date_Time_Converter');
-            $datetimeobj = new date_time_converter($esrow['expires'], "Y-m-d H:i:s"); //new Date_Time_Converter($esrow['expires'] , "Y-m-d H:i:s");
-            $expires = $datetimeobj->convert("Y-m-d H:i");
+            $datetimeobj = new Date_Time_Converter($esrow['expires'], "Y-m-d H:i:s"); //new Date_Time_Converter($esrow['expires'] , "Y-m-d H:i:s");
+            $expires = $datetimeobj->convert($aDateFormatDetails['phpdate'].' H:i');
         }
+        $aData['dateformatdetails']= $aDateFormatDetails;
         $aData['esrow'] = $esrow;
         $aData['startdate'] = $startdate;
         $aData['expires'] = $expires;
