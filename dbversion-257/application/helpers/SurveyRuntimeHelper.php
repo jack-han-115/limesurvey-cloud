@@ -32,8 +32,8 @@ class SurveyRuntimeHelper {
         // Button will be shown inside the form. Not handled by replacement.
         $htmlButtons = array();
         $html = '';
-        $html .=  "\n\n<!-- PRESENT THE INDEX MENU -->\n";
-        $html .=  CHtml::openTag('li', array('id' => 'index-menu', 'class'=>'dropdown'));
+        $html .=  "\n\n<!-- PRESENT THE INDEX MENU (full) -->\n";
+        $html .=  CHtml::openTag('li', array('id' => 'index-menu', 'class'=>'dropdown index-menu-incremental-full'));
         $html .=  CHtml::link(gT("Question index").'&nbsp;<span class="caret"></span>', array('#'), array('class'=>'dropdown-toggle', 'data-toggle'=>"dropdown", 'role'=>"button", 'aria-haspopup'=>"true", 'aria-expanded'=>"false"));
         $html .=  CHtml::openTag('ul', array('class'=>'dropdown-menu'));
         foreach ($_SESSION[$LEMsessid]['grouplist'] as $key => $group)
@@ -42,11 +42,8 @@ class SurveyRuntimeHelper {
             if (LimeExpressionManager::GroupIsRelevant($group['gid']))
             {
                 $group['step'] = $key + 1;
-                $classes = implode(' ', array(
-                    'row',
-                    $_SESSION[$LEMsessid]['step'] == $group['step'] ? 'current' : ''
-
-                ));
+                $active = ($_SESSION[$LEMsessid]['step'] == $group['step']) ? 'current active' : '';
+                $classes = ' linkToButton ';
                 $sButtonSubmit=CHtml::htmlButton(gT('Go to this group'),array('id'=>'button-'.$group['gid'],'type'=>'submit','value'=>$group['step'],'name'=>'move','class'=>'jshide'));
 
                 // Button
@@ -56,8 +53,10 @@ class SurveyRuntimeHelper {
                     'class' => $classes,
                     ), $group['group_name'].$sButtonSubmit);
 
-                $html .=  CHtml::openTag('li');
-                $html .=  CHtml::link($group['group_name'], array('#'), array('class'=>'linkToButton', 'data-button-to-click'=>'#button-'.$group['gid'], ));
+
+
+                $html .=  CHtml::openTag('li', array('class'=>$active));
+                $html .=  CHtml::link($group['group_name'], array('#'), array('class'=>$classes, 'data-button-to-click'=>'#button-'.$group['gid'], ));
                 $html .= CHtml::closeTag('li');
 
             }
@@ -90,8 +89,8 @@ class SurveyRuntimeHelper {
     protected function createIncrementalQuestionIndexMenu($LEMsessid, $surveyMode)
     {
         $html = '';
-        $html .=  "\n\n<!-- PRESENT THE INDEX -->\n";
-        $html .=  CHtml::openTag('li', array('id' => 'index', 'class'=>'dropdown'));
+        $html .=  "\n\n<!-- PRESENT THE INDEX MENU (incremental) -->\n";
+        $html .=  CHtml::openTag('li', array('id' => 'index-menu', 'class'=>'dropdown index-menu-incremental'));
         $html .=  CHtml::link(gT("Question index").'&nbsp;<span class="caret"></span>', array('#'), array('class'=>'dropdown-toggle',  'data-toggle'=>"dropdown", 'role'=>"button", 'aria-haspopup'=>"true", 'aria-expanded'=>"false"));
         $html .=  CHtml::openTag('ul', array('class'=>'dropdown-menu'));
 
@@ -143,13 +142,16 @@ class SurveyRuntimeHelper {
             if ($surveyMode == 'group')
             {
                 $indexlabel = LimeExpressionManager::ProcessString($g['group_name']);
-                $sButtonText=gT('Go to this group');
+                //$sButtonText=gT('Go to this group');
+                $sButtonText = LimeExpressionManager::ProcessString($g['group_name']);
             }
             else
             {
                 $indexlabel = LimeExpressionManager::ProcessString($q[3]);
-                $sButtonText=gT('Go to this question');
+                //$sButtonText=gT('Go to this question');
+                $sButtonText= LimeExpressionManager::ProcessString($q[3]);
             }
+
 
             $sText = (($surveyMode == 'group') ? flattenText($indexlabel) : flattenText($indexlabel));
             $bGAnsw = !$stepInfo['anyUnanswered'];
@@ -163,7 +165,12 @@ class SurveyRuntimeHelper {
             // Button
             $htmlButtons[] = CHtml::htmlButton($sButtonText,array('type'=>'submit','value'=>$s,'name'=>'move','class'=>'jshide'));
 
-            $html .= '<li><a href="#">'.$sButtonText.'</a></li>';
+            //$html .= '<li><a href="#">'.$sButtonText.'</a></li>';
+
+            $html .=  CHtml::openTag('li');
+            $html .=  CHtml::link($sButtonText, array('#'), array('class'=>'linkToButton', 'data-button-to-click'=>'#button-'.$g['gid'], ));
+            $html .= CHtml::closeTag('li');
+
         }
 
         if ($_SESSION[$LEMsessid]['maxstep'] == $_SESSION[$LEMsessid]['totalsteps'])
@@ -195,7 +202,7 @@ class SurveyRuntimeHelper {
 
     protected function createFullQuestionIndexByGroup($LEMsessid)
     {
-        echo "\n\n<!-- PRESENT THE INDEX -->\n";
+        echo "\n\n<!-- PRESENT THE INDEX (full) -->\n";
         echo CHtml::openTag('div', array('id' => 'index'));
         echo CHtml::openTag('div', array('class' => 'container', 'id'=>'indexcontainer'));
         echo CHtml::tag('h2', array(), gT("Question index"));
@@ -246,7 +253,7 @@ class SurveyRuntimeHelper {
 
     protected function createIncrementalQuestionIndex($LEMsessid, $surveyMode)
     {
-        echo "\n\n<!-- PRESENT THE INDEX -->\n";
+        echo "\n\n<!-- PRESENT THE INDEX (incremental)-->\n";
 
         echo '<div id="index"><div class="container" id="indexcontainer"><h2>' . gT("Question index") . '</h2>';
 
@@ -315,7 +322,7 @@ class SurveyRuntimeHelper {
             echo "<div class=\"row $class\">";
             echo "<span class=\"hdr\">$v</span>";
             echo "<span title=\"$sText\">$sText</span>";
-            echo CHtml::htmlButton($sButtonText,array('type'=>'submit','value'=>$s,'name'=>'move','class'=>'jshide'));
+            echo CHtml::htmlButton($sButtonText,array('type'=>'submit','value'=>$s,'name'=>'move','class'=>'jshide', 'id'=> 'button-'.$g['gid']));
             echo "</div>";
         }
 

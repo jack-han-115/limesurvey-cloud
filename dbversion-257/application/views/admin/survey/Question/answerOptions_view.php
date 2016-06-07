@@ -181,6 +181,7 @@
                                                     'assessment_value'  => $row->assessment_value,
                                                     'sortorder'         => $row->sortorder,
                                                     'answer'            => $row->answer,
+                                                    'oldCode'   => true,
                                                 ));?>
 
                                             <?php endif; ?>
@@ -241,6 +242,7 @@
                             data-surveyid="<?php echo $surveyid;?>"
                             data-gid="<?php echo $gid;?>"
                             data-qid="<?php echo $qid;?>"
+                            data-scale-id="<?php echo $scale_id-1; // -1 : because it's incremented via <  ?>"
                         />
                     </p>
 
