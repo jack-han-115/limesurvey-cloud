@@ -42,7 +42,7 @@
     </th>
 
     <!-- Increase -->
-    <td data-title='<?php eT("Increase"); ?>' class="answer_cell_I answer-item radio-item radio text-center">
+    <td class="answer_cell_I answer-item radio-item radio text-center">
         <input
             class="radio"
             type="radio"
@@ -58,13 +58,13 @@
              The label text is provided inside a div,
              To respect the global HTML flow of other question types
         -->
-        <div class="hide label-text" id="label-answer<?php echo $myfname;?>-I">
+        <div class="visible-xs-block label-text" id="label-answer<?php echo $myfname;?>-I">
             <?php eT("Increase"); ?>
         </div>
     </td>
 
     <!-- Same -->
-    <td data-title='<?php eT("Same");?>' class="answer_cell_S answer-item radio-item  radio text-center">
+    <td class="answer_cell_S answer-item radio-item  radio text-center">
         <input
             class="radio"
             type="radio"
@@ -80,13 +80,13 @@
              The label text is provided inside a div,
              To respect the global HTML flow of other question types
         -->
-        <div class="hide label-text" id="label-answer<?php echo $myfname; ?>-S">
+        <div class="visible-xs-block label-text" id="label-answer<?php echo $myfname; ?>-S">
             <?php eT("Same");?>
         </div>
     </td>
 
     <!-- Decrease -->
-    <td data-title='<?php eT("Decrease"); ?>' class="answer_cell_D answer-item radio-item radio  text-center">
+    <td class="answer_cell_D answer-item radio-item radio  text-center">
         <input
             class="radio"
             type="radio"
@@ -102,14 +102,14 @@
              The label text is provided inside a div,
              To respect the global HTML flow of other question types
         -->
-        <div class="hide label-text" id="label-answer<?php echo $myfname;?>-D">
+        <div class="visible-xs-block label-text" id="label-answer<?php echo $myfname;?>-D">
             <?php eT("Decrease"); ?>
         </div>
     </td>
 
     <!-- No Answer -->
     <?php if($no_answer):?>
-        <td data-title='<?php eT("No answer");?>' class="answer-item radio-item noanswer-item radio text-center">
+        <td class="answer-item radio-item noanswer-item radio text-center">
             <input
                 class="radio"
                 type="radio"
@@ -125,7 +125,7 @@
                  The label text is provided inside a div,
                  To respect the global HTML flow of other question types
             -->
-            <div class="hide label-text" id="labelanswer<?php echo $myfname;?>-">
+            <div class="visible-xs-block label-text" id="labelanswer<?php echo $myfname;?>-">
                 <?php eT("No answer");?>
             </div>
         </td>

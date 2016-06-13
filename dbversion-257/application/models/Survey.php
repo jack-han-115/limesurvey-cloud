@@ -143,11 +143,11 @@ class Survey extends LSActiveRecord
         return array(
 
             'permissions'     => array(self::HAS_MANY, 'Permission', array( 'entity_id'=> 'sid'  ), 'together' => true ), //
-            'languagesettings' => array(self::HAS_MANY, 'SurveyLanguageSetting', 'surveyls_survey_id', 'index' => 'surveyls_language'),
+            'languagesettings' => array(self::HAS_MANY, 'SurveyLanguageSetting', 'surveyls_survey_id', 'index' => 'surveyls_language', 'together' => true),
             'defaultlanguage' => array(self::BELONGS_TO, 'SurveyLanguageSetting', array('language' => 'surveyls_language', 'sid' => 'surveyls_survey_id'), 'together' => true),
-            'correct_relation_defaultlanguage' => array(self::HAS_ONE, 'SurveyLanguageSetting', array('surveyls_language' => 'language', 'surveyls_survey_id' => 'sid')),
-            'owner' => array(self::BELONGS_TO, 'User', 'owner_id'),
-            'groups' => array(self::HAS_MANY, 'QuestionGroup', 'sid'),
+            'correct_relation_defaultlanguage' => array(self::HAS_ONE, 'SurveyLanguageSetting', array('surveyls_language' => 'language', 'surveyls_survey_id' => 'sid'), 'together' => true),
+            'owner' => array(self::BELONGS_TO, 'User', 'owner_id', 'together' => true),
+            'groups' => array(self::HAS_MANY, 'QuestionGroup', 'sid', 'together' => true),
         );
     }
 
@@ -186,8 +186,7 @@ class Survey extends LSActiveRecord
             array('expires', 'default','value'=>NULL),
             array('admin,faxto','LSYii_Validators'),
             array('adminemail','filter', 'filter'=>'trim'),
-            array('bounce_email','LSYii_EmailIDNAValidator', 'allowEmpty'=>true),
-            array('adminemail','filter', 'filter'=>'trim'),
+            array('bounce_email','filter', 'filter'=>'trim'),
             array('bounce_email','LSYii_EmailIDNAValidator', 'allowEmpty'=>true),
             array('active', 'in','range'=>array('Y','N'), 'allowEmpty'=>true),
             array('anonymized', 'in','range'=>array('Y','N'), 'allowEmpty'=>true),
@@ -464,9 +463,11 @@ class Survey extends LSActiveRecord
         foreach ($aData as $k => $v)
             $survey->$k = $v;
         $sResult= $survey->save();
+
         if (!$sResult)
         {
             tracevar($survey->getErrors());
+            tracevar($aData);
             return false;
         }
         else return $aData['sid'];
@@ -908,66 +909,60 @@ class Survey extends LSActiveRecord
     public function search()
     {
         $pageSize=Yii::app()->user->getState('pageSize',Yii::app()->params['defaultPageSize']);
+
         $sort = new CSort();
         $sort->attributes = array(
           'survey_id'=>array(
-            'asc'=>'sid',
-            'desc'=>'sid desc',
+            'asc'=>'t.sid asc',
+            'desc'=>'t.sid desc',
           ),
           'title'=>array(
-            'asc'=>'correct_relation_defaultlanguage.surveyls_title',
+            'asc'=>'correct_relation_defaultlanguage.surveyls_title asc',
             'desc'=>'correct_relation_defaultlanguage.surveyls_title desc',
           ),
 
           'creation_date'=>array(
-            'asc'=>'datecreated',
-            'desc'=>'datecreated desc',
+            'asc'=>'t.datecreated asc',
+            'desc'=>'t.datecreated desc',
           ),
 
           'owner'=>array(
-            'asc'=>'owner.users_name',
+            'asc'=>'owner.users_name asc',
             'desc'=>'owner.users_name desc',
           ),
 
           'anonymized_responses'=>array(
-            'asc'=>'anonymized',
-            'desc'=>'anonymized desc',
+            'asc'=>'t.anonymized asc',
+            'desc'=>'t.anonymized desc',
           ),
 
           'running'=>array(
-            'asc'=>'active asc, expires asc',
-            'desc'=>'active desc, expires desc',
+            'asc'=>'t.active asc, t.expires asc',
+            'desc'=>'t.active desc, t.expires desc',
           ),
 
         );
+        $sort->defaultOrder = array('creation_date' => CSort::SORT_DESC);
 
         $criteria = new CDbCriteria;
-        $criteria->together = true;
-        $criteria->with='correct_relation_defaultlanguage';
-
-        // Permission
-        // Rem : the addCondition reflect Permission::hasPermission
-        if(!Permission::model()->hasGlobalPermission("surveys",'read'))
-        {
-            $criteria->with=array('permissions', 'correct_relation_defaultlanguage' );
-            $criteria->addCondition( " ( owner_id=".Yii::app()->user->id."  ) OR (permissions.permission='survey' AND permissions.entity='survey' AND permissions.uid=".Yii::app()->user->id." )" );
-        }
-
+        $aWithRelations = array('correct_relation_defaultlanguage');
 
         // Search filter
-        $criteria2 = new CDbCriteria;
         $sid_reference = (Yii::app()->db->getDriverName() == 'pgsql' ?' t.sid::varchar' : 't.sid');
-        $criteria2->with=array('owner', 'correct_relation_defaultlanguage');
-        $criteria2->compare($sid_reference, $this->searched_value, true, 'OR');
-        $criteria2->compare('correct_relation_defaultlanguage.surveyls_title', $this->searched_value, true, 'OR');
-        $criteria2->compare('t.admin', $this->searched_value, true, 'OR');
+        $aWithRelations[] = 'owner';
+        $criteria->compare($sid_reference, $this->searched_value, true);
+        $criteria->compare('t.admin', $this->searched_value, true, 'OR');
+        $criteria->compare('owner.users_name', $this->searched_value, true, 'OR');
+        $criteria->compare('correct_relation_defaultlanguage.surveyls_title', $this->searched_value, true, 'OR');
+
+
 
         // Active filter
         if(isset($this->active))
         {
             if($this->active == 'N' || $this->active == "Y")
             {
-                $criteria->addCondition("t.active='$this->active'");
+                $criteria->compare("t.active", $this->active, false);
             }
             else
             {
@@ -985,7 +980,25 @@ class Survey extends LSActiveRecord
             }
         }
 
-        $criteria->mergeWith($criteria2, 'AND');
+
+        $criteria->with=$aWithRelations;
+
+        // Permission
+        // Note: reflect Permission::hasPermission
+        if(!Permission::model()->hasGlobalPermission("surveys",'read'))
+        {
+            $criteriaPerm = new CDbCriteria;
+            $criteriaPerm->with=array('permissions');
+            $criteriaPerm->compare('permissions.permission', 'survey', false);
+            $criteriaPerm->compare('permissions.entity', 'survey', false);
+            $criteriaPerm->compare('permissions.uid', Yii::app()->user->id, false);
+
+            $criteriaOwner = new CDbCriteria;
+            $criteriaOwner->compare('t.owner_id', Yii::app()->user->id, false);
+
+            $criteriaOwner->mergeWith($criteriaPerm, 'OR');
+            $criteria->mergeWith($criteriaPerm, 'AND');
+        }
 
         $dataProvider=new CActiveDataProvider('Survey', array(
             'sort'=>$sort,
@@ -995,7 +1008,7 @@ class Survey extends LSActiveRecord
             ),
         ));
 
-        $dataProvider->setTotalItemCount(count($this->findAll($criteria)));
+        $dataProvider->setTotalItemCount($this->count($criteria));
 
         return $dataProvider;
     }
