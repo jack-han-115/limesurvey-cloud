@@ -10,7 +10,7 @@
 ?>
 
 <!-- answer_td_input -->
-<td data-title='<?php echo $i;?>' class="answer-cell-1 answer_cell_<?php echo $i;?> answer-item radio-item radio text-center">
+<td class="answer-cell-1 answer_cell_<?php echo $i;?> answer-item radio-item radio text-center">
     <input
         class="radio"
         type="radio"
@@ -27,7 +27,7 @@
          so final user can add paragraph, div, or whatever he wants in the subquestion text
          This field is related to the input thanks to attribute aria-labelledby
     -->
-    <div class="hide label-text" id="label-answer<?php echo $myfname;?>-<?php echo $i; ?>">
+    <div class="visible-xs-block label-text" id="label-answer<?php echo $myfname;?>-<?php echo $i; ?>">
         <?php echo $i;?>
     </div>
 </td>
