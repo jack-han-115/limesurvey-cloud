@@ -149,12 +149,29 @@ class database extends Survey_Common_Action
             $sQuestionType = $arQuestion['type'];    // Checked)
             $aQuestionTypeList=getQuestionTypeList('','array');
             $iScaleCount=$aQuestionTypeList[$sQuestionType]['answerscales'];
+
+            // This is needed for ranking question. See issue #09828
+            $__max_db_answers = QuestionAttribute::model()->findByAttributes(array(
+                'qid' => $iQuestionID,
+                'attribute' => '__max_db_answers'
+            ));
+
             //First delete all answers
             Answer::model()->deleteAllByAttributes(array('qid'=>$iQuestionID));
             LimeExpressionManager::RevertUpgradeConditionsToRelevance($iSurveyID);
             for ($iScaleID=0;$iScaleID<$iScaleCount;$iScaleID++)
             {
                 $iMaxCount=(int) Yii::app()->request->getPost('answercount_'.$iScaleID);
+
+                // This is needed for ranking question. See issue #09828
+                if (!empty($__max_db_answers))
+                {
+                    if ($iMaxCount > $__max_db_answers->value + 1)
+                    {
+                        Yii::app()->setFlashMessage(gT("You cannot add more answer options while the survey is active."), 'error');
+                    }
+                    $iMaxCount = min($iMaxCount, $__max_db_answers->value + 1);
+                }
 
                 for ($iSortOrderID=1;$iSortOrderID<$iMaxCount;$iSortOrderID++)
                 {

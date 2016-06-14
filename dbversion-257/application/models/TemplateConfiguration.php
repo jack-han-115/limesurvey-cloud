@@ -189,8 +189,8 @@ class TemplateConfiguration extends CFormModel
 
         if (getLanguageRTL(App()->language))
         {
-            $aCssFiles = array_merge($aCssFiles, (array) $this->config->files->rtl->css->filename); // In RTL mode, more CSS files can be necessary
-            $aJsFiles  = array_merge($aJsFiles, (array) $this->config->files->rtl->js->filename);   // In RTL mode, more JS files can be necessary
+            $aCssFiles = (array) $this->config->files->rtl->css->filename; // In RTL mode, original CSS files should not be loaded, else padding-left could be added to padding-right.)
+            $aJsFiles  = (array) $this->config->files->rtl->js->filename;   // In RTL mode,
         }
 
         // The package "survey-template" will be available from anywhere in the app now.
@@ -198,8 +198,8 @@ class TemplateConfiguration extends CFormModel
         // It will create the asset directory, and publish the css and js files
         Yii::app()->clientScript->addPackage( 'survey-template', array(
             'basePath'    => 'survey.template.path',
-            'css'         => $this->config->files->css->filename,
-            'js'          => $this->config->files->js->filename,
+            'css'         => $aCssFiles,
+            'js'          => $aJsFiles,
             'depends'     => $this->depends,
         ) );
     }
