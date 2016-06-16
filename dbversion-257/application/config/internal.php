@@ -98,8 +98,8 @@ $internalConfig = array(
 
         'assetManager' => array(
             'baseUrl' => '/tmp/assets',
-            'basePath'=> $userdir.DIRECTORY_SEPARATOR.'tmp'.DIRECTORY_SEPARATOR.'assets'
-
+            'basePath'=> $userdir.DIRECTORY_SEPARATOR.'tmp'.DIRECTORY_SEPARATOR.'assets',
+            'linkAssets'=>true
         ),
 
         'request' => array(
