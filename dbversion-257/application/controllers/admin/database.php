@@ -176,7 +176,7 @@ class database extends Survey_Common_Action
                 for ($iSortOrderID=1;$iSortOrderID<$iMaxCount;$iSortOrderID++)
                 {
                     $sCode=sanitize_paranoid_string(Yii::app()->request->getPost('code_'.$iSortOrderID.'_'.$iScaleID));
-
+                    //var_dump($sCode);
                     $iAssessmentValue=(int) Yii::app()->request->getPost('assessment_'.$iSortOrderID.'_'.$iScaleID);
                     foreach ($aSurveyLanguages as $sLanguage)
                     {
@@ -184,17 +184,39 @@ class database extends Survey_Common_Action
 
                         // Fix bug with FCKEditor saving strange BR types
                         $sAnswerText=$oFixCKeditor->fixCKeditor($sAnswerText);
+
                         // Now we insert the answers
-                        $iInsertCount=Answer::model()->insertRecords(array('code'=>$sCode,
-                            'answer'=>$sAnswerText,
-                            'qid'=>$iQuestionID,
-                            'sortorder'=>$iSortOrderID,
-                            'language'=>$sLanguage,
-                            'assessment_value'=>$iAssessmentValue,
-                            'scale_id'=>$iScaleID));
-                        if (!$iInsertCount) // Checked
+                        $oAnswer = new Answer;
+                        $oAnswer->code              = $sCode;
+                        $oAnswer->answer            = $sAnswerText;
+                        $oAnswer->qid               = $iQuestionID;
+                        $oAnswer->sortorder         = $iSortOrderID;
+                        $oAnswer->language          = $sLanguage;
+                        $oAnswer->assessment_value  = $iAssessmentValue;
+                        $oAnswer->scale_id          = $iScaleID;
+
+                        if (!$oAnswer->save())
                         {
-                            Yii::app()->setFlashMessage(gT("Failed to update answers"),'error');
+                            $sErrors = '<br/>';
+                            foreach ( $oAnswer->getErrors() as $sError)
+                            {
+                                $sErrors .= $sError[0].'<br/>';
+                            }
+
+                            // Let's give a new to code to the answer to save it, so user entries are not lost
+                            $bAnswerSave = false;
+
+                            while( !$bAnswerSave )
+                            {
+                                $oAnswer->code       = rand ( 11111 , 99999 );  // If the random code already exist (very low probablilty), answer will not be save and a new code will be generated
+                                if($oAnswer->save())
+                                {
+                                    $sErrors .= '<strong>'.gT('answer code has been updated to: ').$oAnswer->code.'</strong><br/>';
+                                    $bAnswerSave = true;
+                                }
+                            }
+
+                            Yii::app()->setFlashMessage(gT("Failed to update answer: ").$sCode.$sErrors,'error');
                         }
                     }
                     // Updating code (oldcode!==null) => update condition with the new code
@@ -289,11 +311,36 @@ class database extends Survey_Common_Action
                 foreach ($aSurveyLanguages as $sLanguage)
                 {
                     $iPosition=0;
+
+                    // Give to subquestions to edit a temporary random title to avoid title duplication on update
+                    foreach ($aRows[$iScaleID][$sLanguage] as $subquestionkey=>$subquestionvalue)
+                    {
+                        if (substr($subquestionkey,0,3)!='new')
+                        {
+                            $oSubQuestion=Question::model()->find("qid=:qid AND language=:language",array(":qid"=>$subquestionkey,':language'=>$sLanguage));
+
+                            $bAnswerSave = false;
+
+                            while( !$bAnswerSave )
+                            {
+                                $oSubQuestion->title       = rand ( 11111 , 99999 );  // If the random code already exist (very low probablilty), answer will not be save and a new code will be generated
+                                if($oSubQuestion->save())
+                                {
+                                    $bAnswerSave = true;
+                                }
+                            }
+                        }
+                    }
+
+
                     foreach ($aRows[$iScaleID][$sLanguage] as $subquestionkey=>$subquestionvalue)
                     {
 
                         if (substr($subquestionkey,0,3)!='new')           //update record
                         {
+
+                            //
+
                             $oSubQuestion=Question::model()->find("qid=:qid AND language=:language",array(":qid"=>$subquestionkey,':language'=>$sLanguage));
                             if(!is_object($oSubQuestion))
                             {
@@ -359,15 +406,30 @@ class database extends Survey_Common_Action
                         }
                         else
                         {
+
                             $aErrors=$oSubQuestion->getErrors();
                             if(count($aErrors))
                             {
-                                //$sErrorMessage=gT("Question could not be updated with this errors:");
                                 foreach($aErrors as $sAttribute=>$aStringErrors)
                                 {
                                     foreach($aStringErrors as $sStringErrors)
                                         Yii::app()->setFlashMessage(sprintf(gT("Error on %s for subquestion %s: %s"), $sAttribute,$aCodes[$iScaleID][$iPosition],$sStringErrors),'error');
                                 }
+
+                                // Let's give a new to code to the answer to save it, so user entries are not lost
+                                $bAnswerSave = false;
+
+                                while( !$bAnswerSave )
+                                {
+                                    $oSubQuestion->title       = rand ( 11111 , 99999 );  // If the random code already exist (very low probablilty), answer will not be save and a new code will be generated
+                                    if($oSubQuestion->save())
+                                    {
+                                        $sErrors = '<strong>'.gT('answer code has been updated to: ').$oSubQuestion->title.'</strong><br/>';
+                                        Yii::app()->setFlashMessage($sErrors,'error');
+                                        $bAnswerSave = true;
+                                    }
+                                }
+
                             }
                             else
                             {
