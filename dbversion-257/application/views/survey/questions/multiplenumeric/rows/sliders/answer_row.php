@@ -29,15 +29,17 @@
 ?>
 
 <div  id='javatbd<?php echo $myfname; ?>' class="question-item answer-item numeric-item  text-item <?php echo $extraclass;?> col-sm-12" <?php echo $sDisplayStyle;?>>
-    <?php if($alert):?>
-        <div class="label label-danger errormandatory"  role="alert">
-            <?php echo $labelText;?>
-        </div> <!-- alert -->
-    <?php endif;?>
+
     <div class="form-group row">
-        <label class='control-label col-xs-12 numeric-label' for="answer<?php echo $myfname; ?>">
-            <?php echo $labelText;?>
-        </label>
+        <?php if($alert):?>
+            <div class="label label-danger errormandatory"  role="alert">
+                <?php echo $labelText;?>
+            </div> <!-- alert -->
+        <?php else:?>
+            <label class='control-label col-xs-12 numeric-label' for="answer<?php echo $myfname; ?>">
+                <?php echo $labelText;?>
+            </label>
+        <?php endif;?>
         <div>
 
         <div class='slider-container row'>
@@ -160,6 +162,7 @@
                         $('#javatbd' + myfname).find('div.tooltip').show(); // Show the tooltip
                         $sliderNoActionEl.val(0); // The user did an action
                         value = $inputEl.val(); // We get the current value of the bootstrapSlider
+                        console.log('value', value);
                         displayValue = value.toString().replace('.',$separator); // We format it with the right separator
                         $inputEl.val(displayValue); // We parse it to the element
                     });
