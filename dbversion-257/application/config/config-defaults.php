@@ -607,7 +607,7 @@ $config['locked'] = false;
 //The following url and dir locations do not need to be modified unless you have a non-standard
 //LimeSurvey installation. Do not change unless you know what you are doing.
 
-if(!isset($argv[0]))
+if(!isset($argv[0]) && Yii::app()!=null)
 {
     $config['publicurl'] = Yii::app()->baseUrl . '/';                          // The public website location (url) of the public survey script
 }

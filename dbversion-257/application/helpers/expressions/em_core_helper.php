@@ -1573,7 +1573,7 @@ class ExpressionManager {
 
                         if ($this->hyperlinkSyntaxHighlighting && isset($gid) && isset($qid) && $qid>0)
                         {
-                            $editlink = Yii::app()->getController()->createUrl('admin/survey/sa/view/surveyid/' . $this->sid . '/gid/' . $gid . '/qid/' . $qid);
+                            $editlink = Yii::app()->getController()->createUrl('admin/questions/sa/view/surveyid/' . $this->sid . '/gid/' . $gid . '/qid/' . $qid);
                             $stringParts[] = "<a title='{$message}' class='em-var {$class}' href='{$editlink}' >";
                         }
                         else
@@ -1636,8 +1636,8 @@ class ExpressionManager {
             $oAdminTheme->registerScriptFile( 'ADMIN_SCRIPT_PATH', 'expression.js');
             */
 
-            App()->getClientScript()->registerCssFile(Yii::app()->getConfig('publicstyleurl') . "expressions.css" );
-            App()->getClientScript()->registerScriptFile(Yii::app()->getConfig('adminscripts') . "expression.js");
+            App()->getClientScript()->registerCssFile( Yii::app()->getConfig('publicstyleurl') . "expressions.css" );
+            App()->getClientScript()->registerScriptFile( Yii::app()->getConfig('adminscripts') . "expression.js");
 
         }
         $sClass='em-expression';

@@ -28,7 +28,6 @@ else {
 $internalConfig = array(
     'basePath' => dirname(dirname(__FILE__)),
 
-    'runtimePath' => $userdir.DIRECTORY_SEPARATOR.'tmp'.DIRECTORY_SEPARATOR.'runtime',
     'name' => 'LimeSurvey',
     'localeClass' =>  'LSYii_Locale',
     'defaultController' => 'surveys',
@@ -95,7 +94,7 @@ $internalConfig = array(
             'rules' => require('routes.php'),
             'showScriptName' => true,
         ),
-
+        // These are defaults and are later overwritten in LSYii_Application by a path based on config tempdir/tempurl
         'assetManager' => array(
             'baseUrl' => '/tmp/assets',
             'basePath'=> $userdir.DIRECTORY_SEPARATOR.'tmp'.DIRECTORY_SEPARATOR.'assets',
