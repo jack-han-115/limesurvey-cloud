@@ -2137,6 +2137,7 @@
                             'eqn' => '(if(is_empty('.$max_answers.'),1,count(' . implode(', ', $sq_names) . ') <= (' . $max_answers . ')))',
                             'qid' => $questionNum,
                             );
+
                         }
                     }
                 }
@@ -2144,7 +2145,24 @@
                 {
                     $max_answers='';
                 }
-
+                /* Specific for ranking : fix only the alert : test if needed (max_subquestions < count(answers) )*/
+                if($type=='R' && (isset($qattr['max_subquestions']) && intval($qattr['max_subquestions'])>0))
+                {
+                    $max_subquestions=intval($qattr['max_subquestions']);
+                    // We don't have another answer count in EM ?
+                    $answerCount=Answer::model()->count("qid=:qid and language=:language",array(":qid"=>$questionNum,'language'=>$_SESSION['LEMlang']));
+                    if($max_subquestions < $answerCount)
+                    {
+                        if($max_answers!='')
+                        {
+                            $max_answers='min('.$max_answers.','.$max_subquestions.')';
+                        }
+                        else
+                        {
+                            $max_answers=intval($qattr['max_subquestions']);
+                        }
+                    }
+                }
                 // Fix min_num_value_n and max_num_value_n for multinumeric with slider: see bug #7798
                 if($type=="K" && isset($qattr['slider_min']) && ( !isset($qattr['min_num_value_n']) || trim($qattr['min_num_value_n'])==''))
                     $qattr['min_num_value_n']=$qattr['slider_min'];
@@ -9216,7 +9234,7 @@ EOD;
                     $LEM->ProcessString($sGroupText, $qid,NULL,false,1,1,false,false);
                     $bGroupHaveError=$bGroupHaveError || $LEM->em->HasErrors();
                     $sGroupText= viewHelper::purified(viewHelper::filterScript($LEM->GetLastPrettyPrintExpression()));
-                    $editlink = Yii::app()->getController()->createUrl('admin/survey/sa/view/surveyid/' . $LEM->sid . '/gid/' . $gid);
+                    $editlink = Yii::app()->getController()->createUrl('admin/questiongroups/sa/view/surveyid/' . $LEM->sid . '/gid/' . $gid);
                     if($bGroupHaveError)
                     {
                         $errClass='text-danger';
@@ -9606,12 +9624,12 @@ EOD;
 
                 if ($varNameErrorMsg == '')
                 {
-                    $editlink = Yii::app()->getController()->createUrl('admin/survey/sa/view/surveyid/' . $sid . '/gid/' . $gid . '/qid/' . $qid);
+                    $editlink = Yii::app()->getController()->createUrl('admin/questions/sa/view/surveyid/' . $sid . '/gid/' . $gid . '/qid/' . $qid);
                     $questionRow .= $rootVarName;
                 }
                 else
                 {
-                    $editlink = Yii::app()->getController()->createUrl('admin/survey/sa/view/surveyid/' . $LEM->sid . '/gid/' . $varNameError['gid'] . '/qid/' . $varNameError['qid']);
+                    $editlink = Yii::app()->getController()->createUrl('admin/questions/sa/view/surveyid/' . $LEM->sid . '/gid/' . $varNameError['gid'] . '/qid/' . $varNameError['qid']);
                     $questionRow .= "<span class='highlighterror' title='" . $varNameError['message'] . "' "
                     . "onclick='window.open(\"$editlink\",\"_blank\")'>"
                     . $rootVarName . "</span>";

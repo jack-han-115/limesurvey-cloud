@@ -37,10 +37,24 @@ class LSYii_Application extends CWebApplication
     * @param array $config
     * @return void
     */
-    public function __construct($config = null)
+    public function __construct($aApplicationConfig = null)
     {
-        parent::__construct($config);
         // Load the default and environmental settings from different files into self.
+        $settings = require(__DIR__ . '/../config/config-defaults.php');
+
+        if(file_exists(__DIR__ . '/../config/config.php'))
+        {
+            $ls_config = require(__DIR__ . '/../config/config.php');
+            if(is_array($ls_config['config']))
+            {
+                $settings = array_merge($settings, $ls_config['config']);
+            }
+        }
+        // Runtime path has to be set before  parent constructor is executed
+        $aApplicationConfig['runtimePath']=$settings['tempdir'] . '/runtime';
+
+        parent::__construct($aApplicationConfig);
+
         $ls_config = require(__DIR__ . '/../config/config-defaults.php');
         $email_config = require(__DIR__ . '/../config/email.php');
         $version_config = require(__DIR__ . '/../config/version.php');
@@ -57,12 +71,19 @@ class LSYii_Application extends CWebApplication
             }
         }
 
+
+
         foreach ($settings as $key => $value)
+        {
             $this->setConfig($key, $value);
+        }
+        // Asset manager path can only be set after App was constructed because it relies on App()
+        App()->getAssetManager()->setBaseUrl($settings['tempurl']. '/assets');
+        App()->getAssetManager()->setBasePath($settings['tempdir'] . '/assets');
 
-        App()->getAssetManager()->setBaseUrl(Yii::app()->getBaseUrl(false) . '/tmp/assets');
+
+
     }
-
 
     public function init() {
         parent::init();
