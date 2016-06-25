@@ -1174,8 +1174,10 @@ function getSurveyInfo($surveyid, $languagecode='')
             if (!isset($thissurvey['adminname'])) {$thissurvey['adminname']=Yii::app()->getConfig('siteadminemail');}
             if (!isset($thissurvey['adminemail'])) {$thissurvey['adminemail']=Yii::app()->getConfig('siteadminname');}
             if (!isset($thissurvey['urldescrip']) || $thissurvey['urldescrip'] == '' ) {$thissurvey['urldescrip']=$thissurvey['surveyls_url'];}
+
             $staticSurveyInfo[$surveyid][$languagecode]=$thissurvey;
         }
+
     }
     return $thissurvey;
 }
@@ -4251,8 +4253,8 @@ function SendEmailMessage($body, $subject, $to, $from, $sitename, $ishtml=false,
             $mail->AddCustomHeader($val);
         }
     }
-    $mail->AddCustomHeader("X-Surveymailer: $sitename Emailer ( LimeService http://www.limeservice.com )");
-    if (get_magic_quotes_gpc() != "0")	{$body = stripcslashes($body);}
+    $mail->AddCustomHeader("X-Surveymailer: $sitename Emailer (limesurvey.org)");
+    if (get_magic_quotes_gpc() != "0")    {$body = stripcslashes($body);}
     if ($ishtml)
     {
         $mail->IsHTML(true);
@@ -5368,10 +5370,26 @@ function convertDateTimeFormat($value, $fromdateformat, $todateformat)
 */
 function convertToGlobalSettingFormat($sDate)
 {
-    $oDate           = new DateTime($sDate);                                    // We generate the Date object (PHP will deal with the format of the string)
-    $sDateformatdata = getDateFormatData(Yii::app()->session['dateformat']);    // We get the Global Setting date format
-    $sDate           = $oDate->format($sDateformatdata['phpdate']);             // We apply it to the Date object to generate a string date
-    return $sDate;                                                              // We return the string date
+
+    try
+    {
+        // Workaround for bug in older PHP version (confirmed for 5.5.9)
+        // The bug is causing invalid dates to create an internal server error which cannot not be caught by try.. catch
+        if (@strtotime($sDate) === false) {
+            throw new Exception("Failed to parse date string ({$sDate})");
+        }
+        $oDate           = new DateTime($sDate);                                    // We generate the Date object (PHP will deal with the format of the string)
+        $sDateformatdata = getDateFormatData(Yii::app()->session['dateformat']);    // We get the Global Setting date format
+        $sDate           = $oDate->format($sDateformatdata['phpdate']);             // We apply it to the Date object to generate a string date
+        return $sDate;                                                              // We return the string date
+    }
+    catch(Exception $e) {
+        $oDate           = new DateTime('1/1/1980');                                    // We generate the Date object (PHP will deal with the format of the string)
+        $sDateformatdata = getDateFormatData(Yii::app()->session['dateformat']);    // We get the Global Setting date format
+        $sDate           = $oDate->format($sDateformatdata['phpdate']);             // We apply it to the Date object to generate a string date
+        return $sDate;                                                              // We return the string date
+
+    }
 }
 
 /**
