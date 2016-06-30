@@ -69,6 +69,7 @@ if ($thissurvey['active'] == "Y")
                 <?php } ?>
                 <tr>
                 <td colspan='3' align='center'>
+                <input type='submit' class="btn btn-default" value='<?php eT("Submit"); ?>'/>
                 <input type='submit' id='submitdata' class="btn btn-default hidden" value='<?php eT("Submit"); ?>'
 
                 <?php if (tableExists('tokens_'.$thissurvey['sid']))
