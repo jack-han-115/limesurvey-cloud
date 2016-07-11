@@ -192,8 +192,8 @@ class remotecontrol_handle
     *
     * @access public
     * @param string $sSessionKey Auth Credentials
-    * @param string $sImportData String containing the BASE 64 encoded data of a lss,csv,xls or survey zip archive
-    * @param string $sImportDataType  lss,csv,txt or zip
+    * @param string $sImportData String containing the BASE 64 encoded data of a lss,csv,txt or survey lsa archive
+    * @param string $sImportDataType  lss,csv,txt or lsa
     * @param string $sNewSurveyName The optional new name of the survey
     * @param integer $DestSurveyID This is the new ID of the survey - if already used a random one will be taken instead
     * @return array|integer iSurveyID  - ID of the new survey
@@ -1626,11 +1626,11 @@ class remotecontrol_handle
     * @access public
     * @param string $sSessionKey Auth credentials
     * @param int $iSurveyID Id of the Survey to get token properties
-    * @param int $iTokenID Id of the participant to check
+    * @param array|struct|int Array $aTokenQueryProperties of participant properties used to query the participant, or the token id as an integer 
     * @param array $aTokenProperties The properties to get
     * @return array The requested values
     */
-    public function get_participant_properties($sSessionKey, $iSurveyID, $iTokenID, $aTokenProperties)
+    public function get_participant_properties($sSessionKey, $iSurveyID, $aTokenQueryProperties, $aTokenProperties)
     {
         if ($this->_checkSessionKey($sSessionKey))
         {
@@ -1643,7 +1643,20 @@ class remotecontrol_handle
                 if(!tableExists("{{tokens_$iSurveyID}}"))
                     return array('status' => 'Error: No token table');
 
-                $token = Token::model($iSurveyID)->findByPk($iTokenID);
+                if(is_array($aTokenQueryProperties)){
+            $tokenCount = Token::model($iSurveyID)->countByAttributes($aTokenQueryProperties);
+		    
+		    if($tokenCount == 0){
+			return array('status' => 'Error: No results were found based on your attributes.');
+		    }else if($tokenCount > 1){
+			return array('status' => 'Error: More than 1 result was found based on your attributes.');
+		    }
+		    $token = Token::model($iSurveyID)->findByAttributes($aTokenQueryProperties);
+		}else{
+                    // If aTokenQueryProperties is not an array, it's an integer
+                    $iTokenID = $aTokenQueryProperties;
+		    $token = Token::model($iSurveyID)->findByPk($iTokenID);
+		}
                 if (!isset($token))
                     return array('status' => 'Error: Invalid tokenid');
 
@@ -1673,11 +1686,11 @@ class remotecontrol_handle
     * @access public
     * @param string $sSessionKey Auth credentials
     * @param int $iSurveyID Id of the survey that participants belong
-    * @param int $iTokenID Id of the participant to alter
+    * @param array|struct|int Array $aTokenQueryProperties of participant properties used to query the participant, or the token id as an integer
     * @param array|struct $aTokenData Data to change
     * @return array Result of the change action
     */
-    public function set_participant_properties($sSessionKey, $iSurveyID, $iTokenID, $aTokenData)
+    public function set_participant_properties($sSessionKey, $iSurveyID, $aTokenQueryProperties, $aTokenData)
     {
         if ($this->_checkSessionKey($sSessionKey))
         {
@@ -1690,7 +1703,19 @@ class remotecontrol_handle
                 if(!tableExists("{{tokens_$iSurveyID}}"))
                     return array('status' => 'Error: No token table');
 
-                $oToken = Token::model($iSurveyID)->findByPk($iTokenID);
+                if(is_array($aTokenQueryProperties)){
+		    $tokenCount = Token::model($iSurveyID)->countByAttributes($aTokenQueryProperties);
+		    if($tokenCount == 0){
+			return array('status' => 'Error: No results were found based on your attributes.');
+		    }else if($tokenCount > 1){
+			return array('status' => 'Error: More than 1 result was found based on your attributes.');
+		    }
+            $oToken = Token::model($iSurveyID)->findByAttributes($aTokenQueryProperties);
+		}else{
+                    // If aTokenQueryProperties is not an array, it's an integer
+                    $iTokenID = $aTokenQueryProperties;
+	  	    $oToken = Token::model($iSurveyID)->findByPk($iTokenID);
+		}
                 if (!isset($oToken))
                     return array('status' => 'Error: Invalid tokenid');
 
