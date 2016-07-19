@@ -40,6 +40,34 @@ $.fn.YesNoDate = function(options)
     });
 }
 
+$.fn.YesNo = function(options)
+{
+    var that              = $(this);                                            // calling element
+    var $elHiddenInput   = that.find('.YesNoDateHidden').first();           // input form, containing the value to submit to the database
+
+
+    $(document).ready(function(){
+        var $elSwitch        = that.find('.YesNoSwitch').first();               // switch element (generated with YiiWheels widgets)
+        $elSwitch.bootstrapSwitch();                                            // Generate the switch
+
+        // When user change date
+        $(document).on( 'switchChange.bootstrapSwitch', '#'+$elSwitch.attr('id'), function(event, state)
+        {
+            if (state==true)
+            {
+                $elHiddenInput.attr('value', 'Y');
+            }
+            else
+            {
+                $elHiddenInput.attr('value', 'N');
+            }
+
+
+        })
+
+    });
+}
+
 /**
  * Provide to this function a element containing form-groups,
  * it will stick the text labels on its border
@@ -79,6 +107,38 @@ $.fn.textWidth = function(text, font) {
     return $.fn.textWidth.fakeEl.width();
 };
 
+
+function submitEditToken(){
+    $form       = $('#edittoken');
+    $datas      = $form.serialize();
+    $actionUrl  = $form.attr('action');
+    $gridid     = $('.listActions').data('grid-id');
+    $modal      = $('#editTokenModal');
+
+    $ajaxLoader = $('#ajaxContainerLoading2');
+    $('#modal-content').empty();
+    $ajaxLoader.show();                                         // Show the ajax loader
+
+    // Ajax request
+    $.ajax({
+        url  : $actionUrl,
+        type : 'POST',
+        data : $datas,
+
+        // html contains the buttons
+        success : function(html, statut){
+            $ajaxLoader.hide();
+            $.fn.yiiGridView.update('token-grid');                   // Update the surveys list
+            $modal.modal('hide');
+        },
+        error :  function(html, statut){
+            $ajaxLoader.hide();
+            $('#modal-content').empty().append(html);
+            console.log(html);
+        }
+    });
+}
+
 /**
  * Scroll the pager and the footer when scrolling horizontally
  */
@@ -87,16 +147,20 @@ $(document).ready(function(){
     if($('#sent-yes-no-date-container').length > 0)
     {
         $('#general').stickLabelOnLeft();
-        $('#sent-yes-no-date-container').YesNoDate();
-        $('#remind-yes-no-date-container').YesNoDate();
-        $('#completed-yes-no-date-container').YesNoDate();
+
+        $('.yes-no-date-container').each(function(el){
+            $(this).YesNoDate();
+        });
+
+        $('.yes-no-container').each(function(el){
+            $(this).YesNo();
+        });
 
         $('#validfrom').datetimepicker({locale: $('#validfrom').data('locale')});
         $('#validuntil').datetimepicker({locale: $('#validuntil').data('locale')});
 
         $('.date .input-group-addon').on('click', function(){
             $prev = $(this).siblings();
-            console.log($prev.attr('class'));
             $prev.data("DateTimePicker").show();
         });
     }
@@ -134,9 +198,20 @@ $(document).ready(function(){
                 $('#modal-content').empty().append(html);                       // Inject the returned HTML in the modal body
 
                 // Apply the yes/no/date jquery plugin to the elements loaded via ajax
-                $('#sent-yes-no-date-container').YesNoDate();
-                $('#remind-yes-no-date-container').YesNoDate();
-                $('#completed-yes-no-date-container').YesNoDate();
+                /*
+                    $('#sent-yes-no-date-container').YesNoDate();
+                    $('#remind-yes-no-date-container').YesNoDate();
+                    $('#completed-yes-no-date-container').YesNoDate();
+                */
+
+                $('.yes-no-date-container').each(function(el){
+                    $(this).YesNoDate();
+                });
+
+
+                $('.yes-no-container').each(function(el){
+                    $(this).YesNo();
+                });
 
                 $('#validfrom').datetimepicker({locale: $('#validfrom').data('locale')});
                 $('#validuntil').datetimepicker({locale: $('#validuntil').data('locale')});
@@ -176,39 +251,17 @@ $(document).ready(function(){
         });
     });
 
+
+    $(document).on('submit','#edittoken',function(){
+        event.preventDefault();
+        submitEditToken();
+    });
+
     /**
      * Save token
      */
     $("#save-edittoken").click(function(){
-        $form       = $('#edittoken');
-        $datas      = $form.serialize();
-        $actionUrl  = $form.attr('action');
-        $gridid     = $('.listActions').data('grid-id');
-        $modal      = $('#editTokenModal');
-
-        $ajaxLoader = $('#ajaxContainerLoading2');
-        $('#modal-content').empty();
-        $ajaxLoader.show();                                         // Show the ajax loader
-
-        // Ajax request
-        $.ajax({
-            url  : $actionUrl,
-            type : 'POST',
-            data : $datas,
-
-            // html contains the buttons
-            success : function(html, statut){
-                $ajaxLoader.hide();
-                $.fn.yiiGridView.update('token-grid');                   // Update the surveys list
-                $modal.modal('hide');
-            },
-            error :  function(html, statut){
-                $ajaxLoader.hide();
-                $('#modal-content').empty().append(html);
-                console.log(html);
-            }
-        });
-
+        submitEditToken();
     });
 
 
@@ -234,6 +287,7 @@ $(document).ready(function(){
             error :  function(html, statut){
                 $ajaxLoader.hide();
                 $modalBodyText.append(html);
+                console.log(html);
             },
 
         });
