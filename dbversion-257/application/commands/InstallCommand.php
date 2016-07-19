@@ -166,7 +166,8 @@
                 $iLineLength = strlen($sLine);
 
                 if ($iLineLength && $sLine[0] != '#' && substr($sLine,0,2) != '--') {
-                    if (substr($sLine, $iLineLength-1, 1) == ';') {
+                    if (substr($sLine, $iLineLength-1, 1) == ';')
+                    {
                         $sCommand .= $sLine;
                         $sCommand = str_replace('prefix_', $sDatabasePrefix, $sCommand); // Table prefixes
 

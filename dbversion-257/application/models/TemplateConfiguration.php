@@ -53,7 +53,7 @@ class TemplateConfiguration extends CFormModel
      * TODO : more tests should be done, with a call to private function _is_valid_template(), testing not only if it has a config.xml, but also id this file is correct, if it has the needed pstpl files, if the files refered in css exist, etc.
      *
      * @param string $sTemplateName     the name of the template to load. The string come from the template selector in survey settings
-     * @param integer $iSurveyId        the id of the survey. If
+     * @param string $iSurveyId        the id of the survey. If
      */
     public function setTemplateConfiguration($sTemplateName='', $iSurveyId='')
     {
@@ -65,7 +65,7 @@ class TemplateConfiguration extends CFormModel
         }
 
         $this->sTemplateName = $sTemplateName;
-        $this->iSurveyId     = $iSurveyId;
+        $this->iSurveyId     = (int) $iSurveyId;
 
         if ($sTemplateName=='')
         {
@@ -102,7 +102,7 @@ class TemplateConfiguration extends CFormModel
 
         // If the template don't have a config file (maybe it has been deleted, or whatever),
         // then, we load the default template
-        $this->hasConfigFile = is_file($this->path.DIRECTORY_SEPARATOR.'config.xml');
+        $this->hasConfigFile = (string) is_file($this->path.DIRECTORY_SEPARATOR.'config.xml');
         $this->isOldTemplate = ( !$this->hasConfigFile && is_file($this->path.DIRECTORY_SEPARATOR.'startpage.pstpl')); // TODO: more complex checks
 
         if (!$this->hasConfigFile)

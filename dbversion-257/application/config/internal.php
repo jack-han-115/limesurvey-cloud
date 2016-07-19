@@ -11,12 +11,19 @@ if (!file_exists(dirname(__FILE__) .  '/config.php')) {
 } else {
     $userConfig = require(dirname(__FILE__) . '/config.php');
 }
-@date_default_timezone_set(@date_default_timezone_get());
+
+if (! date_default_timezone_set(@date_default_timezone_get()))
+{
+
+    date_default_timezone_set('Europe/London');
+}
+// LimeService Mod Start
 if (!isset($_SERVER['SERVER_NAME']))
 {
     $_SERVER['SERVER_NAME']=$argv[1];
 }
 $userdir=str_replace('instances','installations',dirname(dirname(dirname(dirname(__FILE__))))).'/'.$_SERVER['SERVER_NAME'].'/userdata';
+// LimeService Mod End
 if (function_exists('mb_internal_encoding')) {
     // Needed to substring arabic etc
     mb_internal_encoding('UTF-8');
@@ -56,9 +63,11 @@ $internalConfig = array(
         ),
 
     'params'=>array(
-        'defaultPageSize'=>10    ,
-        'pageSizeOptions'=>array(5=>5,10=>10,20=>20,50=>50,100=>100),
-        'pageSizeOptionsTokens'=>array(5=>5,10=>10,25=>25,50=>50,100=>100, 250=>250, 500=>500, 1000=>1000, 2500=>2500, 5000=>5000, 10000=>10000),
+        'defaultPageSize'=>10	,                                                                                                                     // Default page size for most of the grids
+        'pageSizeOptions'=>array(5=>5,10=>10,20=>20,50=>50,100=>100),                                                                                 // Default page size options for most of the grids
+        'pageSizeOptionsTokens'=>array(5=>5,10=>10,25=>25,50=>50,100=>100, 250=>250, 500=>500, 1000=>1000, 2500=>2500, 5000=>5000, 10000=>10000),     // Tokens needs different options
+        'defaultEllipsizeHeaderValue'=>30,                                                                                                            // Default max characters before ellipsizing the headers of responses grid
+        'defaultEllipsizeQuestionValue'=>50,                                                                                                           // Default max characters before ellipsizing the questions inside responses grid
     ),
 
     'import' => array(
