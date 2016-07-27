@@ -27,6 +27,11 @@ $userdir=str_replace('instances','installations',dirname(dirname(dirname(dirname
 if (function_exists('mb_internal_encoding')) {
     // Needed to substring arabic etc
     mb_internal_encoding('UTF-8');
+    if (ini_get('mbstring.internal_encoding'))
+    {
+        ini_set('mbstring.internal_encoding','UTF-8');
+    }
+
 }
 else {
     // Do nothing, will be checked in installation
