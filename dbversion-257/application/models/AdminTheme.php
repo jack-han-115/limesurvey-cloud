@@ -26,7 +26,7 @@ class AdminTheme extends CFormModel
     public $path;                   // Admin Theme's path
     public $sTemplateUrl;           // URL to reach Admin Theme (used to get CSS/JS/Files when asset manager is off)
     public $config;                 // Contains the Admin Theme's configuration file
-    public $use_asset_manager;      // If true, force the use of asset manager even if debug mode is on (useful to debug asset manager's problems)
+    public static $use_asset_manager;      // If true, force the use of asset manager even if debug mode is on (useful to debug asset manager's problems)
     private static $instance;       // The instance of theme object
 
     /**
@@ -94,14 +94,25 @@ class AdminTheme extends CFormModel
         // TODO: replace everywhere the call to Yii::app()->getConfig('adminstyleurl) by $oAdminTheme->sTemplateUrl;
         Yii::app()->setConfig('adminstyleurl', $this->sTemplateUrl );
 
-        // We load the admin theme's configuration file.
-        $this->config = simplexml_load_file($this->path.'/config.xml');
+
+        //////////////////////
+        // Config file loading
+
+        $bOldEntityLoaderState = libxml_disable_entity_loader(true); // @see: http://phpsecurity.readthedocs.io/en/latest/Injection-Attacks.html#xml-external-entity-injection
+        $sXMLConfigFile        = file_get_contents( realpath ($this->path.'/config.xml'));  // Now that entity loader is disabled, we can't use simplexml_load_file; so we must read the file with file_get_contents and convert it as a string
+
+        // Simple Xml is buggy on PHP < 5.4. The [ array -> json_encode -> json_decode ] workaround seems to be the most used one.
+        // @see: http://php.net/manual/de/book.simplexml.php#105330 (top comment on PHP doc for simplexml)
+        $this->config  = json_decode( json_encode ( ( array ) simplexml_load_string($sXMLConfigFile), 1));
 
         // If developers want to test asset manager with debug mode on
-        $this->use_asset_manager = ( $this->config->engine->use_asset_manager_in_debug_mode == 'true');
+        self::$use_asset_manager = isset($this->config->engine->use_asset_manager_in_debug_mode)?( $this->config->engine->use_asset_manager_in_debug_mode == 'true'):'false';
 
         $this->defineConstants();           // Define the (still) necessary constants
         $this->registerStylesAndScripts();  // Register all CSS and JS
+
+        libxml_disable_entity_loader($bOldEntityLoaderState);                   // Put back entity loader to its original state, to avoid contagion to other applications on the server
+
         return $this;
     }
 
@@ -173,7 +184,7 @@ class AdminTheme extends CFormModel
         // When defining the package with a base path (a directory on the file system), the asset manager is used
         // When defining the package with a base url, the file is directly registerd without the asset manager
         // See : http://www.yiiframework.com/doc/api/1.1/CClientScript#packages-detail
-        if( !YII_DEBUG || $this->use_asset_manager)
+        if( !YII_DEBUG || self::$use_asset_manager || Yii::app()->getConfig('use_asset_manager'))
         {
             Yii::setPathOfAlias('admin.theme.path', $this->path);
             $package['basePath'] = 'admin.theme.path';                          // add the base path to the package, so it will use the asset manager
@@ -203,7 +214,7 @@ class AdminTheme extends CFormModel
     public function registerCssFile( $sPath='template', $sFile='' )
     {
         // We check if we should use the asset manager or not
-        if (!YII_DEBUG || $this->use_asset_manager)
+        if (!YII_DEBUG || self::$use_asset_manager ||  Yii::app()->getConfig('use_asset_manager'))
         {
             $path = ($sPath == 'PUBLIC')?dirname(Yii::app()->request->scriptFile).'/styles-public/':$this->path . '/css/';         // We get the wanted path
             App()->getClientScript()->registerCssFile(  App()->getAssetManager()->publish($path.$sFile) );                         // We publish the asset
@@ -215,14 +226,20 @@ class AdminTheme extends CFormModel
         }
     }
 
+    public function registerScriptFile( $cPATH, $sFile )
+    {
+        self::staticRegisterScriptFile( $cPATH, $sFile );
+    }
+
     /**
      * Register a Css File from the correct directory (publict style, style, upload, etc) using the correct method (with / whithout asset manager)
      * This function is called from the different controllers when they want to register a specific css file
+     * Static method is necessary to avoid to init the admin theme to register admin_core script... (see: AdminController::_init())
      *
      * @var string $sPath  'SCRIPT_PATH' for root/scripts/ ; 'ADMIN_SCRIPT_PATH' for root/scripts/admin/; else templates/scripts (uppercase is an heritage from 2.06, which was using constants )
      * @var string $sFile   the name of the js file
      */
-    public function registerScriptFile( $cPATH, $sFile )
+    static public function staticRegisterScriptFile( $cPATH, $sFile )
     {
         $bIsInAdminTheme = !($cPATH == 'ADMIN_SCRIPT_PATH' || $cPATH == 'SCRIPT_PATH');                                             // we check if the path required is in Admin Theme itself.
 
@@ -240,7 +257,7 @@ class AdminTheme extends CFormModel
         }
 
         // We check if we should use the asset manager or not
-        if (!YII_DEBUG || $this->use_asset_manager)
+        if (!YII_DEBUG || self::$use_asset_manager ||  Yii::app()->getConfig('use_asset_manager'))
         {
             App()->getClientScript()->registerScriptFile( App()->getAssetManager()->publish( $path . $sFile ));                      // We publish the asset
         }
@@ -353,6 +370,8 @@ class AdminTheme extends CFormModel
             'application/extensions/SettingsWidget/assets',
             'application/extensions/FlashMessage/assets',
             'application/extensions/admin/survey/question/PositionWidget/assets',
+            'application/extensions/admin/grid/MassiveActionsWidget/assets',
+            'application/extensions/admin/survey/question/PositionWidget/assets',
             //'application/extensions/bootstrap/', we'll touch all the subdirectories of extensions
 
             // Third party assets
@@ -369,6 +388,7 @@ class AdminTheme extends CFormModel
      */
     static private function getThemeList($sDir)
     {
+        $bOldEntityLoaderState = libxml_disable_entity_loader(true); // @see: http://phpsecurity.readthedocs.io/en/latest/Injection-Attacks.html#xml-external-entity-injection
         $aListOfFiles = array();
         if ($sDir && $pHandle = opendir($sDir))
         {
@@ -376,12 +396,18 @@ class AdminTheme extends CFormModel
             {
                 if (is_dir($sDir.DIRECTORY_SEPARATOR.$file) && is_file($sDir.DIRECTORY_SEPARATOR.$file.DIRECTORY_SEPARATOR.'config.xml'))
                 {
-                    $oTemplateConfig = simplexml_load_file($sDir.DIRECTORY_SEPARATOR.$file.'/config.xml');
+                    $sXMLConfigFile        = file_get_contents( realpath ($sDir.DIRECTORY_SEPARATOR.$file.'/config.xml'));  // Now that entity loader is disabled, we can't use simplexml_load_file; so we must read the file with file_get_contents and convert it as a string
+
+                    // Simple Xml is buggy on PHP < 5.4. The [ array -> json_encode -> json_decode ] workaround seems to be the most used one.
+                    // @see: http://php.net/manual/de/book.simplexml.php#105330 (top comment on PHP doc for simplexml)
+                    $oTemplateConfig = json_decode( json_encode ( ( array ) simplexml_load_string($sXMLConfigFile), 1));
+
                     $aListOfFiles[$file] = $oTemplateConfig;
                 }
             }
             closedir($pHandle);
         }
+        libxml_disable_entity_loader($bOldEntityLoaderState);
         return $aListOfFiles;
     }
 
@@ -391,7 +417,7 @@ class AdminTheme extends CFormModel
     private function defineConstants()
     {
         // Define images url
-        if (!YII_DEBUG || $this->use_asset_manager)
+        if (!YII_DEBUG || self::$use_asset_manager ||  Yii::app()->getConfig('use_asset_manager'))
         {
             define('LOGO_URL', App()->getAssetManager()->publish( $this->path . '/images/logo.png'));
         }
@@ -401,7 +427,7 @@ class AdminTheme extends CFormModel
         }
 
         // Define presentation text on welcome page
-        if($this->config->metadatas->presentation)
+        if (isset($this->config->metadatas->presentation) && $this->config->metadatas->presentation)
         {
             define('PRESENTATION', $this->config->metadatas->presentation);
         }
