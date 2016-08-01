@@ -778,6 +778,7 @@ class TokenDynamic extends LSActiveRecord
         $sEditUrl     = App()->createUrl("/admin/tokens/sa/edit/iSurveyId/".self::$sid."/iTokenId/$this->tid/ajax/true");
         $sInviteUrl   = App()->createUrl("/admin/tokens/sa/email/surveyid/".self::$sid."/tokenids/$this->tid");
         $sRemindUrl   = App()->createUrl("admin/tokens/sa/email/action/remind/surveyid/".self::$sid."/tokenids/$this->tid");
+        $sDeleteUrl   = App()->createUrl("admin/tokens/sa/deleteToken/sid/".self::$sid."/sItem/$this->tid");
         $button = '';
 
         // View response details
@@ -844,7 +845,10 @@ class TokenDynamic extends LSActiveRecord
         if (Permission::model()->hasSurveyPermission(self::$sid, 'tokens', 'update'))
         {
             // $sEditUrl     = App()->createUrl("/admin/tokens/sa/edit/iSurveyId/".self::$sid."/iTokenId/$this->tid");
-            $button .= '<a class="btn btn-default btn-xs edit-token" href="#" data-sid="'.self::$sid.'" data-tid="'.$this->tid.'" data-url="'.$sEditUrl.'" role="button" data-toggle="tooltip" title="'.gT('Edit this survey participant').'"><span class="icon-edit" ></span></a>';
+            $button .= '<a class="btn  btn-default btn-xs edit-token" href="#" data-sid="'.self::$sid.'" data-tid="'.$this->tid.'" data-url="'.$sEditUrl.'" role="button" data-toggle="tooltip" title="'.gT('Edit this survey participant').'"><span class="icon-edit" ></span></a>';
+            //Delete Token
+            $button .= '<a class="btn btn-danger btn-xs delete-token" href="#" data-sid="'.self::$sid.'" data-tid="'.$this->tid.'" data-url="'.$sDeleteUrl.'" role="button" data-toggle="tooltip" title="'.gT('Delete survey participant').'"><span class="fa fa-trash-o" ></span></a>';
+
         }
         else
         {

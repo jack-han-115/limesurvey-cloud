@@ -99,10 +99,17 @@ function addinputQuickEdit($currentTable, subquestionText, subquestionCode, lang
         $defer                 = $.Deferred(),
         $codes, datas;
 
+
     // We get all the subquestion codes currently displayed
-    $currentTable.find('.code').each(function(){
-        codes.push($(this).val());
-    });
+    if($currentTable.find('.code').length>0){
+        $currentTable.find('.code').each(function(){
+            codes.push($(this).val());
+        });
+    } else {
+        $currentTable.find('.code-title').each(function(){
+            codes.push($(this).text().trim());
+        });
+    }
 
     // We convert them to json for the request
     $codes = JSON.stringify(codes);
@@ -711,11 +718,16 @@ function quickaddlabels(scale_id, addOrReplace, table_id)
             var aRowInfo=this.id.split('_');
             $('#deletedqids').val($('#deletedqids').val()+' '+aRowInfo[2]);
         });
+    }
 
+    if(closestTable.find('.code').length<0){
+        closestTable.find('.code-title').each(function(){
+            codes.push($(this).text());
+        });
+    } else {
         closestTable.find('.code').each(function(){
             codes.push($(this).val());
         });
-
     }
 
     languages=langs.split(';');
@@ -732,6 +744,29 @@ function quickaddlabels(scale_id, addOrReplace, table_id)
     {
         separatorchar="\t";
     }
+
+        var numericSuffix = '', 
+        n = 1, 
+        numeric = true, 
+        codeAlphaPart = "",
+        currentCharacter,
+        codeSigil = (codes[0] !== undefined ? codes[0].split("") : ("A01").split(""));
+    while(numeric == true && n <= codeSigil.length){
+        currentCharacter = codeSigil.pop()                          // get the current character
+        if ( !isNaN(Number(currentCharacter)) )                         // check if it's numerical
+        {
+            numericSuffix    = currentCharacter+""+numericSuffix;       // store it in a string
+            n++;
+        }
+        else
+        {
+            $numeric = false;                                           // At first non numeric character found, the loop is stoped
+        }
+    }
+    //Sometimes "0" is interpreted as NaN so test if it's just a missing Zero
+    if(isNaN(Number(currentCharacter))){
+        codeSigil.push(currentCharacter);
+    }
     var tablerows = "";
     for (var k in lsrows)
     {
@@ -741,7 +776,10 @@ function quickaddlabels(scale_id, addOrReplace, table_id)
         if (thisrow.length<=languages.length)
         {
             var qCode = (parseInt(k)+(1+parseInt(allrows)));
-            thisrow.unshift("A"+qCode);
+            while(qCode.toString().length < numericSuffix.length){
+                qCode = "0"+qCode;
+            }
+            thisrow.unshift( codeSigil.join('')+qCode);
         }
         else
         {
