@@ -203,6 +203,7 @@ class AdminTheme extends CFormModel
 
         Yii::app()->clientScript->addPackage( 'admin-theme', $package);         // add the package
         Yii::app()->clientScript->registerPackage('admin-theme');               // register the package
+        Yii::app()->clientScript->registerPackage('moment');                    // register moment for correct dateTime calculation
     }
 
 
@@ -296,7 +297,9 @@ class AdminTheme extends CFormModel
     public static function forceAssets()
     {
         // Don't touch symlinked assets because it won't work
-        return;
+        if (App()->getAssetManager()->linkAssets) return;
+
+        // Touch all the admin themes
         $standardTemplatesPath = Yii::app()->getConfig("styledir");
         self::touchSubDirectories($standardTemplatesPath);
 
