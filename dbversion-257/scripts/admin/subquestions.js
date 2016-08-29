@@ -16,7 +16,9 @@
 
 var labelcache=[];
 
-/* Event added on document for all button (new one added in js too)*/
+/* Event added on document for all button (new one added in js too)
+ * TODO : use a real ajax system : see scripts/question.js validateQuestion function for example
+ **/
 $(document).on("click","#editsubquestionsform :submit", function() {
     //Validate duplicate before try to submit: surely some other javascript elsewhere
     return code_duplicates_check();
@@ -61,7 +63,6 @@ $(document).ready(function(){
     $('input[name=savelabeloption]:radio').click(setlabel);
     flag = [false, false];
     $('#btnsave').click(savelabel);
-
     updaterowproperties();
 
     bindExpandRelevanceEquation();
@@ -143,18 +144,18 @@ function deleteinput()
             scale_id=info[2],
             languages=langs.split(';');
 
-        
+
         for (var x in languages)
         {
             var tablerow=$('#tabpage_'+languages[x]).find('#answers_'+languages[x]+'_'+scale_id+' .row_'+position);
-            if (x==0) 
+            if (x==0)
             {
                 tablerow.fadeTo(400, 0, function(){
                     $(this).remove();
                     updaterowproperties();
                 });
             }
-            else 
+            else
             {
                 tablerow.remove();
             }
@@ -236,7 +237,7 @@ function addinputQuickEdit($currentTable, language, first, scale_id, codes)
  */
 
 function addinput()
-{   
+{
        var $that              = $(this),                               // The "add" button
         $currentRow            = $that.parents('.row-container'),   // The row containing the "add" button
         $currentTable          = $that.parents('.answertable'),
@@ -314,7 +315,7 @@ function aftermove(event,ui)
 
     for (var x in languages)
     {
-        if (x>0) 
+        if (x>0)
         {
             var tablerow=$('#tabpage_'+languages[x]+' tbody tr:nth-child('+newindex+')'),
                 tablebody=$('#tabpage_'+languages[x]).find('tbody');
@@ -784,9 +785,9 @@ function transferlabels()
 
 /**
  * Quick-add subquestions/answers
- * 
+ *
  * @global langs
- * 
+ *
  * @param {int} scale_id
  * @param {string} addOrReplace - Either 'add' or 'replace'
  * @return {void}
@@ -835,11 +836,11 @@ function quickaddlabels(scale_id, addOrReplace, table_id)
         separatorchar="\t";
     }
 
-    var numericSuffix = '', 
-        n = 1, 
-        numeric = true,  
+    var numericSuffix = '',
+        n = 1,
+        numeric = true,
         currentCharacter,
-        codeSigil = (codes[0] !== undefined ? codes[0].split("") : ("SQ0001").split(""));
+        codeSigil = (codes[0] !== undefined ? codes[0].split("") : ("001").split(""));
     while(numeric == true && n <= codeSigil.length){
         currentCharacter = codeSigil.pop()                          // get the current character
         if ( !isNaN(Number(currentCharacter)) )                         // check if it's numerical
@@ -860,11 +861,13 @@ function quickaddlabels(scale_id, addOrReplace, table_id)
     for (var k in lsrows)
     {
         var thisrow=lsrows[k].splitCSV(separatorchar);
-        
+
 
         if (thisrow.length<=languages.length)
         {
-            var qCode = (parseInt(k)+(1+parseInt(allrows)));
+            var qCode = (parseInt(k)+1);
+            if (lsreplace===false){
+                qCode+=(parseInt(allrows));}
             while(qCode.toString().length < numericSuffix.length){
                 qCode = "0"+qCode;
             }
@@ -881,7 +884,7 @@ function quickaddlabels(scale_id, addOrReplace, table_id)
             {
                 thisrow[parseInt(x)+1]=thisrow[1];
             }
-                
+
             var lang_active = languages[x];
             if(!answers[lang_active]){
                 answers[lang_active] = [];
@@ -894,7 +897,7 @@ function quickaddlabels(scale_id, addOrReplace, table_id)
                 {text: thisrow[(parseInt(x)+1)], code: thisrow[0], quid: quid}
             );
         }
-        
+
         //$('#answers_'+languages[x]+'_'+scale_id+' tbody').append(tablerows);
 
         // Unbind any previous events
@@ -910,7 +913,7 @@ function quickaddlabels(scale_id, addOrReplace, table_id)
         {
             thisrow[parseInt(x)+1]=thisrow[1];
         }
-            
+
         var lang_active = languages[x];
         promises.push(
             addinputQuickEdit(closestTable, lang_active, (x==0), scale_id, codes)
@@ -928,8 +931,8 @@ function quickaddlabels(scale_id, addOrReplace, table_id)
                         if(htmlRowObject.find('input.code').length > 0)
                         {
                             htmlRowObject.find('input.code').val(row.code);
-                        } 
-                        else 
+                        }
+                        else
                         {
                             htmlRowObject.find('td.code-title').text(row.code);
                         }
@@ -954,7 +957,7 @@ function quickaddlabels(scale_id, addOrReplace, table_id)
                 bindClickIfNotExpanded();
             }
         )
-    
+
 }
 
 function getlabel()
