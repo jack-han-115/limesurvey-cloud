@@ -7069,6 +7069,7 @@
         */
         static function GetRelevanceAndTailoringJavaScript()
         {
+            $aQuestionsWithDependencies = array();
             $now = microtime(true);
             $LEM =& LimeExpressionManager::singleton();
 
@@ -7567,6 +7568,7 @@
                             $qrelgseqs[] = 'relChangeG' . $knownVar['gseq'];
                         }
                     }
+
                     $qrelgseqs[] = 'relChangeG' . $arg['gseq'];   // so if current group changes visibility, re-tailor it.
                     $qrelQIDs = array_unique($qrelQIDs);
                     $qrelgseqs = array_unique($qrelgseqs);
@@ -7575,6 +7577,21 @@
                         $qrelQIDs=array();  // in question-by-questin mode, should never test for dependencies on self or other questions.
                         $qrelgseqs=array();
                     }
+
+                    /**
+                     * https://bugs.limesurvey.org/view.php?id=8308#c26972
+                     * Thomas White explained: "LEMrelXX functions were specifically designed to only be called for questions that have some dependency upon others "
+                     * So $qrelQIDs contains those questions.
+                     */
+                    foreach($qrelQIDs as $qrelQID)
+                    {
+                        $sQid = str_replace("relChange","",$qrelQID);
+                        if(!in_array($sQid, $aQuestionsWithDependencies)  )
+                        {
+                            $aQuestionsWithDependencies[]=$sQid;
+                        }
+                    }
+
 
                     $qrelJS = "function LEMrel" . $arg['qid'] . "(sgqa){\n";
                     $qrelJS .= "  var UsesVars = ' " . implode(' ', $relJsVarsUsed) . " ';\n";
@@ -7871,6 +7888,9 @@
                 $jsParts[] = "<input type='hidden' id='relevance" . $key . "' name='relevance" . $key .  "' value='" . $val . "'/>\n";
             }
             $LEM->runtimeTimings[] = array(__METHOD__,(microtime(true) - $now));
+
+
+            $jsParts[]="<input type='hidden' id='aQuestionsWithDependencies' data-qids='".json_encode($aQuestionsWithDependencies)."' />";
 
             return implode('',$jsParts);
         }

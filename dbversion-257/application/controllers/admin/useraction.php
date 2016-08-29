@@ -677,7 +677,7 @@ class UserAction extends Survey_Common_Action
             'full_name'=> Yii::app()->request->getPost('fullname'),
             'email'=> Yii::app()->request->getPost('email')
             );
-            if (Yii::app()->request->getPost('password')!='')
+            if (Yii::app()->request->getPost('password')!='' && !Yii::app()->getConfig('demoMode'))
             {
                 if (Yii::app()->request->getPost('password')==Yii::app()->request->getPost('repeatpassword'))
                 {
@@ -717,6 +717,12 @@ class UserAction extends Survey_Common_Action
 
         // Get user lang
         $user = User::model()->findByPk(Yii::app()->session['loginID']);
+        $aLanguageData=array('auto'=>gT("(Autodetect)"));
+        foreach (getLanguageData(true, Yii::app()->session['adminlang']) as $langkey => $languagekind)
+        {
+           $aLanguageData[$langkey]=html_entity_decode($languagekind['nativedescription'].' - '.$languagekind['description'],ENT_COMPAT,'utf-8');
+        }
+        $aData['aLanguageData'] = $aLanguageData;
         $aData['sSavedLanguage'] = $user->lang;
         $aData['sUsername'] = $user->users_name;
         $aData['sFullname'] = $user->full_name;
