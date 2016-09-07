@@ -146,7 +146,7 @@ class Question extends LSActiveRecord
         }
         else
         {
-            $aRules[]= array('title', 'compare','compareValue'=>'time','operator'=>'!=', 'message'=> gT("'time' is a reserved word and can not be used for subquestion."), 'except' => 'archiveimport' );
+            $aRules[]= array('title', 'compare','compareValue'=>'time','operator'=>'!=', 'message'=> gT("'time' is a reserved word and can not be used for a subquestion."), 'except' => 'archiveimport' );
             $aRules[]= array('title', 'match', 'pattern' => '/^[[:alnum:]]*$/', 'message' => gT('Subquestion codes may only contain alphanumeric characters.'), 'except' => 'archiveimport');
         }
         return $aRules;
@@ -936,5 +936,37 @@ class Question extends LSActiveRecord
         {
             return false;
         }
+    }
+
+    /**
+     * Used in frontend helper, buildsurveysession.
+     * @param int $surveyid
+     * @return int
+     */
+    public static function getTotalQuestions($surveyid)
+    {
+        $sQuery = "SELECT count(*)\n"
+        ." FROM {{groups}} INNER JOIN {{questions}} ON {{groups}}.gid = {{questions}}.gid\n"
+        ." WHERE {{questions}}.sid=".$surveyid."\n"
+        ." AND {{groups}}.language='".App()->getLanguage()."'\n"
+        ." AND {{questions}}.language='".App()->getLanguage()."'\n"
+        ." AND {{questions}}.parent_qid=0\n";
+        return Yii::app()->db->createCommand($sQuery)->queryScalar();
+    }
+
+    /**
+     * Used in frontend helper, buildsurveysession.
+     * @todo Rename
+     * @param int $surveyid
+     * @return array|false??? Return from CDbDataReader::read()
+     */
+    public static function getNumberOfQuestions($surveyid)
+    {
+        return dbExecuteAssoc("SELECT count(*)\n"
+        ." FROM {{questions}}"
+        ." WHERE type in ('X','*')\n"
+        ." AND sid={$surveyid}"
+        ." AND language='".$_SESSION['survey_'.$surveyid]['s_lang']."'"
+        ." AND parent_qid=0")->read();
     }
 }
