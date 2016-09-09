@@ -1670,7 +1670,9 @@ class tokens extends Survey_Common_Action
                          * token        r       Raw token data.
                          */
                         $event = new PluginEvent('beforeTokenEmail');
+                        $event->set('survey', $iSurveyId);
                         $event->set('type', $sTemplate);
+                        $event->set('model', $sSubAction);
                         $event->set('subject', $modsubject);
                         $event->set('to', $to);
                         $event->set('body', $modmessage);
