@@ -5332,7 +5332,7 @@
                     {
                         $sdata['refurl'] = getenv("HTTP_REFERER");
                     }
-                }
+                 }
 
                 $sdata = array_filter($sdata);
                 SurveyDynamic::sid($this->sid);
@@ -5452,7 +5452,7 @@
                     }
                     else
                     {
-                        $setter[] = dbQuoteID($key) . "=" . dbQuoteAll($val);
+                        $setter[] = dbQuoteID($key) . "=" . dbQuoteAll(stripCtrlChars($val));
                     }
                 }
                 $query .= implode(', ', $setter);
