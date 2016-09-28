@@ -27,12 +27,12 @@
             'name' => 'emailmethod',
             'value'=> getGlobalSetting('emailmethod') ,
             'selectOptions'=>array(
-      /* ======================= LimeService Mod start ===== */            
+      /* ======================= LimeService Mod start ===== */
                 "mail"=>"LimeService",
-      /* ======================= LimeService Mod end ===== */                
                 "smtp"=>"SMTP",
-                "sendmail"=>"Sendmail",
-                "qmail"=>"qmail"
+            //    "sendmail"=>"Sendmail",
+            //    "qmail"=>"qmail"
+      /* ======================= LimeService Mod end ===== */
             )
         ));?>
     </div>
