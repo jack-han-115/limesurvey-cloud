@@ -3,12 +3,12 @@ msgstr ""
 "Project-Id-Version: LimeSurvey 2.x\n"
 "Report-Msgid-Bugs-To: http://translate.limesurvey.org/\n"
 "POT-Creation-Date: 2015-10-21 14:33+0200\n"
-"PO-Revision-Date: 2016-01-19 16:42+0100\n"
+"PO-Revision-Date: 2016-09-30 16:28+0200\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Poedit 1.8.5\n"
+"X-Generator: Poedit 1.8.9\n"
 "X-Poedit-KeywordsList: gT;ngt:1,2;eT;neT:1,2\n"
 "X-Poedit-SourceCharset: utf-8\n"
 "X-Poedit-Basepath: ../../..\n"
@@ -14167,7 +14167,7 @@ msgstr "Kérdőív elküldése."
 #: dbversion-184/application/controllers/admin/printablesurvey.php:133
 #: dbversion-184/application/controllers/admin/templates.php:1149
 msgid "Thank you for completing this survey."
-msgstr "Köszönjük, hogy kitöltötte a kérdőívet."
+msgstr "Köszönjük, hogy kitöltötted a kérdőívet."
 
 #: dbversion-155/admin/printablesurvey.php:165
 #: dbversion-155/admin/templates.php:697
@@ -24702,7 +24702,7 @@ msgstr "Kérdőív neve (ID):"
 #: dbversion-184/application/helpers/qanda_helper.php:161
 #: dbversion-184/application/helpers/qanda_helper.php:162
 msgid "Choose one of the following answers"
-msgstr "Kérem, válasszon egyet a felsoroltak közül"
+msgstr "Kérlek, válassz egyet az alábbiak közül:"
 
 #: dbversion-155/qanda.php:157
 #, fuzzy
@@ -24729,7 +24729,7 @@ msgstr ""
 #: dbversion-184/application/helpers/qanda_helper.php:201
 #: dbversion-184/application/helpers/qanda_helper.php:202
 msgid "Check any that apply"
-msgstr "Válasszon ki egyet vagy többet az alábbiak közül"
+msgstr "Kérlek, válassz ki mindent, ami érvényes:"
 
 #: dbversion-155/qanda.php:180 dbversion-155/qanda.php:181
 #: dbversion-164/application/helpers/qanda_helper.php:200
@@ -25025,9 +25025,8 @@ msgstr "Hiba: Erre a kérdésre nincsenek válaszok."
 
 #: dbversion-155/qanda.php:3282
 #: dbversion-164/application/helpers/qanda_helper.php:3523
-#, fuzzy
 msgid "Only numbers may be entered in these fields"
-msgstr "Csak számokat írhat ebbe a mezőbe!"
+msgstr "Csak számokat írhatsz ebbe a mezőbe!"
 
 #: dbversion-155/qanda.php:3293
 #: dbversion-164/application/helpers/qanda_helper.php:3565
