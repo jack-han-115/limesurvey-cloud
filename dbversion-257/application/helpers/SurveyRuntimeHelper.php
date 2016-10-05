@@ -1035,6 +1035,7 @@ class SurveyRuntimeHelper {
             // TMSW - could iterate through LEM::currentQset instead
 
             //// To diplay one question, all the questions are processed ?
+            $qanda=array();
             foreach ($_SESSION[$LEMsessid]['fieldarray'] as $key => $ia)
             {
                 ++$qnumber;
@@ -1342,11 +1343,14 @@ class SurveyRuntimeHelper {
                 echo templatereplace($question_template, $aQuestionReplacement, $redata, false, false, $qa[4]);
 
             }
-            if ($surveyMode == 'group') {
-                echo "<input type='hidden' name='lastgroup' value='$lastgroup' id='lastgroup' />\n"; // for counting the time spent on each group
-            }
-            if ($surveyMode == 'question') {
-                echo "<input type='hidden' name='lastanswer' value='$lastanswer' id='lastanswer' />\n";
+            if (!empty($qanda))
+            {
+                if ($surveyMode == 'group') {
+                    echo "<input type='hidden' name='lastgroup' value='$lastgroup' id='lastgroup' />\n"; // for counting the time spent on each group
+                }
+                if ($surveyMode == 'question') {
+                    echo "<input type='hidden' name='lastanswer' value='$lastanswer' id='lastanswer' />\n";
+                }
             }
 
             echo "\n\n<!-- END THE GROUP -->\n";
