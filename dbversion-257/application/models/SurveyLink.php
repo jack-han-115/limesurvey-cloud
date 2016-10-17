@@ -44,7 +44,7 @@ class SurveyLink extends LSActiveRecord
      * Returns the primary key of this table
      *
      * @access public
-     * @return string
+     * @return string[]
      */
     public function primaryKey()
     {
@@ -259,7 +259,7 @@ class SurveyLink extends LSActiveRecord
              */
             array(
                 "value" => '$data->surveyName',
-                'header' => gT('Survey Name'),
+                'header' => gT('Survey name'),
                 "sortable" => false,
                 "filter" => false
             ),

@@ -14,6 +14,10 @@
 
 class SurveyRuntimeHelper {
 
+    /**
+     * @param string $LEMsessid
+     * @param string $surveyMode
+     */
     protected function createFullQuestionIndexMenu($LEMsessid, $surveyMode)
     {
         if ($surveyMode == 'group')
@@ -86,6 +90,10 @@ class SurveyRuntimeHelper {
         return array('menulist'=>$html, 'buttons'=>array() );
     }
 
+    /**
+     * @param string $LEMsessid
+     * @param string $surveyMode
+     */
     protected function createIncrementalQuestionIndexMenu($LEMsessid, $surveyMode)
     {
         $html = '';
@@ -187,6 +195,10 @@ class SurveyRuntimeHelper {
         return array('menulist'=>$html, 'buttons'=>array() );
     }
 
+    /**
+     * @param string $LEMsessid
+     * @param string $surveyMode
+     */
     protected function createFullQuestionIndex($LEMsessid, $surveyMode)
     {
         if ($surveyMode == 'group')
@@ -262,6 +274,10 @@ class SurveyRuntimeHelper {
         App()->getClientScript()->registerScript('manageIndex',"manageIndex()\n",CClientScript::POS_END);
     }
 
+    /**
+     * @param string $LEMsessid
+     * @param string $surveyMode
+     */
     protected function createIncrementalQuestionIndex($LEMsessid, $surveyMode)
     {
         echo "\n\n<!-- PRESENT THE INDEX (incremental)-->\n";
@@ -1022,6 +1038,10 @@ class SurveyRuntimeHelper {
             // TMSW - could iterate through LEM::currentQset instead
 
             //// To diplay one question, all the questions are processed ?
+            if (!isset($qanda))
+            {
+                $qanda=array();
+            }
             foreach ($_SESSION[$LEMsessid]['fieldarray'] as $key => $ia)
             {
                 ++$qnumber;
@@ -1329,11 +1349,14 @@ class SurveyRuntimeHelper {
                 echo templatereplace($question_template, $aQuestionReplacement, $redata, false, false, $qa[4]);
 
             }
-            if ($surveyMode == 'group') {
-                echo "<input type='hidden' name='lastgroup' value='$lastgroup' id='lastgroup' />\n"; // for counting the time spent on each group
-            }
-            if ($surveyMode == 'question') {
-                echo "<input type='hidden' name='lastanswer' value='$lastanswer' id='lastanswer' />\n";
+            if (!empty($qanda))
+            {
+                if ($surveyMode == 'group') {
+                    echo "<input type='hidden' name='lastgroup' value='$lastgroup' id='lastgroup' />\n"; // for counting the time spent on each group
+                }
+                if ($surveyMode == 'question') {
+                    echo "<input type='hidden' name='lastanswer' value='$lastanswer' id='lastanswer' />\n";
+                }
             }
 
             echo "\n\n<!-- END THE GROUP -->\n";
