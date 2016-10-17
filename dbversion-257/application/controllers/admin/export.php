@@ -918,10 +918,13 @@ class export extends Survey_Common_Action {
     {
         $sSurveys = $_POST['sItems'];
         $exportResult = $this->exportMultipleSurveys($sSurveys, 'archive');
-        Yii::app()->getController()->renderPartial('/admin/survey/massive_actions/_export_archive_results', array('aResults'=>$exportResult['aResults'], 'sZip'=>$exportResult['sZip'], 'bArchiveIsEmpty'=>$exportResult['bArchiveIsEmpty']));
+        Yii::app()->getController()->renderPartial('ext.admin.survey.ListSurveysWidget.views.massive_actions._export_archive_results', array('aResults'=>$exportResult['aResults'], 'sZip'=>$exportResult['sZip'], 'bArchiveIsEmpty'=>$exportResult['bArchiveIsEmpty']));
     }
 
 
+    /**
+     * @param string $sExportType
+     */
     public function exportMultipleSurveys($sSurveys, $sExportType)
     {
         $aSurveys = json_decode($sSurveys);
@@ -1161,7 +1164,7 @@ class export extends Survey_Common_Action {
      * Return a list of queXML settings
      *
      * @access private
-     * @return array queXML settings
+     * @return string[] queXML settings
      */
     private function _quexmlsettings()
     {

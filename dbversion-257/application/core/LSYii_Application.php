@@ -29,12 +29,19 @@ class LSYii_Application extends CWebApplication
      * @var LimesurveyApi
      */
     protected $api;
+
+    /**
+     * If a plugin action is accessed through the PluginHelper,
+     * store it here.
+     * @var iPlugin
+     */
+    protected $plugin;
+
     /**
      *
     * Initiates the application
     *
     * @access public
-    * @param array $config
     * @return void
     */
     public function __construct($aApplicationConfig = null)
@@ -120,7 +127,6 @@ class LSYii_Application extends CWebApplication
     * Loads a library
     *
     * @access public
-    * @param string $helper
     * @return void
     */
     public function loadLibrary($library)
@@ -242,4 +248,26 @@ class LSYii_Application extends CWebApplication
 
 
 
+
+    /**
+     * Used by PluginHelper to make the controlling plugin
+     * available from everywhere, e.g. from the plugin's models.
+     * Corresponds to Yii::app()->getController()
+     *
+     * @param $plugin
+     * @return void
+     */
+    public function setPlugin($plugin)
+    {
+        $this->plugin = $plugin;
+    }
+
+    /**
+     * Return plugin, if any
+     * @return object
+     */
+    public function getPlugin()
+    {
+        return $this->plugin;
+    }
 }

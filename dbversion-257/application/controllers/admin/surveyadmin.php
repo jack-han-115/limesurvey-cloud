@@ -1157,13 +1157,16 @@ class SurveyAdmin extends Survey_Common_Action
         $this->_renderWrappedTemplate('survey', 'organizeGroupsAndQuestions_view', $aData);
     }
 
+    /**
+     * Reorder groups and questions
+     * @param int $iSurveyID
+     * @return void
+     */
     private function _reorderGroup($iSurveyID)
     {
-        $AOrgData = array();
-        parse_str(Yii::app()->request->getPost('orgdata'), $AOrgData);
-
         $grouporder = 0;
-        foreach ($AOrgData['list'] as $ID => $parent)
+        $orgdata = $this->getOrgdata();
+        foreach ($orgdata as $ID => $parent)
         {
             if ($parent == 'root' && $ID[0] == 'g') {
                 QuestionGroup::model()->updateAll(array('group_order' => $grouporder), 'gid=:gid', array(':gid' => (int)substr($ID, 1)));
@@ -1193,9 +1196,31 @@ class SurveyAdmin extends Survey_Common_Action
     }
 
     /**
+     * Get the new question organization from the post data.
+     * This function replaces parse_str, since parse_str
+     * is bound by max_input_vars.
+     * @return array
+     */
+    protected function getOrgdata()
+    {
+        $request = Yii::app()->request;
+        $orgdata = $request->getPost('orgdata');
+        $ex = explode('&', $orgdata);
+        $vars = array();
+        foreach ($ex as $str) {
+            list($list, $target) = explode('=', $str);
+            $list = str_replace('list[', '', $list);
+            $list = str_replace(']', '', $list);
+            $vars[$list] = $target;
+        }
+
+        return $vars;
+    }
+
+    /**
     * survey::_fetchSurveyInfo()
     * Load survey information based on $action.
-    * @param mixed $action
+    * @param string $action
     * @param mixed $iSurveyID
     * @return
     */
@@ -1379,35 +1404,11 @@ class SurveyAdmin extends Survey_Common_Action
     }
 
     /**
-    * survey::_tabImport()
-    * Load "Import" tab.
-    * @param mixed $iSurveyID
-    * @return
-    */
-    private function _tabImport()
-    {
-        $aData = array();
-        return $aData;
-    }
-
-    /**
-    * survey::_tabCopy()
-    * Load "Copy" tab.
-    * @param mixed $iSurveyID
-    * @return
-    */
-    private function _tabCopy()
-    {
-        $aData = array();
-        return $aData;
-    }
-
-    /**
-    * survey::_tabResourceManagement()
-    * Load "Resources" tab.
-    * @param mixed $iSurveyID
-    * @return
-    */
+     * survey::_tabResourceManagement()
+     * Load "Resources" tab.
+     * @param mixed $iSurveyID
+     * @return
+     */
     private function _tabResourceManagement($iSurveyID)
     {
         global $sCKEditorURL;
@@ -1700,7 +1701,7 @@ class SurveyAdmin extends Survey_Common_Action
     /**
     * This private function creates a sample group
     *
-    * @param mixed $iSurveyID  The survey ID that the sample group will belong to
+    * @param integer $iSurveyID  The survey ID that the sample group will belong to
     */
     private function _createSampleGroup($iSurveyID)
     {
@@ -1720,7 +1721,7 @@ class SurveyAdmin extends Survey_Common_Action
     /**
     * This private function creates a sample question
     *
-    * @param mixed $iSurveyID  The survey ID that the sample question will belong to
+    * @param integer $iSurveyID  The survey ID that the sample question will belong to
     * @param mixed $iGroupID  The group ID that the sample question will belong to
     */
     private function _createSampleQuestion($iSurveyID, $iGroupID)

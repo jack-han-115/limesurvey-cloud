@@ -93,6 +93,7 @@ class ParticipantShare extends LSActiveRecord
     }
 
     /**
+     * @param integer $selected
      * @return string html dropdown
      */
     public function getSharedByList($selected)
@@ -220,12 +221,12 @@ class ParticipantShare extends LSActiveRecord
             ),
             array(
                 "name" => 'participant.lastname',
-                "header" => gT("Lastname"),
+                "header" => gT("Last name"),
                 "filter" => TbHtml::textField("Participant[lastname]",$participantFilter['lastname'])
             ),
             array(
                 "name" => 'participant.firstname',
-                "header" => gT("Firstname"),
+                "header" => gT("First name"),
                 "filter" => TbHtml::textField("Participant[firstname]", $participantFilter['firstname'])
             ),
             array(

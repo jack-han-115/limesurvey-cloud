@@ -76,7 +76,7 @@ abstract class LSYii_Controller extends CController
      * Loads a library
      *
      * @access public
-     * @param string $helper
+     * @param string $library
      * @return void
      */
     public function loadLibrary($library)
