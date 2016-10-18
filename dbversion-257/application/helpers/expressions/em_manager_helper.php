@@ -8763,6 +8763,7 @@ EOD;
         /**
          * @param integer $gseq
          * @param integer $qseq
+         * @param string|null $attr
          */
         static public function GetVarAttribute($name,$attr,$default,$gseq,$qseq)
         {
@@ -8770,6 +8771,10 @@ EOD;
             return $LEM->_GetVarAttribute($name,$attr,$default,$gseq,$qseq);
         }
 
+        /**
+         * @param integer $gseq
+         * @param integer $qseq
+         */
         private function _GetVarAttribute($name,$attr,$default,$gseq,$qseq)
         {
             $args = explode(".", $name);
