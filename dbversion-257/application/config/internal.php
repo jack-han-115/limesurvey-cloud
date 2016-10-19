@@ -86,10 +86,16 @@ $internalConfig = array(
         'bootstrap.widgets.*',
         'bootstrap.behaviors.*',
         'yiiwheels.widgets.select2.WhSelect2',
+        'application.extensions.phpass.*',
 
     ),
     'preload' => array ('log'),
     'components' => array(
+        'phpass'=>array (
+                'class'=>'Phpass',
+                'hashPortable'=>true,
+                'hashCostLog2'=>10,
+            ),
       // yiistrap configuration
         'bootstrap' => array(
             'class' => 'bootstrap.components.TbApi',
