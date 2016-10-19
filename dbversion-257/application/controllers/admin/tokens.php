@@ -2510,11 +2510,7 @@ class tokens extends Survey_Common_Action
 
     /**
     * Handle token form for addnew/edit actions
-    * @param int $iSurveyId
     * @param string $subaction
-    * @param int $iTokenId
-    * @param boolean $ajax
-    * @return void
     */
     public function _handletokenform($iSurveyId, $subaction, $iTokenId="", $ajax=false)
     {

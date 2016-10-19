@@ -438,9 +438,6 @@ class Permission extends LSActiveRecord
         $this->insertSomeRecords($aPerm);
     }
 
-    /**
-     * @param integer $iSurveyID
-     */
     public function giveAllSurveyPermissions($iUserID, $iSurveyID)
     {
         if ($iSurveyID == 0)
@@ -702,7 +699,7 @@ class Permission extends LSActiveRecord
     /**
     * get the owner if of an entity if exist
     * @param iEntityID the entity id
-    * @param sEntityName string name (model)
+    * @param sEntityName entity name (model)
     * @return integer|null user id if exist
     */
     protected function getOwnerId($iEntityID, $sEntityName)

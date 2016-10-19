@@ -537,9 +537,6 @@ function file_validation_popup($ia, $filenotvalidated = null)
         return false;
 }
 
-/**
- * @param string $disable
- */
 function return_timer_script($aQuestionAttributes, $ia, $disable=null)
 {
     global $thissurvey;
@@ -723,10 +720,6 @@ function return_display_style($ia, $aQuestionAttributes, $thissurvey, $rowname)
     return $htmltbody2;
 }
 
-/**
- * @param string $rowname
- * @param string $valuename
- */
 function return_array_filter_strings($ia, $aQuestionAttributes, $thissurvey, $ansrow, $rowname, $trbc='', $valuename, $method="tbody", $class=null)
 {
     $htmltbody2 = "\n\n\t<$method id='javatbd$rowname'";

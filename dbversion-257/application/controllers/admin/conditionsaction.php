@@ -127,9 +127,9 @@ class conditionsaction extends Survey_Common_Action {
                 break;
         }
 
-        $postSubaction = $request->getPost('subaction');
-        if (!empty($postSubaction)) {
-            $subaction = $postSubaction;
+
+        if (!empty($request->getPost('subaction'))) {
+            $subaction = $request->getPost('subaction');
         }
 
         //BEGIN Sanitizing POSTed data
@@ -172,9 +172,8 @@ class conditionsaction extends Survey_Common_Action {
             $p_method = null;
         }
 
-        $postNewScenarioNum = $request->getPost('newscenarionum');
-        if (!empty($postNewScenarioNum)) {
-            $p_newscenarionum = sanitize_int($postNewScenarioNum);
+        if (!empty($request->getPost('newscenarionum'))) {
+            $p_newscenarionum = sanitize_int($request->getPost('newscenarionum'));
         }
         else {
             $p_newscenarionum = null;
@@ -691,8 +690,7 @@ class conditionsaction extends Survey_Common_Action {
     protected function resetSurveyLogic($iSurveyID)
     {
         $request = Yii::app()->request;
-        $postOk = $request->getQuery('ok');
-        if (empty($postOk)) {
+        if (empty($request->get('ok'))) {
             $data = array('iSurveyID' => $iSurveyID);
             $content = $this->getController()->renderPartial('/admin/conditions/deleteAllConditions', $data, true);
             $this->_renderWrappedTemplate('conditions', array('message' => array(
@@ -1465,7 +1463,7 @@ class conditionsaction extends Survey_Common_Action {
                 $acount = count($aresult);
                 foreach ($aresult as $arow)
                 {
-                    $theanswer = $arow['answer'];
+                    $theanswer = addcslashes($arow['answer'], "'");
                     $quicky[]=array($arow['code'], $theanswer);
                 }
                 for ($i=1; $i<=$acount; $i++)
@@ -1496,7 +1494,7 @@ class conditionsaction extends Survey_Common_Action {
 
                 foreach ($aresult as $arows)
                 {
-                    $theanswer = $arows['question'];
+                    $theanswer = addcslashes($arows['question'], "'");
                     $canswers[]=array($rows['sid'].$X.$rows['gid'].$X.$rows['qid'], $arows['title'], $theanswer);
 
                     $shortanswer = "{$arows['title']}: [" . strip_tags($arows['question']) . "]";
@@ -1565,7 +1563,7 @@ class conditionsaction extends Survey_Common_Action {
 
                     foreach ($aresult as $arows)
                     {
-                        $theanswer = $arows['answer'];
+                        $theanswer = addcslashes($arows['answer'], "'");
                         $canswers[]=array($rows['sid'].$X.$rows['gid'].$X.$rows['qid'], $arows['code'], $theanswer);
                     }
                     if ($rows['type'] == "D")

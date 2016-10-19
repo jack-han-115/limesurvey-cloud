@@ -1292,7 +1292,7 @@ function initFieldArray($surveyid, array $fieldmap)
  * @param int $surveyid
  * @param boolean $loadsecurity
  * @todo This does not work for some reason, copied the code back. See bug #11739.
- * @return string[] ($renderCaptcha, $FlashError)
+ * @return array ($renderCaptcha, $FlashError)
  */
 function testCaptcha(array $aEnterTokenData, array $subscenarios, $surveyid, $loadsecurity)
 {
