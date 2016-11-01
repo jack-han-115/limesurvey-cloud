@@ -216,7 +216,7 @@ class Authdb extends AuthPluginBase
         // If we are using phpass
         if (strpos($hash, '$P$') === 0){
             // Use PHPass's portable hashes with a cost of 10.
-            $phpass = Yii::app()->Phpass; //new PasswordHash(10, true);
+            $phpass = Yii::app()->phpass; //new PasswordHash(10, true);
 
             $match = $phpass->CheckPassword($password, $hash);
 
