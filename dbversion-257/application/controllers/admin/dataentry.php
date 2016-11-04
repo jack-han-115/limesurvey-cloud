@@ -1527,10 +1527,9 @@ class dataentry extends Survey_Common_Action
             $updateqr = substr($updateqr, 0, -3);
             $updateqr .= " WHERE id=$id";
 
-            $updateres = dbExecuteAssoc($updateqr) or safeDie("Update failed:<br />\n<br />$updateqr");
              // ========================  Begin LimeService Mod
             $aRow = SurveyDynamic::model($surveyid)->findByPk($id);
-            if ($_POST['completed']!= "N" && $aRow->submitdate!='' )
+            if ($_POST['completed']!= "N" && $aRow->submitdate=='' )
             {
                 $sDomain=$_SERVER['SERVER_NAME'];
                 $sSubdomain=substr($sDomain,0,strpos($sDomain,'.'));
@@ -1543,6 +1542,8 @@ class dataentry extends Survey_Common_Action
                 }
             }
             // ========================  End LimeService Mod
+
+            $updateres = dbExecuteAssoc($updateqr) or safeDie("Update failed:<br />\n<br />$updateqr");
             Yii::app()->setFlashMessage(sprintf(gT("The response record %s was updated."),$id));
             if (Yii::app()->request->getPost('close-after-save')=='true')
             {
