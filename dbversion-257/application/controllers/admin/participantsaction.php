@@ -13,26 +13,25 @@
 */
 
 /**
+ * @param array $a
+ * @param string $subkey
  * @param string $order
+ * @return array
  */
 function subval_sort($a, $subkey, $order)
 {
     $b = array();
     $c = array();
-    foreach ($a as $k => $v)
-    {
+    foreach ($a as $k => $v) {
         $b[$k] = strtolower($v[$subkey]);
     }
-    if ($order == "asc")
-    {
+    if ($order == "asc") {
         asort($b, SORT_REGULAR);
     }
-    else
-    {
+    else {
         arsort($b, SORT_REGULAR);
     }
-    foreach ($b as $key => $val)
-    {
+    foreach ($b as $key => $val) {
         $c[] = $a[$key];
     }
     return $c;
@@ -555,7 +554,7 @@ class participantsaction extends Survey_Common_Action
             $aData['blacklisted'] = 'N';
         }
 
-        $extraAttributes = Yii::app()->request->getPost('Attributes');
+        $extraAttributes = Yii::app()->request->getPost('Attributes', array());
 
         switch ($operation) {
             case 'edit':
@@ -578,7 +577,7 @@ class participantsaction extends Survey_Common_Action
      * @param array $extraAttributes
      * @return void
      */
-    public function updateParticipant($aData, $extraAttributes)
+    public function updateParticipant($aData, array $extraAttributes = array())
     {
         $participant = Participant::model()->findByPk($aData['participant_id']);
 
@@ -599,7 +598,7 @@ class participantsaction extends Survey_Common_Action
         $participant->attributes = $aData;
         $success['participant'] = $participant->save();
 
-        foreach( $extraAttributes as $htmlName => $attributeValue ) {
+        foreach($extraAttributes as $htmlName => $attributeValue ) {
             list(,$attribute_id) = explode('_',$htmlName);
             $data = array(
                 'attribute_id'=>$attribute_id, 
@@ -618,7 +617,7 @@ class participantsaction extends Survey_Common_Action
      * @param array $extraAttributes
      * @return string json
      */
-    public function addParticipant($aData, $extraAttributes)
+    public function addParticipant($aData, array $extraAttributes = array())
     {
         if (Permission::model()->hasGlobalPermission('participantpanel', 'create')) {
             $uuid = Participant::gen_uuid();
@@ -1349,6 +1348,9 @@ class participantsaction extends Survey_Common_Action
         {
             $aData['languagesForDropdown'][$key] = $languageDetail['description']." (".($languageDetail['nativedescription']).")"; 
         }
+
+        // Default visibility to false
+        $model->visible = $model->visible ?: 'FALSE';
 
         $html = $this->getController()->renderPartial(
             '/admin/participants/modal_subviews/_editAttribute',
