@@ -68,7 +68,7 @@ function Emailchange(ui,evt)
     // LimeService mod start
     if ($('#emailmethod input:radio:checked').val()=='mail');
     {
-       $('#siteadminbounce').val('noreply@limeservice.com');
+       $('#siteadminbounce').val('noreply@limesurvey.org');
        $('#bounceaccounttype_opt1').closest('.btn').button('toggle');
     }
     // LimeService mod end

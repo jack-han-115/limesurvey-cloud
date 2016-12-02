@@ -2779,10 +2779,10 @@ function SendEmailMessage($body, $subject, $to, $from, $sitename, $ishtml=false,
             $mail->IsMail();
         // LimeService Mod start
             $mail->AddReplyTo($fromemail, $fromname);
-            $fromemail='noreply@limeservice.com';
+            $fromemail='noreply@limesurvey.org';
             if (trim($fromname)=='')
                 $fromname='LimeService';
-            $senderemail='bounces@limeservice.com';
+            $senderemail='bounces@limesurvey.org';
         // LimeService Mod end
 
     }
