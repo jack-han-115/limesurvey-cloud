@@ -78,8 +78,8 @@ function joomla_verifyPassword($password, $hash)
     if (strpos($hash, '$P$') === 0){
         // Use PHPass's portable hashes with a cost of 10.
         // TODO Add class manually
-        $phpass = Yii::app()->phpass; //new PasswordHash(10, true);
-
+        require_once(dirname(__FILE__).'/../classes/phpass/PasswordHash.php');
+        $phpass = new PasswordHash(10, true);
         $match = $phpass->CheckPassword($password, $hash);
 
         //$rehash = true;
