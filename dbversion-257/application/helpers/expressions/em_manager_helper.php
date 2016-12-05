@@ -5374,7 +5374,7 @@
                     $sDomain=substr($sDomain,strpos($sDomain,'.')+1);
                     $iSSLIncluded=(int)Yii::app()->dbstats->createCommand('select ssl_included from limeservice_system.installations where user_id='.getInstallationID())->queryScalar();
                     $iResponsesToAdd=0.5;
-                    if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off' && $bSSLIncluded<>1) $iResponsesToAdd=1;
+                    if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off' && $iSSLIncluded<>1) $iResponsesToAdd=1;
                     
                     $iAffectedRows =  Yii::app()->dbstats->createCommand("Update responses set hits=hits+{$iResponsesToAdd}, modified=NOW() where subdomain='{$sSubdomain}' and rootdomain='{$sDomain}' and hitperiod='".date('Y-m-d H:00:00')."'")->execute();
                     if ($iAffectedRows==0)
