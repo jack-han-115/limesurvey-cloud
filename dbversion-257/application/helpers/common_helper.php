@@ -6279,7 +6279,7 @@ function array_diff_assoc_recursive($array1, $array2) {
         $aMatches=array();
         preg_match('/dbname=([^;]*)/', Yii::app()->db->getSchema()->getDbConnection()->connectionString, $aMatches);
         $sDbName = $aMatches[1];
-        $sCustomerID=substr($sDbName(),6);
+        $sCustomerID=substr($sDbName,6);
         return $sCustomerID;
     }
 
