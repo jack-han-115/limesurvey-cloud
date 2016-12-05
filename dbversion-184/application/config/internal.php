@@ -14,9 +14,9 @@ if (!file_exists(dirname(__FILE__) .  '/config.php')) {
 @date_default_timezone_set(@date_default_timezone_get());
 $userdir=str_replace('instances','installations',dirname(dirname(dirname(dirname(__FILE__))))).'/'.$_SERVER['SERVER_NAME'].'/userdata';
 $internalConfig = array(
-	'basePath' => dirname(dirname(__FILE__)),
-	'runtimePath' => $userdir.DIRECTORY_SEPARATOR.'tmp'.DIRECTORY_SEPARATOR.'runtime',
-	'name' => 'LimeSurvey',
+    'basePath' => dirname(dirname(__FILE__)),
+    'runtimePath' => $userdir.DIRECTORY_SEPARATOR.'tmp'.DIRECTORY_SEPARATOR.'runtime',
+    'name' => 'LimeSurvey',
     'localeClass' =>  'LSYii_Locale',
     'defaultController' => 'surveys',
     'import' => array(
@@ -25,9 +25,15 @@ $internalConfig = array(
         'application.models.*',
         'application.controllers.*',
         'application.modules.*',
+        'application.extensions.phpass.*',
     ),
     'preload' => array ('log'),
     'components' => array(
+        'phpass'=>array (
+                'class'=>'Phpass',
+                'hashPortable'=>true,
+                'hashCostLog2'=>10,
+            ),
         'bootstrap' => array(
             'class' => 'application.core.LSBootstrap',
             'responsiveCss' => false,
