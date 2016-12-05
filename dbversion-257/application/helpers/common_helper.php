@@ -6269,4 +6269,21 @@ function array_diff_assoc_recursive($array1, $array2) {
         return strlen($sMD5) == 32 && ctype_xdigit($sMD5);
     }
 
+    // LimeService Mod Start _--------------------------
+
+    /**
+    * Get the LimeSurvey Professional installation ID
+    */
+    function getInstallationID() {
+        // Yii doesn't give us a good way to get the database name
+        $aMatches=array();
+        preg_match('/dbname=([^;]*)/', Yii::app()->db->getSchema()->getDbConnection()->connectionString, $aMatches);
+        $sDbName = $aMatches[1];
+        $sCustomerID=substr($sDbName(),6);
+        return $sCustomerID;
+    }
+
+    // LimeService Mod End --------------------------    
+
+    
 // Closing PHP tag intentionally omitted - yes, it is okay
