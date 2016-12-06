@@ -5700,6 +5700,20 @@ function getFooter()
     global $embedded;
     if ( !$embedded )
     {
+        // LimeService Modification start
+        
+        $iWhiteLabel=(int)Yii::app()->dbstats->createCommand('select white_label from limeservice_system.installations where user_id='.getInstallationID())->queryScalar();
+        if (!$iWhiteLabel)
+        {
+            return "<div style='width:100%;margin:0; padding:1em 1em 1em 1em;color:#222;font-size:0.8em;text-align:center;'>
+                Powered by<br><a target='_blank' href='https://www.limesurvey.org'><img src='/logo.png' alt='Logo of LimeSurvey - the Open Source survey software'></a><br>
+                Create free professional surveys with <a target='_blank' href='https://www.limesurvey.org'>LimeSurvey</a>!
+            </div>
+            </body>
+            </html>";
+        }
+        else
+        // LimeService Modification end
         return "\n\n\t</body>\n</html>\n";
     }
 
