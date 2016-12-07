@@ -36,7 +36,7 @@ class LSYii_Application extends CWebApplication
             $config = require($config);
         }
 
-        Yii::import('application.extensions.phppass.*');
+        Yii::import('application.extensions.phpass.*');
 
         // Add logging of trace
         $config['components']['phpass'] = array(
