@@ -36,7 +36,9 @@ class LSYii_Application extends CWebApplication
             $config = require($config);
         }
 
-        Yii::import('application.libraries.phpass.Phpass');
+        // import phpass 
+        Yii::setPathOfAlias('phpass', 'application/libraries/phpass/');
+        Yii::import('phpass.*');
 
         // Add logging of trace
         $config['components']['phpass'] = array(
