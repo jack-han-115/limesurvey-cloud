@@ -134,9 +134,7 @@ class AdminController extends LSYii_Controller
          // ========================  Begin LimeService Mod
        
         $iLocked=(int)Yii::app()->dbstats->createCommand('select locked from limeservice_system.installations where user_id='.getInstallationID())->queryScalar();
-        $sPlan=Yii::app()->dbstats->createCommand('select subscription_alias from limeservice_system.installations where user_id='.getInstallationID())->queryScalar();
-        if (!$iWhiteLabel)
-         
+        $sPlan=Yii::app()->dbstats->createCommand('select subscription_alias from limeservice_system.installations where user_id='.getInstallationID())->queryScalar();    
         if (($sPlan=='' || $sPlan=='free') && $iLocked==1)
         {
             header("Expires: Sat, 26 Jul 1997 05:00:00 GMT");
