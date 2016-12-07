@@ -24,7 +24,7 @@
     $sDomain=substr($sDomain,strpos($sDomain,'.')+1);
 
     $iResponses = Yii::app()->dbstats->createCommand("select responses_avail from limeservice_system.balances where user_id=".substr(Yii::app()->db->username,6))->queryScalar();
-    echo "<div class='menubar-title-right'><small>".sprintf(gT('Your response balance: %s'),$iResponses)."</small> <a href='http://www.limeservice.com/en/buy-survey-responses'>".'(Buy more)'.'</a></div>';
+    echo "<div class='menubar-title-right'><small>".sprintf(gT('Your response balance: %s'),$iResponses)."</small> <a href='https://www.limesurvey.org/services#pricingHostedSubscription'>".'(Buy more)'.'</a></div>';
 
     //===============End LimeService Mod ?>
 

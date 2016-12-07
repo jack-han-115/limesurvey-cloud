@@ -2131,7 +2131,7 @@ function showadminmenu()
         if (@$statconnect->Connect($statdbport, $statdatabaseuser, $statdatabasepass, $statdatabasename))
         {
             $iResponses = $statconnect->GetOne("select responses_avail from limeservice_system.balances where user_id=".substr($databasename,6));
-            $adminmenu  .="<div class='menubar-title-right'><small>".sprintf($clang->gT('Your response balance: %s'),$iResponses)." <a href='http://www.limeservice.com/en/buy-survey-responses'>(Buy more)</a>
+            $adminmenu  .="<div class='menubar-title-right'><small>".sprintf($clang->gT('Your response balance: %s'),$iResponses)." <a href='https://www.limesurvey.org/services#pricingHostedSubscription'>(Buy more)</a>
             - New update (2.50+) available: <a href='$scriptname?action=globalsettings'>".sprintf($clang->gT('Update now and get 20 free responses!' )."</small>",$updateversion).'</a>
             </div>';
         }
