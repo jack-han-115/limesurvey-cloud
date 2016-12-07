@@ -29,7 +29,8 @@ class SurveyController extends LSYii_Controller
         // LimeService Mod start ===========================================
         
         $iLocked=(int)Yii::app()->dbstats->createCommand('select locked from limeservice_system.installations where user_id='.getInstallationID())->queryScalar();
-        if ($iLocked>0)
+        $iResponses = (int)Yii::app()->dbstats->createCommand("select responses_avail from limeservice_system.balances where user_id=".getInstallationID())->queryScalar();
+        if ($iLocked>0 || $iResponses<0)
         {
             header("Expires: Sat, 26 Jul 1997 05:00:00 GMT");
             die("
