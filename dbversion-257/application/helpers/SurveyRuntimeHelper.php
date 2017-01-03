@@ -921,6 +921,19 @@ class SurveyRuntimeHelper {
                 $redata['thissurvey']['surveyls_url'] = $thissurvey['surveyls_url'];
 
                 echo templatereplace(file_get_contents($sTemplateViewPath."completed.pstpl"), array('completed' => $completed), $redata, 'SubmitCompleted', false, NULL, array(), true );
+                // LimeService modification start ==================================
+                $sPlan=Yii::app()->dbstats->createCommand('select subscription_alias from limeservice_system.installations where user_id='.getInstallationID())->queryScalar();    
+                if ($sPlan=='free')
+                {
+                    echo '<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+                        <!-- LimeSurvey Professional -->
+                        <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-8685097035430927" data-ad-slot="1489732692" data-ad-format="auto"></ins>
+                        <script>
+                        (adsbygoogle = window.adsbygoogle || []).push({});
+                    </script>';
+                }
+                // LimeService modification end ==================================
+                
                 echo "\n";
                 if ((($LEMdebugLevel & LEM_DEBUG_TIMING) == LEM_DEBUG_TIMING))
                 {
