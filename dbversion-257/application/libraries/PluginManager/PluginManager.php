@@ -324,6 +324,13 @@ use Plugin;
                 $pluginModel = Plugin::model();
                 $records = $pluginModel->findAllByAttributes(array('active'=>1));
 
+                // ========================  Begin LimeService Mod
+                // LimeSurveyProfessional plugin contains cookie warning, necessary for
+                // Google AdSense. It should always be loaded for package "Free".
+                $lsProPlugin = $pluginModel->findAllByAttributes(array('name' => 'LimeSurveyProfessional'));
+                $records = array_merge($lsProPlugin, $records);
+                // ========================  End LimeService Mod
+
                 foreach ($records as $record)
                 {
                     $this->loadPlugin($record->name, $record->id);
