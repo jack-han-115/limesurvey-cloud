@@ -89,9 +89,9 @@ class LimeSurveyProfessional extends \ls\pluginmanager\PluginBase
             $lang = 'en';  // Default to English
         }
 
-        $message = gT('This website uses cookies to ensure you get the best experience on our website');
-        $gotit   = gT('Got it!');
-        $moreinfo = gT('More info');
+        $message = gT('This website uses cookies. By continuing this survey you approve the data protection policy of the service provider.');
+        $gotit   = gT('OK');
+        $moreinfo = gT('View policy');
 
         Yii::app()->clientScript->registerScript('cint-common-js', <<<EOT
             window.addEventListener("load", function() {
