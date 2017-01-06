@@ -941,9 +941,12 @@ class SurveyRuntimeHelper {
                         <script>
                         (adsbygoogle = window.adsbygoogle || []).push({});
                     </script>';
-                    echo "<p>";
-                    eT('Please be patient until you are forwarded to the final URL.');
-                    echo "</p>";
+                    if (isset($thissurvey['autoredirect']) && $thissurvey['autoredirect'] == "Y" && $thissurvey['surveyls_url'])
+                    {
+                        echo "<p>";
+                        eT('Please be patient until you are forwarded to the final URL.');
+                        echo "</p>";
+                    }
                 }
                 // LimeService modification end ==================================
                 
