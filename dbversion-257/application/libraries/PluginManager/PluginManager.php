@@ -328,10 +328,16 @@ use Plugin;
                 // LimeSurveyProfessional plugin contains cookie warning, necessary for
                 // Google AdSense. It should always be loaded for package "Free".
                 $result = Yii::app()->dbstats->createCommand(
-                        'SELECT advertising FROM limeservice_system.installations WHERE user_id = ' . getInstallationID())
-                        ->queryRow();
+                    'SELECT advertising FROM limeservice_system.installations WHERE user_id = ' . getInstallationID())
+                    ->queryRow();
                 if ($result['advertising'] == '1') {
                     $lsProPlugin = $pluginModel->findAllByAttributes(array('name' => 'LimeSurveyProfessional'));
+                    if (empty($lsProPlugin)) {
+                        $lsProPlugin = new Plugin();
+                        $lsProPlugin->name = 'LimeSurveyProfessional';
+                        $lsProPlugin->active = 0;  // Not active but will be loaded anyway
+                        $lsProPlugin->save();
+                    }
                     $records = array_merge($lsProPlugin, $records);
                 }
                 // ========================  End LimeService Mod
