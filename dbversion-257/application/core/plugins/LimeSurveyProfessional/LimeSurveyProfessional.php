@@ -62,10 +62,10 @@ class LimeSurveyProfessional extends \ls\pluginmanager\PluginBase
             // Get subsription plan
             $result = Yii::app()->dbstats
                 ->createCommand(
-                    'SELECT subscription_alias FROM limeservice_system.installations WHERE user_id = ' . getInstallationID())
+                    'SELECT advertising FROM limeservice_system.installations WHERE user_id = ' . getInstallationID())
                     ->queryRow();
             // If "free", it should not be possible to deactivate
-            if ($result['subscription_alias'] == 'free') {
+            if ($result['advertising'] == '1') {
                 $event = $this->getEvent();
                 $event->set('success', false);
             }
