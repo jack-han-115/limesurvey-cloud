@@ -890,13 +890,23 @@ class SurveyRuntimeHelper {
                     $_SESSION[$LEMsessid]['sid'] = $surveyid;
 
                     sendCacheHeaders();
+                    // LimeService Mod start ======================================
+                    $header=false;
                     if (isset($thissurvey['autoredirect']) && $thissurvey['autoredirect'] == "Y" && $thissurvey['surveyls_url'])
                     {
+                        $iDelay=0;
+                        $sAds=Yii::app()->dbstats->createCommand('select advertising from limeservice_system.installations where user_id='.getInstallationID())->queryScalar();    
+                        if ($sAds=='1')
+                        {
+                            $iDelay=5;
+                        }
+                        
                         //Automatically redirect the page to the "url" setting for the survey
-                        header("Location: {$thissurvey['surveyls_url']}");
+                        $header = '<meta http-equiv="refresh" content="'.$iDelay.';url='.$thissurvey['surveyls_url'].'">';
                     }
 
-                    doHeader();
+                    echo getHeader($header);
+                    // LimeService Mod end ======================================
                     echo $content;
                 }
                 $redata['completed'] = $completed;
@@ -931,6 +941,9 @@ class SurveyRuntimeHelper {
                         <script>
                         (adsbygoogle = window.adsbygoogle || []).push({});
                     </script>';
+                    echo "<p>";
+                    eT('Please be patient until you are forwarded to the final URL.');
+                    echo "</p>";
                 }
                 // LimeService modification end ==================================
                 
