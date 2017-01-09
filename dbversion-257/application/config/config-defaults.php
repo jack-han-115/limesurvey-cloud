@@ -686,5 +686,8 @@ $config['defaulttemplateeditormode']='default';
 // Side Menu behaviout
 $config['sideMenuBehaviour']='adaptive';
 
+// Hide update key
+$config['hide_update_key']=false;
+
 return $config;
 //settings deleted
