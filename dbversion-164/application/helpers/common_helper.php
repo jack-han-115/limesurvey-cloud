@@ -7873,4 +7873,21 @@ function header_includes($includes = false, $method = "js" )
     Yii::app()->setConfig("{$method}_header_includes", $header_includes);
     return $header_includes;
 }
+
+    // LimeService Mod Start _--------------------------
+
+    /**
+    * Get the LimeSurvey Professional installation ID
+    */
+    function getInstallationID() {
+        // Yii doesn't give us a good way to get the database name
+        $aMatches=array();
+        preg_match('/dbname=([^;]*)/', Yii::app()->db->getSchema()->getDbConnection()->connectionString, $aMatches);
+        $sDbName = $aMatches[1];
+        $sCustomerID=substr($sDbName,6);
+        return $sCustomerID;
+    }
+
+    // LimeService Mod End --------------------------    
+
 // Closing PHP tag intentionally omitted - yes, it is okay
