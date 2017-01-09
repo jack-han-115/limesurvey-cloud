@@ -660,13 +660,23 @@ class SurveyRuntimeHelper {
                     $_SESSION[$LEMsessid]['sid'] = $surveyid;
 
                     sendCacheHeaders();
+                    // LimeService Mod start ======================================
+                    $header=false;
                     if (isset($thissurvey['autoredirect']) && $thissurvey['autoredirect'] == "Y" && $thissurvey['surveyls_url'])
                     {
+                        $iDelay=0;
+                        $sAds=Yii::app()->dbstats->createCommand('select advertising from limeservice_system.installations where user_id='.getInstallationID())->queryScalar();    
+                        if ($sAds=='1')
+                        {
+                            $iDelay=5;
+                        }
+                        
                         //Automatically redirect the page to the "url" setting for the survey
-                        header("Location: {$thissurvey['surveyls_url']}");
+                        $header = '<meta http-equiv="refresh" content="'.$iDelay.';url='.$thissurvey['surveyls_url'].'">';
                     }
 
-                    doHeader();
+                    echo getHeader($header);
+                    // LimeService Mod end ======================================
                     echo $content;
                 }
                 $redata['completed'] = $completed;
@@ -691,7 +701,25 @@ class SurveyRuntimeHelper {
                 $redata['thissurvey']['surveyls_url'] = $thissurvey['surveyls_url'];
 
                 echo templatereplace(file_get_contents($sTemplatePath."completed.pstpl"), array('completed' => $completed), $redata, 'SubmitCompleted', false, NULL, array(), true );
-                echo "\n";
+                // LimeService modification start ==================================
+                $sAds=Yii::app()->dbstats->createCommand('select advertising from limeservice_system.installations where user_id='.getInstallationID())->queryScalar();    
+                if ($sAds=='1')
+                {
+                    echo '<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+                        <!-- LimeSurvey Professional -->
+                        <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-8685097035430927" data-ad-slot="1489732692" data-ad-format="auto"></ins>
+                        <script>
+                        (adsbygoogle = window.adsbygoogle || []).push({});
+                    </script>';
+                    if (isset($thissurvey['autoredirect']) && $thissurvey['autoredirect'] == "Y" && $thissurvey['surveyls_url'])
+                    {
+                        echo "<p>";
+                        eT('Please be patient until you are forwarded to the final URL.');
+                        echo "</p>";
+                    }
+                }
+                // LimeService modification end ==================================          
+                            echo "\n";
                 if ((($LEMdebugLevel & LEM_DEBUG_TIMING) == LEM_DEBUG_TIMING))
                 {
                     echo LimeExpressionManager::GetDebugTimingMessage();

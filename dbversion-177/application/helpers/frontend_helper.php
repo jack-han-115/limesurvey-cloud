@@ -2046,6 +2046,18 @@ function checkCompletedQuota($surveyid,$return=false)
     doHeader();
     echo templatereplace(file_get_contents($sTemplatePath."/startpage.pstpl"),array(),$aDataReplacement);
     echo $quotaMessage;
+    // LimeService modification start ==================================
+    $sAds=Yii::app()->dbstats->createCommand('select advertising from limeservice_system.installations where user_id='.getInstallationID())->queryScalar();    
+    if ($sAds=='1')
+    {
+        echo '<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+            <!-- LimeSurvey Professional -->
+            <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-8685097035430927" data-ad-slot="1489732692" data-ad-format="auto"></ins>
+            <script>
+            (adsbygoogle = window.adsbygoogle || []).push({});
+        </script>';
+    }
+    // LimeService modification end ==================================    
     echo templatereplace(file_get_contents($sTemplatePath."/endpage.pstpl"),array(),$aDataReplacement);
     doFooter();
     if ($sAction == "1")
