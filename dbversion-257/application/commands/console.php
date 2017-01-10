@@ -28,15 +28,11 @@
     require_once(dirname(dirname(dirname(__FILE__))) . DIRECTORY_SEPARATOR . 'framework' . DIRECTORY_SEPARATOR . 'yii.php');
   // Load configuration.
   $sCurrentDir=dirname(__FILE__);
-  $settings=require (dirname($sCurrentDir).DIRECTORY_SEPARATOR.'config'.DIRECTORY_SEPARATOR.'config-defaults.php');
   $config=require (dirname($sCurrentDir).DIRECTORY_SEPARATOR.'config'.DIRECTORY_SEPARATOR.'internal.php');
   // Remove the host name
   unset($argv[1]);
   $_SERVER['argv']=array_values($argv);
   $core = dirname($sCurrentDir) . DIRECTORY_SEPARATOR . 'core' . DIRECTORY_SEPARATOR;
-  if(isset($config['config'])){
-    $settings=array_merge($settings,$config['config']);
-  }
   unset ($config['defaultController']);
   unset ($config['config']);
 
@@ -56,9 +52,8 @@
         define('APPPATH', Yii::app()->getBasePath() . DIRECTORY_SEPARATOR);
         $app->commandRunner->addCommands(YII_PATH.'/cli/commands');
         $env=@getenv('YII_CONSOLE_COMMANDS');
-        if(!empty($env)){
+        if(!empty($env))
             $app->commandRunner->addCommands($env);
-        }
     }
     $app->run();
 ?>
