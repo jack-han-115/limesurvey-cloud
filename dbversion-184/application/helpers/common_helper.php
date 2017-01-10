@@ -3988,6 +3988,7 @@ function SendEmailMessage($body, $subject, $to, $from, $sitename, $ishtml=false,
 
 
     require_once(APPPATH.'/third_party/phpmailer/class.phpmailer.php');
+    require_once(APPPATH.'/third_party/phpmailer/class.smtp.php');
     $mail = new PHPMailer;
     if (!$mail->SetLanguage($defaultlang,APPPATH.'/third_party/phpmailer/language/'))
     {
