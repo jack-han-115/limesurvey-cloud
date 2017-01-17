@@ -132,6 +132,10 @@ EOT
             'lang'     => $lang
         );
 
+        $assetsUrl = Yii::app()->assetManager->publish(dirname(__FILE__));
+        App()->clientScript->registerCssFile($assetsUrl . '/css/cookieconsent.min.css');
+        App()->clientScript->registerScriptFile($assetsUrl . '/js/cookieconsent.min.js', CClientScript::POS_END);
+
         Yii::setPathOfAlias('lspro', dirname(__FILE__));
         Yii::app()->controller->renderPartial('lspro.views.modal', $data);
 
