@@ -18,7 +18,7 @@ class LimeSurveyProfessional extends \ls\pluginmanager\PluginBase
      */
     public function init()
     {   
-        $this->subscribe('beforeSurveyPage');
+        $this->subscribe('beforeCloseHtml');
         $this->subscribe('beforeDeactivate');
 
         /* Settings not available in LimeService version
@@ -77,16 +77,18 @@ class LimeSurveyProfessional extends \ls\pluginmanager\PluginBase
      * @todo Download cookieconsent?
      * @return void
      */
-    public function beforeSurveyPage()
+    public function beforeCloseHtml()
     {   
         $settings = $this->getPluginSettings(true);
 
         // Get survey language
         $event = $this->getEvent();
         $surveyId = $event->get('surveyId');
-        $lang = $_SESSION['survey_' . $surveyId]['s_lang'];
-        if (empty($lang)) {
-            $lang = 'en';  // Default to English
+        if ($surveyId) {
+            $lang = $_SESSION['survey_' . $surveyId]['s_lang'];
+        }
+        else {
+            $lang = App()->language;
         }
 
         $message = gT('This website uses cookies. By continuing this survey you approve the data protection policy of the service provider.');
@@ -137,8 +139,7 @@ EOT
         App()->clientScript->registerScriptFile($assetsUrl . '/js/cookieconsent.min.js', CClientScript::POS_END);
 
         Yii::setPathOfAlias('lspro', dirname(__FILE__));
-        Yii::app()->controller->renderPartial('lspro.views.modal', $data);
-
+        $this->set('html', Yii::app()->controller->renderPartial('lspro.views.modal', $data, true));
     }
 
 }
