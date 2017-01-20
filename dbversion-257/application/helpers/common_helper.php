@@ -5665,7 +5665,6 @@ function getHeader($meta = false)
     if ($meta)
         $header .= $meta;
 
-
     if ( !$embedded )
     {
         return $header;
@@ -5695,10 +5694,14 @@ function getPrintableHeader()
     return $headelements;
 }
 
-// This function returns the Footer as result string
-// If you want to echo the Footer use doFooter() !
+/** 
+ * This function returns the Footer as result string
+ * If you want to echo the Footer use doFooter()!
+ * @return string
+ */
 function getFooter()
 {
+
     global $embedded;
     if ( !$embedded )
     {
@@ -5725,8 +5728,22 @@ function getFooter()
         return $embedded_footerfunc();
 }
 
-function doFooter()
+/**
+ * @param int|null $surveyid Null for front-end startpage where there's no survey
+ * @return void
+ */
+function doFooter($surveyid = null)
 {
+    $event = new PluginEvent('beforeCloseHtml');
+    if ($surveyid) {
+        $event->set('surveyId', $surveyid);
+    }
+    App()->getPluginManager()->dispatchEvent($event);
+    if (!is_null($event->get('html')))
+    {
+        echo $event->get('html');
+    }
+
     echo getFooter();
 }
 
@@ -5870,7 +5887,7 @@ function  doesImportArraySupportLanguage($csvarray,$idkeysarray,$langfieldnum,$l
 *
 * @param boolean $bIncludeOwner If the survey owner should be included
 * @param boolean $bIncludeSuperAdmins If Super admins should be included
-* @param int surveyid
+* @param int $surveyid
 * @return string
 */
 function getSurveyUserList($bIncludeOwner=true, $bIncludeSuperAdmins=true,$surveyid)
@@ -5894,25 +5911,37 @@ function getSurveyUserList($bIncludeOwner=true, $bIncludeSuperAdmins=true,$surve
 
     if (Yii::app()->getConfig('usercontrolSameGroupPolicy') == true)
     {
-
         $authorizedUsersList = getUserList('onlyuidarray');
     }
 
-        foreach($aSurveyIDResult as $sv)
-        {
-            if (Yii::app()->getConfig('usercontrolSameGroupPolicy') == false ||
+    $svexist = false;
+    foreach($aSurveyIDResult as $sv)
+    {
+        if (Yii::app()->getConfig('usercontrolSameGroupPolicy') == false ||
             in_array($sv['uid'],$authorizedUsersList))
-            {
-                $surveyselecter .= "<option";
-                $surveyselecter .=" value='{$sv['uid']}'>{$sv['users_name']} {$sv['full_name']}</option>\n";
-            }
+        {
+            $surveyselecter .= "<option";
+            $surveyselecter .=" value='{$sv['uid']}'>{$sv['users_name']} {$sv['full_name']}</option>\n";
+            $svexist = true;
         }
-    if (!isset($svexist)) {$surveyselecter = "<option value='-1' selected='selected'>".gT("Please choose...")."</option>\n".$surveyselecter;}
-    else {$surveyselecter = "<option value='-1'>".gT("None")."</option>\n".$surveyselecter;}
+    }
+
+    if ($svexist) {
+        $surveyselecter = "<option value='-1' selected='selected'>".gT("Please choose...")."</option>\n".$surveyselecter;
+    }
+    else {
+        $surveyselecter = "<option value='-1'>".gT("None")."</option>\n".$surveyselecter;
+    }
 
     return $surveyselecter;
 }
 
+/**
+ * Return HTML <option> list of user groups
+ * @param string $outputformat
+ * @param int $surveyid
+ * @return string
+ */
 function getSurveyUserGroupList($outputformat='htmloptions',$surveyid)
 {
 
@@ -5936,6 +5965,7 @@ function getSurveyUserGroupList($outputformat='htmloptions',$surveyid)
         $authorizedGroupsList=getUserGroupList(NULL, 'simplegidarray');
     }
 
+    $svexist = false;
     foreach($aResult as $sv)
     {
         if (Yii::app()->getConfig('usercontrolSameGroupPolicy') == false ||
@@ -5944,11 +5974,16 @@ function getSurveyUserGroupList($outputformat='htmloptions',$surveyid)
             $surveyselecter .= "<option";
             $surveyselecter .=" value='{$sv['ugid']}'>{$sv['name']}</option>\n";
             $simpleugidarray[] = $sv['ugid'];
+            $svexist = true;
         }
     }
 
-    if (!isset($svexist)) {$surveyselecter = "<option value='-1' selected='selected'>".gT("Please choose...")."</option>\n".$surveyselecter;}
-    else {$surveyselecter = "<option value='-1'>".gT("None")."</option>\n".$surveyselecter;}
+    if ($svexist) {
+        $surveyselecter = "<option value='-1' selected='selected'>".gT("Please choose...")."</option>\n".$surveyselecter;
+    }
+    else {
+        $surveyselecter = "<option value='-1'>".gT("None")."</option>\n".$surveyselecter;
+    }
 
     if ($outputformat == 'simpleugidarray')
     {

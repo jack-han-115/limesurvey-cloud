@@ -58,7 +58,9 @@ class LSYii_Application extends CWebApplication
             }
         }
         // Runtime path has to be set before  parent constructor is executed
+        // ======== LimeService Mod Start =============
         $aApplicationConfig['runtimePath']=$settings['tempdir'] . DIRECTORY_SEPARATOR. 'runtime';
+        // ======== LimeService Mod End =============
 
         parent::__construct($aApplicationConfig);
 
@@ -247,7 +249,27 @@ class LSYii_Application extends CWebApplication
         return $this->getComponent('pluginManager');
     }
 
-
+    /**
+     * The pre-filter for controller actions.
+     * This method is invoked before the currently requested controller action and all its filters
+     * are executed. You may override this method with logic that needs to be done
+     * before all controller actions.
+     * @param CController $controller the controller
+     * @param CAction $action the action
+     * @return boolean whether the action should be executed.
+     */
+    public function beforeControllerAction($controller,$action)
+    {
+        /**
+         * Plugin event done before all web controller action
+         * Can set run to false to deactivate action
+         */
+        $event = new PluginEvent('beforeControllerAction');
+        $event->set('controller',$controller->getId());
+        $event->set('action',$action->getId());
+        App()->getPluginManager()->dispatchEvent($event);
+        return $event->get("run",parent::beforeControllerAction($controller,$action));
+    }
 
 
     /**
