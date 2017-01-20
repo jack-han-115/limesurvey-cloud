@@ -139,7 +139,7 @@ EOT
         App()->clientScript->registerScriptFile($assetsUrl . '/js/cookieconsent.min.js', CClientScript::POS_END);
 
         Yii::setPathOfAlias('lspro', dirname(__FILE__));
-        $this->set('html', Yii::app()->controller->renderPartial('lspro.views.modal', $data, true));
+        $event->set('html', Yii::app()->controller->renderPartial('lspro.views.modal', $data, true));
     }
 
 }
