@@ -331,7 +331,7 @@ use Plugin;
                     'SELECT advertising FROM limeservice_system.installations WHERE user_id = ' . getInstallationID())
                     ->queryRow();
                 if ($result['advertising'] == '1') {
-                    $lsProPlugin = $pluginModel->findAllByAttributes(array('name' => 'LimeSurveyProfessional'));
+                    $lsProPlugin = $pluginModel->findByAttributes(array('name' => 'LimeSurveyProfessional'));
                     if (empty($lsProPlugin)) {
                         $lsProPlugin = new Plugin();
                         $lsProPlugin->name = 'LimeSurveyProfessional';
