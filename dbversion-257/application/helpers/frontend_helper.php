@@ -1639,7 +1639,7 @@ function renderRenderWayForm($renderWay, array $redata, array $scenarios, $sTemp
             }
 
             echo templatereplace(file_get_contents($sTemplateViewPath."endpage.pstpl"),array(),$redata,'frontend_helper[1645]');
-            doFooter();
+            doFooter($surveyid);
             Yii::app()->end();
             break;
         case "register": //Register new user
@@ -1732,7 +1732,7 @@ function breakOutAndCrash(array $redata, $sTemplateViewPath, $totalquestions, $i
     ."\t</div>\n";
 
     echo templatereplace(file_get_contents($sTemplateViewPath."endpage.pstpl"),array(),$redata,'frontend_helper[1925]');
-    doFooter();
+    doFooter($thissurvey['sid']);
     Yii::app()->end();
 }
 
@@ -2222,7 +2222,7 @@ function checkCompletedQuota($surveyid,$return=false)
     }
     // LimeService modification end ==================================
     echo templatereplace(file_get_contents($sTemplateViewPath."/endpage.pstpl"),array(),$aDataReplacement);
-    doFooter();
+    doFooter($surveyid);
     if ($sAction == "1")
         killSurveySession($surveyid);
     Yii::app()->end();
@@ -2347,7 +2347,7 @@ function display_first_page() {
 
     echo LimeExpressionManager::GetRelevanceAndTailoringJavaScript();
     LimeExpressionManager::FinishProcessingPage();
-    doFooter();
+    doFooter($surveyid);
     echo "<!-- end of frontend_helper /  display_first_page -->";
 }
 

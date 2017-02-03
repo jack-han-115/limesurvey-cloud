@@ -1641,13 +1641,13 @@ function XMLImportTokens($sFullFilePath,$iSurveyID,$sCreateMissingAttributeField
             $insertdata[(string)$key]=(string)$value;
         }
 
-        $token = Token::create($iSurveyID);
+        $token = Token::create($iSurveyID,'allowinvalidemail');
         $token->setAttributes($insertdata, false);
-        if (!$token->save())
-        {
-            $results['warnings'][]=gT("Skipped tokens entry:").' '. implode('. ',$token->errors['token']);
-        };
-        $results['tokens']++;
+        if (!$token->save()) {
+            $results['warnings'][]=CHtml::errorSummary($token,gT("Skipped tokens entry:"));
+        } else {
+            $results['tokens']++;
+        }
     }
     switchMSSQLIdentityInsert('tokens_'.$iSurveyID,false);
     if (Yii::app()->db->getDriverName() == 'pgsql')
@@ -1937,6 +1937,11 @@ function CSVImportResponses($sFullFilePath,$iSurveyId,$aOptions=array())
                 }
                 if($oSurvey->save())
                 {
+                    $beforeDataEntryImport = new PluginEvent('beforeDataEntryImport');
+                    $beforeDataEntryImport->set('iSurveyID',$iSurveyId);
+                    $beforeDataEntryImport->set('oModel',$oSurvey);
+                    App()->getPluginManager()->dispatchEvent($beforeDataEntryImport);
+
                     $oTransaction->commit();
                     if($bExistingsId && $aOptions['sExistingId']!='renumber')
                     {

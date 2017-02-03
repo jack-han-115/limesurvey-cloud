@@ -17,13 +17,14 @@ if (! date_default_timezone_set(@date_default_timezone_get()))
 
     date_default_timezone_set('Europe/London');
 }
-// LimeService Mod Start
+// LimeService Mod Start ===============
 if (!isset($_SERVER['SERVER_NAME']))
 {
     $_SERVER['SERVER_NAME']=$argv[1];
 }
 $userdir=str_replace('instances','installations',dirname(dirname(dirname(dirname(__FILE__))))).'/'.$_SERVER['SERVER_NAME'].'/userdata';
-// LimeService Mod End
+// LimeService Mod End ==================
+
 if (function_exists('mb_internal_encoding')) {
     // Needed to substring arabic etc
     mb_internal_encoding('UTF-8');
@@ -85,17 +86,20 @@ $internalConfig = array(
         'bootstrap.helpers.*',
         'bootstrap.widgets.*',
         'bootstrap.behaviors.*',
-        'yiiwheels.widgets.select2.WhSelect2',
+        'yiiwheels.widgets.select2.WhSelect2',	
+// LimeService Mod start =============
         'application.extensions.phpass.*',
-
+// LimeService Mod end =============
     ),
     'preload' => array ('log'),
     'components' => array(
+// LimeService Mod start =============
         'phpass'=>array (
                 'class'=>'Phpass',
                 'hashPortable'=>true,
                 'hashCostLog2'=>10,
             ),
+// LimeService Mod end =============
       // yiistrap configuration
         'bootstrap' => array(
             'class' => 'bootstrap.components.TbApi',
@@ -119,7 +123,10 @@ $internalConfig = array(
             'excludeFiles' => array("config.xml", "assessment.pstpl", "clearall.pstpl",  "completed.pstpl",  "endgroup.pstpl",  "endpage.pstpl",  "groupdescription.pstpl",  "load.pstpl",  "navigator.pstpl",  "printanswers.pstpl",  "print_group.pstpl",  "print_question.pstpl",  "print_survey.pstpl",  "privacy.pstpl",  "question.pstpl",  "register.pstpl",  "save.pstpl",  "startgroup.pstpl",  "startpage.pstpl",  "surveylist.pstpl",  "survey.pstpl",  "welcome.pstpl" ),
             'baseUrl' => '/tmp/assets',
             'basePath'=> $userdir.DIRECTORY_SEPARATOR.'tmp'.DIRECTORY_SEPARATOR.'assets',
+// LimeService Mod start =============
             'linkAssets'=>true
+// LimeService Mod end =============
+
         ),
 
         'request' => array(
