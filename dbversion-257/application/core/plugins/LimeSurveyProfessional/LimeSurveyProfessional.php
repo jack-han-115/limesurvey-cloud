@@ -84,7 +84,7 @@ class LimeSurveyProfessional extends \ls\pluginmanager\PluginBase
         // Get survey language
         $event = $this->getEvent();
         $surveyId = $event->get('surveyId');
-        if ($surveyId) {
+        if ($surveyId && isset($_SESSION['survey_' . $surveyId])) {
             $lang = $_SESSION['survey_' . $surveyId]['s_lang'];
         }
         else {
