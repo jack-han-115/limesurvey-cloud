@@ -17,7 +17,7 @@ class LimeSurveyProfessional extends \ls\pluginmanager\PluginBase
      * @return void
      */
     public function init()
-    {   
+    {
         $this->subscribe('beforeCloseHtml');
         $this->subscribe('beforeDeactivate');
 
@@ -55,15 +55,16 @@ class LimeSurveyProfessional extends \ls\pluginmanager\PluginBase
      * @return void
      */
     public function beforeDeactivate()
-    {   
+    {
         // Check if this is a LimeService installation
         $isLimeServiceInstallation = function_exists('getInstallationID') && isset(Yii::app()->dbstats);
         if ($isLimeServiceInstallation) {
             // Get subsription plan
             $result = Yii::app()->dbstats
                 ->createCommand(
-                    'SELECT advertising FROM limeservice_system.installations WHERE user_id = ' . getInstallationID())
-                    ->queryRow();
+                    'SELECT advertising FROM limeservice_system.installations WHERE user_id = ' . getInstallationID()
+                )
+                ->queryRow();
             // If "free", it should not be possible to deactivate
             if ($result['advertising'] == '1') {
                 $event = $this->getEvent();
@@ -78,7 +79,7 @@ class LimeSurveyProfessional extends \ls\pluginmanager\PluginBase
      * @return void
      */
     public function beforeCloseHtml()
-    {   
+    {
         $settings = $this->getPluginSettings(true);
 
         // Get survey language
@@ -86,8 +87,7 @@ class LimeSurveyProfessional extends \ls\pluginmanager\PluginBase
         $surveyId = $event->get('surveyId');
         if ($surveyId && isset($_SESSION['survey_' . $surveyId])) {
             $lang = $_SESSION['survey_' . $surveyId]['s_lang'];
-        }
-        else {
+        } else {
             $lang = App()->language;
         }
 
@@ -141,6 +141,4 @@ EOT
         Yii::setPathOfAlias('lspro', dirname(__FILE__));
         $event->set('html', Yii::app()->controller->renderPartial('lspro.views.modal', $data, true));
     }
-
 }
-
