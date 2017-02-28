@@ -870,7 +870,7 @@ function submitfailed($errormsg = '', $query = null)
         . ($query ? $query : '') . "\n\n"  // In case we have no global subquery, but an argument to the function
         . gT("ERROR MESSAGE","unescaped").":\n"
         . $errormsg."\n\n";
-        SendEmailMessage($email, gT("Error saving results","unescaped"), $thissurvey['adminemail'], $thissurvey['adminemail'], "LimeSurvey", false, getBounceEmail($surveyid));
+        //SendEmailMessage($email, gT("Error saving results","unescaped"), $thissurvey['adminemail'], $thissurvey['adminemail'], "LimeSurvey", false, getBounceEmail($surveyid));
     }
     else
     {
