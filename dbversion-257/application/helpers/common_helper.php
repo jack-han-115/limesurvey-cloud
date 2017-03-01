@@ -4353,8 +4353,11 @@ function includeKeypad()
 */
 function getQuotaInformation($surveyid,$language,$iQuotaID=null)
 {
+    /** @var Survey $oSurvey */
+    $oSurvey = Survey::model()->findByPk($surveyid);
+
     Yii::log('getQuotaInformation');
-    $baselang = Survey::model()->findByPk($surveyid)->language;
+    $baselang = $oSurvey->language;
     $aAttributes=array('sid' => $surveyid);
     if ((int)$iQuotaID)
     {
@@ -4374,7 +4377,7 @@ function getQuotaInformation($surveyid,$language,$iQuotaID=null)
         foreach ($aQuotas as $oQuota)
         {
             // Array for each quota
-            $aQuotaInfo = array_merge($oQuota->attributes,$oQuota->languagesettings[0]->attributes);// We have only one language, then we can use first only
+            $aQuotaInfo = array_merge($oQuota->attributes,$oQuota->languagesettings[$oSurvey->language]->attributes);// We have only one language, then we can use first only
             $aQuotaMembers = QuotaMember::model()->findAllByAttributes(array('quota_id'=>$oQuota->id));
             $aQuotaInfo['members'] = array();
             if (count($aQuotaMembers) > 0)
@@ -4993,7 +4996,8 @@ function fixLanguageConsistency($sid, $availlangs='')
             reset($langs);
         }
     }
-
+    /* Remove invalid question : can break survey */
+    Survey::model()->findByPk($sid)->fixInvalidQuestions();
 
     $query = "SELECT * FROM {{assessments}} WHERE sid='{$sid}' AND language='{$baselang}'";
     $result = Yii::app()->db->createCommand($query)->query();
@@ -5673,7 +5677,7 @@ function getPrintableHeader()
     return $headelements;
 }
 
-/** 
+/**
  * This function returns the Footer as result string
  * If you want to echo the Footer use doFooter()!
  * @return string
