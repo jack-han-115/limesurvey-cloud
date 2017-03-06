@@ -92,11 +92,11 @@
 
                     <!-- activate expired survey -->
                     <?php if($expired) : ?>
-                        <span class="btntooltip" style="display: inline-block" data-toggle="tooltip" data-placement="bottom" title="<?php eT('This survey is active but expired.'); ?>">
-                            <button type="button" class="btn btn-success btntooltip" disabled="disabled">
+                        <span class="btntooltip" style="display: inline-block" data-toggle="tooltip" data-placement="bottom" data-html="true" title="<?php eT('This survey is active but expired.'); ?><br><?php eT('Click to adjust.'); ?>">
+                            <a href='<?php echo $this->createUrl("admin/survey/editlocalsettings/surveyid/$surveyid#publicationoptions");?>'class="btn btn-success btntooltip" >
                                 <span class="fa fa-ban">&nbsp;</span>
-                                <?php eT("Activate this survey"); ?>
-                            </button>
+                                <?php eT("Expired");?>
+                            </a>
                         </span>
                     <?php elseif($notstarted) : ?>
                         <span class="btntooltip" style="display: inline-block" data-toggle="tooltip" data-placement="bottom" title='<?php eT("This survey is active but has a start date."); ?>'>
@@ -448,6 +448,14 @@
                                               <?php eT("Tab-separated-values format (*.txt)");?>
                                           </a>
                                       </li>
+
+                                      <!-- Survey printable version  -->
+                                      <li>
+                                          <a href='<?php echo $this->createUrl("admin/export/sa/survey/action/exportprintables/surveyid/$surveyid");?>' >
+                                              <span class="icon-export" ></span>
+                                              <?php eT("Printable survey (*.html)");?>
+                                          </a>
+                                      </li>
                                   <?php endif; ?>
 
                               <?php endif;?>
@@ -459,7 +467,7 @@
                                   <li>
                                       <a target='_blank' href='<?php echo $this->createUrl("admin/printablesurvey/sa/index/surveyid/$surveyid");?>' >
                                           <span class="glyphicon glyphicon-print"></span>
-                                          <?php eT("Printable version");?>
+                                          <?php eT("Printable survey");?>
                                       </a>
                                   </li>
                               <?php else: ?>
