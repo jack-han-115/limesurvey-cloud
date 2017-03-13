@@ -11,8 +11,6 @@
 /* @var Quota $oQuota The last Quota as base for Massive edits */
 /* @var QuotaLanguageSetting[] $aQuotaLanguageSettings The last Quota LanguageSettings */
 
-
-
 ?>
 <div class='side-body <?php echo getSideBodyClass(false); ?>'>
     <div class="row">
@@ -29,7 +27,7 @@
                 </div>
             <?php endif; ?>
 
-
+            <?php if($oDataProvider->itemCount > 0):?>
             <!-- Grid -->
             <div class="row">
                 <div class="col-sm-12 content-right">
@@ -37,10 +35,7 @@
                         'dataProvider' => $oDataProvider,
                         'id' => 'quota-grid',
                         'emptyText'=>gT('No quotas'),
-                        'enablePagination'=>false,
-                        'template' => '{items}',
                         'columns' => array(
-
                             array(
                                 'id'=>'id',
                                 'class'=>'CCheckBoxColumn',
@@ -53,15 +48,12 @@
                                 'htmlOptions'=>array('style'=>'vertical-align:top'),
                                 'value'=>function($oQuota) use($oSurvey,$aQuotaItems){
                                     /** @var Quota $oQuota */
-                                    $out = null;
-                                    if (!empty($aQuotaItems) ){
-                                        $out = '<p>'.$this->renderPartial('/admin/quotas/viewquotas_quota_members',
-                                            array(
-                                                'oSurvey'=>$oSurvey,
-                                                'oQuota'=>$oQuota,
-                                                'aQuotaItems'=>$aQuotaItems,
-                                            )).'<p>';
-                                    }
+                                    $out = '<p>'.$this->renderPartial('/admin/quotas/viewquotas_quota_members',
+                                        array(
+                                            'oSurvey'=>$oSurvey,
+                                            'oQuota'=>$oQuota,
+                                            'aQuotaItems'=>$aQuotaItems,
+                                    )).'<p>';
                                     return $out;
                                 },
                             ),
@@ -105,19 +97,23 @@
                             ),
 
                         ),
-                        'itemsCssClass' =>'table-striped table-condensed',
+                        'itemsCssClass' =>'table-quotas table-striped table-condensed',
                     ));
                     ?>
                 </div>
+                <?php endif; ?>
+
                 <?php if (Permission::model()->hasSurveyPermission($oSurvey->getPrimaryKey(), 'quotas','create')):?>
-                    <div class="pull-left">
-                        <?php $this->renderPartial('/admin/quotas/viewquotas_massive_selector',
-                            array(
-                                'oSurvey'=>$oSurvey,
-                                'oQuota'=>$oQuota,
-                                'aQuotaLanguageSettings'=>$aQuotaLanguageSettings,
-                            ));?>
-                    </div>
+                    <?php if($oDataProvider->itemCount > 0):?>
+                        <div class="pull-left">
+                            <?php $this->renderPartial('/admin/quotas/viewquotas_massive_selector',
+                                array(
+                                    'oSurvey'=>$oSurvey,
+                                    'oQuota'=>$oQuota,
+                                    'aQuotaLanguageSettings'=>$aQuotaLanguageSettings,
+                                ));?>
+                        </div>
+                    <?php endif; ?>
                     <div class="pull-right">
                         <?php echo CHtml::beginForm(array("admin/quotas/sa/newquota/surveyid/{$oSurvey->getPrimaryKey()}"), 'post'); ?>
                         <?php echo CHtml::hiddenField('sid',$oSurvey->getPrimaryKey());?>
@@ -128,7 +124,7 @@
                             'class'=>'quota_new btn btn-default',
                         ));?>
                         <?php echo CHtml::endForm();?>
-                </div>
+                    </div>
                 <?php endif; ?>
             </div>
         </div>

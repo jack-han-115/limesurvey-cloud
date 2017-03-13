@@ -578,7 +578,6 @@ class responses extends Survey_Common_Action
                     readfile($sFileRealName);
                     exit;
                 }
-                break;
             }
             Yii::app()->setFlashMessage(gT("Sorry, this file was not found."),'error');
             $this->getController()->redirect(array("admin/responses","sa"=>"browse","surveyid"=>$iSurveyId));
@@ -905,7 +904,7 @@ class responses extends Survey_Common_Action
             {
                 @ob_clean();
                 header('Content-Description: File Transfer');
-                header('Content-Type: application/octet-stream');
+                header('Content-Type: application/zip, application/octet-stream');
                 header('Content-Disposition: attachment; filename=' . basename($zipfilename));
                 header('Content-Transfer-Encoding: binary');
                 header('Expires: 0');
