@@ -1771,19 +1771,23 @@ return $allfields;
 *
 * @param string $surveyid The Survey ID
 * @param string $style 'short' (default) or 'full' - full creates extra information like default values
-* @param boolean|null $force_refresh - Forces to really refresh the array, not just take the session copy
-* @param int $questionid Limit to a certain qid only (for question preview) - default is false
-* @param string $sQuestionLanguage The language to use
+* @param boolean $force_refresh - Forces to really refresh the array, not just take the session copy
+* @param false|int $questionid Limit to a certain qid only (for question preview) - default is false
+* @param string $sLanguage The language to use
+* @param array $aDuplicateQIDs
 * @return array
 */
-function createFieldMap($surveyid, $style='short', $force_refresh=false, $questionid=false, $sLanguage, &$aDuplicateQIDs=array()) {
+function createFieldMap($surveyid, $style='short', $force_refresh=false, $questionid=false, $sLanguage='', &$aDuplicateQIDs=array()) {
 
     $sLanguage = sanitize_languagecode($sLanguage);
     $surveyid = sanitize_int($surveyid);
-
     //checks to see if fieldmap has already been built for this page.
     if (isset(Yii::app()->session['fieldmap-' . $surveyid . $sLanguage]) && !$force_refresh && $questionid == false) {
         return Yii::app()->session['fieldmap-' . $surveyid . $sLanguage];
+    }
+    /* Check if $sLanguage is a survey valid language (else $fieldmap is empty) */
+    if($sLanguage=='' || !in_array($sLanguage,Survey::model()->findByPk($surveyid)->getAllLanguages())){
+        $sLanguage=Survey::model()->findByPk($surveyid)->language;
     }
     $fieldmap["id"]=array("fieldname"=>"id", 'sid'=>$surveyid, 'type'=>"id", "gid"=>"", "qid"=>"", "aid"=>"");
     if ($style == "full")
@@ -4346,12 +4350,11 @@ function includeKeypad()
 /**
 * getQuotaInformation() returns quota information for the current survey
 * @param string $surveyid - Survey identification number
-* @param string $language - Language of the quota
-* @param string $quotaid - Optional quotaid that restricts the result to a given quota
+* @param null : $deprecated not used
 * @param integer $iQuotaID
 * @return array - nested array, Quotas->Members
 */
-function getQuotaInformation($surveyid,$language,$iQuotaID=null)
+function getQuotaInformation($surveyid,$deprecated=null,$iQuotaID=null)
 {
     /** @var Survey $oSurvey */
     $oSurvey = Survey::model()->findByPk($surveyid);
@@ -4364,20 +4367,15 @@ function getQuotaInformation($surveyid,$language,$iQuotaID=null)
         $aAttributes['id'] = $iQuotaID;
     }
 
-    $aQuotas = Quota::model()->with(array('languagesettings' => array('condition' => "quotals_language='$language'")))->findAllByAttributes($aAttributes);
-
     $aSurveyQuotasInfo = array();
-    $x=0;
-
-    $surveyinfo=getSurveyInfo($surveyid,$language);
 
     // Check all quotas for the current survey
-    if (count($aQuotas) > 0)
+    if (count($oSurvey->quotas) > 0)
     {
-        foreach ($aQuotas as $oQuota)
+        foreach ($oSurvey->quotas as $oQuota)
         {
             // Array for each quota
-            $aQuotaInfo = array_merge($oQuota->attributes,$oQuota->languagesettings[$oSurvey->language]->attributes);// We have only one language, then we can use first only
+            $aQuotaInfo = array_merge($oQuota->attributes,$oQuota->currentLanguageSetting->attributes);
             $aQuotaMembers = QuotaMember::model()->findAllByAttributes(array('quota_id'=>$oQuota->id));
             $aQuotaInfo['members'] = array();
             if (count($aQuotaMembers) > 0)

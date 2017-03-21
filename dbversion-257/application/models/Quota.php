@@ -27,6 +27,7 @@
  *
  * @property QuotaLanguageSetting[] $languagesettings Indexed by language code
  * @property QuotaLanguageSetting $mainLanguagesetting
+ * @property QuotaLanguageSetting $currentLanguageSetting
  * @property Survey $survey
  * @property QuotaMember[] $quotaMembers
  */
@@ -45,7 +46,7 @@ class Quota extends LSActiveRecord
      *
      * @static
      * @access public
-    * @param string $class
+     * @param string $class
      * @return CActiveRecord
      */
     public static function model($class = __CLASS__)
@@ -83,10 +84,9 @@ class Quota extends LSActiveRecord
      */
     public function relations()
     {
-        $alias = $this->getTableAlias();
         return array(
             'survey' => array(self::BELONGS_TO, 'Survey', 'sid'),
-            'languagesettings' => array(self::HAS_MANY, 'QuotaLanguageSetting', 'quotals_quota_id','index' => 'quotals_language',),
+            'languagesettings' => array(self::HAS_MANY, 'QuotaLanguageSetting', 'quotals_quota_id','index' => 'quotals_language'),
             'quotaMembers' => array(self::HAS_MANY, 'QuotaMember', 'quota_id'),
         );
     }
@@ -154,11 +154,29 @@ class Quota extends LSActiveRecord
      * @return QuotaLanguageSetting
      */
     public function getMainLanguagesetting(){
-        foreach ($this->languagesettings as $lang=>$languagesetting){
-            if($lang == $this->survey->language){
-                return $languagesetting;
-            }
-        }
+        return QuotaLanguageSetting::model()
+            ->with(array('quota' => array('condition' => 'sid="'.$this->survey->primaryKey.'"')))
+            ->findByAttributes(array(
+                'quotals_language'=>$this->survey->language,
+            ));
     }
+
+    /**
+     * Get the QuotaLanguageSetting for current language
+     * @return QuotaLanguageSetting
+     */
+    public function getCurrentLanguageSetting(){
+        $oQuotaLanguageSettings=QuotaLanguageSetting::model()
+            ->with(array('quota' => array('condition' => 'sid="'.$this->survey->primaryKey.'"')))
+            ->findByAttributes(array(
+                'quotals_language'=>Yii::app()->getLanguage(),
+            ));
+        if($oQuotaLanguageSettings){
+            return $oQuotaLanguageSettings;
+        }
+        /* If not exist or found, return the one from survey base languague */
+        return $this->getMainLanguagesetting();
+    }
+
 
 }
