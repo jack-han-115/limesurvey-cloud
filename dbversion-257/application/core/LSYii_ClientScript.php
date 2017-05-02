@@ -1,4 +1,4 @@
-<?php
+<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 /*
  * LimeSurvey
  * Copyright (C) 2007-2011 The LimeSurvey Project Team / Carsten Schmitz
@@ -9,14 +9,25 @@
  * is derivative of works licensed under the GNU General Public License or
  * other free or open source software licenses.
  * See COPYRIGHT.php for copyright notices and details.
- *150413
+ *
  */
 
-$config['versionnumber'] = '2.65.0';
-$config['dbversionnumber'] = 261;
-$config['buildnumber'] = '';
-$config['updatable'] = true;
-$config['assetsversionnumber'] = '2650';
-return $config;
+class LSYii_ClientScript extends CClientScript {
 
-?>
+    public function getCssFiles()
+    {
+        return $this->cssFiles;
+    }
+
+    public function getCoreScripts()
+    {
+        return $this->coreScripts;
+    }
+
+    public function unregisterPackage($name)
+    {
+        if(!empty($this->coreScripts[$name])){
+            unset($this->coreScripts[$name]);
+        }
+    }
+}
