@@ -5464,6 +5464,12 @@ function enforceSSLMode()
     {
         $force_ssl = 'off';
     };
+    // LimeService modification
+    if ($force_ssl=='off')
+    {
+        $force_ssl='';
+    }
+    //    
     if( $force_ssl == 'on' && !$bSSLActive )
     {
         SSLRedirect('s');
