@@ -56,6 +56,8 @@ $internalConfig = array(
         // yiiwheels configuration
         'yiiwheels' => realpath(__DIR__ . '/../extensions/yiiwheels'),
         'vendor.twbs.bootstrap.dist',
+        // 'CaptchaExtendedAction' => realpath(__DIR__ . '/../extensions/captchaExtended/CaptchaExtendedAction.php'),
+        // 'CaptchaExtendedValidator' => realpath(__DIR__ . '/../extensions/captchaExtended/CaptchaExtendedValidator.php')
     ),
 
     'modules'=>array(
@@ -86,9 +88,11 @@ $internalConfig = array(
         'bootstrap.helpers.*',
         'bootstrap.widgets.*',
         'bootstrap.behaviors.*',
-        'yiiwheels.widgets.select2.WhSelect2',	
+        'yiiwheels.widgets.select2.WhSelect2',
+        'ext.captchaExtended.CaptchaExtendedAction',
+        'ext.captchaExtended.CaptchaExtendedValidator'
 // LimeService Mod start =============
-        'application.extensions.phpass.*',
+        ,'application.extensions.phpass.*',
 // LimeService Mod end =============
     ),
     'preload' => array ('log'),
