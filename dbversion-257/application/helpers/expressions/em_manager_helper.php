@@ -5418,23 +5418,6 @@
             }
             if (count($updatedValues) > 0 || $finished)
             {
-                
-                 // ========================  Begin LimeService Mod
-                if (!isset($_SESSION[$this->sessid]['limeservice_start']) && $this->surveyOptions['active']=='Y' && ($_SESSION[$this->sessid]['step']==1 || ($_SESSION[$this->sessid]['totalsteps']==1 && $_SESSION[$this->sessid]['step']==2)))
-                {
-                    $sDomain=$_SERVER['SERVER_NAME'];
-                    $sSubdomain=substr($sDomain,0,strpos($sDomain,'.'));
-                    $sDomain=substr($sDomain,strpos($sDomain,'.')+1);
-                    $iResponsesToAdd=0.5;
-                    $iAffectedRows =  Yii::app()->dbstats->createCommand("Update responses set hits=hits+{$iResponsesToAdd}, modified=NOW() where subdomain='{$sSubdomain}' and rootdomain='{$sDomain}' and hitperiod='".date('Y-m-d H:00:00')."'")->execute();
-                    if ($iAffectedRows==0)
-                    {
-                        Yii::app()->dbstats->createCommand("insert into responses (hits,subdomain,rootdomain,hitperiod, created) values ({$iResponsesToAdd},'{$sSubdomain}','{$sDomain}','".date('Y-m-d H:00:00')."', NOW())")->execute();
-                    } 
-                    $_SESSION[$this->sessid]['limeservice_start']=true;
-                }
-                // ========================  End LimeService Mod  
-                            
                 $query = 'UPDATE ' . $this->surveyOptions['tablename'] . ' SET ';
                 $setter = array();
                 switch ($this->surveyMode)
@@ -8718,24 +8701,12 @@ EOD;
                                     // For an explanation of the exclamation mark, see this thread:
                                     // http://stackoverflow.com/questions/43740037/datetime-converts-wrong-when-system-time-is-30-march
                                     $dateTime = DateTime::createFromFormat('!' . $aDateFormatData['phpdate'], trim($value));
-
-                                    if ($dateTime === false) {
-                                        // Can happen if e.g. default answer is date('Y-m-d') but date format d.m.Y.
-                                        $message = sprintf(
-                                            'Could not convert date %s to format %s. Please check your date format settings.',
-                                            trim($value),
-                                            $aDateFormatData['phpdate']
-                                        );
-                                        LimeExpressionManager::addFrontendFlashMessage('error', $message, $LEM->sid);
+                                    $newValue = $dateTime->format("Y-m-d H:i");
+                                    $newDateTime = DateTime::createFromFormat("!Y-m-d H:i", $newValue);
+                                    if($value == $newDateTime->format($aDateFormatData['phpdate'])) { // control if inverse function original value
+                                        $value = $newValue;
                                     } else {
-                                        $convertedValue = $dateTime->format("Y-m-d H:i");
-                                        $newValue = $dateTime->format($aDateFormatData['phpdate']);
-                                        $newDateTime = DateTime::createFromFormat("!Y-m-d H:i", $convertedValue);
-                                        if($value == $newDateTime->format($aDateFormatData['phpdate'])) { // control if inverse function original value
-                                            $value = $newValue;
-                                        } else {
-                                            $value = "";// Or $value="INVALID" ? : dropdown is OK with this not default.
-                                        }
+                                        $value = "";// Or $value="INVALID" ? : dropdown is OK with this not default.
                                     }
                                 }
                                 break;
