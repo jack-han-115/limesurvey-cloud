@@ -612,11 +612,13 @@ CREATE TABLE prefix_notifications (
     "display_class" character varying(31) DEFAULT 'default',
     "created" timestamp NOT NULL,
     "first_read" timestamp DEFAULT NULL,
+    "hash" character varying(64) DEFAULT '',
     CONSTRAINT prefix_notifications_pkey PRIMARY KEY (id)
 );
 CREATE INDEX prefix_index ON prefix_notifications USING btree (entity, entity_id, status);
+CREATE INDEX notif_hash_index ON prefix_notifications USING btree (hash);
 
 --
 -- Version Info
 --
-INSERT INTO prefix_settings_global VALUES ('DBVersion', '262');
+INSERT INTO prefix_settings_global VALUES ('DBVersion', '263');

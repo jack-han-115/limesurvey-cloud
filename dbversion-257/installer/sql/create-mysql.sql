@@ -609,11 +609,13 @@ CREATE TABLE IF NOT EXISTS `prefix_notifications` (
     `display_class` VARCHAR(31) DEFAULT 'default' COMMENT 'Bootstrap class, like warning, info, success',
     `created` DATETIME NOT NULL,
     `first_read` DATETIME DEFAULT NULL,
+    `hash` VARCHAR(64) DEFAULT '',
     PRIMARY KEY (`id`),
-    INDEX(`entity`, `entity_id`, `status`)
+    INDEX(`entity`, `entity_id`, `status`),
+    INDEX(`hash`)
 ) ENGINE=MYISAM CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 --
 -- Version Info
 --
-INSERT INTO `prefix_settings_global` VALUES ('DBVersion', '262');
+INSERT INTO `prefix_settings_global` VALUES ('DBVersion', '263');
