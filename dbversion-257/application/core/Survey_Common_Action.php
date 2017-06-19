@@ -145,7 +145,7 @@ class Survey_Common_Action extends CAction
         /* Control sid,gid and qid params validity see #12434 */
         // Fill param with according existing param, replace existing parameters.
         // iGroupId/gid can be found with qid/iQuestionId
-        if(isset($params['iQuestionId']) && $params['iQuestionId']!=='') {
+        if(!empty($params['iQuestionId'])) {
             if((string)(int)$params['iQuestionId']!==(string)$params['iQuestionId']) { // pgsql need filtering before find
                 throw new CHttpException(403,gT("Invalid question id"));
             }
@@ -158,7 +158,7 @@ class Survey_Common_Action extends CAction
             }
         }
         // iSurveyId/iSurveyID/sid can be found with gid/iGroupId
-        if(isset($params['iGroupId']) && $params['iGroupId']!=='') {
+        if(!empty($params['iGroupId'])) {
             if((string)(int)$params['iGroupId']!==(string)$params['iGroupId']) { // pgsql need filtering before find
                 throw new CHttpException(403,gT("Invalid group id"));
             }
@@ -171,7 +171,7 @@ class Survey_Common_Action extends CAction
             }
         }
         // Finally control validity of sid
-        if(isset($params['iSurveyId']) && $params['iSurveyId']!=='') {
+        if(!empty($params['iSurveyId'])) {
             if((string)(int)$params['iSurveyId']!==(string)$params['iSurveyId']) { // pgsql need filtering before find
                 // 403 mean The request was valid, but the server is refusing action.
                 throw new CHttpException(403,gT("Invalid survey id"));
@@ -386,46 +386,57 @@ class Survey_Common_Action extends CAction
     /**
      * Display the update notification
      */
-    function _updatenotification()
+    protected function _updatenotification()
     {
-        // Lower dbversionnumbers will not have the notifications table.
-        if (Yii::app()->getConfig('dbversionnumber') < 259) {
+        // Never use Notification model for database update.
+        // TODO: Real fix: No database queries while doing database update, meaning
+        // don't call _renderWrappedTemplate.
+        if (get_class($this) == 'databaseupdate') {
             return;
         }
 
-        if( !Yii::app()->user->isGuest && Yii::app()->getConfig('updatable'))
-        {
+        if (!Yii::app()->user->isGuest && Yii::app()->getConfig('updatable')) {
             $updateModel = new UpdateForm();
             $updateNotification = $updateModel->updateNotification;
             $urlUpdate = Yii::app()->createUrl("admin/update");
-            $urlUpdateNotificationState = Yii::app()->createUrl("admin/update/sa/notificationstate");
             $currentVersion = Yii::app()->getConfig("buildnumber");
             $superadmins = User::model()->getSuperAdmins();
 
-            if($updateNotification->result)
-            {
-                if($updateNotification->security_update)
-                {
-                    UniqueNotification::broadcast(array(
-                        'title' => gT('Security update!')." (".gT("Current version: ").$currentVersion.")",
-                        'message' => gT('A security update is available.')." <a href=".$urlUpdate.">".gT('Click here to use ComfortUpdate.')."</a>"
-                    ), $superadmins);
-                }
-                else if(Yii::app()->session['unstable_update'] )
-                {
-                    UniqueNotification::broadcast(array(
-                        'title' => gT('New UNSTABLE update available')." (".gT("Current version: ").$currentVersion.")",
-                        'markAsNew' => false,
-                        'message' => gT('A security update is available.')."<a href=".$urlUpdate.">".gT('Click here to use ComfortUpdate.')."</a>"
-                    ), $superadmins);
-                }
-                else
-                {
-                    UniqueNotification::broadcast(array(
-                        'title' => gT('New update available')." (".gT("Current version: ").$currentVersion.")",
-                        'markAsNew' => false,
-                        'message' => gT('A security update is available.')."<a href=".$urlUpdate.">".gT('Click here to use ComfortUpdate.')."</a>"
-                    ), $superadmins);
+            if ($updateNotification->result) {
+                if ($updateNotification->security_update) {
+                    UniqueNotification::broadcast(
+                        array(
+                            'title' => gT('Security update!')." (".gT("Current version: ")
+                                . $currentVersion.")",
+                            'message' => gT('A security update is available.')." <a href=".$urlUpdate.">"
+                                . gT('Click here to use ComfortUpdate.')."</a>",
+                            'importance' => Notification::HIGH_IMPORTANCE
+                        ),
+                        $superadmins
+                    );
+                } elseif (Yii::app()->session['unstable_update']) {
+                    UniqueNotification::broadcast(
+                        array(
+                            'title' => gT('New UNSTABLE update available')." ("
+                                . gT("Current version: ").$currentVersion.")",
+                            'markAsNew' => false,
+                            'message' => gT('A security update is available.')."<a href=".$urlUpdate.">"
+                                . gT('Click here to use ComfortUpdate.')."</a>",
+                            'importance' => Notification::HIGH_IMPORTANCE
+                        ),
+                        $superadmins
+                    );
+                } else {
+                    UniqueNotification::broadcast(
+                        array(
+                            'title' => gT('New update available')." (".gT("Current version: ").$currentVersion.")",
+                            'markAsNew' => false,
+                            'message' => gT('A security update is available.')."<a href=".$urlUpdate.">"
+                                . gT('Click here to use ComfortUpdate.')."</a>",
+                            'importance' => Notification::HIGH_IMPORTANCE
+                        ),
+                        $superadmins
+                    );
                 }
             }
         }
