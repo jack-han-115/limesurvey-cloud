@@ -211,6 +211,13 @@ class LSYii_Application extends CWebApplication
     */
     public function setLanguage( $sLanguage )
     {
+        // This method is also called from AdminController and LSUser
+        // But if a param is defined, it should always have the priority
+        // eg: index.php/admin/authentication/sa/login/&lang=de
+        if ($this->request->getParam('lang') !== null){
+            $sLanguage = $this->request->getParam('lang');
+        }
+
         $sLanguage=preg_replace('/[^a-z0-9-]/i', '', $sLanguage);
         /// LimeService modification start
         $uploaddir=str_replace('instances','installations',dirname(dirname(dirname(dirname(__FILE__))))).'/'.$_SERVER['SERVER_NAME'].'/userdata/upload';
