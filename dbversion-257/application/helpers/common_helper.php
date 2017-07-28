@@ -2764,7 +2764,7 @@ function SendEmailMessage($body, $subject, $to, $from, $sitename, $ishtml=false,
             $mail->AddReplyTo($fromemail, $fromname);
             $fromemail='noreply@limesurvey.org';
             if (trim($fromname)=='')
-                $fromname='LimeService';
+                $fromname='LimeSurvey Professional';
             $senderemail='bounces@limesurvey.org';
         // LimeService Mod end
 

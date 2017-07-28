@@ -28,7 +28,7 @@
             'value'=> getGlobalSetting('emailmethod') ,
             'selectOptions'=>array(
       /* ======================= LimeService Mod start ===== */
-                "mail"=>"LimeService",
+                "mail"=>"LimeSurvey Professional",
                 "smtp"=>"SMTP",
             //    "sendmail"=>"Sendmail",
             //    "qmail"=>"qmail"

@@ -43,7 +43,7 @@ $config['rootdir']            =   getcwd(); //dirname(__FILE__); // This is the 
 
 
 // Site Info
-$config['sitename']           =   'LimeService - Your online survey service';     // The official name of the site (appears in the Window title)
+$config['sitename']           =   'LimeSurvey Professional - Your online survey service';     // The official name of the site (appears in the Window title)
 $config['scriptname']         =   'admin.php';      // The name of the admin script
 
 $config['defaultuser']        =   'admin';          // This is the default username when LimeSurvey is installed

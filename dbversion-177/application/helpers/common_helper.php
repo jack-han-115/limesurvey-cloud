@@ -4054,10 +4054,10 @@ function SendEmailMessage($body, $subject, $to, $from, $sitename, $ishtml=false,
             $mail->IsMail();   
         // LimeService Mod start
             $mail->AddReplyTo($fromemail, $fromname);
-            $fromemail='noreply@limeservice.com';
+            $fromemail='noreply@limesurvey.org';
             if (trim($fromname)=='')
-                $fromname='LimeService';
-            $senderemail='bounces@limeservice.com';        
+                $fromname='LimeSurvey Professional';
+            $senderemail='bounces@limesurvey.org';        
         // LimeService Mod end
             
     }
@@ -4083,7 +4083,7 @@ function SendEmailMessage($body, $subject, $to, $from, $sitename, $ishtml=false,
             $mail->AddCustomHeader($val);
         }
     }
-    $mail->AddCustomHeader("X-Surveymailer: $sitename Emailer ( LimeService http://www.limeservice.com )");
+    $mail->AddCustomHeader("X-Surveymailer: $sitename Emailer ( LimeSurvey Professional http://www.limesurvey.org )");
     if (get_magic_quotes_gpc() != "0")	{$body = stripcslashes($body);}
     if ($ishtml)
     {
