@@ -66,7 +66,7 @@ function Emailchange(ui,evt)
     $("#emailsmtpuser").prop('disabled',smtp_enabled);
     $("#emailsmtppassword").prop('disabled',smtp_enabled);
     // LimeService mod start
-    if ($('#emailmethod input:radio:checked').val()=='mail');
+    if ($('#emailmethod input:radio:checked').val()=='mail')
     {
        $('#siteadminbounce').val('noreply@limeservice.com');
        $('#bounceaccounttype_opt1').closest('.btn').button('toggle');
