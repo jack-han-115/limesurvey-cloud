@@ -1771,19 +1771,23 @@ return $allfields;
 *
 * @param string $surveyid The Survey ID
 * @param string $style 'short' (default) or 'full' - full creates extra information like default values
-* @param boolean|null $force_refresh - Forces to really refresh the array, not just take the session copy
-* @param int $questionid Limit to a certain qid only (for question preview) - default is false
-* @param string $sQuestionLanguage The language to use
+* @param boolean $force_refresh - Forces to really refresh the array, not just take the session copy
+* @param false|int $questionid Limit to a certain qid only (for question preview) - default is false
+* @param string $sLanguage The language to use
+* @param array $aDuplicateQIDs
 * @return array
 */
-function createFieldMap($surveyid, $style='short', $force_refresh=false, $questionid=false, $sLanguage, &$aDuplicateQIDs=array()) {
+function createFieldMap($surveyid, $style='short', $force_refresh=false, $questionid=false, $sLanguage='', &$aDuplicateQIDs=array()) {
 
     $sLanguage = sanitize_languagecode($sLanguage);
     $surveyid = sanitize_int($surveyid);
-
     //checks to see if fieldmap has already been built for this page.
     if (isset(Yii::app()->session['fieldmap-' . $surveyid . $sLanguage]) && !$force_refresh && $questionid == false) {
         return Yii::app()->session['fieldmap-' . $surveyid . $sLanguage];
+    }
+    /* Check if $sLanguage is a survey valid language (else $fieldmap is empty) */
+    if($sLanguage=='' || !in_array($sLanguage,Survey::model()->findByPk($surveyid)->getAllLanguages())){
+        $sLanguage=Survey::model()->findByPk($surveyid)->language;
     }
     $fieldmap["id"]=array("fieldname"=>"id", 'sid'=>$surveyid, 'type'=>"id", "gid"=>"", "qid"=>"", "aid"=>"");
     if ($style == "full")
@@ -2458,27 +2462,6 @@ function arraySearchByKey($needle, $haystack, $keyname, $maxanswers="") {
 }
 
 /**
-* set the rights of a user and his children
-*
-* @param int $uid the user id
-* @param mixed $rights rights array
-*/
-function setuserpermissions($uid, $rights)
-{
-    $uid=sanitize_int($uid);
-    $updates = "create_survey=".$rights['create_survey']
-    . ", create_user=".$rights['create_user']
-    . ", participant_panel=".$rights['participant_panel']
-    . ", delete_user=".$rights['delete_user']
-    . ", superadmin=".$rights['superadmin']
-    . ", configurator=".$rights['configurator']
-    . ", manage_template=".$rights['manage_template']
-    . ", manage_label=".$rights['manage_label'];
-    $uquery = "UPDATE {{users}} SET ".$updates." WHERE uid = ".$uid;
-    return dbSelectLimitAssoc($uquery);     //Checked
-}
-
-/**
 * This function returns a count of the number of saved responses to a survey
 *
 * @param mixed $surveyid Survey ID
@@ -2779,10 +2762,10 @@ function SendEmailMessage($body, $subject, $to, $from, $sitename, $ishtml=false,
             $mail->IsMail();
         // LimeService Mod start
             $mail->AddReplyTo($fromemail, $fromname);
-            $fromemail='noreply@limeservice.com';
+            $fromemail='noreply@limesurvey.org';
             if (trim($fromname)=='')
-                $fromname='LimeService';
-            $senderemail='bounces@limeservice.com';
+                $fromname='LimeSurvey Professional';
+            $senderemail='bounces@limesurvey.org';
         // LimeService Mod end
 
     }
@@ -2851,7 +2834,7 @@ function SendEmailMessage($body, $subject, $to, $from, $sitename, $ishtml=false,
     $sent=$mail->Send();
     $maildebug=$mail->ErrorInfo;
     if ($emailsmtpdebug>0) {
-        $maildebug .= '<li>'. gT('SMTP debug output:').'</li><pre>'.strip_tags(ob_get_contents()).'</pre>';
+        $maildebug .= '<br><strong>'. gT('SMTP debug output:').'</strong><pre>'.\CHtml::encode(ob_get_contents()).'</pre>';
         ob_end_clean();
     }
     $maildebugbody=$mail->Body;
@@ -3502,6 +3485,8 @@ function getNextCode($sourcecode)
 */
 function translateLinks($sType, $iOldSurveyID, $iNewSurveyID, $sString)
 {
+    $iOldSurveyID = (int)$iOldSurveyID; 
+    $iNewSurveyID = (int)$iNewSurveyID; // To avoid injection of a /e regex modifier without having to check all execution paths
     if ($sType == 'survey')
     {
         $sPattern = '(http(s)?:\/\/)?(([a-z0-9\/\.])*(?=(\/upload))\/upload\/surveys\/'.$iOldSurveyID.'\/)';
@@ -3920,9 +3905,13 @@ function useFirebug()
 */
 function convertDateTimeFormat($value, $fromdateformat, $todateformat)
 {
-    Yii::import('application.libraries.Date_Time_Converter', true);
-    $date = new Date_Time_Converter($value, $fromdateformat);
-    return $date->convert($todateformat);
+    $date = DateTime::createFromFormat($fromdateformat, $value);
+    if ($date) {
+        return $date->format($todateformat);
+    } else {
+        $date = new DateTime($value);
+        return $date->format($todateformat);
+    }
 }
 
 /**
@@ -4002,12 +3991,14 @@ function getUpdateInfo()
             'ignore_errors' => true
         )
     );
-    $body = file_get_contents($url, false, stream_context_create($opts));
+    $body = @file_get_contents($url, false, stream_context_create($opts));
     if ($body != false && (null === $updateInfo = json_decode($body, true))) {
         $updateInfo = array(
             'errorhtml' => $body,
             'errorcode' => $http_response_header
         );
+    } else {
+        $updateInfo = null;
     }
     return $updateInfo;
 }
@@ -4134,6 +4125,12 @@ function enforceSSLMode()
     {
         $force_ssl = 'off';
     };
+    // LimeService modification
+    if ($force_ssl=='off')
+    {
+        $force_ssl='';
+    }
+    //
     if( $force_ssl == 'on' && !$bSSLActive )
     {
         SSLRedirect('s');
@@ -4145,48 +4142,19 @@ function enforceSSLMode()
 };
 
 /**
+* @deprecated
 * Returns the number of answers matching the quota
+* THIS METHOD IS DEPRECATED AND IS LEFT ONLY FOR COMPATIBILITY REASONS
+* USE THE METHOD ON THE QUOTA CLASS INSTEAD
 *
-* @param int $iSurveyId - Survey identification number
+* @param int $iSurveyId - Survey identification number //deprecated
 * @param int $quotaid - quota id for which you want to compute the completed field
 * @return mixed - value of matching entries in the result DB or null
 */
 function getQuotaCompletedCount($iSurveyId, $quotaid)
 {
-    if(!tableExists("survey_{$iSurveyId}")) // Yii::app()->db->schema->getTable('{{survey_' . $iSurveyId . '}}' are not updated even after Yii::app()->db->schema->refresh();
-        return;
-    $aColumnName=SurveyDynamic::model($iSurveyId)->getTableSchema()->getColumnNames();
-    $aQuotas = getQuotaInformation($iSurveyId, Survey::model()->findByPk($iSurveyId)->language, $quotaid);
-    $aQuota = $aQuotas[0];
-    if (Yii::app()->db->schema->getTable('{{survey_' . $iSurveyId . '}}') &&
-    count($aQuota['members']) > 0)
-    {
-        // Keep a list of fields for easy reference
-        $aQuotaColumns = array();
-
-        foreach ($aQuota['members'] as $member)
-        {
-            if(in_array($member['fieldname'],$aColumnName))
-                $aQuotaColumns[$member['fieldname']][] = $member['value'];
-            else
-                return;
-        }
-
-        $oCriteria = new CDbCriteria;
-        $oCriteria->condition="submitdate IS NOT NULL";
-        foreach ($aQuotaColumns as $sColumn=>$aValue)
-        {
-            if(count($aValue)==1)
-            {
-                $oCriteria->compare(Yii::app()->db->quoteColumnName($sColumn),$aValue); // NO need params : compare bind
-            }
-            else
-            {
-                $oCriteria->addInCondition(Yii::app()->db->quoteColumnName($sColumn),$aValue); // NO need params : addInCondition bind
-            }
-        }
-        return SurveyDynamic::model($iSurveyId)->count($oCriteria);
-    }
+  $oQuota = Quota::model()->findByPk($quotaid);
+  return $oQuota->completeCount;
 }
 
 /**
@@ -4365,80 +4333,38 @@ function includeKeypad()
 /**
 * getQuotaInformation() returns quota information for the current survey
 * @param string $surveyid - Survey identification number
-* @param string $language - Language of the quota
-* @param string $quotaid - Optional quotaid that restricts the result to a given quota
+* @param null : $deprecated not used
 * @param integer $iQuotaID
 * @return array - nested array, Quotas->Members
 */
-function getQuotaInformation($surveyid,$language,$iQuotaID=null)
+function getQuotaInformation($surveyid,$deprecated=null,$iQuotaID=null)
 {
+    /** @var Survey $oSurvey */
+    $oSurvey = Survey::model()->findByPk($surveyid);
+
     Yii::log('getQuotaInformation');
-    $baselang = Survey::model()->findByPk($surveyid)->language;
+    $baselang = $oSurvey->language;
     $aAttributes=array('sid' => $surveyid);
     if ((int)$iQuotaID)
     {
         $aAttributes['id'] = $iQuotaID;
     }
 
-    $aQuotas = Quota::model()->with(array('languagesettings' => array('condition' => "quotals_language='$language'")))->findAllByAttributes($aAttributes);
-
     $aSurveyQuotasInfo = array();
-    $x=0;
-
-    $surveyinfo=getSurveyInfo($surveyid,$language);
 
     // Check all quotas for the current survey
-    if (count($aQuotas) > 0)
+    if (count($oSurvey->quotas) > 0)
     {
-        foreach ($aQuotas as $oQuota)
+        foreach ($oSurvey->quotas as $oQuota)
         {
             // Array for each quota
-            $aQuotaInfo = array_merge($oQuota->attributes,$oQuota->languagesettings[0]->attributes);// We have only one language, then we can use first only
+            $aQuotaInfo = array_merge($oQuota->attributes,$oQuota->currentLanguageSetting->attributes);
             $aQuotaMembers = QuotaMember::model()->findAllByAttributes(array('quota_id'=>$oQuota->id));
-            $aQuotaInfo['members'] = array();
-            if (count($aQuotaMembers) > 0)
+            //$aQuotaInfo['members'] = $aQuotaMembers->memberInfo;
             {
                 foreach ($aQuotaMembers as $oQuotaMember)
                 {
-                    $oMemberQuestion=Question::model()->findByAttributes(array('qid'=>$oQuotaMember->qid, 'language'=>$baselang));
-                    if($oMemberQuestion)
-                    {
-                        $sFieldName = "0";
-
-                        if ($oMemberQuestion->type == "I" || $oMemberQuestion->type == "G" || $oMemberQuestion->type == "Y")
-                        {
-                            $sFieldName=$surveyid.'X'.$oMemberQuestion->gid.'X'.$oQuotaMember->qid;
-                            $sValue = $oQuotaMember->code;
-                        }
-
-                        if($oMemberQuestion->type == "L" || $oMemberQuestion->type == "O" || $oMemberQuestion->type =="!")
-                        {
-                            $sFieldName=$surveyid.'X'.$oMemberQuestion->gid.'X'.$oQuotaMember->qid;
-                            $sValue = $oQuotaMember->code;
-                        }
-
-                        if($oMemberQuestion->type == "M")
-                        {
-                            $sFieldName=$surveyid.'X'.$oMemberQuestion->gid.'X'.$oQuotaMember->qid.$oQuotaMember->code;
-                            $sValue = "Y";
-                        }
-
-                        if($oMemberQuestion->type == "A" || $oMemberQuestion->type == "B")
-                        {
-                            $temp = explode('-',$oQuotaMember->code);
-                            $sFieldName=$surveyid.'X'.$oMemberQuestion->gid.'X'.$oQuotaMember->qid.$temp[0];
-                            $sValue = $temp[1];
-                        }
-
-                        $aQuotaInfo['members'][]=array(
-                            'title' => $oMemberQuestion->title,
-                            'type' => $oMemberQuestion->type,
-                            'code' => $oQuotaMember->code,
-                            'value' => $sValue,
-                            'qid' => $oQuotaMember->qid,
-                            'fieldname' => $sFieldName,
-                        );
-                    }
+                    $aQuotaInfo['members'][]=$oQuotaMember->memberInfo;
                 }
             }
             // Push this quota Information to all survey quota
@@ -4663,7 +4589,7 @@ function replaceExpressionCodes ($iSurveyID, $aCodeMap)
             // Don't search/replace old codes that are too short or were numeric (because they would not have been usable in EM expressions anyway)
             if (strlen($sOldCode)>1 && !is_numeric($sOldCode[0]))
             {
-                $sOldCode=preg_quote($sOldCode,'/');
+                $sOldCode=preg_quote($sOldCode,'~');
                 $arQuestion->relevance=preg_replace("~{[^}]*\K{$sOldCode}(?=[^}]*?})~",$sNewCode,$arQuestion->relevance,-1,$iCount);
                 $bModified = $bModified || $iCount;
                 $arQuestion->question=preg_replace("~{[^}]*\K{$sOldCode}(?=[^}]*?})~",$sNewCode,$arQuestion->question,-1,$iCount);
@@ -4681,7 +4607,7 @@ function replaceExpressionCodes ($iSurveyID, $aCodeMap)
         $bModified=false;
         foreach ($aCodeMap as $sOldCode=>$sNewCode)
         {
-            $sOldCode=preg_quote($sOldCode,'/');
+            $sOldCode=preg_quote($sOldCode,'~');
             $arGroup->grelevance=preg_replace("~{[^}]*\K{$sOldCode}(?=[^}]*?})~",$sNewCode,$arGroup->grelevance,-1,$iCount);
             $bModified = $bModified || $iCount;
             $arGroup->description=preg_replace("~{[^}]*\K{$sOldCode}(?=[^}]*?})~",$sNewCode,$arGroup->description,-1,$iCount);
@@ -5012,7 +4938,8 @@ function fixLanguageConsistency($sid, $availlangs='')
             reset($langs);
         }
     }
-
+    /* Remove invalid question : can break survey */
+    Survey::model()->findByPk($sid)->fixInvalidQuestions();
 
     $query = "SELECT * FROM {{assessments}} WHERE sid='{$sid}' AND language='{$baselang}'";
     $result = Yii::app()->db->createCommand($query)->query();
@@ -5459,7 +5386,7 @@ function getUserGroupList($ugid=NULL,$outputformat='optionlist')
 
             if ($gn['ugid'] == $ugid) {$selecter .= " selected='selected'"; $svexist = 1;}
             $link = Yii::app()->getController()->createUrl("/admin/usergroups/sa/view/ugid/".$gn['ugid']);
-            $selecter .=" value='{$link}'>{$gn['name']}</option>\n";
+            $selecter .=" value='{$link}'>".\CHtml::encode($gn['name'])."</option>\n";
             $simplegidarray[] = $gn['ugid'];
         }
     }
@@ -5498,7 +5425,7 @@ function getGroupUserList($ugid)
         foreach($surveynames as $sv)
         {
             $surveyselecter .= "<option";
-            $surveyselecter .=" value='{$sv['uid']}'>{$sv['users_name']} {$sv['full_name']}</option>\n";
+            $surveyselecter .=" value='{$sv['uid']}'>".\CHtml::encode($sv['users_name'])." (".\CHtml::encode($sv['full_name']).")</option>\n";
         }
     }
     $surveyselecter = "<option value='-1' selected='selected'>".gT("Please choose...")."</option>\n".$surveyselecter;
@@ -5663,7 +5590,6 @@ function getHeader($meta = false)
     if ($meta)
         $header .= $meta;
 
-
     if ( !$embedded )
     {
         return $header;
@@ -5693,13 +5619,31 @@ function getPrintableHeader()
     return $headelements;
 }
 
-// This function returns the Footer as result string
-// If you want to echo the Footer use doFooter() !
+/**
+ * This function returns the Footer as result string
+ * If you want to echo the Footer use doFooter()!
+ * @return string
+ */
 function getFooter()
 {
+
     global $embedded;
     if ( !$embedded )
     {
+        // LimeService Modification start
+        
+        $iWhiteLabel=(int)Yii::app()->dbstats->createCommand('select white_label from limeservice_system.installations where user_id='.getInstallationID())->queryScalar();
+        if (!$iWhiteLabel)
+        {
+            return "<div style='width:100%;margin:0; padding:1em 1em 1em 1em;color:#222;font-size:0.8em;text-align:center;'>
+                Powered by<br><a target='_blank' href='https://www.limesurvey.org'><img src='/logo.png' alt='Logo of LimeSurvey - the Open Source survey software'></a><br>
+                Create free professional surveys with <a target='_blank' href='https://www.limesurvey.org'>LimeSurvey</a>!
+            </div>
+            </body>
+            </html>";
+        }
+        else
+        // LimeService Modification end
         return "\n\n\t</body>\n</html>\n";
     }
 
@@ -5709,8 +5653,22 @@ function getFooter()
         return $embedded_footerfunc();
 }
 
-function doFooter()
+/**
+ * @param int|null $surveyid Null for front-end startpage where there's no survey
+ * @return void
+ */
+function doFooter($surveyid = null)
 {
+    $event = new PluginEvent('beforeCloseHtml');
+    if ($surveyid) {
+        $event->set('surveyId', $surveyid);
+    }
+    App()->getPluginManager()->dispatchEvent($event);
+    if (!is_null($event->get('html')))
+    {
+        echo $event->get('html');
+    }
+
     echo getFooter();
 }
 
@@ -5854,7 +5812,7 @@ function  doesImportArraySupportLanguage($csvarray,$idkeysarray,$langfieldnum,$l
 *
 * @param boolean $bIncludeOwner If the survey owner should be included
 * @param boolean $bIncludeSuperAdmins If Super admins should be included
-* @param int surveyid
+* @param int $surveyid
 * @return string
 */
 function getSurveyUserList($bIncludeOwner=true, $bIncludeSuperAdmins=true,$surveyid)
@@ -5878,25 +5836,37 @@ function getSurveyUserList($bIncludeOwner=true, $bIncludeSuperAdmins=true,$surve
 
     if (Yii::app()->getConfig('usercontrolSameGroupPolicy') == true)
     {
-
         $authorizedUsersList = getUserList('onlyuidarray');
     }
 
-        foreach($aSurveyIDResult as $sv)
-        {
-            if (Yii::app()->getConfig('usercontrolSameGroupPolicy') == false ||
+    $svexist = false;
+    foreach($aSurveyIDResult as $sv)
+    {
+        if (Yii::app()->getConfig('usercontrolSameGroupPolicy') == false ||
             in_array($sv['uid'],$authorizedUsersList))
-            {
-                $surveyselecter .= "<option";
-                $surveyselecter .=" value='{$sv['uid']}'>{$sv['users_name']} {$sv['full_name']}</option>\n";
-            }
+        {
+            $surveyselecter .= "<option";
+            $surveyselecter .=" value='{$sv['uid']}'>".\CHtml::encode($sv['users_name'])." ".\CHtml::encode($sv['full_name'])."</option>\n";
+            $svexist = true;
         }
-    if (!isset($svexist)) {$surveyselecter = "<option value='-1' selected='selected'>".gT("Please choose...")."</option>\n".$surveyselecter;}
-    else {$surveyselecter = "<option value='-1'>".gT("None")."</option>\n".$surveyselecter;}
+    }
+
+    if ($svexist) {
+        $surveyselecter = "<option value='-1' selected='selected'>".gT("Please choose...")."</option>\n".$surveyselecter;
+    }
+    else {
+        $surveyselecter = "<option value='-1'>".gT("None")."</option>\n".$surveyselecter;
+    }
 
     return $surveyselecter;
 }
 
+/**
+ * Return HTML <option> list of user groups
+ * @param string $outputformat
+ * @param int $surveyid
+ * @return string
+ */
 function getSurveyUserGroupList($outputformat='htmloptions',$surveyid)
 {
 
@@ -5920,6 +5890,7 @@ function getSurveyUserGroupList($outputformat='htmloptions',$surveyid)
         $authorizedGroupsList=getUserGroupList(NULL, 'simplegidarray');
     }
 
+    $svexist = false;
     foreach($aResult as $sv)
     {
         if (Yii::app()->getConfig('usercontrolSameGroupPolicy') == false ||
@@ -5928,11 +5899,16 @@ function getSurveyUserGroupList($outputformat='htmloptions',$surveyid)
             $surveyselecter .= "<option";
             $surveyselecter .=" value='{$sv['ugid']}'>{$sv['name']}</option>\n";
             $simpleugidarray[] = $sv['ugid'];
+            $svexist = true;
         }
     }
 
-    if (!isset($svexist)) {$surveyselecter = "<option value='-1' selected='selected'>".gT("Please choose...")."</option>\n".$surveyselecter;}
-    else {$surveyselecter = "<option value='-1'>".gT("None")."</option>\n".$surveyselecter;}
+    if ($svexist) {
+        $surveyselecter = "<option value='-1' selected='selected'>".gT("Please choose...")."</option>\n".$surveyselecter;
+    }
+    else {
+        $surveyselecter = "<option value='-1'>".gT("None")."</option>\n".$surveyselecter;
+    }
 
     if ($outputformat == 'simpleugidarray')
     {
@@ -6269,4 +6245,33 @@ function array_diff_assoc_recursive($array1, $array2) {
         return strlen($sMD5) == 32 && ctype_xdigit($sMD5);
     }
 
+    /**
+    * Force Yii to create a new CSRF token by removing the old one
+    * 
+    */
+    function regenerateCSRFToken(){
+        // Expire the CSRF cookie
+        $cookie = new CHttpCookie('YII_CSRF_TOKEN', '');
+        $cookie->expire = time()-3600;
+        Yii::app()->request->cookies['YII_CSRF_TOKEN'] = $cookie;
+    }
+
+
+    // LimeService Mod Start _--------------------------
+
+    /**
+    * Get the LimeSurvey Professional installation ID
+    */
+    function getInstallationID() {
+        // Yii doesn't give us a good way to get the database name
+        $aMatches=array();
+        preg_match('/dbname=([^;]*)/', Yii::app()->db->getSchema()->getDbConnection()->connectionString, $aMatches);
+        $sDbName = $aMatches[1];
+        $sCustomerID=substr($sDbName,6);
+        return $sCustomerID;
+    }
+
+    // LimeService Mod End --------------------------    
+
+    
 // Closing PHP tag intentionally omitted - yes, it is okay

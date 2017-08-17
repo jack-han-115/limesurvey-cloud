@@ -12,27 +12,33 @@ if (!isset($_SERVER['SERVER_NAME'])) {
 
 $userdir=str_replace('instances','installations',dirname(dirname(dirname(dirname(__FILE__))))).'/'.$_SERVER['SERVER_NAME'].'/userdata';
 $internalConfig = array(
-	'basePath' => dirname(dirname(__FILE__)),
-	'runtimePath' => $userdir.DIRECTORY_SEPARATOR.'tmp'.DIRECTORY_SEPARATOR.'runtime',
-	'name' => 'LimeSurvey',
-	'defaultController' => 'surveys',
-	'import' => array(
-		'application.core.*',
-		'application.models.*',
-		'application.controllers.*',
-		'application.modules.*',
-	),
-	'components' => array(
+    'basePath' => dirname(dirname(__FILE__)),
+    'runtimePath' => $userdir.DIRECTORY_SEPARATOR.'tmp'.DIRECTORY_SEPARATOR.'runtime',
+    'name' => 'LimeSurvey',
+    'defaultController' => 'surveys',
+    'import' => array(
+        'application.core.*',
+        'application.models.*',
+        'application.controllers.*',
+        'application.modules.*',
+        'application.extensions.phpass.*',
+    ),
+    'components' => array(
+        'phpass'=>array (
+                'class'=>'Phpass',
+                'hashPortable'=>true,
+                'hashCostLog2'=>10,
+            ),
         'bootstrap' => array(
             'class' => 'application.core.LSBootstrap',
             'responsiveCss' => false,
             'jqueryCss' => false
         ),
-		'urlManager' => array(
-			'urlFormat' => 'get',
-			'rules' => require('routes.php'),
-			'showScriptName' => true,
-		),
+        'urlManager' => array(
+            'urlFormat' => 'get',
+            'rules' => require('routes.php'),
+            'showScriptName' => true,
+        ),
 
         'clientScript' => array(
             'packages' => require('third_party.php')
@@ -41,7 +47,7 @@ $internalConfig = array(
             'baseUrl' => '/tmp/assets',
             'linkAssets' => true
         ),
-		'request' => array(
+        'request' => array(
             'class'=>'LSHttpRequest',
             'noCsrfValidationRoutes'=>array(
 //              '^services/wsdl.*$'   // Set here additional regex rules for routes not to be validate
@@ -53,16 +59,16 @@ $internalConfig = array(
         'user' => array(
             'class' => 'LSWebUser',
         ),
-		'log' => array(
-			'class' => 'CLogRouter'
-		),
+        'log' => array(
+            'class' => 'CLogRouter'
+        ),
         'cache'=>array(
            'class'=>'system.caching.CFileCache',
         ),
         'db' => array(
                 'schemaCachingDuration' => 3600,
         )
-	)
+    )
 );
 
 

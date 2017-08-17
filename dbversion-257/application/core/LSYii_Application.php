@@ -58,7 +58,9 @@ class LSYii_Application extends CWebApplication
             }
         }
         // Runtime path has to be set before  parent constructor is executed
+        // ======== LimeService Mod Start =============
         $aApplicationConfig['runtimePath']=$settings['tempdir'] . DIRECTORY_SEPARATOR. 'runtime';
+        // ======== LimeService Mod End =============
 
         parent::__construct($aApplicationConfig);
 
@@ -81,6 +83,7 @@ class LSYii_Application extends CWebApplication
         {
             $this->setConfig($key, $value);
         }
+        /* Don't touch to linkAssets : you can set it in config.php */
         // Asset manager path can only be set after App was constructed because it relies on App()
         App()->getAssetManager()->setBaseUrl($settings['tempurl']. '/assets');
         App()->getAssetManager()->setBasePath($settings['tempdir'] . '/assets');
@@ -208,6 +211,13 @@ class LSYii_Application extends CWebApplication
     */
     public function setLanguage( $sLanguage )
     {
+        // This method is also called from AdminController and LSUser
+        // But if a param is defined, it should always have the priority
+        // eg: index.php/admin/authentication/sa/login/&lang=de
+        if ( $this->request->getParam('lang') !== null && in_array('authentication', explode( '/', Yii::app()->request->url)) ){
+            $sLanguage = $this->request->getParam('lang');
+        }
+
         $sLanguage=preg_replace('/[^a-z0-9-]/i', '', $sLanguage);
         /// LimeService modification start
         $uploaddir=str_replace('instances','installations',dirname(dirname(dirname(dirname(__FILE__))))).'/'.$_SERVER['SERVER_NAME'].'/userdata/upload';
@@ -246,7 +256,27 @@ class LSYii_Application extends CWebApplication
         return $this->getComponent('pluginManager');
     }
 
-
+    /**
+     * The pre-filter for controller actions.
+     * This method is invoked before the currently requested controller action and all its filters
+     * are executed. You may override this method with logic that needs to be done
+     * before all controller actions.
+     * @param CController $controller the controller
+     * @param CAction $action the action
+     * @return boolean whether the action should be executed.
+     */
+    public function beforeControllerAction($controller,$action)
+    {
+        /**
+         * Plugin event done before all web controller action
+         * Can set run to false to deactivate action
+         */
+        $event = new PluginEvent('beforeControllerAction');
+        $event->set('controller',$controller->getId());
+        $event->set('action',$action->getId());
+        App()->getPluginManager()->dispatchEvent($event);
+        return $event->get("run",parent::beforeControllerAction($controller,$action));
+    }
 
 
     /**

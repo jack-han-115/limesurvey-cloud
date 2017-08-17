@@ -17,13 +17,14 @@ if (! date_default_timezone_set(@date_default_timezone_get()))
 
     date_default_timezone_set('Europe/London');
 }
-// LimeService Mod Start
+// LimeService Mod Start ===============
 if (!isset($_SERVER['SERVER_NAME']))
 {
     $_SERVER['SERVER_NAME']=$argv[1];
 }
 $userdir=str_replace('instances','installations',dirname(dirname(dirname(dirname(__FILE__))))).'/'.$_SERVER['SERVER_NAME'].'/userdata';
-// LimeService Mod End
+// LimeService Mod End ==================
+
 if (function_exists('mb_internal_encoding')) {
     // Needed to substring arabic etc
     mb_internal_encoding('UTF-8');
@@ -55,6 +56,8 @@ $internalConfig = array(
         // yiiwheels configuration
         'yiiwheels' => realpath(__DIR__ . '/../extensions/yiiwheels'),
         'vendor.twbs.bootstrap.dist',
+        // 'CaptchaExtendedAction' => realpath(__DIR__ . '/../extensions/captchaExtended/CaptchaExtendedAction.php'),
+        // 'CaptchaExtendedValidator' => realpath(__DIR__ . '/../extensions/captchaExtended/CaptchaExtendedValidator.php')
     ),
 
     'modules'=>array(
@@ -86,16 +89,21 @@ $internalConfig = array(
         'bootstrap.widgets.*',
         'bootstrap.behaviors.*',
         'yiiwheels.widgets.select2.WhSelect2',
-        'application.extensions.phpass.*',
-
+        'ext.captchaExtended.CaptchaExtendedAction',
+        'ext.captchaExtended.CaptchaExtendedValidator'
+// LimeService Mod start =============
+        ,'application.extensions.phpass.*',
+// LimeService Mod end =============
     ),
     'preload' => array ('log'),
     'components' => array(
+// LimeService Mod start =============
         'phpass'=>array (
                 'class'=>'Phpass',
                 'hashPortable'=>true,
                 'hashCostLog2'=>10,
             ),
+// LimeService Mod end =============
       // yiistrap configuration
         'bootstrap' => array(
             'class' => 'bootstrap.components.TbApi',
@@ -107,6 +115,7 @@ $internalConfig = array(
 
         'clientScript'=>array(
             'packages' => require('third_party.php'),
+            'class' => 'application.core.LSYii_ClientScript',
         ),
 
         'urlManager' => array(
@@ -116,20 +125,26 @@ $internalConfig = array(
         ),
         // These are defaults and are later overwritten in LSYii_Application by a path based on config tempdir/tempurl
         'assetManager' => array(
+            'excludeFiles' => array("config.xml", "assessment.pstpl", "clearall.pstpl",  "completed.pstpl",  "endgroup.pstpl",  "endpage.pstpl",  "groupdescription.pstpl",  "load.pstpl",  "navigator.pstpl",  "printanswers.pstpl",  "print_group.pstpl",  "print_question.pstpl",  "print_survey.pstpl",  "privacy.pstpl",  "question.pstpl",  "register.pstpl",  "save.pstpl",  "startgroup.pstpl",  "startpage.pstpl",  "surveylist.pstpl",  "survey.pstpl",  "welcome.pstpl" ),
             'baseUrl' => '/tmp/assets',
             'basePath'=> $userdir.DIRECTORY_SEPARATOR.'tmp'.DIRECTORY_SEPARATOR.'assets',
+// LimeService Mod start =============
             'linkAssets'=>true
+// LimeService Mod end =============
+
         ),
 
         'request' => array(
             'class'=>'LSHttpRequest',
+            'enableCsrfValidation'=>true,    // CSRF protection
+            'enableCookieValidation'=>false,   // Enable to activate cookie protection
             'noCsrfValidationRoutes'=>array(
                 'remotecontrol',
                 'plugins/unsecure',
             ),
-
-            'enableCsrfValidation'=>true,    // CSRF protection
-            'enableCookieValidation'=>false   // Enable to activate cookie protection
+            'csrfCookie' => array(
+                'secure' => ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || (isset($_SERVER['SERVER_PORT']) && $_SERVER['SERVER_PORT']== 443))
+            ),
         ),
         'user' => array(
             'class' => 'LSWebUser',
@@ -158,7 +173,7 @@ $internalConfig = array(
         'session' => array(
             'cookieParams' => array(
                 'httponly' => true,
-                'secure'=> isset($_SERVER['HTTPS']) && ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443)
+                'secure' => ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || (isset($_SERVER['SERVER_PORT']) && $_SERVER['SERVER_PORT']== 443))
             ),
         ),
         'messages' => array(

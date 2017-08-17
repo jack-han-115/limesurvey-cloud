@@ -40,8 +40,8 @@ class RegisterController extends LSYii_Controller {
     {
         return array(
             'captcha' => array(
-                'class' => 'CCaptchaAction',
-                'backColor'=>0xf6f6f6
+                'class' => 'CaptchaExtendedAction',
+                'mode'=>CaptchaExtendedAction::MODE_MATH
             )
         );
     }
@@ -138,9 +138,9 @@ class RegisterController extends LSYii_Controller {
         // Check the security question's answer
         if (function_exists("ImageCreate") && isCaptchaEnabled('registrationscreen',$aSurveyInfo['usecaptcha']) )
         {
-            $sLoadsecurity=Yii::app()->request->getPost('loadsecurity','');
+            $sLoadSecurity=Yii::app()->request->getPost('loadsecurity','');
             $captcha=Yii::app()->getController()->createAction("captcha");
-            $captchaCorrect = $captcha->validate( $sLoadsecurity, false);
+            $captchaCorrect = $captcha->validate( $sLoadSecurity, false);
 
             if (!$captchaCorrect)
             {
@@ -443,7 +443,7 @@ class RegisterController extends LSYii_Controller {
     /**
     * Get the date if survey is future
     * @param $iSurveyId
-    * @return localized date
+    * @return null|string date
     */
     public function getStartDate($iSurveyId){
         $aSurveyInfo=getSurveyInfo($iSurveyId,Yii::app()->language);
@@ -494,6 +494,6 @@ class RegisterController extends LSYii_Controller {
             // Survey/index need renderPartial
             echo $this->renderPartial('/register/display',$aViewData, true, true);
         }
-        doFooter();
+        doFooter($iSurveyId);
     }
 }

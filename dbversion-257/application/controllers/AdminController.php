@@ -132,12 +132,16 @@ class AdminController extends LSYii_Controller
     {
 
          // ========================  Begin LimeService Mod
-        if (Yii::app()->getConfig('locked'))
+       
+        $iResponses = (int)Yii::app()->dbstats->createCommand("select responses_avail from limeservice_system.balances where user_id=".getInstallationID())->queryScalar();
+        $iLocked=(int)Yii::app()->dbstats->createCommand('select locked from limeservice_system.installations where user_id='.getInstallationID())->queryScalar();
+        $sPlan=Yii::app()->dbstats->createCommand('select subscription_alias from limeservice_system.installations where user_id='.getInstallationID())->queryScalar();    
+        if (($sPlan=='' || $sPlan=='free') && ($iLocked==1 || $iResponses<0))
         {
             header("Expires: Sat, 26 Jul 1997 05:00:00 GMT");
             die("
-                Dear survey administrator - the administration is currently not available since you used up your available Survey Responses.<br />
-                Please login with your username at <a href='https://www.limesurvey.org'>LimeSurvey.org</a> and buy some Survey Responses!");
+                Dear survey administrator - the administration is currently not available since you used up more than your available Survey Responses.<br />
+                Please login with your username at <a href='https://www.limesurvey.org'>LimeSurvey.org</a> and subscribe to one of our LimeSurvey Professional Plans!");
         }
 
         $sDomain=$_SERVER['SERVER_NAME'];

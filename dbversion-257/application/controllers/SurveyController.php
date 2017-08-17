@@ -28,7 +28,9 @@ class SurveyController extends LSYii_Controller
 
         // LimeService Mod start ===========================================
         
-        if (Yii::app()->getConfig('locked'))
+        $iLocked=(int)Yii::app()->dbstats->createCommand('select locked from limeservice_system.installations where user_id='.getInstallationID())->queryScalar();
+        $iResponses = (int)Yii::app()->dbstats->createCommand("select responses_avail from limeservice_system.balances where user_id=".getInstallationID())->queryScalar();
+        if ($iLocked>0 || $iResponses<0)
         {
             header("Expires: Sat, 26 Jul 1997 05:00:00 GMT");
             die("
@@ -94,8 +96,9 @@ class SurveyController extends LSYii_Controller
             'uploader' => 'application.controllers.uploader',
             'verification' => 'application.controllers.verification',
             'captcha' => array(
-                'class' => 'CCaptchaAction', 
-                'backColor'=>0xf6f6f6
+              'class'=>'CaptchaExtendedAction',
+              // if needed, modify settings
+              'mode'=>CaptchaExtendedAction::MODE_MATH,
             )
         );
     }

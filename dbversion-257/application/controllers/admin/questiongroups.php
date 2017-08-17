@@ -106,7 +106,7 @@ class questiongroups extends Survey_Common_Action
             $aData['sidemenu']['state'] = false;
 
             $surveyinfo = Survey::model()->findByPk($iSurveyID)->surveyinfo;
-            $aData['title_bar']['title'] = $surveyinfo['surveyls_title']."(".gT("ID").":".$iSurveyID.")";
+            $aData['title_bar']['title'] = $surveyinfo['surveyls_title']." (".gT("ID").":".$iSurveyID.")";
 
             $this->_renderWrappedTemplate('survey/QuestionGroups', 'import_view', $aData);
         }
@@ -134,7 +134,7 @@ class questiongroups extends Survey_Common_Action
 
 
             $surveyinfo = Survey::model()->findByPk($iSurveyID)->surveyinfo;
-            $aData['title_bar']['title'] = $surveyinfo['surveyls_title']."(".gT("ID").":".$iSurveyID.")";
+            $aData['title_bar']['title'] = $surveyinfo['surveyls_title']." (".gT("ID").":".$iSurveyID.")";
 
             $this->_renderWrappedTemplate('survey/QuestionGroups', 'importGroup_view', $aData);
         }
@@ -176,7 +176,7 @@ class questiongroups extends Survey_Common_Action
 
             $aData['sidemenu']['state'] = false;
             $surveyinfo = Survey::model()->findByPk($iSurveyID)->surveyinfo;
-            $aData['title_bar']['title'] = $surveyinfo['surveyls_title']."(".gT("ID").":".$iSurveyID.")";
+            $aData['title_bar']['title'] = $surveyinfo['surveyls_title']." (".gT("ID").":".$iSurveyID.")";
             $aData['surveybar']['importquestiongroup'] = true;
             $aData['surveybar']['closebutton']['url'] = 'admin/survey/sa/listquestiongroups/surveyid/'.$surveyid;  // Close button
             $aData['surveybar']['savebutton']['form'] = true;
@@ -209,6 +209,7 @@ class questiongroups extends Survey_Common_Action
                 $oGroup=new QuestionGroup;
                 $oGroup->sid=$surveyid;
                 if(isset($newGroupID)){
+                    switchMSSQLIdentityInsert('groups',true);
                     $oGroup->gid=$newGroupID;
                 }
                 $oGroup->group_name = Yii::app()->request->getPost('group_name_' . $sLanguage,"");
@@ -223,6 +224,10 @@ class questiongroups extends Survey_Common_Action
                 if($oGroup->save()){
                     if(!isset($newGroupID)){
                         $newGroupID=$oGroup->gid;
+                    }
+                    else
+                    {
+                        switchMSSQLIdentityInsert('groups',true);
                     }
                 }else{
                     Yii::app()->setFlashMessage(CHtml::errorSummary($oGroup),'error');
@@ -310,7 +315,7 @@ class questiongroups extends Survey_Common_Action
         $aData['sidemenu']['questiongroups'] = true;
         $aData['sidemenu']['group_name'] = $grow['group_name'];
         $surveyinfo = Survey::model()->findByPk($iSurveyID)->surveyinfo;
-        $aData['title_bar']['title'] = $surveyinfo['surveyls_title']."(".gT("ID").":".$iSurveyID.")";
+        $aData['title_bar']['title'] = $surveyinfo['surveyls_title']." (".gT("ID").":".$iSurveyID.")";
         $aData['surveyIsActive'] = $surveyinfo['active']=='Y';
         $aData['questiongroupbar']['buttons']['view'] = true;
 
@@ -415,7 +420,7 @@ class questiongroups extends Survey_Common_Action
             $aData['aBaseLanguage'] = $aBaseLanguage;
 
             $surveyinfo = Survey::model()->findByPk($iSurveyID)->surveyinfo;
-            $aData['title_bar']['title'] = $surveyinfo['surveyls_title']."(".gT("ID").":".$iSurveyID.")";
+            $aData['title_bar']['title'] = $surveyinfo['surveyls_title']." (".gT("ID").":".$iSurveyID.")";
 
             ///////////
             // sidemenu

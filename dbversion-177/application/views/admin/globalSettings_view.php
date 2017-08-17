@@ -234,7 +234,7 @@
                     <select id='emailmethod' name='emailmethod'>
                         <option value='mail'
                             <?php if (getGlobalSetting('emailmethod')=='mail') { echo "selected='selected'";} ?>
-                            ><?php $clang->eT("LimeService"); ?></option>
+                            ><?php $clang->eT("LimeSurvey Professional"); ?></option>
                         <option value='smtp'
                             <?php if (getGlobalSetting('emailmethod')=='smtp') { echo "selected='selected'";} ?>
                             ><?php $clang->eT("SMTP"); ?></option>
@@ -292,7 +292,7 @@
                     <select id='bounceaccounttype' name='bounceaccounttype'>
                         <option value='off'
                             <?php if (getGlobalSetting('bounceaccounttype')=='off') {echo " selected='selected'";}?>
-                            ><?php $clang->eT("LimeService"); ?></option>
+                            ><?php $clang->eT("LimeSurvey Professional"); ?></option>
                         <option value='IMAP'
                             <?php if (getGlobalSetting('bounceaccounttype')=='IMAP') {echo " selected='selected'";}?>
                             ><?php $clang->eT("IMAP"); ?></option>
@@ -360,7 +360,7 @@
                 <?php $thisforce_ssl = getGlobalSetting('force_ssl');
                     $opt_force_ssl_on = $opt_force_ssl_off = $opt_force_ssl_neither = '';
                     // LimeService Mod Start
-                    $warning_force_ssl =  $clang->gT("Attention: SSL is only available for *.limequery.com domains. If the setting 'Force https' (SSL) is enabled/enforced then 0.5 responses are counted additionally if a survey is started and using SSL encryption (a complete responses will cost then 1.5 LimeService responses).");
+                    $warning_force_ssl =  $clang->gT("Attention: SSL is only available for *.limequery.com domains.");
 /*
                     switch($thisforce_ssl)
                     {
@@ -589,7 +589,7 @@
             ?>
             <div style="width:600px;text-align: left;padding-top:50px; margin:0 auto;">
                 <span style="font-weight: bold; font-size: 14pt;">Upgrade to <?php echo $sUpgradeVersion; ?> is now scheduled!</span><br /><br />
-                <b>Your LimeService installation was scheduled for upgrade.</b> Upgrade cycles run every full hour. The current server time is <?php echo date('g:i a');?>.<br>
+                <b>Your LimeSurvey Professional installation was scheduled for upgrade.</b> Upgrade cycles run every full hour. The current server time is <?php echo date('g:i a');?>.<br>
                 This action cannot be undone. When the update process has finished you will receive an email.<p /></div>
             <?php
         }
@@ -627,7 +627,7 @@
     { ?>
         <div style="width:600px;text-align: left;padding-top:50px; margin:0 auto;">
             <span style="font-weight: bold; font-size: 14pt;">Upgrade to <?php echo $sUpgradeVersion; ?> is in progress!</span><br /><br />
-            Your LimeService installation is already scheduled for upgrade. Upgrade cycles run on every full hour and can take up to 15 minutes - please be patient. The current server time is '<?php echo date('g:i T');?>.
+            Your LimeSurvey Professional installation is already scheduled for upgrade. Upgrade cycles run on every full hour and can take up to 15 minutes - please be patient. The current server time is '<?php echo date('g:i T');?>.
             This action cannot be undone. <br /><b>Please be patient. When the upgrade has finished you will receive an automatic email.</b><p /></div>
         <?php
     }

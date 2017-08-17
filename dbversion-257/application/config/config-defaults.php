@@ -43,7 +43,7 @@ $config['rootdir']            =   getcwd(); //dirname(__FILE__); // This is the 
 
 
 // Site Info
-$config['sitename']           =   'LimeService - Your online survey service';     // The official name of the site (appears in the Window title)
+$config['sitename']           =   'LimeSurvey Professional - Your online survey service';     // The official name of the site (appears in the Window title)
 $config['scriptname']         =   'admin.php';      // The name of the admin script
 
 $config['defaultuser']        =   'admin';          // This is the default username when LimeSurvey is installed
@@ -389,7 +389,7 @@ $config['bPdfQuestionBold'] = '0';		  // Questions in bold (1) or normal (0)
 $config['bPdfQuestionBorder'] = '1'; 	  // Border in questions. Accepts 0:no border, 1:border
 $config['bPdfResponseBorder'] = '1';	  // Border in responses. Accepts 0:no border, 1:border
 
-// QueXML-PDF: If set to true, the printable_help attribute will be visible on the exported PDF questionnaires
+// QueXML-PDF: If set to true, the printable_help attribute will be visible on the exported PDF survey
 // If used, the appearance (font size, justification, etc.) may be adjusted by editing td.questionHelpBefore and $helpBeforeBorderBottom of quexml.
 $config['quexmlshowprintablehelp'] = false;
 
@@ -487,7 +487,7 @@ $config['showqnumcode'] = 'choose';
 * If LimeSurvey comes up as normal, then everything is fine. If you
 * get a page not found error or permission denied error then
 */
-$config['force_ssl'] = 'off'; // DO not turn on unless you are sure your server supports SSL/HTTPS
+$config['force_ssl'] = 'neither'; // DO not turn on unless you are sure your server supports SSL/HTTPS
 
 
 /**
@@ -685,6 +685,9 @@ $config['defaulttemplateeditormode']='default';
 
 // Side Menu behaviout
 $config['sideMenuBehaviour']='adaptive';
+
+// Hide update key
+$config['hide_update_key']=false;
 
 return $config;
 //settings deleted

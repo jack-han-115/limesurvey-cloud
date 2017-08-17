@@ -3987,6 +3987,7 @@ function SendEmailMessage($body, $subject, $to, $from, $sitename, $ishtml=false,
 
 
     require_once(APPPATH.'/third_party/phpmailer/class.phpmailer.php');
+    require_once(APPPATH.'/third_party/phpmailer/class.smtp.php');
     $mail = new PHPMailer;
     if (!$mail->SetLanguage($defaultlang,APPPATH.'/third_party/phpmailer/language/'))
     {
@@ -4053,10 +4054,10 @@ function SendEmailMessage($body, $subject, $to, $from, $sitename, $ishtml=false,
             $mail->IsMail();   
         // LimeService Mod start
             $mail->AddReplyTo($fromemail, $fromname);
-            $fromemail='noreply@limeservice.com';
+            $fromemail='noreply@limesurvey.org';
             if (trim($fromname)=='')
-                $fromname='LimeService';
-            $senderemail='bounces@limeservice.com';        
+                $fromname='LimeSurvey Professional';
+            $senderemail='bounces@limesurvey.org';        
         // LimeService Mod end
             
     }
@@ -4082,7 +4083,7 @@ function SendEmailMessage($body, $subject, $to, $from, $sitename, $ishtml=false,
             $mail->AddCustomHeader($val);
         }
     }
-    $mail->AddCustomHeader("X-Surveymailer: $sitename Emailer ( LimeService http://www.limeservice.com )");
+    $mail->AddCustomHeader("X-Surveymailer: $sitename Emailer ( LimeSurvey Professional http://www.limesurvey.org )");
     if (get_magic_quotes_gpc() != "0")	{$body = stripcslashes($body);}
     if ($ishtml)
     {
@@ -5463,6 +5464,12 @@ function enforceSSLMode()
     {
         $force_ssl = 'off';
     };
+    // LimeService modification
+    if ($force_ssl=='off')
+    {
+        $force_ssl='';
+    }
+    //    
     if( $force_ssl == 'on' && !$bSSLActive )
     {
         SSLRedirect('s');
@@ -7594,5 +7601,22 @@ function array_diff_assoc_recursive($array1, $array2) {
         return isset($aTypes[$aParts[0]]) ? $aTypes[$aParts[0]] : ( isset($aParts[2]) ? trim($aParts[2], '"') : null);
     }
 
+        // LimeService Mod Start _--------------------------
+
+    /**
+    * Get the LimeSurvey Professional installation ID
+    */
+    function getInstallationID() {
+        // Yii doesn't give us a good way to get the database name
+        $aMatches=array();
+        preg_match('/dbname=([^;]*)/', Yii::app()->db->getSchema()->getDbConnection()->connectionString, $aMatches);
+        $sDbName = $aMatches[1];
+        $sCustomerID=substr($sDbName,6);
+        return $sCustomerID;
+    }
+
+    // LimeService Mod End --------------------------    
+
+    
 // Closing PHP tag intentionally omitted - yes, it is okay
 

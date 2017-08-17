@@ -43,7 +43,7 @@ $config['rootdir']            =   getcwd(); //dirname(__FILE__); // This is the 
 
 
 // Site Info
-$config['sitename']           =   'LimeService - Your online survey service';     // The official name of the site (appears in the Window title)
+$config['sitename']           =   'LimeSurvey Professional - Your online survey service';     // The official name of the site (appears in the Window title)
 $config['scriptname']         =   'admin.php';      // The name of the admin script
 
 $config['defaultuser']        =   'admin';          // This is the default username when LimeSurvey is installed
@@ -480,7 +480,7 @@ $config['showqnumcode'] = 'choose';
 * If LimeSurvey comes up as normal, then everything is fine. If you
 * get a page not found error or permission denied error then
 */
-$config['force_ssl'] = 'off'; // DO not turn on unless you are sure your server supports SSL/HTTPS
+$config['force_ssl'] = ''; // DO not turn on unless you are sure your server supports SSL/HTTPS
 
 
 /**

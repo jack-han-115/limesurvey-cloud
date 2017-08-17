@@ -890,13 +890,23 @@ class SurveyRuntimeHelper {
                     $_SESSION[$LEMsessid]['sid'] = $surveyid;
 
                     sendCacheHeaders();
+                    // LimeService Mod start ======================================
+                    $header=false;
                     if (isset($thissurvey['autoredirect']) && $thissurvey['autoredirect'] == "Y" && $thissurvey['surveyls_url'])
                     {
+                        $iDelay=0;
+                        $sAds=Yii::app()->dbstats->createCommand('select advertising from limeservice_system.installations where user_id='.getInstallationID())->queryScalar();    
+                        if ($sAds=='1')
+                        {
+                            $iDelay=5;
+                        }
+                        
                         //Automatically redirect the page to the "url" setting for the survey
-                        header("Location: {$thissurvey['surveyls_url']}");
+                        $header = '<meta http-equiv="refresh" content="'.$iDelay.';url='.$thissurvey['surveyls_url'].'">';
                     }
 
-                    doHeader();
+                    echo getHeader($header);
+                    // LimeService Mod end ======================================
                     echo $content;
                 }
                 $redata['completed'] = $completed;
@@ -921,6 +931,25 @@ class SurveyRuntimeHelper {
                 $redata['thissurvey']['surveyls_url'] = $thissurvey['surveyls_url'];
 
                 echo templatereplace(file_get_contents($sTemplateViewPath."completed.pstpl"), array('completed' => $completed), $redata, 'SubmitCompleted', false, NULL, array(), true );
+                // LimeService modification start ==================================
+                $sAds=Yii::app()->dbstats->createCommand('select advertising from limeservice_system.installations where user_id='.getInstallationID())->queryScalar();    
+                if ($sAds=='1')
+                {
+                    echo '<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+                        <!-- LimeSurvey Professional -->
+                        <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-8685097035430927" data-ad-slot="1489732692" data-ad-format="auto"></ins>
+                        <script>
+                        (adsbygoogle = window.adsbygoogle || []).push({});
+                    </script>';
+                    if (isset($thissurvey['autoredirect']) && $thissurvey['autoredirect'] == "Y" && $thissurvey['surveyls_url'])
+                    {
+                        echo "<p>";
+                        eT('Please be patient until you are forwarded to the final URL.');
+                        echo "</p>";
+                    }
+                }
+                // LimeService modification end ==================================
+                
                 echo "\n";
                 if ((($LEMdebugLevel & LEM_DEBUG_TIMING) == LEM_DEBUG_TIMING))
                 {
@@ -931,7 +960,7 @@ class SurveyRuntimeHelper {
                     echo "<table><tr><td align='left'><b>Group/Question Validation Results:</b>" . $moveResult['message'] . "</td></tr></table>\n";
                 }
                 echo templatereplace(file_get_contents($sTemplateViewPath."endpage.pstpl"), array(), $redata, 'SubmitEndpage', false, NULL, array(), true );
-                doFooter();
+                doFooter($surveyid);
 
                 // The session cannot be killed until the page is completely rendered
                 if ($thissurvey['printanswers'] != 'Y')
@@ -953,7 +982,7 @@ class SurveyRuntimeHelper {
             echo "\t<center><br />\n";
             echo "\t" . gT("Sorry. There is no matching survey.") . "<br /></center>&nbsp;\n";
             echo templatereplace(file_get_contents($sTemplateViewPath."endpage.pstpl"), array(), $redata);
-            doFooter();
+            doFooter($surveyid);
             exit;
         }
         createFieldMap($surveyid,'full',false,false,$_SESSION[$LEMsessid]['s_lang']);
@@ -1455,7 +1484,7 @@ class SurveyRuntimeHelper {
 
         echo "\n";
 
-        doFooter();
+        doFooter($surveyid);
 
     }
 
@@ -1664,7 +1693,8 @@ class SurveyRuntimeHelper {
         $aReplacement['QUESTION_VALID_MESSAGE'] = $event->get('valid_message');
         $aReplacement['QUESTION_FILE_VALID_MESSAGE'] = $event->get('file_valid_message');
         $aReplacement['QUESTION_MANDATORY'] = $event->get('mandatory',$aReplacement['QUESTION_MANDATORY']);
-        // Always add id for QUESTION_ESSENTIALS
+        // Always add id for QUESTION_ESSENTIALS afer take aHtmlOptions from event
+        $aHtmlOptions=$event->get('aHtmlOptions');
         $aHtmlOptions['id']="question{$iQid}";
         $aReplacement['QUESTION_ESSENTIALS']=CHtml::renderAttributes($aHtmlOptions);
 

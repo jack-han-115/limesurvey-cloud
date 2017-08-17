@@ -145,7 +145,7 @@ class AdminController extends LSYii_Controller
             header("Expires: Sat, 26 Jul 1997 05:00:00 GMT");
             die("
                 Dear survey administrator - the administration is currently not available since you used up your available Survey Responses.<br />
-                Please login with your username at <a href='https://www.limeservice.com'>LimeService</a> and buy some Survey Responses!");
+                Please login with your username at <a href='https://www.limesurvey.org'>LimeSurvey</a> and subscribe to one of our LimeSurvey Professional Plans!");
         }
          
         $sDomain=$_SERVER['SERVER_NAME'];
