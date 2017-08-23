@@ -3185,9 +3185,14 @@ function time () {
     return Math.floor(new Date().getTime() / 1000);
 }
 
-// updates the repeated headings in a dynamic table
-function updateHeadings(tab, rep)
+/**
+ * Updates the repeated headings in a dynamic table.
+ * @param {string} questionId
+ * @param {number} rep        - Repetition
+ */
+function updateHeadings(questionId, rep)
 {
+    var tab = $('#' + questionId).find('table.question');
     tab.find('.repeat').remove();
     var header = tab.find('thead>tr');
     var trs = tab.find('tr:visible');
@@ -3201,9 +3206,16 @@ function updateHeadings(tab, rep)
     });
 }
 
-// updates the colors in a dynamic table
-function updateColors(tab)
+/**
+ * Updates the colors in a dynamic table.
+ * No use of jQuery in this function due to speed reasons.
+ * Get all "#questionId table.question tr:visible" and reset
+ * class array1/array2.
+ * @param {string} questionId
+ */
+function updateColors(questionId)
 {
+    var tab = $('#' + questionId).find('table.question');
     var trs = tab.find('tr:visible');
     trs.each(function(i, tr)
     {
