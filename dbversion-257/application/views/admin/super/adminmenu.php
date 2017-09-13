@@ -119,11 +119,15 @@
             $sDomain=$_SERVER['SERVER_NAME'];
             $sSubdomain=substr($sDomain,0,strpos($sDomain,'.'));
             $sDomain=substr($sDomain,strpos($sDomain,'.')+1);
+            $iUserId = (int) substr(Yii::app()->db->username, 6);
 
-            $iResponses = Yii::app()->dbstats->createCommand("select responses_avail from limeservice_system.balances where user_id=".substr(Yii::app()->db->username,6))->queryScalar();
-            echo " <li><a href='https://www.limesurvey.org/services#pricingHostedSubscription'>".sprintf(gT('Response balance: %s'),$iResponses).'</a></li>';
-
+            $data = Yii::app()->dbstats->createCommand("SELECT i.upload_storage_size, b.storage_used, b.responses_avail FROM limeservice_system.balances b JOIN limeservice_system.installations i ON b.user_id = i.user_id WHERE i.user_id = ". $iUserId)->queryRow();
+            if ($data) {
+                echo " <li><a href='https://www.limesurvey.org/services#pricingHostedSubscription'>".sprintf(gT('Response balance: %s'),$data['responses_avail']).'</a></li>';
+                printf("<li><a href='#'>Storage used (MB): %d / %d</a></li>", $data['storage_used'], $data['upload_storage_size']);
+            }
             //===============End LimeService Mod ?>
+
             <!-- Extra menus from plugins -->
             <?php // TODO: This views should be in same module as ExtraMenu and ExtraMenuItem classes (not plugin) ?>
             <?php foreach ($extraMenus as $menu): ?>
