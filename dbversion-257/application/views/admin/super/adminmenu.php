@@ -123,8 +123,17 @@
 
             $data = Yii::app()->dbstats->createCommand("SELECT i.upload_storage_size, b.storage_used, b.responses_avail FROM limeservice_system.balances b JOIN limeservice_system.installations i ON b.user_id = i.user_id WHERE i.user_id = ". $iUserId)->queryRow();
             if ($data) {
-                echo " <li><a href='https://www.limesurvey.org/services#pricingHostedSubscription'>".sprintf(gT('Response balance: %s'),$data['responses_avail']).'</a></li>';
-                printf("<li><a href='#'>Storage used (MB): %d / %d</a></li>", $data['storage_used'], $data['upload_storage_size']);
+                printf(
+                    "<li data-toggle='tooltip' data-placement='bottom' data-title='%s'><a href='https://www.limesurvey.org/services#pricingHostedSubscription'><span class='fa fa-comments'></span>&nbsp;%d</a></li>",
+                    gT('Response balance'),
+                    $data['responses_avail']
+                );
+                printf(
+                    "<li data-toggle='tooltip' data-placement='bottom' data-title='%s'><a href='#'><span class='fa fa-database'></span>&nbsp;%d / %d</a></li>",
+                    gT('Storage used / storage available (MB)'),
+                    $data['storage_used'],
+                    $data['upload_storage_size']
+                );
             }
             //===============End LimeService Mod ?>
 
