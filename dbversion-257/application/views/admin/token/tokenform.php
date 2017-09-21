@@ -205,7 +205,7 @@
                     <div class="form-group">
                         <label class="col-sm-2 control-label"  for='email'><?php eT("Email:"); ?></label>
                         <div class="col-sm-4">
-                            <input class='form-control' type='text' maxlength='320' size='50' id='email' name='email' value="<?php if (isset($email)){echo $email;} ?>" />
+                            <input class='form-control action_validate_email' data-targetfield="#emailstatus" type='text' maxlength='320' size='50' id='email' name='email' value="<?php if (isset($email)){echo $email;} ?>" />
                         </div>
 
                         <!-- Email Status -->
@@ -217,11 +217,8 @@
 
                     </div>
 
-
-
                     <!-- Invitation sent, Reminder sent -->
                     <div class="form-group">
-
                         <!-- Invitation sent -->
                         <label class="col-sm-2 control-label"  for='sent'><?php eT("Invitation sent?"); ?></label>
                         <div class="col-sm-4 <?php echo $sCointainerClass;?>" id="sent-yes-no-date-container" data-locale="<?php echo convertLStoDateTimePickerLocale(Yii::app()->session['adminlang']);?>">
