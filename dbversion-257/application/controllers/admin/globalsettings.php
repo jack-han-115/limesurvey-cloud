@@ -396,6 +396,34 @@ class GlobalSettings extends Survey_Common_Action
         );
     }
 
+    // Start LimeService Mod
+    /**
+     * Insert a plan_action to check storage for this installation.
+     * @return void
+     */
+    public function refreshStorageUsage()
+    {
+        $query = sprintf(
+            'INSERT INTO `limeservice_system`.`plan_actions`(`user_id`, `client_command`, `created`) VALUES(%d, \'check_storage\', \'%s\')',
+            (int) getInstallationId(),
+            date('Y-m-d H:i:s')
+        );
+        $result = Yii::app()->dbstats->createCommand($query)->execute();
+        if ($result) {
+            Yii::app()->setFlashMessage(
+                gT('Refresh scheduled. It might take a couple of seconds to go through.'),
+                'success'
+            );
+        } else {
+            Yii::app()->setFlashMessage(
+                gT('Could not schedule refresh. Please contact support.'),
+                'error'
+            );
+        }
+        $this->getController()->redirect(App()->createUrl('admin/globalsettings'));
+    }
+    // End LimeService Mod
+
     /**
     * Renders template(s) wrapped in header and footer
     *
