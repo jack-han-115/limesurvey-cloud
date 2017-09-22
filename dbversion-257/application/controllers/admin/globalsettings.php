@@ -411,7 +411,7 @@ class GlobalSettings extends Survey_Common_Action
         $result = Yii::app()->dbstats->createCommand($query)->execute();
         if ($result) {
             Yii::app()->setFlashMessage(
-                gT('Refresh scheduled. It might take a couple of seconds to go through.'),
+                gT('Refresh scheduled. It might take a couple of seconds to complete.'),
                 'success'
             );
         } else {
