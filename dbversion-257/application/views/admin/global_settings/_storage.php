@@ -16,23 +16,9 @@
     <br/>
     <span class='text-muted'>
         <?php eT('Depending on the number of uploaded files, this might take some time.'); ?>
+        <!-- LimeService Mod Start -->
+        <br/>
+        <?php eT('Update the storage usage of your installation. Use this to unlock surveys after you\'ve deleted files, in case you\'ve got locked due to too high storage usage.'); ?>
+        <!-- LimeService Mod End -->
     </span>
 </div>
-
-<!-- Start LimeService Mod -->
-<div id='global-settings-limeservice'>
-    <br/>
-    <button
-        id='global-settings-calculate-storage'
-        class='btn btn-primary '
-        onclick='window.location.href = "<?php echo Yii::app()->createUrl('admin/globalsettings/', array('sa' => 'refreshStorageUsage')); ?>"; return false;'
-        >
-        <span class='fa fa-refresh'></span>&nbsp;
-        <?php eT('Refresh LimeSurvey Pro storage usage'); ?>
-    </button>
-    <br/>
-    <span class='text-muted'>
-        <?php eT('Update the storage usage of your installation. Use this to unlock surveys after you\'ve deleted files.'); ?>
-    </span>
-</div>
-<!-- End LimeService Mod -->

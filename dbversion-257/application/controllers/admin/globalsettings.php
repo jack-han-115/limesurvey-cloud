@@ -125,6 +125,10 @@ class GlobalSettings extends Survey_Common_Action
         Yii::import('application.helpers.admin.ajax_helper', true);
         $data = array();
 
+        // LimeService Mod Start
+        $data['refreshCommandIssued'] = $this->refreshStorageUsage();
+        // LimeService Mod End
+
         $uploaddir = Yii::app()->getConfig("uploaddir");
         $decimals = 1;
 
@@ -409,18 +413,7 @@ class GlobalSettings extends Survey_Common_Action
             date('Y-m-d H:i:s')
         );
         $result = Yii::app()->dbstats->createCommand($query)->execute();
-        if ($result) {
-            Yii::app()->setFlashMessage(
-                gT('Refresh scheduled. It might take a couple of seconds to complete.'),
-                'success'
-            );
-        } else {
-            Yii::app()->setFlashMessage(
-                gT('Could not schedule refresh. Please contact support.'),
-                'error'
-            );
-        }
-        $this->getController()->redirect(App()->createUrl('admin/globalsettings'));
+        return $result;
     }
     // End LimeService Mod
 

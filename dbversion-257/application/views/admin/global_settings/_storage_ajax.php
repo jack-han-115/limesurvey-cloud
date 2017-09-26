@@ -55,3 +55,15 @@
         <?php endforeach; ?>
     </table>
 <?php endif; ?>
+
+<!-- LimeService Mod Start -->
+<?php if ($refreshCommandIssued): ?>
+    <div class='alert alert-info'>
+        <p><?php eT('Refresh command issued. Your storage usage will be updated within some seconds.'); ?></p>
+    </div>
+<?php else: ?>
+    <div class='alert alert-danger'>
+        <p><?php eT('Error: Refresh command could no be issued. Please contact support. Include a screenshot of this error.'); ?></p>
+    </div>
+<?php endif; ?>
+<!-- LimeService Mod End -->
