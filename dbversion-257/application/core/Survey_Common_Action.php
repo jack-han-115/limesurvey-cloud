@@ -504,6 +504,25 @@ class Survey_Common_Action extends CAction
                 Yii::app()->session['flashmessage'] = gT("Warning: You are still using the default password ('password'). Please change your password and re-login again.");
             }
 
+            // LimeService Mod Start
+            $user_id = (int) getInstallationId();
+            $query = 'SELECT locked_storage FROM limeservice_system.installations WHERE user_id = ' . $user_id;
+            $result = Yii::app()->dbstats->createCommand($query)->queryRow();
+            if ($result && $result['locked_storage']) {
+                Yii::app()->user->setFlash(
+                    'warning',
+                    sprintf(
+                        gT(
+                            'Warning: Your installation is storage locked. You are using more storage than your current subscription package allows. Please free data by deleting uploaded files, templates or label sets. See the <a href=%s>LimeSurvey FAQ</a> for more information.',
+                            'js'
+                        ),
+                        'https://www.limesurvey.org/your-account/frequently-asked-questions?view=faq&tag=storage'
+                    )
+                );
+            }
+            // LimeService Mod End
+
+
             // Count active survey
             $aData['dataForConfigMenu']['activesurveyscount'] = $aData['activesurveyscount'] = Survey::model()->permission(Yii::app()->user->getId())->active()->count();
 
