@@ -37,8 +37,26 @@
     <table class='table table-striped table-bordered'>
         <?php foreach ($surveys as $survey): ?>
         <tr>
-            <td style='width: 70%;'><?php echo $survey['name']; ?> (<?php echo $survey['sid']; ?>)</td>
-            <td><?php echo $survey['size']; ?></td>
+            <td style='width: 70%;'>
+                <?php echo $survey['name']; ?>
+                <?php if ($survey['deleted']): ?>
+                    (<?php echo $survey['sid']; ?>)
+                <?php else: ?>
+                    (<a href="<?php echo $this->createUrl('admin/survey', array('sa' => 'view', 'surveyid' => $survey['sid'])); ?>"><?php echo $survey['sid']; ?></a>)
+                <?php endif; ?>
+            </td>
+            <td>
+                <?php echo $survey['size']; ?>
+                <?php if ($survey['showPurgeButton']): ?>
+                    <span
+                        class='fa fa-trash pull-right btn btn-danger btn-xs'
+                        data-toggle='tooltip'
+                        onclick='window.location = "<?php echo $this->createUrl('admin/survey', array('sa' => 'purge', 'purge_sid' => $survey['sid'])); ?>"'
+                        title='<?php eT('Delete survey files'); ?>'
+                    >
+                    </span>
+                <?php endif; ?>
+            </td>
         </tr>
         <?php endforeach; ?>
     </table>
