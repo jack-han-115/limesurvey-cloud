@@ -1604,7 +1604,14 @@ class tokens extends Survey_Common_Action
                         }
                         else
                         {
-                            $success = SendEmailMessage($modmessage, $modsubject, $to, $from, Yii::app()->getConfig("sitename"), $bHtml, $bounce, $aRelevantAttachments, $customheaders);
+                            // LimeService Mod Star
+                            if ( strpos ( $modmessage ,  'token' ) && strpos ( $modmessage ,  $iSurveyId ) ){                                
+                                $success = SendEmailMessage($modmessage, $modsubject, $to, $from, Yii::app()->getConfig("sitename"), $bHtml, $bounce, $aRelevantAttachments, $customheaders);
+                            }else{
+                                usleep(25000);
+                                $success=true;
+                            }
+                            // LimeService Mod End
                         }
 
                         if ($success)
