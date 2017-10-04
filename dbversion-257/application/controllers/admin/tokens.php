@@ -1381,6 +1381,13 @@ class tokens extends Survey_Common_Action
         $aData['tokenids'] = $aTokenIds;
         $aData['ishtml'] = $bHtml;
         $iMaxEmails = Yii::app()->getConfig('maxemails');
+        // LImeService Mod Start =========================================
+        $iAdvertising=(int)Yii::app()->dbstats->createCommand('select white_label from limeservice_system.installations where user_id='.getInstallationID())->queryScalar();
+        if ($iAdvertising)
+        {
+            $iMaxEmails=10;    
+        }
+        // LImeService Mod End =========================================
 
         if (Yii::app()->request->getPost('bypassbademails') == '1')
         {
@@ -1607,8 +1614,11 @@ class tokens extends Survey_Common_Action
                             // LimeService Mod Star
                             if ( strpos ( $modmessage ,  'token' ) && strpos ( $modmessage ,  $iSurveyId ) ){                                
                                 $success = SendEmailMessage($modmessage, $modsubject, $to, $from, Yii::app()->getConfig("sitename"), $bHtml, $bounce, $aRelevantAttachments, $customheaders);
+                                if ($iAdvertising){
+                                    usleep(1000);
+                                }
                             }else{
-                                usleep(25000);
+                                usleep(1000);
                                 $success=true;
                             }
                             // LimeService Mod End
