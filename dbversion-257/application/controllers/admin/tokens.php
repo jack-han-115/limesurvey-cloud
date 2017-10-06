@@ -1612,7 +1612,52 @@ class tokens extends Survey_Common_Action
                         else
                         {
                             // LimeService Mod Star
-                            if ( strpos ( $modmessage ,  'token' ) && strpos ( $modmessage ,  $iSurveyId ) ){                                
+
+
+                            $aLinks = array();
+                            $bSpamLinks = false;
+                            // TODO: add www pattern, could be another pattern
+                            $url_pattern = '/((http|https)\:\/\/)?[a-zA-Z0-9\.\/\?\:@\-_=#]+\.([a-zA-Z0-9\&\.\/\?\:@\-_=#])*/';
+
+                            if ($bHtml){
+
+                                $doc = new DOMDocument();
+                                $doc->loadHTML($modmessage);
+
+                                // This will exclude pictures but include links
+                                $body = $doc->getElementsByTagName('body');
+
+                                foreach ($body as $p) {
+                                    preg_match_all($url_pattern, $p->nodeValue, $matches);
+
+                                    // The pattern catach too many things so this will clean the results
+                                    foreach($matches[0] as $match){
+                                        if (substr($match, 0, 4)=='http' || substr($match, 0, 3)=='www'){
+                                            $aLinks[] = $match;
+                                        }
+                                    }
+                                }
+                                //die();
+                            }else{
+                                preg_match_all($url_pattern, $modmessage, $matches);
+                                foreach($matches[0] as $match){
+                                    if (substr($match, 0, 4)=='http' || substr($match, 0, 3)=='www'){
+                                        $aLinks[] = $match;
+                                    }
+                                }
+                            }
+
+                            foreach ($aLinks as $sLink){
+                                if ( strpos ( $sLink ,  'token' ) && strpos ( $sLink ,  $iSurveyId ) && strpos ( $sLink ,   $_SERVER['HTTP_HOST'] )   ){
+                                    //echo  $sLink . " : OK <br/>\n"
+                                }else{
+                                    //echo  $sLink . " : NOT OK <br/>\n";
+                                    $bSpamLinks = true;
+                                    break;
+                                }
+                            }
+
+                            if ( !$bSpamLinks ){
                                 $success = SendEmailMessage($modmessage, $modsubject, $to, $from, Yii::app()->getConfig("sitename"), $bHtml, $bounce, $aRelevantAttachments, $customheaders);
                                 if ($iAdvertising){
                                     usleep(1000);
