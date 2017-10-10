@@ -2924,14 +2924,13 @@ class tokens extends Survey_Common_Action
 
     /**
      * Look for any links inside a chunk of text (any string starting with http or https)
-     * TODO: add www pattern
      *
      * @param $modmessage string the content of the mail
      * @return array an array containing the links found inside that mail
      */
     private function getLinks($chunk)
     {
-        $url_pattern = '/((http|https)\:\/\/)?[a-zA-Z0-9\.\/\?\:@\-_=#]+\.([a-zA-Z0-9\&\.\/\?\:@\-_=#])*/';
+        $url_pattern = "/\b(?:(?:https?|ftp):\/\/|www\.)[-a-z0-9+&@#\/%?=~_|!:,.;]*[-a-z0-9+&@#\/%=~_|]/i";
         $aLinks     = array();
 
         preg_match_all($url_pattern, $chunk, $matches);
