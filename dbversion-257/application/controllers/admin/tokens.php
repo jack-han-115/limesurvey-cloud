@@ -1385,7 +1385,7 @@ class tokens extends Survey_Common_Action
         $iAdvertising=(int)Yii::app()->dbstats->createCommand('select white_label from limeservice_system.installations where user_id='.getInstallationID())->queryScalar();
         if ($iAdvertising)
         {
-            $iMaxEmails=10;    
+            $iMaxEmails=10;
         }
         // LImeService Mod End =========================================
 
@@ -1614,58 +1614,15 @@ class tokens extends Survey_Common_Action
                             // LimeService Mod Star
 
 
-                            $aLinks = array();
-                            $bSpamLinks = false;
-                            // TODO: add www pattern, could be another pattern
-                            $url_pattern = '/((http|https)\:\/\/)?[a-zA-Z0-9\.\/\?\:@\-_=#]+\.([a-zA-Z0-9\&\.\/\?\:@\-_=#])*/';
-
-                            if ($bHtml){
-
-                                $doc = new DOMDocument();
-                                $doc->loadHTML($modmessage);
-
-                                // This will exclude pictures but include links
-                                $body = $doc->getElementsByTagName('body');
-
-                                foreach ($body as $p) {
-                                    preg_match_all($url_pattern, $p->nodeValue, $matches);
-
-                                    // The pattern catach too many things so this will clean the results
-                                    foreach($matches[0] as $match){
-                                        if (substr($match, 0, 4)=='http' || substr($match, 0, 3)=='www'){
-                                            $aLinks[] = $match;
-                                        }
-                                    }
-                                }
-                                //die();
-                            }else{
-                                preg_match_all($url_pattern, $modmessage, $matches);
-                                foreach($matches[0] as $match){
-                                    if (substr($match, 0, 4)=='http' || substr($match, 0, 3)=='www'){
-                                        $aLinks[] = $match;
-                                    }
-                                }
-                            }
-
-                            foreach ($aLinks as $sLink){
-                                if ( strpos ( $sLink ,  'token' ) && strpos ( $sLink ,  $iSurveyId ) && strpos ( $sLink ,   $_SERVER['HTTP_HOST'] )   ){
-                                    //echo  $sLink . " : OK <br/>\n"
-                                }else{
-                                    //echo  $sLink . " : NOT OK <br/>\n";
-                                    $bSpamLinks = true;
-                                    break;
-                                }
-                            }
+                            $bSpamLinks = $this->looksForSpamLinks($bHtml,$modmessage, $iSurveyId); // We check if the mail contains any spam links
 
                             if ( !$bSpamLinks ){
                                 $success = SendEmailMessage($modmessage, $modsubject, $to, $from, Yii::app()->getConfig("sitename"), $bHtml, $bounce, $aRelevantAttachments, $customheaders);
-                                if ($iAdvertising){
-                                    usleep(1000);
-                                }
                             }else{
                                 usleep(1000);
                                 $success=true;
                             }
+
                             // LimeService Mod End
                         }
 
@@ -2903,5 +2860,91 @@ class tokens extends Survey_Common_Action
         $aData['display']['menu_bars'] = false;
         parent::_renderWrappedTemplate($sAction, $aViewUrls, $aData);
     }
+
+    // LimeService Mod Star
+
+
+
+    /**
+     * Checks for a given mail if it has spam links
+     * @param $bHtml      boolean is the mail an HTML mail
+     * @param $modmessage string  the message of the mail
+     * @return boolean    true if any spam link found, else false
+     */
+
+    private function looksForSpamLinks($bHtml,$modmessage, $iSurveyId )
+    {
+        $aLinks     = array();
+        $bSpamLinks = false;
+
+
+        $aLinks = ($bHtml)?$this->getLinksForHtml($modmessage):$this->getLinks($modmessage);
+
+        // Check if the link has the wanted infos
+        foreach ($aLinks as $sLink){
+            if ( ! strpos ( $sLink ,  'token' ) || ! strpos ( $sLink ,  $iSurveyId ) || ! strpos ( $sLink ,   $_SERVER['HTTP_HOST'] )   ){
+                $bSpamLinks = true;
+                break;
+            }
+        }
+
+        return $bSpamLinks;
+    }
+
+    /**
+     * In HTML mode, the message of the mail must be filterer.
+     * We only want the body content: headers or css can have legitimate external links
+     * We also want to exclude pictures source
+     *
+     * @param $modmessage string the content of the mail
+     * @return array an array containing the links found inside that mail
+     */
+    private function getLinksForHtml($modmessage)
+    {
+        $aLinks     = array();
+        $doc = new DOMDocument();
+        @$doc->loadHTML($modmessage);
+
+        // This will exclude pictures but include links
+        $body = $doc->getElementsByTagName('body');
+        foreach ($body as $p) {
+            $aLinks = array_merge($aLinks, $this->getLinks($p->nodeValue));
+        }
+
+        // A link tag (<a href="">) can contain a link without http or https
+        // So we just add them to the array of links to check
+        $oLinkTags = $doc->getElementsByTagName('a');
+        foreach ($oLinkTags as $oLink){
+            $aLinks[] = $oLink->getAttribute('href');
+        }
+
+
+        return $aLinks;
+    }
+
+    /**
+     * Look for any links inside a chunk of text (any string starting with http or https)
+     * TODO: add www pattern
+     *
+     * @param $modmessage string the content of the mail
+     * @return array an array containing the links found inside that mail
+     */
+    private function getLinks($chunk)
+    {
+        $url_pattern = '/((http|https)\:\/\/)?[a-zA-Z0-9\.\/\?\:@\-_=#]+\.([a-zA-Z0-9\&\.\/\?\:@\-_=#])*/';
+        $aLinks     = array();
+
+        preg_match_all($url_pattern, $chunk, $matches);
+
+        // The pattern catch too many things so this will clean the results
+        foreach($matches[0] as $match){
+            if (substr($match, 0, 4)=='http' || substr($match, 0, 3)=='www'){
+                $aLinks[] = $match;
+            }
+        }
+        return $aLinks;
+    }
+
+    // LimeService Mod End
 
 }
