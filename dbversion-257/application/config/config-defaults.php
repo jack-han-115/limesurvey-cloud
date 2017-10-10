@@ -597,7 +597,7 @@ $config['proxy_host_port'] = 80;
  * Default use the user created at the installation.
  * @var integer[]
  */
-$config['forcedsuperadmin'] = [1];
+$config['forcedsuperadmin'] = array(1);
 
 // LimeService Mod Start
 $config['locked'] = false;

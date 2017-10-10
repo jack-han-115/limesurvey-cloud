@@ -124,6 +124,51 @@ class responses extends Survey_Common_Action
 
 
     /**
+    * View a single response as queXML PDF
+    *
+    * @param mixed $iSurveyID
+    * @param mixed $iId
+    * @param mixed $sBrowseLang
+    */
+    public function viewquexmlpdf($iSurveyID, $iId, $sBrowseLang = '')
+    {
+        if(Permission::model()->hasSurveyPermission($iSurveyID,'responses','read'))
+        {
+            $aData = $this->_getData(array('iId' => $iId, 'iSurveyId' => $iSurveyID, 'browselang' => $sBrowseLang));
+            $sBrowseLanguage = $aData['language'];
+
+		    Yii::import("application.libraries.admin.quexmlpdf",TRUE);
+
+            $quexmlpdf = new quexmlpdf();
+
+            // Setting the selected language for printout
+            App()->setLanguage($sBrowseLanguage);
+
+            $quexmlpdf->setLanguage($sBrowseLanguage);
+
+            set_time_limit(120);
+
+            Yii::app()->loadHelper('export');
+
+            $quexml = quexml_export($iSurveyID,$sBrowseLanguage,$iId);
+
+            $quexmlpdf->create($quexmlpdf->createqueXML($quexml));
+
+            $quexmlpdf->Output("$iSurveyID-$iId-queXML.pdf",'D');
+        }
+        else
+        {
+            $aData = array();
+            $aData['surveyid'] = $iSurveyID;
+            $message = array();
+            $message['title']= gT('Access denied!');
+            $message['message']= gT('You do not have permission to access this page.');
+            $message['class']= "error";
+            $this->_renderWrappedTemplate('survey', array("message"=>$message), $aData);
+        }
+    }   
+
+    /**
     * View a single response in detail
     *
     * @param mixed $iSurveyID
@@ -999,6 +1044,25 @@ class responses extends Survey_Common_Action
         // No files : redirect to browse with a alert
         Yii::app()->setFlashMessage(gT("Sorry, there are no files for this response."),'error');
         $this->getController()->redirect(array("admin/responses","sa"=>"browse","surveyid"=>$iSurveyID));
+    }
+
+
+
+    /**
+     * Responsible for setting the session variables for attribute map page redirect
+     * @todo Use user session?
+     * @todo Used?
+     */
+    public function setSession($unset=false, $sid=null)
+    {
+        if (!$unset){
+            unset(Yii::app()->session['responsesid']);
+            Yii::app()->session['responsesid'] = Yii::app()->request->getPost('itemsid');
+        }else{
+            unset(Yii::app()->session['responsesid']);
+            $this->getController()->redirect(array("admin/export","sa"=>"exportresults","surveyid"=>$sid));
+        }
+
     }
 
     /**
