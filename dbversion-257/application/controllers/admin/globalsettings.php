@@ -411,7 +411,7 @@ class GlobalSettings extends Survey_Common_Action
     public function refreshStorageUsage()
     {
         $query = sprintf(
-            'INSERT INTO `limeservice_system`.`plan_actions`(`user_id`, `client_command`, `created`) VALUES(%d, \'check_storage\', \'%s\')',
+            'INSERT INTO `limeservice_system`.`plan_actions`(`user_id`, `command`, `client_command`, `created`) VALUES(%d, \'\', \'check_storage\', \'%s\')',
             (int) getInstallationId(),
             date('Y-m-d H:i:s')
         );
