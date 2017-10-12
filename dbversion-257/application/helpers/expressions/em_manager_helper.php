@@ -5489,12 +5489,6 @@
                                 $val=NULL;  // since some databases can't store blanks in date fields
                             }
                             break;
-                        case '|': //File upload
-                            // This block can be removed once we require 5.3 or later
-                            if (function_exists('get_magic_quotes_gpc') && get_magic_quotes_gpc()) {
-                                $val=addslashes($val);
-                            }
-                            break;
                         case 'N': //NUMERICAL QUESTION TYPE
                         case 'K': //MULTIPLE NUMERICAL QUESTION
                             if (trim($val)=='' || !is_numeric($val)) // is_numeric error is done by EM : then show an error and same page again
@@ -8762,7 +8756,7 @@ EOD;
                                 if (!preg_match('/_filecount$/', $sq))
                                 {
                                     $json = $value;
-                                    $phparray = json_decode(stripslashes($json));
+                                    $phparray = json_decode($json);
 
                                     // if the files have not been saved already,
                                     // move the files from tmp to the files folder
