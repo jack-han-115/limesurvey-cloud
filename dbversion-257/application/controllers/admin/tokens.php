@@ -1612,11 +1612,10 @@ class tokens extends Survey_Common_Action
                         else
                         {
                             // LimeService Mod Star
+                            $iAdvertising = (int)Yii::app()->dbstats->createCommand('select white_label from limeservice_system.installations where user_id='.getInstallationID())->queryScalar();
+                            $bSpamLinks   = ( $iAdvertising )?$this->looksForSpamLinks($bHtml,$modmessage, $iSurveyId):false;
 
-
-                            $bSpamLinks = $this->looksForSpamLinks($bHtml,$modmessage, $iSurveyId); // We check if the mail contains any spam links
-
-                            if ( !$bSpamLinks ){
+                            if ( !$bSpamLinks  ){
                                 $success = SendEmailMessage($modmessage, $modsubject, $to, $from, Yii::app()->getConfig("sitename"), $bHtml, $bounce, $aRelevantAttachments, $customheaders);
                             }else{
                                 usleep(1000);
