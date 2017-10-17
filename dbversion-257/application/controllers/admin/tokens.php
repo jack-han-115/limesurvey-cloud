@@ -1382,7 +1382,7 @@ class tokens extends Survey_Common_Action
         $aData['ishtml'] = $bHtml;
         $iMaxEmails = Yii::app()->getConfig('maxemails');
         // LImeService Mod Start =========================================
-        $iAdvertising=(int)Yii::app()->dbstats->createCommand('select white_label from limeservice_system.installations where user_id='.getInstallationID())->queryScalar();
+        $iAdvertising=(int)Yii::app()->dbstats->createCommand('select advertising from limeservice_system.installations where user_id='.getInstallationID())->queryScalar();
         if ($iAdvertising)
         {
             $iMaxEmails=10;
@@ -1612,15 +1612,15 @@ class tokens extends Survey_Common_Action
                         else
                         {
                             // LimeService Mod Start
-                            $iAdvertising = (int)Yii::app()->dbstats->createCommand('select white_label from limeservice_system.installations where user_id='.getInstallationID())->queryScalar();
+                            $iAdvertising = (int)Yii::app()->dbstats->createCommand('select advertising from limeservice_system.installations where user_id='.getInstallationID())->queryScalar();
                             $bSpamLinks   = ( $iAdvertising )?$this->looksForSpamLinks($bHtml,$modmessage, $iSurveyId):false;
 
-                            // if ( !$bSpamLinks  ){
+                            if (!$bSpamLinks) {
                                 $success = SendEmailMessage($modmessage, $modsubject, $to, $from, Yii::app()->getConfig("sitename"), $bHtml, $bounce, $aRelevantAttachments, $customheaders);
-                            /* }else{
+                            } else {
                                 usleep(1000);
                                 $success=false;
-                            }*/
+                            }
 
                             // LimeService Mod End
                         }
