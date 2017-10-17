@@ -1620,6 +1620,7 @@ class tokens extends Survey_Common_Action
                             } else {
                                 usleep(1000);
                                 $success=false;
+                                $maildebug =  gT('Your email contains unauthorized links.');
                             }
 
                             // LimeService Mod End
