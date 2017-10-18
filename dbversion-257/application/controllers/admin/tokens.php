@@ -1618,9 +1618,8 @@ class tokens extends Survey_Common_Action
                             if (!$bSpamLinks) {
                                 $success = SendEmailMessage($modmessage, $modsubject, $to, $from, Yii::app()->getConfig("sitename"), $bHtml, $bounce, $aRelevantAttachments, $customheaders);
                             } else {
-                                usleep(1000);
                                 $success=false;
-                                $maildebug =  gT('Your email contains unauthorized links.');
+                                $maildebug =  gT('Your email contains external links. In the free version only links to your survey are allowed.');
                             }
 
                             // LimeService Mod End
