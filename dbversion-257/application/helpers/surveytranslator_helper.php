@@ -683,7 +683,7 @@ function getLanguageData($bOrderByNative = false, $sLanguageCode = 'en')
 
     //Ukrainian
     $supportedLanguages['uk']['description'] = gT('Ukrainian');
-    $supportedLanguages['uk']['nativedescription'] = 'ukrayins&#x2B9;kyy';
+    $supportedLanguages['uk']['nativedescription'] = '&#x423;&#x43A;&#x440;&#x430;&#x457;&#x43D;&#x441;&#x44C;&#x43A;&#x430;';
       $supportedLanguages['uk']['rtl'] = false;
     $supportedLanguages['uk']['dateformat'] = 1;
     $supportedLanguages['uk']['radixpoint'] = 1;
