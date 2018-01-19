@@ -1,0 +1,44 @@
+{#
+    LimeSurvey
+    Copyright (C) 2007-2017 The LimeSurvey Project Team / Louis Gac
+    All rights reserved.
+    License: GNU/GPL License v2 or later, see LICENSE.php
+    LimeSurvey is free software. This version may have been modified pursuant
+    to the GNU General Public License, and as distributed it includes or
+    is derivative of works licensed under the GNU General Public License or
+    other free or open source software licenses.
+    See COPYRIGHT.php for copyright notices and details.
+
+    (¯`·._.·(¯`·._.· User Forms Layout  ·._.·´¯)·._.·´¯)
+
+    This file renders the user forms such as: token (survey participant), and register.
+
+    NOTE: see layout_global.twig for more infos
+#}
+
+<!DOCTYPE html>
+<html lang="{{ aSurveyInfo.languagecode }}" dir="{{ aSurveyInfo.dir }}" class="{{ aSurveyInfo.class.html }} {{ aSurveyInfo.languagecode }} dir-{{ aSurveyInfo.dir }} " {{ aSurveyInfo.attr.html }}>
+
+    {# Headers, metadatas, etc #}
+    {{ include('./subviews/header/head.twig') }}
+
+    <body class="{{ aSurveyInfo.class.body }} lang-{{surveylanguage}} {{surveyformat}}" {{ aSurveyInfo.attr.body }}>
+
+        {# Bootstrap Navigation Bar: the top menu #}
+        {{ include('./subviews/header/nav_bar.twig') }}
+
+
+        <!-- Outer Frame Container -->
+        <div class="{{ aSurveyInfo.class.outerframe }} container" id="{{ aSurveyInfo.id.outerframe }}" {{ aSurveyInfo.attr.outerframe }}>
+
+        </div> <!-- outer frame container -->
+
+        {# Bootstrap alert modal #}
+        {{ include('./subviews/messages/bootstrap_alert_modal.twig') }}
+
+        {# Basic ThemeScript options  #}
+        {{ registerScript("BasicThemeScripts", " if(window.basicThemeScripts === undefined){ window.basicThemeScripts = new ThemeScripts(); } basicThemeScripts.initGlobal(); ", POS_END) }}
+
+    </body>
+</html>
+<!-- end of startpage.twig -->

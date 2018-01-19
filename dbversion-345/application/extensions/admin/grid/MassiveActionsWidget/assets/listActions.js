@@ -15,16 +15,14 @@
  *      perform an ajax request and close
  *      perform an ajax request and show the result in the modal
  */
-$(document).on('click', '.listActions a', function ()
-{
-    var $that          = $(this);                                                             // The cliked link
+var onClickListAction =  function () {
+    var $that          = $(this);                                                             // The clicked link
     var $actionUrl     = $that.data('url');                                                   // The url of the Survey Controller action to call
     var onSuccess      = $that.data('on-success');
-    var $gridid        = $('.listActions').data('grid-id');
-    var $oCheckedItems = $.fn.yiiGridView.getChecked($gridid, $('.listActions').data('pk')); // List of the clicked checkbox
+    var $gridid        = $('#'+$(this).closest('div.listActions').data('grid-id'));
+    var $oCheckedItems = $gridid.yiiGridView('getChecked', $(this).closest('div.listActions').data('pk')); // List of the clicked checkbox
     var $oCheckedItems = JSON.stringify($oCheckedItems);
     var actionType = $that.data('actionType');
-
 
     if( $oCheckedItems == '[]' ) {
         //If no item selected, the error modal "please select first an item" is shown
@@ -41,7 +39,7 @@ $(document).on('click', '.listActions a', function ()
     // TODO : Switch case "redirection (with 2 type; post or fill session)"
     if(actionType == "redirect")
     {
-        $oCheckedItems = $.fn.yiiGridView.getChecked($gridid, $('.listActions').data('pk')); // So we can join
+        $oCheckedItems = $gridid.yiiGridView('getChecked', $('.listActions').data('pk')); // So we can join
         var newForm = jQuery('<form>', {
             'action': $actionUrl,
             'target': '_blank',
@@ -73,7 +71,7 @@ $(document).on('click', '.listActions a', function ()
 
     // Set window location href. Used by download files in responses list view.
     if (actionType == 'window-location-href') {
-        var $oCheckedItems = $.fn.yiiGridView.getChecked($gridid, $('.listActions').data('pk')); // So we can join
+        var $oCheckedItems = $gridid.yiiGridView('getChecked', $('.listActions').data('pk')); // So we can join
         window.location.href = $actionUrl + $oCheckedItems.join(',');
         return;
     }
@@ -85,7 +83,7 @@ $(document).on('click', '.listActions a', function ()
     if (actionType == 'custom') {
         var js = $that.data('custom-js');
         var func = eval(js);
-        var itemIds = $.fn.yiiGridView.getChecked($gridid, $('.listActions').data('pk'));
+        var itemIds = $gridid.yiiGridView('getChecked', $('.listActions').data('pk'));
         func(itemIds);
         return;
     }
@@ -115,9 +113,9 @@ $(document).on('click', '.listActions a', function ()
 
         if ($that.data('grid-reload') == "yes")
         {
-            $.fn.yiiGridView.update($gridid);                         // Update the surveys list
+            $gridid.yiiGridView('update');                         // Update the surveys list
             setTimeout(function(){
-                $('#'+$gridid).trigger("actions-updated");}, 500);    // Raise an event if some widgets inside the modals need some refresh (eg: position widget in question list)
+                $(document).trigger("actions-updated");}, 500);    // Raise an event if some widgets inside the modals need some refresh (eg: position widget in question list)
         }
 
     })
@@ -193,7 +191,7 @@ $(document).on('click', '.listActions a', function ()
 
     // open the modal
     $modal.modal();
-});
+};
 
 /**
  * Bootstrap switch extension
@@ -276,17 +274,22 @@ function getDefaultDateTimePickerSettings() {
     return mydata;
 }
 
+function bindListItemclick(){
+    $( '.listActions a').off('click.listactions').on('click.listactions', onClickListAction);
+}
 
-$(document).ready(function() {
 
+$(document).off('pjax:scriptcomplete.listActions').on('pjax:scriptcomplete.listActions, ready ', function() {
     prepareBsSwitchBoolean(gridId);
     prepareBsSwitchInteger(gridId);
 
-
     // Grid refresh: see point 3
-    $(document).on('actions-updated', '#'+gridId,  function(){
+    $(document).on('actions-updated', function(){
         prepareBsSwitchBoolean(gridId);
         prepareBsSwitchInteger(gridId);
         prepareBsDateTimePicker(gridId);
+        bindListItemclick();
     });
+    bindListItemclick();
 });
+
