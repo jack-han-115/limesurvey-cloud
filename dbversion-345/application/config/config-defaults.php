@@ -600,8 +600,7 @@ $config['forcedsuperadmin'] = array(1);
 // LimeService Mod Start ===============
 $config['locked'] = false;
 
-if (!isset($_SERVER['SERVER_NAME']))
-{
+if (!isset($_SERVER['SERVER_NAME'])) {
     $_SERVER['SERVER_NAME']=$argv[1];
 }
 // LimeService Mod End ==================
