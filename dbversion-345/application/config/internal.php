@@ -138,7 +138,7 @@ $internalConfig = array(
         // These are defaults and are later overwritten in LSYii_Application by a path based on config tempdir/tempurl
         'assetManager' => array(
             'excludeFiles' => array("config.xml", "node_modules", "src"),
-            'class' => 'application.core.LSYii_AssetManager'
+            'class' => 'application.core.LSYii_AssetManager',
             'basePath'=> $userdir.DIRECTORY_SEPARATOR.'tmp'.DIRECTORY_SEPARATOR.'assets',
 // LimeService Mod start =============
             'linkAssets'=>true

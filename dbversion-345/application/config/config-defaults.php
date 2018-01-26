@@ -636,16 +636,16 @@ $config['adminstyleurl']           = $config['styleurl'].$config['admintheme'].'
 $config['publicdir']               = $config['rootdir'];                                   // The directory path of the public scripts
 $config['homedir']                 = $config['rootdir'];       // The directory path of the admin scripts
 // LimeService Mod start
-$config['configdir']=$userdir=str_replace('instances','installations',dirname(dirname(dirname(dirname(__FILE__))))).'/'.$_SERVER['SERVER_NAME'].'/userdata';
-$config['tempdir']                 = $userdir.DIRECTORY_SEPARATOR."tmp";         // The directory path where LimeSurvey can store temporary files
-$config['imagedir']                 = $config['rootdir'].DIRECTORY_SEPARATOR."assets".DIRECTORY_SEPARATOR."images"; // The directory path of the image directory
-$config['uploaddir']               = $userdir.DIRECTORY_SEPARATOR."upload";
+$config['configdir']               = str_replace('instances','installations',dirname(dirname(dirname(dirname(__FILE__))))).'/'.$_SERVER['SERVER_NAME'].'/userdata';
+$config['tempdir']                 = $config['configdir'].DIRECTORY_SEPARATOR."tmp";         // The directory path where LimeSurvey can store temporary files
+$config['imagedir']                = $config['rootdir'].DIRECTORY_SEPARATOR."assets".DIRECTORY_SEPARATOR."images"; // The directory path of the image directory
+$config['uploaddir']               = $config['configdir'].DIRECTORY_SEPARATOR."upload";
 $config['standardthemerootdir']     = $config['rootdir'].DIRECTORY_SEPARATOR."themes".DIRECTORY_SEPARATOR."survey"; // The directory path of the standard themes
 $config['publicstylepath']          = $config['rootdir'].DIRECTORY_SEPARATOR.$config['publicstyle'];
 $config['corequestionthemedir']     = "themes".DIRECTORY_SEPARATOR."question";
 $config['corequestionthemerootdir'] = $config['rootdir'].DIRECTORY_SEPARATOR.$config['corequestionthemedir']; // The directory containing the core's question themes.
 $config['styledir']                 = $config['rootdir'].DIRECTORY_SEPARATOR.'themes'.DIRECTORY_SEPARATOR.'admin';
-$config['questiontypedir']         = $config['rootdir'].DIRECTORY_SEPARATOR.'application'.DIRECTORY_SEPARATOR.'extensions'.DIRECTORY_SEPARATOR.'questionTypes';
+$config['questiontypedir']          = $config['rootdir'].DIRECTORY_SEPARATOR.'application'.DIRECTORY_SEPARATOR.'extensions'.DIRECTORY_SEPARATOR.'questionTypes';
 $config['userthemerootdir']         = $config['uploaddir'].DIRECTORY_SEPARATOR."themes".DIRECTORY_SEPARATOR."survey"; // The directory path of the user themes
 $config['userquestionthemedir']     = "themes".DIRECTORY_SEPARATOR."question"; // The directory containing the user's question themes.
 $config['userquestionthemerootdir'] = $config['uploaddir'].DIRECTORY_SEPARATOR.$config['userquestionthemedir']; // The directory containing the user's question themes.
