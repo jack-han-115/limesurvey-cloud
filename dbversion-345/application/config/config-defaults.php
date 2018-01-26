@@ -597,9 +597,14 @@ $config['proxy_host_port'] = 80;
  */
 $config['forcedsuperadmin'] = array(1);
 
-// LimeService Mod Start
+// LimeService Mod Start ===============
 $config['locked'] = false;
-// LimeService Mod End
+
+if (!isset($_SERVER['SERVER_NAME']))
+{
+    $_SERVER['SERVER_NAME']=$argv[1];
+}
+// LimeService Mod End ==================
 
 // === Advanced Setup
 //The following url and dir locations do not need to be modified unless you have a non-standard
