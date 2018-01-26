@@ -156,7 +156,7 @@ class RegisterController extends LSYii_Controller
         $aSurveyInfo = getSurveyInfo($iSurveyId, App()->language);
 
         // Check the security question's answer
-        if (function_exists("ImageCreate") && isCaptchaEnabled('registrationscreen', $aSurveyInfo['usecaptcha'])) {
+        if (isCaptchaEnabled('registrationscreen', $aSurveyInfo['usecaptcha'])) {
             $sLoadSecurity = Yii::app()->request->getPost('loadsecurity', '');
             $captcha = Yii::app()->getController()->createAction("captcha");
             $captchaCorrect = $captcha->validate($sLoadSecurity, false);
@@ -245,7 +245,7 @@ class RegisterController extends LSYii_Controller
         $aData['sEmail'] = $aFieldValue['sEmail'];
         $aData['aAttribute'] = $aFieldValue['aAttribute'];
         $aData['aExtraAttributes'] = $aRegisterAttributes;
-        $aData['bCaptcha'] = function_exists("ImageCreate") && isCaptchaEnabled('registrationscreen', $oSurvey->usecaptcha);
+        $aData['bCaptcha'] = isCaptchaEnabled('registrationscreen', $oSurvey->usecaptcha);
         $aData['sRegisterFormUrl'] = App()->createUrl('register/index', array('sid'=>$iSurveyId));
 
         $aData['formAdditions'] = '';
@@ -512,7 +512,7 @@ class RegisterController extends LSYii_Controller
         $aData['aSurveyInfo']['registration_view'] = $registerContent;
 
         $aData['aSurveyInfo']['registerform']['hiddeninputs'] = '<input value="'.$aData['aSurveyInfo']['sLanguage'].'"  type="hidden" name="lang" id="register_lang" /><input  value="true" type="hidden" name="register"id="register_register" />';
-        $aData['aSurveyInfo']['include_content'] = 'register.twig';
+        $aData['aSurveyInfo']['include_content'] = 'register';
         Yii::app()->twigRenderer->renderTemplateFromFile('layout_global.twig', $aData, false);
 
     }

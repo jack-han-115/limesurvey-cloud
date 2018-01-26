@@ -269,7 +269,7 @@ $internalConfig = array(
             ),
             'filters' => array(
                 'jencode' => 'CJSON::encode',
-                't'     => 'eT',
+                't'     => 'gT',
                 'gT'    => 'gT',
             ),
 

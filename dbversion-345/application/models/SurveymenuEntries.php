@@ -508,13 +508,14 @@ class SurveymenuEntries extends LSActiveRecord
      */
     public function restoreDefaults()
     {
+        
         $oDB = Yii::app()->db;
         $oTransaction = $oDB->beginTransaction();
         try {
 
             $oDB->createCommand()->truncateTable('{{surveymenu_entries}}');
 
-            $basicMenues = LsDefaultDataSet::getSurveyMenuEntryData();
+            $basicMenues = LsDefaultDataSets::getSurveyMenuEntryData();
             foreach ($basicMenues as $basicMenu) {
                 $oDB->createCommand()->insert("{{surveymenu_entries}}", $basicMenu);
             }
