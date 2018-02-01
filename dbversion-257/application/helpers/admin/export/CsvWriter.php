@@ -62,7 +62,7 @@ class CsvWriter extends Writer
                     $index++;
                 }
                 //Output the header...once and only once.
-                $sRecord.=implode($this->separator, $headers) . PHP_EOL;
+                $sRecord.=implode($this->separator, $headers) . "\r\n";
             }
             $this->hasOutputHeader = true;
         }
@@ -73,7 +73,7 @@ class CsvWriter extends Writer
             $values[$index] = $this->csvEscape($value);
             $index++;
         }
-        $sRecord.= implode($this->separator, $values) . PHP_EOL;
+        $sRecord.= implode($this->separator, $values) . "\r\n";
         if ($oOptions->output=='display')
         {
             echo $sRecord; 
