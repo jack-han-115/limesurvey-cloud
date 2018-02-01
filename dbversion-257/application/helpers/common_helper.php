@@ -3139,7 +3139,7 @@ function getArrayFilterExcludesForQuestion($qid)
  */
 function CSVEscape($sString)
 {
-    $sString = preg_replace(array('~\R~u'), array(PHP_EOL), $sString);
+    $sString = preg_replace(array('~\R~u'), array("\n"), $sString);
     return '"' . str_replace('"','""', $sString) . '"';
 }
 
