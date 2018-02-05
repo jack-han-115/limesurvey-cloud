@@ -33,15 +33,8 @@ class InstallCommand extends CConsoleCommand
      */
     public function run($aArguments)
     {
-            if (!isset($sArgument[0])) {
-                die("You have to set admin/password/full name and email address on the command line like this: php console.php install <my.domain.com>\n");
-                return 1;
-            }
+        if (isset($aArguments) && isset($aArguments[0]) && isset($aArguments[1]) && isset($aArguments[2]) && isset($aArguments[3])) {
             Yii::import('application.helpers.common_helper', true);
-            $aConfig=Yii::app()->getComponents(false);
-            $aLocalConfig=require(str_replace('instances','installations',dirname(dirname(dirname(dirname(__FILE__))))).'/'.$sArgument[0].'/userdata/config.php');
-            $aLocalConfig=$aLocalConfig['config'];
-            $bDatabaseExists=true;
 
             $this->setNoisy($aArguments);
 
@@ -110,7 +103,11 @@ class InstallCommand extends CConsoleCommand
             );
             $this->output('All done!');
             return 0;
-
+        } else {
+            // TODO: a valid error process
+            echo "You have to set admin/password/full name and email address on the command line like this: php console.php install adminname mypassword fullname emailaddress [verbose]\n";
+            return 1;
+        }
     }
 
     /**

@@ -59,7 +59,7 @@
         $env = (string) @getenv('YII_CONSOLE_COMMANDS');
         if (!empty($env)) {
             $app->commandRunner->addCommands($env);
-    }
+        }
     }
     $app->run();
 ?>

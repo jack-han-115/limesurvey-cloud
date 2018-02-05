@@ -1,42 +1,52 @@
 <?php
-    /*
-    * LimeSurvey (tm)
-    * Copyright (C) 2011 The LimeSurvey Project Team / Carsten Schmitz
-    * All rights reserved.
-    * License: GNU/GPL License v2 or later, see LICENSE.php
-    * LimeSurvey is free software. This version may have been modified pursuant
-    * to the GNU General Public License, and as distributed it includes or
-    * is derivative of works licensed under the GNU General Public License or
-    * other free or open source software licenses.
-    * See COPYRIGHT.php for copyright notices and details.
-    *
-    */
-    class UpdatedbCommand extends CConsoleCommand
-    {
-        public $connection;
 
-        public function run($sArgument)
-        {
-            if (!isset($sArgument) || !isset($sArgument[0]) || $sArgument[0]!='yes') {
-                die('This CLI command updates a LimeSurvey database. For security reasons this command can only started if you add the parameter \'yes\' to the command line.');   
-            }
+    /*
+ * @author Denis Chenu <denis@sondages.pro>
+ * @license GPL v3
+ * @version 0.1
+ *
+ * Copyright (C) 2017 LimeSurvey Team
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ */
+class UpdateDBCommand extends CConsoleCommand
+{
+    /**
+     * Update database
+     * @param array $args
+     * @return void
+     * @throws CException
+     */
+    public function run($args = null)
+    {
+        $newDbVersion = (int) Yii::app()->getConfig('dbversionnumber');
+        $currentDbVersion = intval(Yii::app()->getConfig('DBVersion'));
+
+        if (!$currentDbVersion) {
+            throw new CException("DataBase version are not found, seems LimeSurvey are not installed.");
+        }
+
+        if ($newDbVersion > $currentDbVersion) {
+            echo "Update ".Yii::app()->db->connectionString." with prefix :";
+            echo Yii::app()->db->tablePrefix." from {$currentDbVersion} to {$newDbVersion}\n";
             Yii::import('application.helpers.common_helper', true);
-            Yii::import('application.helpers.database_helper', true);
-            $sVersionConfigPath=dirname(dirname(__FILE__)).DIRECTORY_SEPARATOR.'config'.DIRECTORY_SEPARATOR.'version.php';   
-            $config=require ($sVersionConfigPath);         
-            $iDBVersionNumber = $config['dbversionnumber'];
-            $iCurrentDBVersion=Yii::app()->db->createCommand("select stg_value from {{settings_global}} where stg_name='DBVersion'")->queryScalar();;
-            if (intval($iDBVersionNumber)>intval($iCurrentDBVersion))
-            {
-                Yii::import('application.helpers.update.updatedb_helper', true);
-                db_upgrade_all((float)$iCurrentDBVersion);
-                print 'Database updated to '.$iCurrentDBVersion.PHP_EOL;
+            Yii::import('application.helpers.update.updatedb_helper', true);
+            $result = db_upgrade_all($currentDbVersion);
+            if ($result) {
+                echo "Database has been successfully upgraded to version $newDbVersion \n";
+            } else {
+                throw new CException("Please fix this error in your database and try again");
             }
-            else
-            {
-                print 'Database already at version '.$iCurrentDBVersion.PHP_EOL;
-                print PHP_EOL;
-            }
+        } else {
+            echo "no need update : DB is uptodate\n";
         }
     }
-?>
+}
