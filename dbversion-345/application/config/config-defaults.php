@@ -601,7 +601,10 @@ $config['forcedsuperadmin'] = array(1);
 $config['locked'] = false;
 
 if (!isset($_SERVER['SERVER_NAME'])) {
-    $_SERVER['SERVER_NAME']=$argv[1];
+    $_SERVER['SERVER_NAME'] = '';
+    if (is_array($argv) && count($argv)>1) {
+        $_SERVER['SERVER_NAME']=end($argv); // This is for console installation - the last argument is always assumed to be the FQDN of the installation
+    }
 }
 // LimeService Mod End ==================
 
