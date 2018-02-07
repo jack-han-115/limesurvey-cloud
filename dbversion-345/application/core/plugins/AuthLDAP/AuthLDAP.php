@@ -128,6 +128,8 @@ class AuthLDAP extends LimeSurvey\PluginManager\AuthPluginBase
         $this->subscribe('beforeLogin');
         $this->subscribe('newLoginForm');
         $this->subscribe('afterLoginFormSubmit');
+        $this->subscribe('remoteControlLogin');
+
         $this->subscribe('newUserSession');
     }
 
@@ -437,14 +439,14 @@ class AuthLDAP extends LimeSurvey\PluginManager\AuthPluginBase
                 $autoCreateFlag = true;
             } else {
                 // If the user doesnt exist in the LS database, he can not login
-                $this->setAuthFailure(self::ERROR_USERNAME_INVALID);
+                $this->setAuthFailure(self::ERROR_USERNAME_INVALID); // Error shown : user or password invalid
                 return;
             }
         }
         if ($user !== null) {
             //If user cannot login via LDAP: setAuthFailure
-            if ( ($user->uid == 1 && !$this->get('allowInitialUser'))
-                || !Permission::model()->hasGlobalPermission('auth_ldap','read',$user->uid)
+            if (($user->uid == 1 && !$this->get('allowInitialUser'))
+                || !Permission::model()->hasGlobalPermission('auth_ldap', 'read', $user->uid)
             ) {
                 $this->setAuthFailure(self::ERROR_AUTH_METHOD_INVALID, gT('LDAP authentication method is not allowed for this user'));
                 return;
@@ -454,7 +456,7 @@ class AuthLDAP extends LimeSurvey\PluginManager\AuthPluginBase
         if (empty($password)) {
             // If password is null or blank reject login
             // This is necessary because in simple bind ldap server authenticates with blank password
-            $this->setAuthFailure(self::ERROR_PASSWORD_INVALID);
+            $this->setAuthFailure(self::ERROR_PASSWORD_INVALID); // Error shown : user or password invalid
             return;
         }
 

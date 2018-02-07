@@ -35,6 +35,63 @@ Thank you to everyone who helped with this new release!
 CHANGE LOG
 ------------------------------------------------------
 
+Changes from 3.1.1 (build 180130) to 3.2.0 (build 180206) Feb 06, 2018
+-New feature #13296: Systeminfos $this->view->assign Button (markusfluer)
+-New feature: Remote control login by plugin (Denis Chenu)
+-New feature: Installation from any config file possible (markusfluer)
+-Fixed issue #13185: Rendering issue when adding new questions (Preview) (markusfluer)
+-Fixed issue #13206: Unable to update Advanced question setting after activation (markusfluer)
+-Fixed issue #13234: Focus in text fields when pressing return (markusfluer)
+-Fixed issue #13236: Import LSS files from previous versions (markusfluer)
+-Fixed issue #13260: Expressions in question groups are not interpreted (Olle Haerstedt)
+-Fixed issue #13265: Survey menu assigned to specific user shows up for all users (Olle Haerstedt)
+-Fixed issue #13269: Tutorial - Create a sample question and question group (markusfluer)
+-Fixed issue #13272: Captcha does not show Continue button (markusfluer)
+-Fixed issue #13275: Export Survey as .lsa doesn't work - _timings not existing (markusfluer)
+-Fixed issue #13277: "Inactive survey message" for active survey (markusfluer)
+-Fixed issue #13279: Reference to 'LimeSurvey' in user message breaks Template principle (Carsten Schmitz)
+-Fixed issue #13280: Variables don't work in END_URL (markusfluer)
+-Fixed issue #13285: Can't view/edit question screen of any template (Olle Haerstedt)
+-Fixed issue #13286: Simple selector don't have optgroup (markusfluer)
+-Fixed issue #13290: Admin user with only read perm see "Update default" (Olle Haerstedt)
+-Fixed issue #13292: Google analytics script included even if GA is not set (Denis Chenu)
+-Fixed issue #13295: Better captcha instructions (Olle Haerstedt)
+-Fixed issue: Add question buttonshown even if not allowed (markusfluer)
+-Fixed issue: Beginer tutorial won't work withour correct permission (markusfluer)
+-Fixed issue: Better Excel compatibility for multiline response fields (Carsten Schmitz)
+-Fixed issue: Disable sorting in left box of ranking question (kw-private)
+-Fixed issue: Navigation bar overflowing survey welcome (markusfluer)
+-Fixed issue: question type selectior available in activated survey (markusfluer)
+
+Changes from 3.1.0 (build 180124) to 3.1.1 (build 180130) Jan 30, 2018
+-Fixed issue #13206: Unable to update advanced question setting after activation (markusfluer)
+-Fixed issue #12451: Problem when user exports to PDF (Carsten Schmitz)
+-Fixed issue #12815: Error after multiple question deleting (markusfluer)
+-Fixed issue #12990: Exporting non-response participants very slow - fix by DeveloperChris (Carsten Schmitz)
+-Fixed issue #13010: MySQL 8 reserved word used as table alias in query (Olle Haerstedt)
+-Fixed issue #13104: A lot of white space below answer list (LouisGac)
+-Fixed issue #13116: Can't edit survey list (LouisGac)
+-Fixed issue #13185: Rendering issue when adding new questions (Preview) (markusfluer)
+-Fixed issue #13219: Stars / Slider don't work anymore in 1-5 Single Choice Question since 3.0.5 (markusfluer)
+-Fixed issue #13225: VVImport not showing a result screen (Carsten Schmitz)
+-Fixed issue #13235: Copying Array question results in error (Carsten Schmitz)
+-Fixed issue #13239: Extended fruity variations cannot be changed in survey, only in admin theme editor (LouisGac)
+-Fixed issue #13241: Error when upgrading from 2.x and using MSSQL (Carsten Schmitz)
+-Fixed issue #13255: Problems with saving expiration date and start date (Olle Haerstedt)
+-Fixed issue #13258: Class 'Users' not found when changing menu entry permissions (Olle Haerstedt)
+-Fixed issue #13259: Clear templates database cache after update (Olle Haerstedt)
+-Fixed issue #13180: Variables don't work in END_URL (LouisGac)
+-Fixed issue: Slider not working on new Firefox (Markus flür
+-Fixed issue: Group ordering doesn't work (markusfluer)
+#Updated translation: Catalan by qualitatuvic
+#Updated translation: Dutch (Informal) by Han 
+#Updated translation: Dutch by Han 
+#Updated translation: Hungarian by kkd 
+#Updated translation: Norwegian (Bokmål) by pmonsta
+#Updated translation: Polish (Informal) by elissa
+#Updated translation: Polish by elissa
+#Updated translation: Romanian by cdorin
+
 Changes from 3.0.5 (build 180118) to 3.1.0 (build 180124) Jan 24, 2018
 -New feature #12240: Validation settings for "array by column" question type (Denis Chenu)
 -New feature: Add em_validation_q to list of choice (dropdown and radio) (Denis Chenu)

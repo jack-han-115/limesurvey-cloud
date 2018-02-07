@@ -448,7 +448,7 @@ class SurveyAdmin extends Survey_Common_Action
     {
         $iSurveyID = sanitize_int($surveyid);
 
-        if (!Permission::model()->hasSurveyPermission($iSurveyID, 'surveysettings', 'read')) {
+        if (!Permission::model()->hasSurveyPermission($iSurveyID, 'surveycontent', 'read')) {
             Yii::app()->user->setFlash('error', gT("Access denied"));
             $this->getController()->redirect(Yii::app()->createUrl('/admin'));
         }
@@ -517,15 +517,8 @@ class SurveyAdmin extends Survey_Common_Action
     {
         $iSurveyID = sanitize_int($surveyid);
 
-        if (!Permission::model()->hasSurveyPermission($iSurveyID, 'surveysettings', 'read')) {
-            Yii::app()->user->setFlash('error', gT("Access denied"));
-            $this->getController()->redirect(Yii::app()->createUrl('/admin'));
-        }
-
         $survey    = Survey::model()->findByPk($iSurveyID);
-        $baselang  = $survey->language;
         $menus = $survey->getSurveyMenus($position);
-        $userSettings = [];
         return Yii::app()->getController()->renderPartial(
             '/admin/super/_renderJson',
             array(
@@ -1307,6 +1300,19 @@ class SurveyAdmin extends Survey_Common_Action
             }
         }
 
+        $oSurvey = Survey::model()->findByPk($aImportResults['newsid']);
+        LimeExpressionManager::SetDirtyFlag();
+        $oEM =& LimeExpressionManager::singleton();
+        @LimeExpressionManager::UpgradeConditionsToRelevance($aImportResults['newsid']);
+        @LimeExpressionManager::StartSurvey($oSurvey->sid,'survey',$oSurvey->attributes,true);
+        @LimeExpressionManager::StartProcessingPage(true,true); 
+        $aGrouplist = QuestionGroup::model()->findAllByAttributes(['sid'=>$aImportResults['newsid']]);
+        foreach ($aGrouplist as $iGID => $aGroup) {
+            @LimeExpressionManager::StartProcessingGroup($aGroup['gid'], $oSurvey->anonymized != 'Y', $aImportResults['newsid']);
+            @LimeExpressionManager::FinishProcessingGroup();
+        }
+        @LimeExpressionManager::FinishProcessingPage();
+        
         $this->_renderWrappedTemplate('survey', 'importSurvey_view', $aData);
     }
 

@@ -1250,24 +1250,25 @@ function getRenderWay($renderToken, $renderCaptcha)
 function renderRenderWayForm($renderWay, array $scenarios, $sTemplateViewPath, $aEnterTokenData, $surveyid)
 {
     switch ($renderWay) {
-
         case "main": //Token required, maybe Captcha required
-
             // Datas for the form
             $aForm                    = array();
             $aForm['sType']           = ($scenarios['tokenRequired']) ? 'token' : 'captcha';
             $aForm['token']           = array_key_exists('token', $aEnterTokenData) ? $aEnterTokenData['token'] : null;
             $aForm['aEnterErrors']    = $aEnterTokenData['aEnterErrors'];
             $aForm['bCaptchaEnabled'] = (isset($aEnterTokenData['bCaptchaEnabled'])) ? $aEnterTokenData['bCaptchaEnabled'] : '';
-            if($aForm['bCaptchaEnabled']) {
+            if ($aForm['bCaptchaEnabled']) {
                 Yii::app()->getController()->createAction('captcha');
             }
+            $oSurvey = Survey::model()->findByPk($surveyid);
             // Rendering layout_user_forms.twig
+            $thissurvey                     = $oSurvey->attributes;
             $thissurvey["aForm"]            = $aForm;
             $thissurvey['surveyUrl']        = App()->createUrl("/survey/index", array("sid"=>$surveyid));
             $thissurvey['include_content']  = 'userforms';
             
-            Yii::app()->twigRenderer->renderTemplateFromFile("layout_user_forms.twig", array('oSurvey'=>Survey::model()->findByPk($surveyid), 'aSurveyInfo'=>$thissurvey), false);
+            
+            Yii::app()->twigRenderer->renderTemplateFromFile("layout_user_forms.twig", array('aSurveyInfo'=>$thissurvey), false);
             break;
 
         case "register": //Register new user

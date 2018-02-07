@@ -303,7 +303,7 @@ class Survey extends LSActiveRecord
     }
 
 
-  /*  public function defaultScope()
+    /*  public function defaultScope()
     {
         return array('order'=> $this->getTableAlias().'.sid');
     }    */
@@ -397,11 +397,11 @@ class Survey extends LSActiveRecord
      */
     public function afterFindSurvey()
     {
-        $event =  new PluginEvent('afterFindSurvey');
+        $event = new PluginEvent('afterFindSurvey');
         $event->set('surveyid', $this->sid);
         App()->getPluginManager()->dispatchEvent($event);
         // set the attributes we allow to be fixed
-        $allowedAttributes = array( 'template', 'usecookie', 'allowprev',
+        $allowedAttributes = array('template', 'usecookie', 'allowprev',
             'showxquestions', 'shownoanswer', 'showprogress', 'questionindex',
             'usecaptcha', 'showgroupinfo', 'showqnumcode', 'navigationdelay');
         foreach ($allowedAttributes as $attribute) {
@@ -661,7 +661,7 @@ class Survey extends LSActiveRecord
         return TemplateConfiguration::getInstance(null, null, $this->sid);
     }
 
-    private function __useTranslationForSurveymenu(&$entryData){
+    private function __useTranslationForSurveymenu(&$entryData) {
         $entryData['title']             = gT($entryData['title']);
         $entryData['menu_title']        = gT($entryData['menu_title']);
         $entryData['menu_description']  = gT($entryData['menu_description']);
@@ -679,10 +679,20 @@ class Survey extends LSActiveRecord
             foreach ($aMenuEntries as $menuEntry) {
                 $aEntry = $menuEntry->attributes;
                 //Skip menu if no permission
-                if (
-                    (!empty($entry['permission']) && !empty($entry['permission_grade'])
-                    && !Permission::model()->hasSurveyPermission($this->sid, $entry['permission'], $entry['permission_grade']))
-                ) {continue; }
+                if ((!empty($aEntry['permission']) && !empty($aEntry['permission_grade'])
+                    && !Permission::model()->hasSurveyPermission($this->sid, $aEntry['permission'], $aEntry['permission_grade']))
+                ) {
+                    continue;
+                }
+
+                // Check if a specific user owns this menu.
+                if (!empty($aEntry['user_id'])) {
+                    $userId = Yii::app()->session['loginID'];
+                    if ($userId != $aEntry['user_id']) {
+                        continue;
+                    }
+                }
+
                 //parse the render part of the data attribute
                 $oDataAttribute = new SurveymenuEntryData();
                 $oDataAttribute->apply($menuEntry, $this->sid);
