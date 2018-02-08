@@ -73,7 +73,7 @@ class update extends Survey_Common_Action
     public function index()
     {
         // ================== LimeService Mod start
-        Yii::app()->setFlashMessage(gT('LimeSurvey Professional automatically provides updates - Comfortupdate is not needed.'), 'error');
+        Yii::app()->setFlashMessage(gT('LimeSurvey Professional automatically provides updates - ComfortUpdate is not needed!'), 'error');
         $this->getController()->redirect(Yii::app()->getController()->createUrl("/admin"));
         // ================== LimeService Mod end
         $buttons = 1;
@@ -91,7 +91,7 @@ class update extends Survey_Common_Action
     public function managekey()
     {
         // ================== LimeService Mod start
-        Yii::app()->setFlashMessage(gT('LimeSurvey Professional automatically provides updates - Comfortupdate is not needed.'), 'error');
+        Yii::app()->setFlashMessage(gT('LimeSurvey Professional automatically provides updates - ComfortUpdate is not needed!'), 'error');
         $this->getController()->redirect(Yii::app()->getController()->createUrl("/admin"));
         // ================== LimeService Mod end
         if (Permission::model()->hasGlobalPermission('superadmin')) {
@@ -116,7 +116,7 @@ class update extends Survey_Common_Action
     public function manage_submitkey()
     {
         // ================== LimeService Mod start
-        Yii::app()->setFlashMessage(gT('LimeSurvey Professional automatically provides updates - Comfortupdate is not needed.'), 'error');
+        Yii::app()->setFlashMessage(gT('LimeSurvey Professional automatically provides updates - ComfortUpdate is not needed!'), 'error');
         $this->getController()->redirect(Yii::app()->getController()->createUrl("/admin"));
         // ================== LimeService Mod end
         
@@ -178,7 +178,7 @@ class update extends Survey_Common_Action
     public function delete_key()
     {
         // ================== LimeService Mod start
-        Yii::app()->setFlashMessage(gT('LimeSurvey Professional automatically provides updates - Comfortupdate is not needed.'), 'error');
+        Yii::app()->setFlashMessage(gT('LimeSurvey Professional automatically provides updates - ComfortUpdate is not needed!'), 'error');
         $this->getController()->redirect(Yii::app()->getController()->createUrl("/admin"));
         // ================== LimeService Mod end
         
@@ -217,7 +217,7 @@ class update extends Survey_Common_Action
     public function getwelcome()
     {
         // ================== LimeService Mod start
-        Yii::app()->setFlashMessage(gT('LimeSurvey Professional automatically provides updates - Comfortupdate is not needed.'), 'error');
+        Yii::app()->setFlashMessage(gT('LimeSurvey Professional automatically provides updates - ComfortUpdate is not needed!'), 'error');
         $this->getController()->redirect(Yii::app()->getController()->createUrl("/admin"));
         // ================== LimeService Mod end
         
@@ -241,7 +241,7 @@ class update extends Survey_Common_Action
     public function checkLocalErrors()
     {
         // ================== LimeService Mod start
-        Yii::app()->setFlashMessage(gT('LimeSurvey Professional automatically provides updates - Comfortupdate is not needed.'), 'error');
+        Yii::app()->setFlashMessage(gT('LimeSurvey Professional automatically provides updates - ComfortUpdate is not needed!'), 'error');
         $this->getController()->redirect(Yii::app()->getController()->createUrl("/admin"));
         // ================== LimeService Mod end
         if (Permission::model()->hasGlobalPermission('superadmin')) {
@@ -270,7 +270,7 @@ class update extends Survey_Common_Action
     public function changeLog()
     {
         // ================== LimeService Mod start
-        Yii::app()->setFlashMessage(gT('LimeSurvey Professional automatically provides updates - Comfortupdate is not needed.'), 'error');
+        Yii::app()->setFlashMessage(gT('LimeSurvey Professional automatically provides updates - ComfortUpdate is not needed!'), 'error');
         $this->getController()->redirect(Yii::app()->getController()->createUrl("/admin"));
         // ================== LimeService Mod end
         
@@ -308,7 +308,7 @@ class update extends Survey_Common_Action
     public function fileSystem()
     {
         // ================== LimeService Mod start
-        Yii::app()->setFlashMessage(gT('LimeSurvey Professional automatically provides updates - Comfortupdate is not needed.'), 'error');
+        Yii::app()->setFlashMessage(gT('LimeSurvey Professional automatically provides updates - ComfortUpdate is not needed!'), 'error');
         $this->getController()->redirect(Yii::app()->getController()->createUrl("/admin"));
         // ================== LimeService Mod end
         
@@ -346,7 +346,7 @@ class update extends Survey_Common_Action
     public function backup()
     {
         // ================== LimeService Mod start
-        Yii::app()->setFlashMessage(gT('LimeSurvey Professional automatically provides updates - Comfortupdate is not needed.'), 'error');
+        Yii::app()->setFlashMessage(gT('LimeSurvey Professional automatically provides updates - ComfortUpdate is not needed!'), 'error');
         $this->getController()->redirect(Yii::app()->getController()->createUrl("/admin"));
         // ================== LimeService Mod end
         
@@ -393,7 +393,7 @@ class update extends Survey_Common_Action
     function step4()
     {
         // ================== LimeService Mod start
-        Yii::app()->setFlashMessage(gT('LimeSurvey Professional automatically provides updates - Comfortupdate is not needed.'), 'error');
+        Yii::app()->setFlashMessage(gT('LimeSurvey Professional automatically provides updates - ComfortUpdate is not needed!'), 'error');
         $this->getController()->redirect(Yii::app()->getController()->createUrl("/admin"));
         // ================== LimeService Mod end
         
@@ -455,7 +455,7 @@ class update extends Survey_Common_Action
     public function updateUpdater()
     {
         // ================== LimeService Mod start
-        Yii::app()->setFlashMessage(gT('LimeSurvey Professional automatically provides updates - Comfortupdate is not needed.'), 'error');
+        Yii::app()->setFlashMessage(gT('LimeSurvey Professional automatically provides updates - ComfortUpdate is not needed!'), 'error');
         $this->getController()->redirect(Yii::app()->getController()->createUrl("/admin"));
         // ================== LimeService Mod end
         
@@ -502,7 +502,7 @@ class update extends Survey_Common_Action
     public function getnewkey()
     {
         // ================== LimeService Mod start
-        Yii::app()->setFlashMessage(gT('LimeSurvey Professional automatically provides updates - Comfortupdate is not needed.'), 'error');
+        Yii::app()->setFlashMessage(gT('LimeSurvey Professional automatically provides updates - ComfortUpdate is not needed!'), 'error');
         $this->getController()->redirect(Yii::app()->getController()->createUrl("/admin"));
         // ================== LimeService Mod end
         
@@ -523,7 +523,7 @@ class update extends Survey_Common_Action
     public function submitkey()
     {
         // ================== LimeService Mod start
-        Yii::app()->setFlashMessage(gT('LimeSurvey Professional automatically provides updates - Comfortupdate is not needed.'), 'error');
+        Yii::app()->setFlashMessage(gT('LimeSurvey Professional automatically provides updates - ComfortUpdate is not needed!'), 'error');
         $this->getController()->redirect(Yii::app()->getController()->createUrl("/admin"));
         // ================== LimeService Mod end
 
@@ -557,7 +557,7 @@ class update extends Survey_Common_Action
     public function db($continue = null)
     {
         // ================== LimeService Mod start
-        Yii::app()->setFlashMessage(gT('LimeSurvey Professional automatically provides updates - Comfortupdate is not needed.'), 'error');
+        Yii::app()->setFlashMessage(gT('LimeSurvey Professional automatically provides updates - ComfortUpdate is not needed!'), 'error');
         $this->getController()->redirect(Yii::app()->getController()->createUrl("/admin"));
         // ================== LimeService Mod end
         
@@ -581,7 +581,7 @@ class update extends Survey_Common_Action
     public function step4b()
     {
         // ================== LimeService Mod start
-        Yii::app()->setFlashMessage(gT('LimeSurvey Professional automatically provides updates - Comfortupdate is not needed.'), 'error');
+        Yii::app()->setFlashMessage(gT('LimeSurvey Professional automatically provides updates - ComfortUpdate is not needed!'), 'error');
         $this->getController()->redirect(Yii::app()->getController()->createUrl("/admin"));
         // ================== LimeService Mod end
         
@@ -602,7 +602,7 @@ class update extends Survey_Common_Action
     public function notificationstate($state = '0')
     {
         // ================== LimeService Mod start
-        Yii::app()->setFlashMessage(gT('LimeSurvey Professional automatically provides updates - Comfortupdate is not needed.'), 'error');
+        Yii::app()->setFlashMessage(gT('LimeSurvey Professional automatically provides updates - ComfortUpdate is not needed!'), 'error');
         $this->getController()->redirect(Yii::app()->getController()->createUrl("/admin"));
         // ================== LimeService Mod end
         

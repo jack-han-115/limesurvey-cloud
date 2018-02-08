@@ -8,20 +8,6 @@
 echo viewHelper::getViewTestTag('index');
 ?>
 
-<?php
-    // Boxes are defined by user. We still want the default boxes to be translated.
-    gT('Create survey');
-    gT('Create a new survey');
-    gT('List surveys');
-    gT('List available surveys');
-    gT('Global settings');
-    gT('Edit global settings');
-    gT('ComfortUpdate');
-    gT('Stay safe and up to date');
-    gT('Label sets');
-    gT('Edit label sets');
-    gT('Themes');
-?>
 
 <!-- Welcome view -->
 <div class="container-fluid welcome full-page-wrapper">

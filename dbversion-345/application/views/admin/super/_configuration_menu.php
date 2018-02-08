@@ -42,9 +42,6 @@
                             <dd><?php echo $surveyscount; ?></dd>
                             <dt class="text-info"><?php eT('Active surveys');?></dt>
                             <dd><?php echo $activesurveyscount; ?></dd>
-                            <dt class="text-info"><?php eT('ComfortUpdate key');?></dt>
-                            <dd><?php echo $comfortUpdateKey;?></dd>
-
                         </dl>
                     </div>
                 </div>
@@ -164,15 +161,6 @@
                         </a>
                     </li>
 
-                <?php endif;?>
-
-                <!-- Comfort update -->
-                <?php if(Permission::model()->hasGlobalPermission('superadmin')): ?>
-                    <li class="dropdown-item">
-                        <a href="<?php echo $this->createUrl("admin/update"); ?>">
-                            <?php eT("ComfortUpdate");?>
-                        </a>
-                    </li>
                 <?php endif;?>
             </ul>
 
