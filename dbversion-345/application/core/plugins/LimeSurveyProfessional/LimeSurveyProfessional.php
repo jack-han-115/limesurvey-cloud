@@ -5,7 +5,7 @@
  * Source for the cookie consent popup: https://cookieconsent.insites.com/documentation/javascript-api/
  * Requires Bootstrap for modal popup.
  */
-class LimeSurveyProfessional extends \ls\pluginmanager\PluginBase
+class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
 {
     protected $storage = 'DbStorage';
     static protected $description = 'LimeSurvey Professional extras';
