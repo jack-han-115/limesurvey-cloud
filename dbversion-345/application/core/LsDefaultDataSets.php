@@ -149,7 +149,7 @@ class LsDefaultDataSets
         $returnArray[] = ['position' => 1, 'url' => 'admin/survey/sa/newsurvey', 'title' => gT('Create survey'), 'ico' => 'add', 'desc' => gT('Create a new survey'), 'page' => 'welcome', 'usergroup' => '-2'];
         $returnArray[] = ['position' => 2, 'url' => 'admin/survey/sa/listsurveys', 'title' => gT('List surveys'), 'ico' => 'list', 'desc' => gT('List available surveys'), 'page' => 'welcome', 'usergroup' => '-1'];
         $returnArray[] = ['position' => 3, 'url' => 'admin/globalsettings', 'title' => gT('Global settings'), 'ico' => 'settings', 'desc' => gT('Edit global settings'), 'page' => 'welcome', 'usergroup' => '-2'];
-        $returnArray[] = ['position' => 4, 'url' => 'admin/update', 'title' => gT('ComfortUpdate'), 'ico' => 'shield', 'desc' => gT('Stay safe and up to date'), 'page' => 'welcome', 'usergroup' => '-2'];
+        $returnArray[] = ['position' => 4, 'url' => 'admin/user', 'title' => gT('Manage survey administrators'), 'ico' => 'user', 'desc' => gT('User control'), 'page' => 'welcome', 'usergroup' => '-2'];
         $returnArray[] = ['position' => 5, 'url' => 'admin/labels/sa/view', 'title' => gT('Label sets'), 'ico' => 'label', 'desc' => gT('Edit label sets'), 'page' => 'welcome', 'usergroup' => '-2'];
         $returnArray[] = ['position' => 6, 'url' => 'admin/themeoptions', 'title' => gT('Themes'), 'ico' => 'templates', 'desc' => gT('Themes'), 'page' => 'welcome', 'usergroup' => '-2'];
 

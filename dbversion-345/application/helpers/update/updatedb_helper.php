@@ -1532,68 +1532,9 @@ function upgradeSurveyTables255()
         "DELETE FROM {{boxes}}"
     )->execute();
 
-    // Then we recreate them
-    $oDB = Yii::app()->db;
-    $oDB->createCommand()->insert('{{boxes}}', array(
-        'position' =>  '1',
-        'url'      => 'admin/survey/sa/newsurvey',
-        'title'    => 'Create survey',
-        'ico'      => 'add',
-        'desc'     => 'Create a new survey',
-        'page'     => 'welcome',
-        'usergroup' => '-2',
-    ));
-
-    $oDB->createCommand()->insert('{{boxes}}', array(
-        'position' =>  '2',
-        'url'      =>  'admin/survey/sa/listsurveys',
-        'title'    =>  'List surveys',
-        'ico'      =>  'list',
-        'desc'     =>  'List available surveys',
-        'page'     =>  'welcome',
-        'usergroup' => '-1',
-    ));
-
-    $oDB->createCommand()->insert('{{boxes}}', array(
-        'position' =>  '3',
-        'url'      =>  'admin/globalsettings',
-        'title'    =>  'Global settings',
-        'ico'      =>  'global',
-        'desc'     =>  'Edit global settings',
-        'page'     =>  'welcome',
-        'usergroup' => '-2',
-    ));
-
-    $oDB->createCommand()->insert('{{boxes}}', array(
-        'position' =>  '4',
-        'url'      =>  'admin/update',
-        'title'    =>  'ComfortUpdate',
-        'ico'      =>  'shield',
-        'desc'     =>  'Stay safe and up to date',
-        'page'     =>  'welcome',
-        'usergroup' => '-2',
-    ));
-
-    $oDB->createCommand()->insert('{{boxes}}', array(
-        'position' =>  '5',
-        'url'      =>  'admin/labels/sa/view',
-        'title'    =>  'Label sets',
-        'ico'      =>  'labels',
-        'desc'     =>  'Edit label sets',
-        'page'     =>  'welcome',
-        'usergroup' => '-2',
-    ));
-
-    $oDB->createCommand()->insert('{{boxes}}', array(
-        'position' =>  '6',
-        'url'      =>  'admin/themes/sa/view',
-        'title'    =>  'Template editor',
-        'ico'      =>  'templates',
-        'desc'     =>  'Edit LimeSurvey templates',
-        'page'     =>  'welcome',
-        'usergroup' => '-2',
-    ));
-
+    foreach( $boxesData=LsDefaultDataSets::getBoxesData() as $box){
+        $oDB->createCommand()->insert("{{boxes}}", $box);
+    }
 }
 
 function upgradeSurveyTables254()
@@ -1650,60 +1591,6 @@ function createBoxes250()
         'img' => 'text',
         'desc' => 'text',
         'page'=>'text',
-    ));
-
-    $oDB->createCommand()->insert('{{boxes}}', array(
-        'position' =>  '1',
-        'url'      => 'admin/survey/sa/newsurvey',
-        'title'    => 'Create survey',
-        'img'      => 'add.png',
-        'desc'     => 'Create a new survey',
-        'page'     => 'welcome',
-    ));
-
-    $oDB->createCommand()->insert('{{boxes}}', array(
-        'position' =>  '2',
-        'url'      =>  'admin/survey/sa/listsurveys',
-        'title'    =>  'List surveys',
-        'img'      =>  'surveylist.png',
-        'desc'     =>  'List available surveys',
-        'page'     =>  'welcome',
-    ));
-
-    $oDB->createCommand()->insert('{{boxes}}', array(
-        'position' =>  '3',
-        'url'      =>  'admin/globalsettings',
-        'title'    =>  'Global settings',
-        'img'      =>  'global.png',
-        'desc'     =>  'Edit global settings',
-        'page'     =>  'welcome',
-    ));
-
-    $oDB->createCommand()->insert('{{boxes}}', array(
-        'position' =>  '4',
-        'url'      =>  'admin/update',
-        'title'    =>  'ComfortUpdate',
-        'img'      =>  'shield&#45;update.png',
-        'desc'     =>  'Stay safe and up to date',
-        'page'     =>  'welcome',
-    ));
-
-    $oDB->createCommand()->insert('{{boxes}}', array(
-        'position' =>  '5',
-        'url'      =>  'admin/labels/sa/view',
-        'title'    =>  'Label sets',
-        'img'      =>  'labels.png',
-        'desc'     =>  'Edit label sets',
-        'page'     =>  'welcome',
-    ));
-
-    $oDB->createCommand()->insert('{{boxes}}', array(
-        'position' =>  '6',
-        'url'      =>  'admin/themes/sa/view',
-        'title'    =>  'Template editor',
-        'img'      =>  'templates.png',
-        'desc'     =>  'Edit LimeSurvey templates',
-        'page'     =>  'welcome',
     ));
 }
 
