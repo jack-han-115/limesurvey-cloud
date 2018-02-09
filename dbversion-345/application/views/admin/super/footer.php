@@ -65,7 +65,12 @@ $systemInfos = [
                 <div class="h3 modal-title"><?php eT("System information"); ?></div>
             </div>
             <div class="modal-body">
-                <?php if(Permission::model()->hasGlobalPermission('superadmin','read')) { ?>
+                <?php 
+                // Limeservice mod start --------------------
+                if(1==2) { 
+                // Limeservice mod end --------------------
+
+                    ?>
                     <h4><?=gT("Your system configuration:")?></h4>
                     <ul class="list-group">
                         <?php foreach($systemInfos as $name => $systemInfo){ ?>
@@ -77,9 +82,14 @@ $systemInfos = [
                             </li>   
                         <?php } ?>
                     </ul>
-                <?php } else { ?>
-                    <h4><?=gT("We are sorry but this information is only available to superadministrators.")?></h4>
-                <?php } ?>
+                <?php } else { 
+                // Limeservice mod start --------------------
+                    ?>
+                    <h4><?=gT("We are sorry but this information is not available on LimeSurvey Professional.")?></h4>
+                <?php 
+                // Limeservice mod end --------------------
+                
+                } ?>
             </div>
         </div>
     </div>
