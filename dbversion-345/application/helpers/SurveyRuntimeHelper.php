@@ -935,7 +935,7 @@ class SurveyRuntimeHelper
     {
         $bDisplayFirstPage = ($this->sSurveyMode != 'survey' && $_SESSION[$this->LEMsessid]['step'] == 0);
 
-        if ($this->sSurveyMode == 'survey' || $bDisplayFirstPage ){
+        if ($this->sSurveyMode == 'survey' || $bDisplayFirstPage) {
             $this->aSurveyInfo['description'] = $this->processString($this->aSurveyInfo['description']);
             $this->aSurveyInfo['welcome']     = $this->processString($this->aSurveyInfo['welcome']) ;
         }
@@ -1211,11 +1211,12 @@ class SurveyRuntimeHelper
      */
     private function processString($sString)
     {
-        $sProcessedString = '';
         if (strpos($sString, "{") !== false) {
             // process string anyway so that it can be pretty-printed
             $aStandardsReplacementFields = getStandardsReplacementFields($this->aSurveyInfo);
             $sProcessedString = LimeExpressionManager::ProcessString( $sString, null, $aStandardsReplacementFields);
+        } else {
+            $sProcessedString = $sString;
         }
 
         return $sProcessedString;
