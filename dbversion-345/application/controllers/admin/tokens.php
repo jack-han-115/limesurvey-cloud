@@ -1485,9 +1485,7 @@ class tokens extends Survey_Common_Action
                             // This is some ancient global used for error reporting instead of a return value from the actual mail function..
                             $maildebug = (string) $event->get('error', $maildebug);
                             $success = $event->get('error') == null;
-                        }
-                        else
-                        {
+                        } else {
                             // LimeService Mod Start
                             $iAdvertising = (int)Yii::app()->dbstats->createCommand('select advertising from limeservice_system.installations where user_id='.getInstallationID())->queryScalar();
                             $bSpamLinks   = ( $iAdvertising )?$this->looksForSpamLinks($bHtml,$modmessage, $iSurveyId):false;
@@ -1500,7 +1498,6 @@ class tokens extends Survey_Common_Action
                             }
 
                             // LimeService Mod End
-                        }
                         }
 
                         if ($success) {
