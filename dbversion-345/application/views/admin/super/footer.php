@@ -40,6 +40,12 @@ try {
     $systemInfos[gT('Database server version')] = $ex->getMessage();
 }
 
+/* Fix array to string , see #13352 */
+foreach($systemInfos as &$systemInfo) {
+    if(is_array($systemInfo)) {
+        $systemInfo = json_encode($systemInfo, JSON_PRETTY_PRINT);
+    }
+}
 ?>
 <!-- Footer -->
 <footer class='footer'>
@@ -100,8 +106,8 @@ try {
                         <?php foreach($systemInfos as $name => $systemInfo){ ?>
                             <li class="list-group-item">
                                 <div class="ls-flex-row">
-                                    <div class="col-4"><?=$name?></div>
-                                    <div class="col-8"><?=$systemInfo?></div>
+                                    <div class="col-4"><?php echo $name ?></div>
+                                    <div class="col-8"><?php echo $systemInfo ?></div>
                                 </div>
                             </li>   
                         <?php } ?>
