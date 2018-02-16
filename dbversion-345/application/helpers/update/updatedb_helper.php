@@ -2753,6 +2753,7 @@ function upgradeSurveyTables255()
         "DELETE FROM {{boxes}}"
     )->execute();
 
+    $oDB = Yii::app()->db;
     foreach( $boxesData=LsDefaultDataSets::getBoxesData() as $box){
         $oDB->createCommand()->insert("{{boxes}}", $box);
     }
