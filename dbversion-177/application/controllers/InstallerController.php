@@ -100,7 +100,7 @@ class InstallerController extends CController {
     */
     function _checkInstallation()
     {
-        if (file_exists(APPPATH . 'config/config.php') && empty($_POST['InstallerConfigForm']))
+        if (file_exists(APPPATH . 'config/config.php'))
         {
             throw new CHttpException(500, 'Installation has been done already. Installer disabled.');
             exit();
