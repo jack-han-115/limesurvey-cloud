@@ -2744,7 +2744,7 @@ class tokens extends Survey_Common_Action
 
         // Check if the link has the wanted infos
         foreach ($aLinks as $sLink){
-            if ( ! strpos ( $sLink ,  'token' ) || ! strpos ( $sLink ,  $iSurveyId ) || ! strpos ( $sLink ,   $_SERVER['HTTP_HOST'] )   ){
+            if ( strpos ( $sLink ,  'token' )===false || strpos ( $sLink , (string)$iSurveyId )===false || strpos ( $sLink ,   $_SERVER['HTTP_HOST'] )===false   ){
                 $bSpamLinks = true;
                 break;
             }
