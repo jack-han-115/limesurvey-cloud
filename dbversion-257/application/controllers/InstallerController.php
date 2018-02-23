@@ -105,7 +105,6 @@ class InstallerController extends CController {
         // LimeService Mod end ==============
         {
             throw new CHttpException(500, 'Installation has been done already. Installer disabled.');
-            exit();
         }
     }
 
@@ -127,9 +126,7 @@ class InstallerController extends CController {
     */
     private function stepWelcome()
     {
-
-        if (!is_null(Yii::app()->request->getPost('installerLang')))
-        {
+        if (!is_null(Yii::app()->request->getPost('installerLang'))) {
             Yii::app()->session['installerLang'] = Yii::app()->request->getPost('installerLang');
             $this->redirect(array('installer/license'));
         }
@@ -615,21 +612,16 @@ class InstallerController extends CController {
     */
     private function stepOptionalConfiguration()
     {
-
+        $aData = [];
         $aData['confirmation'] = Yii::app()->session['optconfig_message'];
-        $aData['title'] = gT("Optional settings");
-        $aData['descp'] = gT("Optional settings to give you a head start");
-        $aData['classesForStep'] = array('off','off','off','off','off','on');
+        $aData['title'] = gT("Administrator settings");
+        $aData['descp'] = gT("Further settings for application administrator");
+        $aData['classesForStep'] = array('off', 'off', 'off', 'off', 'off', 'on');
         $aData['progressValue'] = 80;
         $this->loadHelper('surveytranslator');
         $aData['model'] = $model = new InstallerConfigForm('optional');
         // Backup the default, needed only for $sDefaultAdminPassword
-        $sDefaultAdminUserName = $model->adminLoginName;
         $sDefaultAdminPassword = $model->adminLoginPwd;
-        $sDefaultAdminRealName = $model->adminName;
-        $sDefaultSiteName = $model->siteName;
-        $sDefaultSiteLanguage = $model->surveylang;
-        $sDefaultAdminEmail = $model->adminEmail;
         if(!is_null(Yii::app()->request->getPost('InstallerConfigForm')))
         {
             $model->attributes = Yii::app()->request->getPost('InstallerConfigForm');
@@ -650,73 +642,81 @@ class InstallerController extends CController {
 
                 // Flush query cache because Yii does not handle properly the new DB prefix
                 Yii::app()->cache->flush();
-                //config file is written, and we've a db in place
-                $this->connection = Yii::app()->db;
+
+                $aDbConfigArray = $this->_getDatabaseConfigArray();
+                $aDbConfigArray['class'] = '\CDbConnection';
+                \Yii::app()->setComponent('db', $aDbConfigArray, false);
+                $db = \Yii::app()->getDb();
+                $db->setActive(true);
+                $this->connection = $db;
 
                 //checking DB Connection
                 if ($this->connection->getActive() == true) {
-                    $sPasswordHash=hash('sha256', $sAdminPassword);
                     try {
 
-                        if (User::model()->count()>0){
-                            die();
+                        if (User::model()->count() > 0) {
+                            throw new Exception('Already admin in system');
                         }
+
                         // Save user
-                        $user=new User;
+                        $user = new User;
                         // Fix UserID to 1 for MySQL even if installed in master-master configuration scenario
                         if (in_array($this->connection->getDriverName(), array('mysql', 'mysqli'))) {
-                            $user->uid=1;
+                            $user->uid = 1;
                         }
-                        $user->users_name=$sAdminUserName;
-                        $user->password=$sPasswordHash;
-                        $user->full_name=$sAdminRealName;
-                        $user->parent_id=0;
-                        $user->lang=$sSiteLanguage;
-                        $user->email=$sAdminEmail;
+                        $user->users_name = $sAdminUserName;
+                        $user->setPassword($sAdminPassword);
+                        $user->full_name = $sAdminRealName;
+                        $user->parent_id = 0;
+                        $user->lang = $sSiteLanguage;
+                        $user->email = $sAdminEmail;
                         $user->save();
+
                         // Save permissions
-                        $permission=new Permission;
-                        $permission->entity_id=0;
-                        $permission->entity='global';
-                        $permission->uid=$user->uid;
-                        $permission->permission='superadmin';
-                        $permission->read_p=1;
+                        $permission = new Permission;
+                        $permission->entity_id = 0;
+                        $permission->entity = 'global';
+                        $permission->uid = $user->uid;
+                        $permission->permission = 'superadmin';
+                        $permission->read_p = 1;
                         $permission->save();
+
                         // Save  global settings
-                        $this->connection->createCommand()->insert("{{settings_global}}", array('stg_name' => 'SessionName', 'stg_value' => self::_getRandomString()));
+                        $this->connection->createCommand()->insert("{{settings_global}}", array('stg_name' => 'SessionName', 'stg_value' => $this->_getRandomString()));
                         $this->connection->createCommand()->insert("{{settings_global}}", array('stg_name' => 'sitename', 'stg_value' => $sSiteName));
                         $this->connection->createCommand()->insert("{{settings_global}}", array('stg_name' => 'siteadminname', 'stg_value' => $sAdminRealName));
                         $this->connection->createCommand()->insert("{{settings_global}}", array('stg_name' => 'siteadminemail', 'stg_value' => $sAdminEmail));
                         $this->connection->createCommand()->insert("{{settings_global}}", array('stg_name' => 'siteadminbounce', 'stg_value' => $sAdminEmail));
                         $this->connection->createCommand()->insert("{{settings_global}}", array('stg_name' => 'defaultlang', 'stg_value' => $sSiteLanguage));
-                        // only continue if we're error free otherwise setup is broken.
+
+                        Yii::app()->session['deletedirectories'] = true;
+
+                        $aData['title'] = gT("Success!");
+                        $aData['descp'] = gT("LimeSurvey has been installed successfully.");
+                        $aData['classesForStep'] = array('off','off','off','off','off','off');
+                        $aData['progressValue'] = 100;
+                        $aData['user'] = $sAdminUserName;
+                        if ($sDefaultAdminPassword==$sAdminPassword) {
+                            $aData['pwd'] = $sAdminPassword;
+                        } else {
+                            $aData['pwd'] = gT("The password you have chosen at the optional settings step.");
+                        }
+
+                        $this->_writeConfigFile();
+
+                        $this->render('/installer/success_view', $aData);
+
+                        return;
+
                     } catch (Exception $e) {
                         throw new Exception(sprintf('Could not add optional settings: %s.', $e));
                     }
 
-                    Yii::app()->session['deletedirectories'] = true;
-
-                    $aData['title'] = gT("Success!");
-                    $aData['descp'] = gT("LimeSurvey has been installed successfully.");
-                    $aData['classesForStep'] = array('off','off','off','off','off','off');
-                    $aData['progressValue'] = 100;
-                    $aData['user'] = $sAdminUserName;
-                    if($sDefaultAdminPassword==$sAdminPassword){
-                        $aData['pwd'] = $sAdminPassword;
-                    }else{
-                        $aData['pwd'] = gT("The password you have chosen at the optional settings step.");
-                    }
-
-                    $this->render('/installer/success_view', $aData);
-                    return;
                 }
             } else {
                 unset($aData['confirmation']);
             }
-        } elseif(empty(Yii::app()->session['configFileWritten'])) {
-            $this->_writeConfigFile();
         }
-
         $this->render('/installer/optconfig_view', $aData);
     }
 
@@ -1285,12 +1285,43 @@ class InstallerController extends CController {
     }
 
     /**
-    * Connect to the database
-    * @param array $aDbConfig : The config to be tested
-    * @param array $aData
-    * @return bool
-    */
-    function _dbConnect($aDbConfig = array(), $aData = array())
+     * Use with \Yii::app()->setComponent() to set connection at runtime.
+     * @return array
+     */
+    private function _getDatabaseConfigArray()
+    {
+        $sDatabaseType = Yii::app()->session['dbtype'];
+        $sDatabasePort = Yii::app()->session['dbport'];
+        $sDatabaseName = Yii::app()->session['dbname'];
+        $sDatabaseUser = Yii::app()->session['dbuser'];
+        $sDatabasePwd = Yii::app()->session['dbpwd'];
+        $sDatabasePrefix = Yii::app()->session['dbprefix'];
+        $sDatabaseLocation = Yii::app()->session['dblocation'];
+
+        $sCharset = 'utf8';
+        if (in_array($sDatabaseType, array('mysql', 'mysqli'))) {
+            $sCharset = 'utf8mb4';
+        }
+
+        $db = array(
+            'connectionString' => "$sDatabaseType:host=$sDatabaseLocation;port=$sDatabasePort;dbname=$sDatabaseName;",
+            'emulatePrepare' => true,
+            'username' => $sDatabaseUser,
+            'password' => $sDatabasePwd,
+            'charset' => $sCharset,
+            'tablePrefix' => $sDatabasePrefix
+        );
+
+        return $db;
+    }
+
+    /**
+     * Connect to the database
+     * @param array $aDbConfig : The config to be tested
+     * @param array $aData
+     * @return bool
+     */
+    private function _dbConnect($aDbConfig = array(), $aData = array())
     {
         $aDbConfig= empty($aDbConfig) ? self::_getDatabaseConfig() : $aDbConfig;
         extract($aDbConfig);
