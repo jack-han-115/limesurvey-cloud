@@ -182,6 +182,15 @@ function SPSSExportData ($iSurveyID, $iLength, $na = '', $q='\'', $header=FALSE,
                                 echo($na);
                         }
                         break;
+                    case ':':
+                        $aSize=explode(".",$field['size']);
+                        if(isset($aSize[1]) && $aSize[1]) {
+                            // We need to add decimal
+                            echo $q .  number_format($row[$fieldno],$aSize[1],".","") . $q;
+                        } else {
+                            echo $q .  $row[$fieldno] . $q;
+                        }
+                        break;
                     case 'P':
                     case 'M':
                         if(substr($field['code'],-7) != 'comment' && substr($field['code'],-5) != 'other') {
@@ -194,15 +203,6 @@ function SPSSExportData ($iSurveyID, $iLength, $na = '', $q='\'', $header=FALSE,
                             }
                             break; // Break inside if : comment and other are string to be filtered
                         }
-                    case ':':
-                        $aSize=explode(".",$field['size']);
-                        if(isset($aSize[1]) && $aSize[1]) {
-                            // We need to add decimal
-                            echo $q .  number_format($row[$fieldno],$aSize[1],".","") . $q;
-                        } else {
-                            echo $q .  $row[$fieldno] . $q;
-                        }
-                        break;
                     default:
                         $strTmp=mb_substr(stripTagsFull($row[$fieldno]), 0, $iLength);
                         if (trim($strTmp) != ''){
