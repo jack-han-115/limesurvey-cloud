@@ -53,7 +53,6 @@ echo viewHelper::getViewTestTag('exportResults');
                 </div>
             </div>
         </div>
-    </div>
-    <input type='submit' class="btn btn-default hidden" value='<?php eT("Export data");?>' id='exportresultsubmitbutton' />
-</form>
+        <input type='submit' class="btn btn-default hidden" value='<?php eT("Export data");?>' id='exportresultsubmitbutton' />
+    </form>
 </div>
