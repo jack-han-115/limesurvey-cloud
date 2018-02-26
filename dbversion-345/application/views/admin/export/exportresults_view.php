@@ -47,7 +47,7 @@ echo viewHelper::getViewTestTag('exportResults');
                         
                         <!-- Token control -->
                         <?php if ($thissurvey['anonymized'] == "N" && tableExists("{{tokens_$surveyid}}") && Permission::model()->hasSurveyPermission($surveyid,'tokens','read')): ?>
-                            <?php $this->renderPartial('/admin/export/exportresult_panels/_token-control', []); ?>   
+                            <?php $this->renderPartial('/admin/export/exportresult_panels/_token-control', ['surveyid' => $surveyid]); ?>   
                         <?php endif;?>
                     </div>
                 </div>
