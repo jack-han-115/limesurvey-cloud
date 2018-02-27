@@ -7,10 +7,11 @@
 // DO NOT REMOVE This is for automated testing to validate we see that page
 echo viewHelper::getViewTestTag('exportResults');
 
+$scriptBegin = "var sMsgColumnCount = '".gT("%s of %s columns selected",'js')."';";
+App()->getClientScript()->registerScript('ExportresultsVariables', $scriptBegin, LSYii_ClientScript::POS_BEGIN);
+
+
 ?>
-<script type="text/javascript">
-    var sMsgColumnCount = '<?php eT("%s of %s columns selected",'js'); ?>';
-</script>
 
 <div class='side-body <?php echo getSideBodyClass(false); ?>'>
     <h3>
@@ -47,7 +48,7 @@ echo viewHelper::getViewTestTag('exportResults');
                         
                         <!-- Token control -->
                         <?php if ($thissurvey['anonymized'] == "N" && tableExists("{{tokens_$surveyid}}") && Permission::model()->hasSurveyPermission($surveyid,'tokens','read')): ?>
-                            <?php $this->renderPartial('/admin/export/exportresult_panels/_token-control', ['surveyid' => $surveyid]); ?>   
+                            <?php $this->renderPartial('/admin/export/exportresult_panels/_token-control', ['surveyid' => $surveyid]); ?>
                         <?php endif;?>
                     </div>
                 </div>
