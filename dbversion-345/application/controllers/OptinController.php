@@ -76,7 +76,7 @@ class OptinController extends LSYii_Controller
             }
         }
 
-        $this->renderHtml($sMessage, $aSurveyInfo, $iSurveyID);
+        $this->_renderHtml($sMessage, $aSurveyInfo, $iSurveyID);
     }
 
     /**
@@ -87,22 +87,25 @@ class OptinController extends LSYii_Controller
      * @param int $iSurveyID
      * @return void
      */
-    private function renderHtml($html, $aSurveyInfo, $iSurveyID)
+    private function _renderHtml($html, $aSurveyInfo, $iSurveyID)
     {
-        $survey = Survey::model()->findByPk($iSurveyID);
+        sendCacheHeaders();
+        doHeader();
+        $aSupportData = array('thissurvey'=>$aSurveyInfo);
 
-        $aSurveyInfo['include_content'] = 'optin';
-        $aSurveyInfo['optin_message'] = $html;
-        Template::model()->getInstance('', $iSurveyID);
+        $oTemplate = Template::model()->getInstance(null, $iSurveyID);
+        if ($oTemplate->cssFramework == 'bootstrap') {
+            App()->bootstrap->register();
+        }
+        App()->clientScript->registerPackage('survey-template');
+        $thistpl = $oTemplate->pstplPath;
 
-        Yii::app()->twigRenderer->renderTemplateFromFile(
-            "layout_global.twig",
-            array(
-                'oSurvey'     => $survey,
-                'aSurveyInfo' => $aSurveyInfo
-            ),
-            false
-        );
-        Yii::app()->end();
+        echo templatereplace(file_get_contents($thistpl.'startpage.pstpl'), array(), $aSupportData);
+        $aData['html'] = $html;
+        $aData['thistpl'] = $thistpl;
+        $this->render('/opt_view', $aData);
+        echo templatereplace(file_get_contents($thistpl.'endpage.pstpl'), array(), $aSupportData);
+        doFooter();
     }
+
 }

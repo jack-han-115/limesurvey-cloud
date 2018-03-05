@@ -46,26 +46,27 @@ class Assessments extends Survey_Common_Action
 
             Yii::app()->setConfig("baselang", $surveyLanguage);
             Yii::app()->setConfig("assessmentlangs", $languages);
-            
+
             if ($sAction == "assessmentadd") {
-                $this->_add($iSurveyID);
+                            $this->_add($iSurveyID);
             }
 
             if ($sAction == "assessmentupdate") {
-                $this->_update($iSurveyID);
+                            $this->_update($iSurveyID);
             }
 
             if ($sAction == "assessmentopenedit") {
-                $this->_edit($iSurveyID);
+                            $this->_edit($iSurveyID);
             }
 
             if ($sAction == "assessmentdelete") {
-                $this->_delete($iSurveyID, $_POST['id']);
+                            $this->_delete($iSurveyID, $_POST['id']);
             }
 
             if ($sAction == "asessementactivate") {
-                $this->_activateAsessement($iSurveyID);
+                            $this->_activateAsessement($iSurveyID);
             }
+
 
             $this->_showAssessments($iSurveyID, $sAction);
         } else {
@@ -96,12 +97,7 @@ class Assessments extends Survey_Common_Action
         parent::_renderWrappedTemplate($sAction, $aViewUrls, $aData, $sRenderFile);
     }
 
-    /**
-     * @param array $aData
-     * @param boolean $collectEdit
-     * @return array
-     */
-    private function prepareDataArray(&$aData, $collectEdit = false)
+    private function _prepareDataArray(&$aData, $collectEdit = false)
     {
         $iSurveyID = $aData['surveyid'];
         
@@ -111,8 +107,6 @@ class Assessments extends Survey_Common_Action
         $oAssessments = Assessment::model();
         $oAssessments->sid = $iSurveyID;
         $this->_collectGroupData($iSurveyID, $aData);
-
-        $this->setSearchParams($oAssessments);
         
         $aData['model'] = $oAssessments;
         $aData['pageSizeAsessements'] = Yii::app()->user->getState('pageSizeAsessements', Yii::app()->params['defaultPageSize']);
@@ -133,54 +127,6 @@ class Assessments extends Survey_Common_Action
         return $aData;
     }
 
-    /**
-     * Set search params from Yii grid view.
-     * @param Assessment $oAssessments
-     * @return void
-     */
-    private function setSearchParams(Assessment $oAssessments)
-    {
-        /*
-        ["Assessment"]=>
-            array(5) {
-            ["scope"]=>
-                string(1) "T"
-                ["name"]=>
-                string(0) ""
-                ["minimum"]=>
-                string(0) ""
-                ["maximum"]=>
-                string(0) ""
-                ["message"]=>
-                string(0) ""
-            }
-         */
-        if (isset($_POST['Assessment']['scope'])) {
-            $oAssessments->scope = $_POST['Assessment']['scope'];
-        }
-
-        if (isset($_POST['Assessment']['name'])) {
-            $oAssessments->name = $_POST['Assessment']['name'];
-        }
-
-        if (isset($_POST['Assessment']['minimum'])) {
-            $oAssessments->minimum = $_POST['Assessment']['minimum'];
-        }
-
-        if (isset($_POST['Assessment']['maximum'])) {
-            $oAssessments->maximum = $_POST['Assessment']['maximum'];
-        }
-
-        if (isset($_POST['Assessment']['message'])) {
-            $oAssessments->message = $_POST['Assessment']['message'];
-        }
-    }
-
-    /**
-     * Feed JSON to modal.
-     * @param int $surveyid
-     * @return void
-     */
     public function _edit($surveyid)
     {
         $iAsessementId = App()->request->getParam('id');
@@ -197,14 +143,9 @@ class Assessments extends Survey_Common_Action
             $aData['action'] = $action;
 
             Yii::app()->getController()->renderPartial('/admin/super/_renderJson', ['data' => $aData]);
-        }
+        }     
     }
 
-    /**
-     * @param int $iSurveyID
-     * @param string $action
-     * @return void
-     */
     private function _showAssessments($iSurveyID, $action)
     {
         $oSurvey = Survey::model()->findByPk($iSurveyID);
@@ -215,7 +156,7 @@ class Assessments extends Survey_Common_Action
         
         Yii::app()->loadHelper('admin/htmleditor');
 
-        $this->prepareDataArray($aData);
+        $this->_prepareDataArray($aData);
 
         $aData['asessementNotActivated'] = false;
         if ($oSurvey->assessments != 'Y') {
@@ -234,24 +175,17 @@ class Assessments extends Survey_Common_Action
         $this->_renderWrappedTemplate('', 'assessments/assessments_view', $aData);
     }
 
-    /**
-     * @param int $iSurveyID
-     * @return array
-     */
     private function _activateAsessement($iSurveyID)
     {
         $oSurvey = Survey::model()->findByPk($iSurveyID);
         $oSurvey->assessments = "Y";
-        return ['success' => $oSurvey->save()];
+        $oSurvey->save();
+        return ['success' => true];
     }
 
-    /**
-     * @param int $iSurveyID
-     * @param array $aData
-     * @return array
-     */
     private function _collectGroupData($iSurveyID, &$aData = array())
     {
+        //$aData = array();
         $groups = QuestionGroup::model()->findAllByAttributes(array('sid' => $iSurveyID));
         foreach ($groups as $group) {
             $groupId = $group->attributes['gid'];
@@ -261,15 +195,11 @@ class Assessments extends Survey_Common_Action
         return $aData;
     }
 
-    /**
-     * @param array $aData
-     * @return array
-     */
     private function _collectEditData(array $aData)
     {
         $oAssessment = Assessment::model()->find("id=:id", array(':id' => App()->request->getParam('id')));
         if (!$oAssessment) {
-            throw new CHttpException(500);
+                    throw new CHttpException(500);
         }
         // 404 ?
 
@@ -283,8 +213,6 @@ class Assessments extends Survey_Common_Action
 
     /**
      * Inserts an assessment to the database. Receives input from POST
-     * @param int $iSurveyID
-     * @return void
      */
     private function _add($iSurveyID)
     {
@@ -310,8 +238,6 @@ class Assessments extends Survey_Common_Action
 
     /**
      * Updates an assessment. Receives input from POST
-     * @param int $iSurveyID
-     * @return void
      */
     private function _update($iSurveyID)
     {
@@ -328,9 +254,6 @@ class Assessments extends Survey_Common_Action
 
     /**
      * Deletes an assessment.
-     * @param int $iSurveyID
-     * @param int $assessmentId
-     * @return void
      */
     private function _delete($iSurveyID, $assessmentId)
     {
@@ -339,15 +262,10 @@ class Assessments extends Survey_Common_Action
         }
     }
 
-    /**
-     * @param int $iSurveyID
-     * @param string $language
-     * @return array
-     */
     private function _getAssessmentPostData($iSurveyID, $language)
     {
         if (!isset($_POST['gid'])) {
-            $_POST['gid'] = 0;
+                    $_POST['gid'] = 0;
         }
 
         return array(

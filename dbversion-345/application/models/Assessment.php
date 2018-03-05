@@ -123,9 +123,9 @@ class Assessment extends LSActiveRecord
             ),
             array(
                 'name' => 'scope',
-                'value' => '$data->scope == "G" ? eT("Group") : eT("Total")',
+                'value' => '$data->scope == "G" ? eT("Global") : eT("Total")',
                 'htmlOptions' => ['class' => 'col-sm-1'],
-                'filter' => TbHtml::dropDownList('Assessment[scope]', 'scope', ['' => gT('All'), 'T' => gT('Total'), 'G' => gT("Group")])
+                'filter' => TbHtml::dropDownList('assessment["scope"]', 'scope', ['' => gT('All'), 'T' => gT('Total'), 'G' => gT("Global")])
             ),
             array(
                 'name' => 'name',
@@ -149,9 +149,7 @@ class Assessment extends LSActiveRecord
 
     public function search()
     {
-        // @todo Please modify the following code to remove attributes that should not be searched.
-
-        $survey = Survey::model()->findByPk($this->sid);
+// @todo Please modify the following code to remove attributes that should not be searched.
 
         $criteria = new CDbCriteria;
 
@@ -163,18 +161,13 @@ class Assessment extends LSActiveRecord
         $criteria->compare('minimum', $this->minimum);
         $criteria->compare('maximum', $this->maximum);
         $criteria->compare('message', $this->message, true);
-        $criteria->compare('language', $survey->language);
         
-        $pageSize = Yii::app()->user->getState('pageSizeParticipantView', Yii::app()->params['defaultPageSize']);
-        return new CActiveDataProvider(
-            $this,
-            array(
-                'criteria'=>$criteria,
-                'pagination' => array(
-                    'pageSize' => $pageSize
-                )
-            )
-        );
+        // TODO: Does not work with Postgres.
+        //$criteria->group = 'id';
+
+        return new CActiveDataProvider($this, array(
+            'criteria'=>$criteria,
+        ));
     }
 
     /**
