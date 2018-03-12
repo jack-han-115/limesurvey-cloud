@@ -4446,7 +4446,6 @@
         * @param string $string - the string to be replaced
         * @param integer $questionNum - the $qid of question being replaced - needed for properly alignment of question-level relevance and tailoring
         * @param array|null $replacementFields - optional replacement values
-        * @param boolean $debug - deprecated
         * @param integer $numRecursionLevels - the number of times to recursively subtitute values in this string
         * @param integer $whichPrettyPrintIteration - if want to pretty-print the source string, which recursion  level should be pretty-printed
         * @param boolean $noReplacements - true if we already know that no replacements are needed (e.g. there are no curly braces)
@@ -4454,7 +4453,7 @@
         * @param boolean $staticReplacement - return HTML string without the system to update by javascript
         * @return string - the original $string with all replacements done.
         */
-        public  static function ProcessString($string, $questionNum=NULL, $replacementFields=array(), $numRecursionLevels=1, $whichPrettyPrintIteration=1, $noReplacements=false, $timeit=true, $staticReplacement=false)
+        public static function ProcessString($string, $questionNum=NULL, $replacementFields=array(), $numRecursionLevels=1, $whichPrettyPrintIteration=1, $noReplacements=false, $timeit=true, $staticReplacement=false)
         {
             $now = microtime(true);
             $LEM =& LimeExpressionManager::singleton();
@@ -9362,6 +9361,27 @@ report~numKids > 0~message~{name}, you said you are {age} and that you have {num
                     $sPrint= viewHelper::purified($LEM->GetLastPrettyPrintExpression());
                     $errClass = ($LEM->em->HasErrors() ? 'danger' : '');
                     $out .= "<tr class='LEMgroup $errClass'><td>" . $LEM->gT("End URL:") . "</td><td colspan=\"3\">" . $sPrint . "</td></tr>";
+                }
+                if ($aSurveyInfo['surveyls_policy_notice'] != '')
+                {
+                    $LEM->ProcessString($aSurveyInfo['surveyls_policy_notice'],0);
+                    $sPrint= viewHelper::purified(viewHelper::filterScript($LEM->GetLastPrettyPrintExpression()));
+                    $errClass = ($LEM->em->HasErrors() ? 'danger' : '');
+                    $out .= "<tr class='LEMgroup $errClass'><td >" . $LEM->gT("Survey policy notice:") . "</td><td colspan=\"3\">" . $sPrint . "</td></tr>";
+                }
+                if ($aSurveyInfo['surveyls_policy_error'] != '')
+                {
+                    $LEM->ProcessString($aSurveyInfo['surveyls_policy_error'],0);
+                    $sPrint= viewHelper::purified(viewHelper::filterScript($LEM->GetLastPrettyPrintExpression()));
+                    $errClass = ($LEM->em->HasErrors() ? 'danger' : '');
+                    $out .= "<tr class='LEMgroup $errClass'><td >" . $LEM->gT("Survey policy error:") . "</td><td colspan=\"3\">" . $sPrint . "</td></tr>";
+                }
+                if ($aSurveyInfo['surveyls_policy_notice_label'] != '')
+                {
+                    $LEM->ProcessString($aSurveyInfo['surveyls_policy_notice_label'],0);
+                    $sPrint= viewHelper::purified(viewHelper::filterScript($LEM->GetLastPrettyPrintExpression()));
+                    $errClass = ($LEM->em->HasErrors() ? 'danger' : '');
+                    $out .= "<tr class='LEMgroup $errClass'><td >" . $LEM->gT("Survey policy label:") . "</td><td colspan=\"3\">" . $sPrint . "</td></tr>";
                 }
             }
 
