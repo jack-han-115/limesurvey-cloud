@@ -1924,71 +1924,63 @@ function questionGetXMLStructure($xml,$gid,$qid)
 }
 
 
+/**
+ * @param integer $iSurveyID
+ */
 function tokensExport($iSurveyID)
 {
-    $sEmailFiter=trim(App()->request->getPost('filteremail'));
-    $iTokenStatus=App()->request->getPost('tokenstatus');
-    $iInvitationStatus=App()->request->getPost('invitationstatus');
-    $iReminderStatus=App()->request->getPost('reminderstatus');
-    $sTokenLanguage=App()->request->getPost('tokenlanguage');
+    $sEmailFiter = trim(App()->request->getPost('filteremail'));
+    $iTokenStatus = App()->request->getPost('tokenstatus');
+    $iInvitationStatus = App()->request->getPost('invitationstatus');
+    $iReminderStatus = App()->request->getPost('reminderstatus');
+    $sTokenLanguage = App()->request->getPost('tokenlanguage');
 
-    $oSurvey=Survey::model()->findByPk($iSurveyID);
-    $bIsNotAnonymous= ($oSurvey->anonymized=='N' && $oSurvey->active=='Y');// db table exist (survey_$iSurveyID) ?
+    $oSurvey = Survey::model()->findByPk($iSurveyID);
+    $bIsNotAnonymous = ($oSurvey->anonymized == 'N' && $oSurvey->active == 'Y'); // db table exist (survey_$iSurveyID) ?
 
-    $oRecordSet = Yii::app()->db->createCommand()->from("{{tokens_$iSurveyID}}");
+    $oRecordSet = Yii::app()->db->createCommand()->from("{{tokens_$iSurveyID}} lt");
     $databasetype = Yii::app()->db->getDriverName();
     $oRecordSet->where("1=1");
-    if ($sEmailFiter!='')
-    {
-        if (in_array($databasetype, array('mssql', 'sqlsrv', 'dblib')))
-        {
-            $oRecordSet->andWhere("CAST(email as varchar) like ".dbQuoteAll('%'.$sEmailFiter.'%', true));
-        }
-        else
-        {
-            $oRecordSet->andWhere("email like ".dbQuoteAll('%'.$sEmailFiter.'%', true));
+    if ($sEmailFiter != '') {
+        if (in_array($databasetype, array('mssql', 'sqlsrv', 'dblib'))) {
+            $oRecordSet->andWhere("CAST(lt.email as varchar) like ".App()->db->quoteValue('%'.$sEmailFiter.'%'));
+        } else {
+            $oRecordSet->andWhere("lt.email like ".App()->db->quoteValue('%'.$sEmailFiter.'%'));
         }
     }
-    if ($iTokenStatus==1)
-    {
-        $oRecordSet->andWhere("completed<>'N'");
-    }
-    elseif ($iTokenStatus==2)
-    {
-        $oRecordSet->andWhere("completed='N'");
-        if ($bIsNotAnonymous)
-        {
-            $oRecordSet->andWhere("token not in (select token from {{survey_$iSurveyID}} group by token)");
+    if ($iTokenStatus == 1) {
+        $oRecordSet->andWhere("lt.completed<>'N'");
+    } elseif ($iTokenStatus == 2) {
+        $oRecordSet->andWhere("lt.completed='N'");
+        if ($bIsNotAnonymous) {
+            $oRecordSet->leftJoin("{{survey_$iSurveyID}} ls", 'lt.token=ls.token');
+            $oRecordSet->andWhere("ls.id IS NULL");
         }
     }
-    if ($iTokenStatus==3 && $bIsNotAnonymous)
-    {
-        $oRecordSet->andWhere("completed='N' and token in (select token from {{survey_$iSurveyID}} group by token)");
+    if ($iTokenStatus == 3 && $bIsNotAnonymous) {
+        $oRecordSet->leftJoin("{{survey_$iSurveyID}} ls", 'lt.token=ls.token');
+        $oRecordSet->andWhere("lt.completed='N'");
+        $oRecordSet->andWhere("ls.id IS NULL");    
+    }
+        
+    if ($iInvitationStatus == 1) {
+        $oRecordSet->andWhere("lt.sent<>'N'");
+    }
+    if ($iInvitationStatus == 2) {
+        $oRecordSet->andWhere("lt.sent='N'");
     }
 
-    if ($iInvitationStatus==1)
-    {
-        $oRecordSet->andWhere("sent<>'N'");
+    if ($iReminderStatus == 1) {
+        $oRecordSet->andWhere("lt.remindersent<>'N'");
     }
-    if ($iInvitationStatus==2)
-    {
-        $oRecordSet->andWhere("sent='N'");
+    if ($iReminderStatus == 2) {
+        $oRecordSet->andWhere("lt.remindersent='N'");
     }
 
-    if ($iReminderStatus==1)
-    {
-        $oRecordSet->andWhere("remindersent<>'N'");
+    if ($sTokenLanguage != '') {
+        $oRecordSet->andWhere("lt.language=".App()->db->quoteValue($sTokenLanguage));
     }
-    if ($iReminderStatus==2)
-    {
-        $oRecordSet->andWhere("remindersent='N'");
-    }
-
-    if ($sTokenLanguage!='')
-    {
-        $oRecordSet->andWhere("language=".dbQuoteAll($sTokenLanguage));
-    }
-    $oRecordSet->order("tid");
+    $oRecordSet->order("lt.tid");
     $bresult = $oRecordSet->query();
     //HEADERS should be after the above query else timeout errors in case there are lots of tokens!
     header("Content-Disposition: attachment; filename=tokens_".$iSurveyID.".csv");
@@ -2001,30 +1993,27 @@ function tokensExport($iSurveyID)
     $tokenoutput .= "tid,firstname,lastname,email,emailstatus,token,language,validfrom,validuntil,invited,reminded,remindercount,completed,usesleft";
     $attrfieldnames = getAttributeFieldNames($iSurveyID);
     $attrfielddescr = getTokenFieldsAndNames($iSurveyID, true);
-    foreach ($attrfieldnames as $attr_name)
-    {
-        $tokenoutput .=", $attr_name";
-        if (isset($attrfielddescr[$attr_name]))
-            $tokenoutput .=" <".str_replace(","," ",$attrfielddescr[$attr_name]['description']).">";
+    foreach ($attrfieldnames as $attr_name) {
+        $tokenoutput .= ", $attr_name";
+        if (isset($attrfielddescr[$attr_name])) {
+                    $tokenoutput .= " <".str_replace(",", " ", $attrfielddescr[$attr_name]['description']).">";
+        }
     }
-    $tokenoutput .="\n";
+    $tokenoutput .= "\n";
     echo $tokenoutput;
-    $tokenoutput="";
+    $tokenoutput = "";
 
     // Export token line by line and fill $aExportedTokens with token exported
     Yii::import('application.libraries.Date_Time_Converter', true);
     $aExportedTokens = array();
-    while ($brow = $bresult->read())
-    {
-        if (trim($brow['validfrom']!=''))
-        {
-            $datetimeobj = new Date_Time_Converter($brow['validfrom'] , "Y-m-d H:i:s");
-            $brow['validfrom']=$datetimeobj->convert('Y-m-d H:i');
+    while ($brow = $bresult->read()) {
+        if (trim($brow['validfrom'] != '')) {
+            $datetimeobj = new Date_Time_Converter($brow['validfrom'], "Y-m-d H:i:s");
+            $brow['validfrom'] = $datetimeobj->convert('Y-m-d H:i');
         }
-        if (trim($brow['validuntil']!=''))
-        {
-            $datetimeobj = new Date_Time_Converter($brow['validuntil'] , "Y-m-d H:i:s");
-            $brow['validuntil']=$datetimeobj->convert('Y-m-d H:i');
+        if (trim($brow['validuntil'] != '')) {
+            $datetimeobj = new Date_Time_Converter($brow['validuntil'], "Y-m-d H:i:s");
+            $brow['validuntil'] = $datetimeobj->convert('Y-m-d H:i');
         }
 
         $tokenoutput .= '"'.trim($brow['tid']).'",';
@@ -2041,20 +2030,18 @@ function tokensExport($iSurveyID)
         $tokenoutput .= '"'.trim($brow['remindercount']).'",';
         $tokenoutput .= '"'.trim($brow['completed']).'",';
         $tokenoutput .= '"'.trim($brow['usesleft']).'",';
-        foreach ($attrfieldnames as $attr_name)
-        {
-            $tokenoutput .='"'.trim($brow[$attr_name]).'",';
+        foreach ($attrfieldnames as $attr_name) {
+            $tokenoutput .= '"'.trim($brow[$attr_name]).'",';
         }
-        $tokenoutput = substr($tokenoutput,0,-1); // remove last comma
+        $tokenoutput = substr($tokenoutput, 0, -1); // remove last comma
         $tokenoutput .= "\n";
         echo $tokenoutput;
-        $tokenoutput='';
+        $tokenoutput = '';
 
         $aExportedTokens[] = $brow['tid'];
     }
 
-    if (Yii::app()->request->getPost('tokendeleteexported') && Permission::model()->hasSurveyPermission($iSurveyId, 'tokens', 'delete') && !empty($aExportedTokens))
-    {
+    if (Yii::app()->request->getPost('tokendeleteexported') && Permission::model()->hasSurveyPermission($iSurveyID, 'tokens', 'delete') && !empty($aExportedTokens)) {
         Token::model($iSurveyID)->deleteByPk($aExportedTokens);
     }
 }
