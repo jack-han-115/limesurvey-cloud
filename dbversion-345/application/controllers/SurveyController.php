@@ -40,11 +40,12 @@ class SurveyController extends LSYii_Controller
 
         // LimeService Mod start ===========================================
         $iInstallationId = (int) getInstallationID();
+        $iHardLocked=(int)Yii::app()->dbstats->createCommand('select hard_lock from limeservice_system.installations where user_id='.$iInstallationId)->queryScalar();
         $iLocked=(int)Yii::app()->dbstats->createCommand('select locked from limeservice_system.installations where user_id='.$iInstallationId)->queryScalar();
         $iStorageLocked=(int)Yii::app()->dbstats->createCommand('select locked_storage from limeservice_system.installations where user_id='.$iInstallationId)->queryScalar();
         $iResponses = (int)Yii::app()->dbstats->createCommand("select responses_avail from limeservice_system.balances where user_id=".$iInstallationId)->queryScalar();
         $sid = returnGlobal('sid');
-        if ($iLocked>0 || $iResponses<0 || ($iStorageLocked>0 && hasFileUploadQuestion($sid)))
+        if ($iHardLocked>0 || $iLocked>0 || $iResponses<0 || ($iStorageLocked>0 && hasFileUploadQuestion($sid)))
         {
             header("Expires: Sat, 26 Jul 1997 05:00:00 GMT");
             die("
