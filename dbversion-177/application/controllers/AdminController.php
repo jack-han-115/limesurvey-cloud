@@ -138,14 +138,17 @@ class AdminController extends LSYii_Controller
     public function run($action)
     {
         
-        
-        
-
          // ========================  Begin LimeService Mod
-       
+        $iInstallationId = (int) getInstallationID();
         $iResponses = (int)Yii::app()->dbstats->createCommand("select responses_avail from limeservice_system.balances where user_id=".getInstallationID())->queryScalar();
+        $iHardLocked=(int)Yii::app()->dbstats->createCommand('select hard_lock from limeservice_system.installations where user_id='.$iInstallationId)->queryScalar();
         $iLocked=(int)Yii::app()->dbstats->createCommand('select locked from limeservice_system.installations where user_id='.getInstallationID())->queryScalar();
         $sPlan=Yii::app()->dbstats->createCommand('select subscription_alias from limeservice_system.installations where user_id='.getInstallationID())->queryScalar();    
+        if ($iHardLocked)
+        {
+            header("Expires: Sat, 26 Jul 1997 05:00:00 GMT");
+            die("Dear survey administrator - the LimeSurvey administration is currently not available because it has been locked. Please contact support@limesurvey.org for details.");
+        }
         if (($sPlan=='' || $sPlan=='free') && ($iLocked==1 || $iResponses<0))
         {
             header("Expires: Sat, 26 Jul 1997 05:00:00 GMT");
