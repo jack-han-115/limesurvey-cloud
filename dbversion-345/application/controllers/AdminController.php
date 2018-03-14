@@ -126,7 +126,7 @@ class AdminController extends LSYii_Controller
         if ($iHardLocked)
         {
             header("Expires: Sat, 26 Jul 1997 05:00:00 GMT");
-            die("Dear survey administrator - the administration is currently not available, your installation has been locked.");
+            die("Dear survey administrator - the LimeSurvey administration is currently not available because it has been locked. Please contact support@limesurvey.org for details.");
         }
         if (($sPlan=='' || $sPlan=='free') && ($iLocked==1 || $iResponses<0))
         {
