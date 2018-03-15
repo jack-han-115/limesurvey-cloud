@@ -281,7 +281,88 @@ class User extends LSActiveRecord
             $this->setPassword($sPassword, true);
             return true;
         }
+
+        // If password comes from the Joomla user, use this to check.
+        // TODO: Method copied from Authdb plugin.
+        if ($this->joomla_verifyPassword($sPassword, $this->password)) {
+            return true;
+        }
+
         return false;
+    }
+
+    /**
+     * Copied from Authdb.php.
+     * @param   string   $password  The plaintext password to check.
+     * @param   string   $hash      The hash to verify against.
+     * @return  boolean  True if the password and hash match, false otherwise
+     */
+    protected function joomla_verifyPassword($password, $hash)
+    {
+
+        if(!function_exists('hash_equals'))
+        {
+            function hash_equals($str1, $str2)
+            {
+                if(strlen($str1) != strlen($str2))
+                {
+                    return false;
+                }
+                else
+                {
+                    $res = $str1 ^ $str2;
+                    $ret = 0;
+                    for($i = strlen($res) - 1; $i >= 0; $i--)
+                    {
+                        $ret |= ord($res[$i]);
+                    }
+                    return !$ret;
+                }
+            }
+        }
+
+        //$rehash = false;
+        $match = false;
+
+        // If we are using phpass
+        if (strpos($hash, '$P$') === 0){
+            // Use PHPass's portable hashes with a cost of 10.
+            $phpass = Yii::app()->phpass; //new PasswordHash(10, true);
+
+            $match = $phpass->CheckPassword($password, $hash);
+
+            //$rehash = true;
+        }elseif ($hash[0] == '$'){
+            // JCrypt::hasStrongPasswordSupport() includes a fallback for us in the worst case
+            //JCrypt::hasStrongPasswordSupport();
+            $match = password_verify($password, $hash);
+
+            // Uncomment this line if we actually move to bcrypt.
+            //$rehash = password_needs_rehash($hash, PASSWORD_DEFAULT);
+        }elseif (substr($hash, 0, 8) == '{SHA256}'){
+            // Check the password
+            $parts     = explode(':', $hash);
+            $crypt     = $parts[0];
+            $salt      = @$parts[1];
+            $testcrypt = static::getCryptedPassword($password, $salt, 'sha256', true);
+
+            //$match = JCrypt::timingSafeCompare($hash, $testcrypt);
+            $match = hash_equals((string) $hash, (string) $testcrypt);
+        }else{
+            // Check the password
+            $parts = explode(':', $hash);
+            $crypt = $parts[0];
+            $salt  = @$parts[1];
+
+            // Compile the hash to compare
+            // If the salt is empty AND there is a ':' in the original hash, we must append ':' at the end
+            $testcrypt = md5($password . $salt) . ($salt ? ':' . $salt : (strpos($hash, ':') !== false ? ':' : ''));
+
+            $match = hash_equals((string) $hash, (string) $testcrypt);
+        }
+
+        return $match;
+
     }
 
     /**

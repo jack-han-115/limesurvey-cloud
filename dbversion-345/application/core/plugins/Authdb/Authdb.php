@@ -184,6 +184,7 @@ class Authdb extends AuthPluginBase
      * and the hash does not fit the current hashing algorithm, it automatically
      * updates the hash.
      *
+     * @todo This function is copied to User model. Put in helper instead?
      * @param   string   $password  The plaintext password to check.
      * @param   string   $hash      The hash to verify against.
      * @param   integer  $user_id   ID of the user if the password hash should be updated
