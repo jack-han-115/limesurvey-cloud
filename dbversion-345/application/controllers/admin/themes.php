@@ -161,6 +161,7 @@ class themes extends Survey_Common_Action
                     $uploadresult = gT("An error occurred uploading your file. This may be caused by incorrect permissions for the application /tmp folder.");
                 } else {
                     $uploadresult = sprintf(gT("File %s uploaded"), $filename);
+                    Yii::app()->user->setFlash('success', "Data1 saved!");
                     $success = true;
                 };
 
@@ -968,6 +969,8 @@ class themes extends Survey_Common_Action
                 $thissurvey['aGroups'][1]["aQuestions"][1]["answer"]        = $this->getController()->renderPartial('/admin/themes/templateeditor_question_answer_view', array(), true);
                 $thissurvey['aGroups'][1]["aQuestions"][1]["help"]["show"]  = true;
                 $thissurvey['aGroups'][1]["aQuestions"][1]["help"]["text"]  = "This is some helpful text.";
+                $thissurvey['aGroups'][1]["aQuestions"][1]["class"]         = "list-radio mandatory";
+                $thissurvey['aGroups'][1]["aQuestions"][1]["attributes"]    = 'id="question42"';
 
                 // Question 2 Datas
                 $thissurvey['aGroups'][1]["aQuestions"][2]["qid"]           = "1";
@@ -978,6 +981,8 @@ class themes extends Survey_Common_Action
                 $thissurvey['aGroups'][1]["aQuestions"][2]["answer"]        = $this->getController()->renderPartial('/admin/themes/templateeditor_question_answer_view', array('alt' => true), true);
                 $thissurvey['aGroups'][1]["aQuestions"][2]["help"]["show"]  = true;
                 $thissurvey['aGroups'][1]["aQuestions"][2]["help"]["text"]  = "This is some helpful text.";
+                $thissurvey['aGroups'][1]["aQuestions"][2]["class"]         = "text-long";
+                $thissurvey['aGroups'][1]["aQuestions"][2]["attributes"]    = 'id="question43"';
 
                 // This is just to prevent getAllClasses to retreive .ls-hidden CSS class
                 $thissurvey['aGroups'][1]["aQuestions"][1]['templateeditor'] = true;
