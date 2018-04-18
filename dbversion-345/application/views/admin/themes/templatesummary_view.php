@@ -14,7 +14,7 @@ Yii::app()->getClientScript()->registerScript('editorfiletype',"editorfiletype =
             <?php if (!is_writable($templates[$templatename])) { ?>
                 <div class="alert alert-warning alert-dismissible" role="alert">
                     <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <?php eT("You can't save changes because the template directory is not writable."); ?>
+                    <?php eT("You can't save changes because the theme directory is not writable."); ?>
                 </div>
             <?php } ?>
         </div>
@@ -110,9 +110,9 @@ Yii::app()->getClientScript()->registerScript('editorfiletype',"editorfiletype =
                 <?php if (Permission::model()->hasGlobalPermission('templates','update')) {
                     $sSaveText = ( $oEditedTemplate->getTemplateForFile($relativePathEditfile, $oEditedTemplate)->sTemplateName == $oEditedTemplate->sTemplateName)
                         ? gT("Save changes")
-                        : gT("Copy to local template and save changes");
+                        : gT("Copy to local theme and save changes");
                     if (is_writable($templates[$templatename])) { ?>
-                        <input type='submit' class='btn btn-default' value='<?php echo $sSaveText; ?>' <?=(!is_template_editable($templatename) ? "disabled='disabled' alt='".gT( "Changes cannot be saved to a standard template."). "'" : "")?> />
+                        <input type='submit' class='btn btn-default' id='button-save-changes' value='<?php echo $sSaveText; ?>' <?=(!is_template_editable($templatename) ? "disabled='disabled' alt='".gT( "Changes cannot be saved to a standard theme."). "'" : "")?> />
                     <?php } ?>
                 <?php } ?>
             </p>
@@ -122,10 +122,10 @@ Yii::app()->getClientScript()->registerScript('editorfiletype',"editorfiletype =
         <div>
             <?php eT("Other files:"); ?>
             <br/>
-            <div class="col-sm-12 well">
+            <div class="col-sm-12 well other-files-list">
                 <?php foreach ($otherfiles as $fileName => $file) { ?>
-                    <div class="row">
-                        <div class="col-sm-9">
+                    <div class="row other-files-row">
+                        <div class="col-sm-9 other-files-filename">
                             <?php echo (empty(substr(strrchr($file, DIRECTORY_SEPARATOR), 1)))?$file:substr(strrchr($file, DIRECTORY_SEPARATOR), 1) ;?>
                         </div>
                         <div class="col-sm-3">
@@ -134,7 +134,7 @@ Yii::app()->getClientScript()->registerScript('editorfiletype',"editorfiletype =
                                 if (Permission::model()->hasGlobalPermission('templates','delete')) { ?>
                                     <?=CHtml::form(array('admin/themes/sa/templatefiledelete'), 'post'); ?>
                                         <input type='hidden' name="otherfile" value="<?php echo $file; ?>" />
-                                        <input type='submit' class='btn btn-default btn-xs' value='<?php eT("Delete"); ?>' onclick="javascript:return confirm('<?php eT(" Are you sure you want to delete this file? ", "js "); ?>')"/>
+                                        <input type='submit' class='btn btn-default btn-xs other-files-delete-button' value='<?php eT("Delete"); ?>' onclick="javascript:return confirm('<?php eT(" Are you sure you want to delete this file? ", "js"); ?>')"/>
                                         <input type='hidden' name='screenname' value='<?php echo htmlspecialchars($screenname); ?>' />
                                         <input type='hidden' name='templatename' value='<?php echo htmlspecialchars($templatename); ?>' />
                                         <input type='hidden' name='editfile' value='<?php echo htmlspecialchars($relativePathEditfile); ?>' />
@@ -219,11 +219,11 @@ Yii::app()->getClientScript()->registerScript('editorfiletype',"editorfiletype =
             <div style='width:90%; margin:0 auto;'>
                 <?php if(isset($filenotwritten) && $filenotwritten==true) { ?>
                     <p>
-                        <span class='errortitle'><?php echo sprintf(gT("Please change the directory permissions of the folder %s in order to preview templates."), $tempdir); ?></span>
+                        <span class='errortitle'><?php echo sprintf(gT("Please change the directory permissions of the folder %s in order to preview themes."), $tempdir); ?></span>
                     </p>
                 <?php } else { ?>
                     <p>
-                        <iframe id='previewiframe' title='Preview' src='<?php echo $this->createUrl('admin/themes/sa/tmp/',array('id '=>$time)); ?>' height='768' name='previewiframe' style='width:95%;background-color: white;'>Embedded Frame</iframe>
+                        <iframe id='previewiframe' title='Preview' src='<?php echo $this->createUrl('admin/themes/sa/tmp/',array('id'=>$time)); ?>' height='768' name='previewiframe' style='width:95%;background-color: white;'>Embedded Frame</iframe>
                     </p>
                 <?php } ?>
             </div>

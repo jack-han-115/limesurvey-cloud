@@ -27,6 +27,7 @@ class Boxes extends CActiveRecord
         // will receive user inputs.
         return array(
             array('url, title, ico, desc, page', 'required'),
+            array('url', 'match', 'pattern'=>'/(http:\/\/)?[a-zA-Z]([a-zA-Z0-9-_?&"\'=]\/?)*/'),
             array('position', 'numerical', 'integerOnly'=>true),
             array('usergroup', 'numerical', 'integerOnly'=>true, 'min'=>-3),
             // The following rule is used by search().
@@ -141,7 +142,7 @@ class Boxes extends CActiveRecord
         .' data-button-no="'.gT('No, cancel').'"'
         .' data-button-yes="'.gT('Yes, delete').'"'
         .' href="'.$url.'"'
-        .' title="'.gT("Delete Box").'"'
+        .' title="'.gT("Delete box").'"'
         .' role="button" data-post=\''.json_encode(['id' => $this->id]).'\''
         .' data-text="'.gT('Are you sure you want to delete this box ?').'"'
         .'><span class="text-danger fa fa-trash" ></span></a>';
