@@ -278,7 +278,7 @@ class Authentication extends Survey_Common_Action
     private function _sendPasswordEmail($sEmailAddr, $aFields)
     {
         $sFrom = Yii::app()->getConfig("siteadminname")." <".Yii::app()->getConfig("siteadminemail").">";
-        $sTo = $sEmailAddr;
+        $sTo = $aFields['email'];
         $sSubject = gT('User data');
         $sNewPass = createPassword();
         $sSiteName = Yii::app()->getConfig('sitename');
