@@ -63,28 +63,28 @@ class update extends Survey_Common_Action
 {
 
 
+            // ============ Update LimeService Begin =======================================================
+            public function scheduleupgrade()
+            {
+                $iDestinationVersion=345;
+                $sUpgradeVersion='LimeSurvey 3';
 
-        // ============ Update LimeService Begin =======================================================
-        public function scheduleupgrade()
-        {
-            $iDestinationVersion=345;
-            $sUpgradeVersion='LimeSurvey 3';
+                // Check if already scheduled for upgrade
+                $sDomain           = $_SERVER['SERVER_NAME'];
+                $sSubDomain        = substr($sDomain,0,strpos($sDomain,'.'));
+                $sRootDomain       = substr($sDomain,strpos($sDomain,'.')+1);
+                $iUpgradeDBVersion = Yii::app()->dbstats->createCommand("select upgradedbversion from pageviews where subdomain='$sSubDomain' and rootdomain='$sRootDomain'")->queryScalar();
 
-            // Check if already scheduled for upgrade
-            $sDomain           = $_SERVER['SERVER_NAME'];
-            $sSubDomain        = substr($sDomain,0,strpos($sDomain,'.'));
-            $sRootDomain       = substr($sDomain,strpos($sDomain,'.')+1);
-            $iUpgradeDBVersion = Yii::app()->dbstats->createCommand("select upgradedbversion from pageviews where subdomain='$sSubDomain' and rootdomain='$sRootDomain'")->queryScalar();
+                Yii::app()->dbstats->createCommand("Update pageviews set upgradedbversion=$iDestinationVersion where subdomain='$sSubDomain' and rootdomain='$sRootDomain'")->execute();
 
-            Yii::app()->dbstats->createCommand("Update pageviews set upgradedbversion=$iDestinationVersion where subdomain='$sSubDomain' and rootdomain='$sRootDomain'")->execute();
+                $aData['fullpagebar']['update'] = true;
+                $aData['scheduleupgrade']       = true;
 
-            $aData['fullpagebar']['update'] = true;
-            $aData['scheduleupgrade']       = true;
+                $this->_renderWrappedTemplate('update', '_updateContainer', $aData);
+            }
 
-            $this->_renderWrappedTemplate('update', '_updateContainer', $aData);
-        }
+            // ============ Update LimeService End======================================================= /
 
-        // ============ Update LimeService End======================================================= /
 
     /**
      * First function to be called, when comming to admin/update
