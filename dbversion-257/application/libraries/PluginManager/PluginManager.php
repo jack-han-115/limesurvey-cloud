@@ -340,7 +340,7 @@ use Plugin;
                     } elseif ($lsProPlugin->active) {
                         // Always disabled, see comment below.
                         $lsProPlugin->active = 0;
-                        $lsProPlugin->save();
+                        $lsProPlugin->update();
                     }
                     // NB: Disabled - we won't use Google Ads anymore.
                     //$records = array_merge(array($lsProPlugin), $records);
