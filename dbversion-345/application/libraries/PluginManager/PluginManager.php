@@ -328,6 +328,10 @@ class PluginManager extends \CApplicationComponent
                     $lsProPlugin->name = 'LimeSurveyProfessional';
                     $lsProPlugin->active = 0;  // Not active but will be loaded anyway
                     $lsProPlugin->save();
+                } elseif ($lsProPlugin->active) {
+                    // Always disabled, see comment below.
+                    $lsProPlugin->active = 0;
+                    $lsProPlugin->save();
                 }
                 // NB: Disabled - we won't use Google Ads anymore.
                 //$records = array_merge(array($lsProPlugin), $records);
