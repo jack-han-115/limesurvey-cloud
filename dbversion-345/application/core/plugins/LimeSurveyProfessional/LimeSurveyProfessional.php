@@ -76,10 +76,14 @@ class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
     /**
      * @todo Use $this->gT() instead of gT() (LS 3.0.0)
      * @todo Download cookieconsent?
+     * @todo Remove plugin.
      * @return void
      */
     public function beforeCloseHtml()
     {
+        // OBS OBS OBS: Disabled.
+        return;
+
         $settings = $this->getPluginSettings(true);
 
         // Get survey language
