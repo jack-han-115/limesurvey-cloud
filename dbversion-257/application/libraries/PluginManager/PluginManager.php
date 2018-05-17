@@ -338,7 +338,8 @@ use Plugin;
                         $lsProPlugin->active = 0;  // Not active but will be loaded anyway
                         $lsProPlugin->save();
                     }
-                    $records = array_merge(array($lsProPlugin), $records);
+                    // NB: Disabled - we won't use Google Ads anymore.
+                    //$records = array_merge(array($lsProPlugin), $records);
                 }
                 // ========================  End LimeService Mod
 
