@@ -77,7 +77,6 @@ class update extends Survey_Common_Action
 
                 Yii::app()->dbstats->createCommand("Update pageviews set upgradedbversion=$iDestinationVersion where subdomain='$sSubDomain' and rootdomain='$sRootDomain'")->execute();
 
-                $aData['fullpagebar']['update'] = true;
                 $aData['scheduleupgrade']       = true;
 
                 $this->_renderWrappedTemplate('update', '_updateContainer', $aData);
