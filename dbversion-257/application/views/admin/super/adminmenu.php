@@ -57,6 +57,12 @@
     <div class="collapse navbar-collapse js-navbar-collapse pull-right">
         <ul class="nav navbar-nav navbar-right">
 
+            <?php // ============ Update LimeService Begin ======================================================= ?>
+            <li class="dropdown-split-left">
+                <a href="<?php echo Yii::app()->createUrl("admin/update"); ?>"><strong class="text-warning"><?php eT("New update available:");?> </strong> <?php eT('Click here to use ComfortUpdate or to download it.');?></a>
+            </li>
+            <?php // ============ Update LimeService End======================================================= / ?>
+
             <!-- Configuration menu -->
             <?php $this->renderPartial( "/admin/super/_configuration_menu", $dataForConfigMenu ); ?>
 
