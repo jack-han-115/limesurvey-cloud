@@ -431,16 +431,16 @@ function getStandardsReplacementFields($thissurvey)
     }
 
     $_assessment_current_total = '';
-    if (!empty($thissurvey['aAssessments'])) {
-        if (!empty($thissurvey['aAssessments']['total'])) {
-            $_assessment_current_total = $thissurvey['aAssessments']['total'];
-        }
-
+    if (!empty($thissurvey['assessments']) && $thissurvey['assessments']=="Y") {
+        $assessmentdata = doAssessment($surveyid, true);
+        $_assessment_current_total = (!empty($assessmentdata['datas']['total_score']))?$assessmentdata['datas']['total_score']:gT("unkown");
     }
 
 
     // Set the array of replacement variables here - don't include curly braces
     $coreReplacements = array();
+    $coreReplacements['NUMBEROFGROUPS'] = QuestionGroup::model()->getTotalGroupsWithQuestions($_surveyid);
+    $coreReplacements['NUMBEROFQUESTIONS'] = $_SESSION['survey_'.$surveyid]['totalquestions'];
     $coreReplacements['ACTIVE'] = (isset($thissurvey['active']) && !($thissurvey['active'] != "Y"));
     $coreReplacements['DATESTAMP'] = $_datestamp;
     $coreReplacements['EXPIRY'] = $_dateoutput;
