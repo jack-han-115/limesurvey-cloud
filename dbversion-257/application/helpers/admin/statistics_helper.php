@@ -1291,8 +1291,8 @@ class statistics_helper {
                     }
 
                     //list IDs and answer codes in brackets
-                    $qquestion .=  $linefeed."[".$atext."]";
-                    $qtitle .= "($qanswer)";
+                    $qquestion .=  $linefeed;
+                    $qtitle .= "($qanswer) "."[".$atext."]";
                     break;
 
 
@@ -1312,8 +1312,8 @@ class statistics_helper {
                         $atext=flattenText($qrow[1]);
                     }
 
-                    $qquestion .=  $linefeed."[".$atext."]";
-                    $qtitle .= "($qanswer)";
+                    $qquestion .=  $linefeed;
+                    $qtitle .= "($qanswer) "."[".$atext."]";
                     break;
 
 
@@ -1334,8 +1334,8 @@ class statistics_helper {
                         $atext=flattenText($qrow[1]);
                     }
                     //output
-                    $qquestion .=  $linefeed."[".$atext."]";
-                    $qtitle .= "($qanswer)";
+                    $qquestion .=  $linefeed;
+                    $qtitle .= "($qanswer) "."[".$atext."]";
                     break;
 
 
@@ -1353,8 +1353,8 @@ class statistics_helper {
                         $alist[]=array("D", gT("Decrease"));
                         $atext=flattenText($qrow[1]);
                     }
-                    $qquestion .= $linefeed."[".$atext."]";
-                    $qtitle .= "($qanswer)";
+                    $qquestion .= $linefeed;
+                    $qtitle .= "($qanswer) "."[".$atext."]";
                     break;
 
 
@@ -1377,8 +1377,8 @@ class statistics_helper {
                         $atext=flattenText($qrow[1]);
                     }
 
-                    $qquestion .=  $linefeed."[".$atext."] [".$ltext."]";
-                    $qtitle .= "($qanswer)";
+                    $qquestion .=  $linefeed;
+                    $qtitle .= "($qanswer) "."[".$atext."] [".$ltext."]";
                     break;
 
                 case ":": //Array (Multiple Flexi) (Numbers)
@@ -1447,8 +1447,8 @@ class statistics_helper {
                     }
 
                     //output
-                    $qquestion .= $linefeed."[".$atext."]";
-                    $qtitle .= "($qanswer)";
+                    $qquestion .= $linefeed;
+                    $qtitle .= "($qanswer) "."[".$atext."]";
                     break;
 
 
