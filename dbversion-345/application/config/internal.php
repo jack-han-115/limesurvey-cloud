@@ -304,6 +304,11 @@ $internalConfig = array(
                     'trim',
                     'json_encode',
                     'replace',
+                    'last',
+                    'capitalize',
+                    'lower',
+                    'upper',
+                    'strip_tags',
                 ),
                 'methods' => array(
                     'ETwigViewRendererStaticClassProxy' =>  array("encode", "textfield", "form", "link", "emailField", "beginForm", "endForm", "dropDownList", "htmlButton", "passwordfield", "hiddenfield", "textArea", "checkBox"),
@@ -364,6 +369,7 @@ $internalConfig = array(
                     'createUrl',
                     'json_decode',
                     'json_encode',
+                    'strip_tags',
                     /* Not in twigRenderer[functions] */
                     'include',
                     'dump',
