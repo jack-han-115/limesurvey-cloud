@@ -101,7 +101,8 @@ class Template extends LSActiveRecord
 
     /**
      * @return array customized attribute labels (name=>label)
-     */
+    */
+
     public function attributeLabels()
     {
         return array(
@@ -151,7 +152,7 @@ class Template extends LSActiveRecord
         }
 
         $sRequestedTemplate = $sTemplateName;
-        $sDefaultTemplate = getGlobalSetting('defaulttheme');
+        $sDefaultTemplate = App()->getConfig('defaulttheme');
 
         /* Validate if template is OK in user dir, DIRECTORY_SEPARATOR not needed "/" is OK */
         $oTemplate = self::model()->findByPk($sTemplateName);
@@ -180,7 +181,7 @@ class Template extends LSActiveRecord
 
         if (!empty($sTemplateName)) {
             setGlobalSetting('defaulttheme', $sTemplateName);
-            $sDefaultTemplate = getGlobalSetting('defaulttheme');
+            $sDefaultTemplate = App()->getConfig('defaulttheme');
 
             if(method_exists(Yii::app(), 'setFlashMessage'))
                 Yii::app()->setFlashMessage(sprintf(gT("Default survey theme %s is not installed. Now %s is the new default survey theme"), $sRequestedTemplate, $sTemplateName), 'error');
@@ -479,7 +480,7 @@ class Template extends LSActiveRecord
     {
         // The error page from default template can be called when no survey found with a specific ID.
         if ($sTemplateName === null && $iSurveyId === null) {
-            $sTemplateName = getGlobalSetting('defaulttheme');
+            $sTemplateName = App()->getConfig('defaulttheme');
         }
 
         if ($bForceXML === null) {
@@ -510,13 +511,32 @@ class Template extends LSActiveRecord
     }
 
     /**
+     * Reset assets for this template
+     * Using DB only
+     * @return void
+     */
+    public function resetAssetVersion()
+    {
+        AssetVersion::incrementAssetVersion(self::getTemplatePath($this->name));
+    }
+
+    /**
+     * Delete asset related to this template
+     * Using DB only
+     * @return integer (0|1)
+     */
+    public function deleteAssetVersion()
+    {
+        return AssetVersion::deleteAssetVersion(self::getTemplatePath($this->name));
+    }
+
+    /**
      * Return the standard template list
      * @return string[]
      * @throws Exception
      */
     public static function getStandardTemplateList()
     {
-
         $standardTemplates = array('vanilla', 'bootswatch', 'fruity');
         return $standardTemplates;
     }
@@ -583,6 +603,7 @@ class Template extends LSActiveRecord
     public function renameTo($sNewName)
     {
         Yii::import('application.helpers.sanitize_helper', true);
+        $this->deleteAssetVersion();
         Survey::model()->updateAll(array('template' => $sNewName), "template = :oldname", array(':oldname'=>$this->name));
         Template::model()->updateAll(array('name' => $sNewName, 'folder' => $sNewName), "name = :oldname", array(':oldname'=>$this->name));
         TemplateConfiguration::rename($this->name, $sNewName);

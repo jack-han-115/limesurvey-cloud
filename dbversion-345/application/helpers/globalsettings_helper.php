@@ -15,23 +15,11 @@
  */
 //Ensure script is not run directly, avoid path disclosure
 //if (!isset($homedir) || isset($_REQUEST['$homedir'])) {die("Cannot run this script directly");}
-injectglobalsettings();
-
-
-function injectglobalsettings()
-{
-    $settings = SettingGlobal::model()->findAll();
-
-    //if ($dbvaluearray!==false)
-    if (count($settings) > 0) {
-        foreach ($settings as $setting) {
-            Yii::app()->setConfig($setting->getAttribute('stg_name'), $setting->getAttribute('stg_value'));
-        }
-    }
-}
 
 /**
  * Returns a global setting
+ * @deprecated : use App()->getConfig($settingname)
+ * since all config are set at start of App : no need to read and test again 
  *
  * @param string $settingname
  * @return string
@@ -62,7 +50,11 @@ function getGlobalSetting($settingname)
 }
 
 /**
+ * Set a global setting after control (must be moved to rules or filter of SettingGlobal model)
+ * And save it in DB
  * @param string $settingname
+ * @param string $settingvalue
+ * @return void
  */
 function setGlobalSetting($settingname, $settingvalue)
 {

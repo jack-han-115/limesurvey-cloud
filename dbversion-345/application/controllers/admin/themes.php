@@ -179,13 +179,12 @@ class themes extends Survey_Common_Action
                         false
                     );
                 }
-                $checkImage = getimagesize($_FILES["file"]["tmp_name"]);
-                $debug[] = $checkImage;
-                if ($checkImage === false || !in_array($checkImage[2], [IMAGETYPE_JPEG, IMAGETYPE_PNG, IMAGETYPE_GIF])) {
-                    $uploadresult = gT("This file is not a supported image - please only upload JPG,PNG or GIF type images.");
+                Yii::import('application.helpers.common_helper', true);
+                $checkImage = validateImage($_FILES["file"]["tmp_name"]);
+                if ($checkImage['check'] === false) {
                     return Yii::app()->getController()->renderPartial(
                         '/admin/super/_renderJson',
-                        array('data' => ['success' => $success, 'message' => $uploadresult, 'debug' => $debug]),
+                        array('data' => ['success' => $success, 'message' => $checkImage['uploadresult'], 'debug' => $checkImage['debug']]),
                         false,
                         false
                     );
@@ -346,6 +345,7 @@ class themes extends Survey_Common_Action
                         $uploadresult = gT("An error occurred uploading your file. This may be caused by incorrect permissions for the application /tmp folder.");
                     } else {
                         $uploadresult = sprintf(gT("File %s uploaded"), $filename);
+                        Template::model()->findByPk($templatename)->resetAssetVersion(); // Upload a files, asset need to be resetted (maybe)
                         $status = 'success';
                     }
                 }
@@ -461,6 +461,7 @@ class themes extends Survey_Common_Action
 
             if (@unlink($the_full_file_path)) {
                 Yii::app()->user->setFlash('success', sprintf(gT("The file %s was deleted."), htmlspecialchars($sFileToDelete)));
+                Template::model()->findByPk($sTemplateName)->resetAssetVersion(); // Delete a files, asset need to be resetted (maybe)
             } else {
                 Yii::app()->user->setFlash('error', sprintf(gT("File %s couldn't be deleted. Please check the permissions on the /upload/themes folder"), htmlspecialchars($sFileToDelete)));
             }
@@ -583,8 +584,8 @@ class themes extends Survey_Common_Action
             if (Template::checkIfTemplateExists($templatename) && !Template::isStandardTemplate($templatename)) {
 
                 if (!Template::hasInheritance($templatename)) {
-
                     if (rmdirr(Yii::app()->getConfig('userthemerootdir')."/".$templatename)) {
+                        Template::model()->findByPk($templatename)->deleteAssetVersion();
                         $surveys = Survey::model()->findAllByAttributes(array('template' => $templatename));
 
                         // The default template could be the same as the one we're trying to remove
@@ -698,7 +699,8 @@ class themes extends Survey_Common_Action
 
                         // If the file is an asset file, we refresh asset number
                         if (in_array($relativePathEditfile, $cssfiles) || in_array($relativePathEditfile, $jsfiles)){
-                            SettingGlobal::increaseCustomAssetsversionnumber();
+                            //SettingGlobal::increaseCustomAssetsversionnumber();
+                            Template::model()->findByPk($sTemplateName)->resetAssetVersion();
                         }
 
                         fclose($handle);
@@ -782,7 +784,7 @@ class themes extends Survey_Common_Action
             //App()->getClientScript()->reset();
             @fwrite($fnew, getHeader());
 
-            App()->getClientScript()->registerScript("activateActionLink", "activateActionLink();", CClientScript::POS_END); /* show the button if needed */
+            App()->getClientScript()->registerScript("activateActionLink", "activateActionLink();", LSYii_ClientScript::POS_POSTSCRIPT); /* show the button if needed */
 
             /* Must remove all exitsing scripts / css and js */
             App()->getClientScript()->unregisterPackage('admin-theme'); // We remove the admin package
