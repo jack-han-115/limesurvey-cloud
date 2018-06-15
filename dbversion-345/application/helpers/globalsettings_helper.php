@@ -29,7 +29,6 @@ function injectglobalsettings()
         }
     }
 }
-
 /**
  * Returns a global setting
  * @deprecated : use App()->getConfig($settingname)
