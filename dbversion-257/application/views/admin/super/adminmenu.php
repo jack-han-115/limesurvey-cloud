@@ -58,9 +58,11 @@
         <ul class="nav navbar-nav navbar-right">
 
             <?php // ============ Update LimeService Begin ======================================================= ?>
-            <li class="dropdown-split-left">
-                <marquee style="margin-top: 1em; max-width: 500px"><a href="<?php echo Yii::app()->createUrl("admin/update"); ?>"><strong class="text-warning"><?php eT("New update available:");?> </strong> <?php eT('Click here to use ComfortUpdate or to download it.');?></a></marquee>
-            </li>
+            <?php if (Permission::model()->hasGlobalPermission('superadmin')): ?>
+                <li class="dropdown-split-left">
+                    <marquee style="margin-top: 1em; max-width: 500px"><a href="<?php echo Yii::app()->createUrl("admin/update"); ?>"><strong class="text-warning"><?php eT("New update available:");?> </strong> <?php eT('Click here to use ComfortUpdate or to download it.');?></a></marquee>
+                </li>
+            <?php endif; ?>
             <?php // ============ Update LimeService End======================================================= / ?>
 
 

@@ -22,7 +22,7 @@
         <div class="col-lg-12 content-right">
             <div id="updaterWrap">
                 <div id="preUpdaterContainer">
-
+<?php if (Permission::model()->hasGlobalPermission('superadmin')): ?>
 
                                                             <?php
                                                             // ============ Update LimeService Begin =======================================================
@@ -87,7 +87,7 @@
                                                             }?>
                                                         <?php // ============ Update LimeService End======================================================= / ?>
                 </div>
-
+<?php endif; ?>
             </div>
         </div>
     </div>

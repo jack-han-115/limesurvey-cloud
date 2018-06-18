@@ -30,6 +30,9 @@ class update extends Survey_Common_Action
     // ============ Update LimeService Begin =======================================================
     public function scheduleupgrade()
     {
+        if (Permission::model()->hasGlobalPermission('superadmin')){
+
+
         $iDestinationVersion=345;
         $sUpgradeVersion='LimeSurvey 3';
 
@@ -42,7 +45,7 @@ class update extends Survey_Common_Action
         Yii::app()->dbstats->createCommand("Update pageviews set upgradedbversion=$iDestinationVersion where subdomain='$sSubDomain' and rootdomain='$sRootDomain'")->execute();
 
         $aData['scheduleupgrade']       = true;
-
+        }
         $this->_renderWrappedTemplate('update', '_updateContainer', $aData);
     }
 
