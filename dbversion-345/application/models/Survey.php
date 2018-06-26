@@ -192,13 +192,15 @@ class Survey extends LSActiveRecord
         $this->owner_id = 1;
         $this->admin = App()->getConfig('siteadminname');
         $this->adminemail = App()->getConfig('siteadminemail');
-        $iUserid = Permission::getUserId();
-        if($iUserid) {
-            $this->owner_id = $iUserid;
-            $oUser = User::model()->findByPk($iUserid);
-            if($oUser) {
-                $this->admin = $oUser->full_name;
-                $this->adminemail = $oUser->email;
+        if(!(Yii::app() instanceof CConsoleApplication)) {
+            $iUserid = Permission::getUserId();
+            if($iUserid) {
+                $this->owner_id = $iUserid;
+                $oUser = User::model()->findByPk($iUserid);
+                if($oUser) {
+                    $this->admin = $oUser->full_name;
+                    $this->adminemail = $oUser->email;
+                }
             }
         }
         $this->attachEventHandler("onAfterFind", array($this, 'afterFindSurvey'));
@@ -393,7 +395,8 @@ class Survey extends LSActiveRecord
             'quotas' => array(self::HAS_MANY, 'Quota', 'sid', 'order'=>'name ASC'),
             'surveymenus' => array(self::HAS_MANY, 'Surveymenu', array('survey_id' => 'sid')),
             'surveygroup' => array(self::BELONGS_TO, 'SurveysGroups', array('gsid' => 'gsid')),
-            'templateModel' => array(self::HAS_ONE, 'Template', array('name' => 'template'))
+            'templateModel' => array(self::HAS_ONE, 'Template', array('name' => 'template')),
+            'templateConfiguration' => array(self::HAS_ONE, 'TemplateConfiguration', array('sid' => 'sid'))
         );
     }
 
