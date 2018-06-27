@@ -475,6 +475,10 @@ class LSETwigViewRenderer extends ETwigViewRenderer
             foreach ($oTemplate->oOptions as $key => $value) {
                 $aDatas["aSurveyInfo"]["options"][$key] = (string) $value;
             }
+            //LIMESERVICE SPECIFIC START
+                //-> FORCE DEACTIVATE AJAX MODE!
+                $aDatas["aSurveyInfo"]["options"]['ajaxmode'] = "off";
+            //LIMESERVICE SPECIFIC END
         }
         return $aDatas;
     }
