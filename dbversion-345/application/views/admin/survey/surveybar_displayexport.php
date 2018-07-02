@@ -17,7 +17,7 @@
         "key" => "surveystructure",
         "description" => "".gT("Survey structure (.lss)"),
         "detailpage" => "<p>"
-        .gT("This export will dump all the groups, questions, answers and conditions for your survey into a .LSS file (which is basically an XML file). This dump file can be used with the 'Import survey' feature when creating a new survey.")
+        .htmlspecialchars(gT("This export will dump all the groups, questions, answers and conditions for your survey into a .LSS file (which is basically an XML file). This dump file can be used with the 'Import survey' feature when creating a new survey."))
         ."</p>"
         ."<p>"
         .gT("A survey which uses a custom theme will import fine, but the template it refers to will not exist on the new server. In that case the system will use the global default theme.")
