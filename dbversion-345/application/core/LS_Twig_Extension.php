@@ -345,7 +345,7 @@ class LS_Twig_Extension extends Twig_Extension
     public static function registerScriptFile($path, $position = null)
     {
 
-        Yii::app()->getClientScript()->registerScriptFile($path, ($position === null ? CClientScript::POS_BEGIN : $position));
+        Yii::app()->getClientScript()->registerScriptFile($path, ($position === null ? LSYii_ClientScript::POS_BEGIN : self::getPosition($position)));
     }
 
     public static function registerCssFile($path)
@@ -355,7 +355,7 @@ class LS_Twig_Extension extends Twig_Extension
 
     public static function registerPackage($name)
     {
-        Yii::app()->getClientScript()->registerPackage($name, CClientScript::POS_BEGIN);
+        Yii::app()->getClientScript()->registerPackage($name, LSYii_ClientScript::POS_BEGIN);
     }
 
     /**
