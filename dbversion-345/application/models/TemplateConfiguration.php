@@ -251,6 +251,50 @@ class TemplateConfiguration extends TemplateConfig
         return $oTemplateConfigurationModel;
     }
 
+
+
+    /**
+     * Returns a Theme options array based on a surveyID
+     *
+     * @param integer $iSurveyId
+     * @param bool $bInherited should inherited theme option values be used?
+     * @return array
+     */
+    
+    public static function getThemeOptionsFromSurveyId($iSurveyId = 0, $bInherited = false)
+    {
+        $aTemplateConfigurations = array();
+        // fetch all themes belonging to $iSurveyId
+        $criteria = new CDbCriteria();
+        $criteria->addCondition('sid=:sid');
+        $criteria->params = array('sid' => $iSurveyId);
+        $oTemplateConfigurations = self::model()->findAll($criteria);
+
+        if ($bInherited){ // inherited values
+            foreach ($oTemplateConfigurations as $key => $oTemplateConfiguration) {
+                $oTemplateConfiguration->bUseMagicInherit = true;
+                $oTemplateConfiguration->setOptions();
+                // set array with values
+                $aTemplateConfigurations[$key]['id'] = null;
+                $aTemplateConfigurations[$key]['sid'] = $iSurveyId;
+                $aTemplateConfigurations[$key]['template_name'] = $oTemplateConfiguration->template_name;
+                $aTemplateConfigurations[$key]['config']['options'] = (array)$oTemplateConfiguration->oOptions;
+            }
+        } else { // db values
+            foreach ($oTemplateConfigurations as $key => $oTemplateConfiguration) {
+                $oTemplateConfiguration->bUseMagicInherit = false;
+                $oAttributes = $oTemplateConfiguration->attributes;
+                // set array with values
+                $aTemplateConfigurations[$key]['id'] = null;
+                $aTemplateConfigurations[$key]['sid'] = $iSurveyId;
+                $aTemplateConfigurations[$key]['template_name'] = $oAttributes['template_name'];
+                $aTemplateConfigurations[$key]['config']['options'] = isJson($oAttributes['options'])?(array)json_decode($oAttributes['options']):$oAttributes['options'];            
+            }            
+        }
+
+        return $aTemplateConfigurations;
+    }
+
     /**
      * For a given survey, it checks if its theme have a all the needed configuration entries (survey + survey group). Else, it will create it.
      * @TODO: recursivity for survey group
@@ -707,17 +751,30 @@ class TemplateConfiguration extends TemplateConfig
         }
     }
 
+    private function _getRelativePath($from, $to) {
+        $dir = explode(DIRECTORY_SEPARATOR, is_file($from) ? dirname($from) : rtrim($from, DIRECTORY_SEPARATOR));
+        $file = explode(DIRECTORY_SEPARATOR, $to);
+    
+        while ($dir && $file && ($dir[0] == $file[0])) {
+            array_shift($dir);
+            array_shift($file);
+        }
+        return str_repeat('..'.DIRECTORY_SEPARATOR, count($dir)) . implode(DIRECTORY_SEPARATOR, $file);
+    }
+
     private function _filterImages($file)
     {
         $imagePath = (file_exists($this->filesPath.$file['name']))
-            ? $this->filesPath.'/'.$file['name']
+            ? $this->filesPath.$file['name']
             : $this->generalFilesPath.$file['name'] ;
 
-        $filepath = App()->getAssetManager()->publish($imagePath);
+        $filePath = $this->_getRelativePath(Yii::app()->getConfig('rootdir'),  $imagePath);
+
+        $previewFilePath = App()->getAssetManager()->publish($imagePath);
 
         $checkImage = LSYii_ImageValidator::validateImage($imagePath);
         if (!$checkImage['check'] === false) {
-                return ['filepath' => $filepath, 'filepathOptions' => $imagePath ,'filename'=>$file['name']];
+                return ['preview' => $previewFilePath, 'filepath' => $filePath, 'filepathOptions' => $filePath ,'filename'=>$file['name']];
         }
     }
 

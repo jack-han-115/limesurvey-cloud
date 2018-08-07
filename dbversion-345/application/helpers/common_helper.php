@@ -314,7 +314,13 @@ function getGidNext($surveyid, $gid)
 }
 
 
-
+/**
+ * convertGETtoPOST a function to create a post Request from get parameters
+ * !!! This functions result has to be wrappen in singlequotes!
+ *
+ * @param String $url | The complete url with all parameters
+ * @return String | The onclick action for the element
+ */
 function convertGETtoPOST($url)
 {
     // This function must be deprecated and replaced by $.post
@@ -323,21 +329,17 @@ function convertGETtoPOST($url)
     $calledscript = array_shift($stack);
     $query = array_shift($stack);
     $aqueryitems = explode('&', $query);
-    $arrayParam = Array();
-    $arrayVal = Array();
+    $postArray = [];
 
     foreach ($aqueryitems as $queryitem) {
         $stack = explode('=', $queryitem);
         $paramname = array_shift($stack);
         $value = array_shift($stack);
-        $arrayParam[] = "'".$paramname."'";
-        $arrayVal[] = substr($value, 0, 9) != "document." ? "'".$value."'" : $value;
+        $postArray[$paramname] = $value;
     }
-    //    $Paramlist = "[" . implode(",",$arrayParam) . "]";
-    //    $Valuelist = "[" . implode(",",$arrayVal) . "]";
-    $Paramlist = "[".implode(",", $arrayParam)."]";
-    $Valuelist = "[".implode(",", $arrayVal)."]";
-    $callscript = "sendPost('$calledscript','',$Paramlist,$Valuelist);";
+
+    $callscript = "window.LS.sendPost(\"".$calledscript."\",\"\",".json_encode($postArray).");";
+
     return $callscript;
 }
 
@@ -4975,3 +4977,29 @@ function get_absolute_path($path)
     }    
     
 // Closing PHP tag intentionally omitted - yes, it is okay
+
+/**
+* Check if string is JSON array
+*
+* @param string $str
+* @return bool
+*/
+function isJson($str) {
+    $json = json_decode($str);
+    return $json && $str != $json;
+}
+
+/**
+* Check if array is associative
+*
+* @param array $array
+* @return bool
+*/
+function isAssociativeArray($array){
+    foreach ($array as $key => $value) {
+        if (is_string($key)) {
+            return true;
+        }
+    }
+    return false;
+}
