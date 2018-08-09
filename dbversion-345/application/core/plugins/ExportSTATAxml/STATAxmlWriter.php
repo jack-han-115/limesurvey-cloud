@@ -308,8 +308,9 @@ class STATAxmlWriter extends Writer
         function clean(&$item)
         {
             if (is_string($item)){
-                $item = trim((htmlspecialchars_decode(stripTagsFull($item))));
+            $item = trim((htmlspecialchars_decode(stripTagsFull($item))));
             }
+
         }
         array_walk_recursive($tobestripped, 'clean');
         return ($tobestripped);
