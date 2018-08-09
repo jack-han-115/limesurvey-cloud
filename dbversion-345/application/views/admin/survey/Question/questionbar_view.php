@@ -254,14 +254,6 @@ $aReplacementData=array();
                 <?php endif;?>
             <?php endif;?>
         </div>
-    <?php else: ?>        
-        <!-- Close -->
-        <?php if(isset($questionbar['closebutton']['url'])):?>
-            <a class="btn btn-danger pull-right margin-left" href="<?php echo $questionbar['closebutton']['url']; ?>" role="button">
-                <span class="fa fa-close"></span>
-                <?php eT("Close");?>
-            </a>
-        <?php endif;?>
     <?php endif; ?>
 
         <?php // TODO: Factor out in own view? ?>

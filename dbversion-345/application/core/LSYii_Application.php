@@ -358,9 +358,7 @@ class LSYii_Application extends CWebApplication
     public function onException($event)
     {
         if (Yii::app() instanceof CWebApplication) {
-            $configExists = file_exists(__DIR__.'/../config/config.php');
-            $usingTestEnv = defined('PHP_ENV') && PHP_ENV == 'test';
-            if ($usingTestEnv || !$configExists) {
+            if (defined('PHP_ENV') && PHP_ENV == 'test') {
                 // If run from phpunit, die with exception message.
                 die($event->exception->getMessage());
             } else {

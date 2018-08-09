@@ -50,7 +50,7 @@ question_template_attribute.add_platform_info           : {{question_template_at
             value="{{dispVal}}"
             {% if inputsize is not empty %} size="{{inputsize}}" {% endif %}
             {% if maxlength is not empty %} maxlength='{{maxlength}}' {% endif %}
-            readonly="readonly"
+            disabled="disabled"
             aria-labelledby="ls-question-text-{{basename}}"
         />
 
@@ -67,9 +67,13 @@ question_template_attribute.add_platform_info           : {{question_template_at
 {% else %}
 </div>
 {% endif %}
-{{ registerScript( "BrowserDetectQuestion" ~ name, "
+<script>
+$(function(){
     var browserCheckObject = new BrowserCheck();
-        $('#answer" ~ name ~ "')
-            .val(browserCheckObject." ~ (question_template_attribute.add_platform_info ? "getBrowserInfoLong()" : "getBrowserInfoShort()") ~ ");
-    ", "POS_POSTSCRIPT")
-}}
+    {% if question_template_attribute.add_platform_info == true %}
+        $("#answer{{name}}").val(browserCheckObject.getBrowserInfoLong());
+    {% else %}
+        $("#answer{{name}}").val(browserCheckObject.getBrowserInfoShort());
+    {% endif %}
+});
+</script>
