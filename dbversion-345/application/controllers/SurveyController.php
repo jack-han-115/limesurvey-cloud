@@ -66,6 +66,7 @@ class SurveyController extends LSYii_Controller
         if (!Yii::app()->getConfig("subaction")) {Yii::app()->setConfig("subaction", returnGlobal('subaction')); } //Desired subaction
         if (!Yii::app()->getConfig("editedaction")) {Yii::app()->setConfig("editedaction", returnGlobal('editedaction')); } // for html editor integration
         Yii::app()->clientScript->registerPackage('decimal');                  // decimal
+        Yii::app()->clientScript->registerPackage('decimalcustom'); // decimal-customisations
          // ========================  Begin LimeService Mod
         $sDomain=$_SERVER['SERVER_NAME'];
         $sSubdomain=substr($sDomain,0,strpos($sDomain,'.'));

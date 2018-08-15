@@ -644,7 +644,10 @@ class Survey extends LSActiveRecord
         $allKnowAttributes = $attdescriptiondata;
         // Without token table : all attribute $this->attributedescriptions AND real attribute. @see issue #13924
         if($this->getHasTokensTable()){
-            $allKnowAttributes = array_intersect_key(array_merge($attdescriptiondata,Token::model($this->sid)->getAttributes()),Token::model($this->sid)->getAttributes());
+            $allKnowAttributes = array_intersect_key(
+                ( $attdescriptiondata + Token::model($this->sid)->getAttributes()),
+                Token::model($this->sid)->getAttributes()
+            );
             // We remove deleted attribute even if deleted manually in DB
         }
         $aCompleteData = array();
@@ -1436,6 +1439,15 @@ class Survey extends LSActiveRecord
                 ->queryScalar();
             return $answers;
         }
+    }
+
+    /**
+     * decodes the attributedescriptions to be used anywhere necessary
+     * @return Array
+     */
+    public function getDecodedAttributedescriptions()
+    {
+        return decodeTokenAttributes($this->attributedescriptions);
     }
 
     /**

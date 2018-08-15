@@ -127,6 +127,7 @@ class TemplateConfig extends CActiveRecord
     public function prepareTemplateRendering($sTemplateName = '', $iSurveyId = '', $bUseMagicInherit = true)
     {
 
+
         if (!empty ($sTemplateName) && !empty ($iSurveyId)  ){
             if (!empty(self::$aPreparedToRender[$sTemplateName])) {
                 if (!empty(self::$aPreparedToRender[$sTemplateName][$iSurveyId])) {
@@ -148,18 +149,58 @@ class TemplateConfig extends CActiveRecord
         }
 
 
-
-
         $this->setBasics($sTemplateName, $iSurveyId, $bUseMagicInherit);
         $this->setMotherTemplates(); // Recursive mother templates configuration
         $this->setThisTemplate(); // Set the main config values of this template
         $this->createTemplatePackage($this); // Create an asset package ready to be loaded
+        $this->removeFiles();
         $this->getshowpopups();
 
-        self::$aPreparedToRender[$sTemplateName][$iSurveyId][$bUseMagicInherit] = $this;
+        if (!empty ($sTemplateName) && !empty ($iSurveyId)  ){
+            self::$aPreparedToRender[$sTemplateName][$iSurveyId][$bUseMagicInherit] = $this;
+        }
         return $this;
     }
 
+    /**
+     * Remove the css/js files defined in theme config, from any package (even the core ones)
+     * The file should have the exact same name as in the package (see: application/config/packages.php and application/config/third_party.php)
+     * eg: to remove awesome-bootstrap-checkbox.css, in the theme config file add <remove>awesome-bootstrap-checkbox/awesome-bootstrap-checkbox.css</remove>
+     */
+    public function removeFiles()
+    {
+        $aCssFilesToRemove = $this->getFilesTo($this, "css", 'remove');
+        $aJsFilesToRemove  = $this->getFilesTo($this, "js", 'remove');
+
+        if ( ! (  empty($aCssFilesToRemove) && empty($aJsFilesToRemove )) ) {
+            $aPackages = Yii::app()->clientScript->packages;
+
+            foreach ($aPackages as $sPackageName => $aPackage) {
+                $this->removeFilesFromPackage($sPackageName, $aPackage, 'css', $aCssFilesToRemove );
+                $this->removeFilesFromPackage($sPackageName, $aPackage, 'js',  $aJsFilesToRemove );
+            }
+        }
+    }
+
+    /**
+     * Checks if some files are inside a package, and remove them.
+     * @param string $sPackageName   name of the package
+     * @param array  $aPackage       the package to check (as provided by Yii::app()->clientScript)
+     * @param string $sType          the type of file (css or js)
+     * @param array $aFilesToRemove  an array containing the files to chech and remove
+     */
+    protected function removeFilesFromPackage($sPackageName, $aPackage, $sType, $aFilesToRemove  )
+    {
+        if (!empty($aPackage[$sType])){
+            if (!empty($aFilesToRemove)){
+                foreach ($aFilesToRemove as $sFileToRemove){
+                    if (($key = array_search($sFileToRemove, $aPackage[$sType])) !== false) {
+                        Yii::app()->clientScript->removeFileFromPackage($sPackageName, $sType, $sFileToRemove);
+                    }
+                }
+            }
+        }
+    }
 
     /**
      * Get the template for a given file. It checks if a file exist in the current template or in one of its mother templates
@@ -357,12 +398,7 @@ class TemplateConfig extends CActiveRecord
         $sMessage .= "\\n";
 
         if ($sCustomMessage==null){
-            $sMessage .= "Can't find file '$sFileName' defined in theme '$this->template_name' \\n";
-            $sMessage .= "\\n";
-            $sMessage .= "Note: Make sure this file exist in the current theme, or in one of its parent themes.  \\n ";
-            $sMessage .= "Note: Remember you can set in config.php 'force_xmlsettings_for_survey_rendering' so configuration is read from XML instead of DB (no reset needed)  \\n ";
-            $sMessage .= "\\n";
-            $sMessage .= "\\n";
+            $sMessage .= "\\n unknown error";
         }else{
             $sMessage .= $sCustomMessage;
         }
@@ -1031,11 +1067,16 @@ class TemplateConfig extends CActiveRecord
 
         // If in template manifest, a single file is provided, a string is produced instead of an array.
         // We force it to array here
-        if (is_object($oFiled) && !empty($oFiled->add) && is_string($oFiled->add)) {
-            $sValue      = $oFiled->add;
-            $oFiled->add = array($sValue);
-            $jFiled      = json_encode($oFiled);
+
+        foreach ( array('add', 'replace', 'remove') as $sAction){
+            if (is_object($oFiled) && !empty($oFiled->$sAction) && is_string($oFiled->$sAction)) {
+                $sValue      = $oFiled->$sAction;
+                $oFiled->$sAction = array($sValue);
+                $jFiled      = json_encode($oFiled);
+            }
         }
+
+
 
         return $jFiled;
     }
@@ -1093,16 +1134,6 @@ class TemplateConfig extends CActiveRecord
         return $aFiles;
     }
 
-    /**
-     * From a list of json files in db it will generate a PHP array ready to use by removeFileFromPackage()
-     *
-     * @var $sType string js or css ?
-     * @return array
-     */
-    protected function getFilesToRemove($oTemplate, $sType)
-    {
-        return $this->getFilesTo($oTemplate, $sType, 'remove');
-    }
 
     /**
      * Change the mother template configuration depending on template settings
@@ -1132,7 +1163,13 @@ class TemplateConfig extends CActiveRecord
                     if ($oRTemplate){
                       Yii::app()->clientScript->addFileToPackage($oRTemplate->sPackageName, $sType, $sFileName);
                     }else{
-                      parent::throwConsoleError();
+                        $sMessage  = "Can't find file '$sFileName' defined in theme '$this->sTemplateName' \\n";
+                        $sMessage .= "\\n";
+                        $sMessage .= "Note: Make sure this file exist in the current theme, or in one of its parent themes.  \\n ";
+                        $sMessage .= "Note: Remember you can set in config.php 'force_xmlsettings_for_survey_rendering' so configuration is read from XML instead of DB (no reset needed)  \\n ";
+                        $sMessage .= "\\n";
+                        $sMessage .= "\\n";
+                      self::throwConsoleError($sMessage);
                     }
 
                 }
@@ -1151,7 +1188,7 @@ class TemplateConfig extends CActiveRecord
     {
       do {
 
-          if (!($oRTemplate instanceof TemplateConfiguration)) {
+          if ( !($oRTemplate instanceof TemplateConfiguration) || !($oRTemplate->oMotherTemplate instanceof TemplateConfiguration) ) {
             return false;
             break;
           }
