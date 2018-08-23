@@ -7593,6 +7593,7 @@ EOD;
                                         // Check all possible file uploads
                                         for ($i = 0; $i < count($phparray); $i++)
                                         {
+                                            $phparray[$i]->filename = get_absolute_path ($phparray[$i]->filename) ;
                                             if (file_exists($tmp . $phparray[$i]->filename))
                                             {
                                                 $sDestinationFileName = 'fu_' . randomChars(15);
