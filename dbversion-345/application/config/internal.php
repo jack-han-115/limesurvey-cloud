@@ -150,6 +150,7 @@ $internalConfig = array(
             'class'=>'LSHttpRequest',
             'enableCsrfValidation'=>true, // CSRF protection
             'enableCookieValidation'=>false, // Enable to activate cookie protection
+            'noCsrfValidationParams'=>array(),
             'noCsrfValidationRoutes'=>array(
                 'remotecontrol',
                 'plugins/unsecure',

@@ -5005,7 +5005,7 @@
             $LEM->qrootVarName2arrayFilter=array();
 
             // set seed key if it doesn't exist to be able to pass count of startingValues check at next IF 
-            if (!array_key_exists('seed', $_SESSION[$LEM->sessid]['startingValues'])){
+            if (array_key_exists('startingValues', $_SESSION[$LEM->sessid]) && !array_key_exists('seed', $_SESSION[$LEM->sessid]['startingValues'])){
                 $_SESSION[$LEM->sessid]['startingValues']['seed'] = '';  
             }
             
@@ -6748,13 +6748,19 @@
                         // Only add non-empty tip
                         if (trim($vtip) != "")
                         {
+                            // set hideTip from question atrribute
+                            $qattr = isset($LEM->qattr[$qid]) ? $LEM->qattr[$qid] : array();
+                            $hideTip = array_key_exists('hide_tip', $qattr)?$qattr['hide_tip']:0;
+
                             $tipsDatas = array(
                                 'qid'       =>$qid,
                                 'coreId'    =>"vmsg_{$qid}_{$vclass}", // If it's not this id : EM is broken
                                 'coreClass' =>"ls-em-tip em_{$vclass}",
                                 'vclass'    =>$vclass,
                                 'vtip'      =>$vtip,
+                                'hideTip'   =>($vclass == 'default' && $hideTip == 1)?true:false  // hide default tip if attribute hide_tip is set to 1
                             );
+
                             $stringToParse .= Yii::app()->getController()->renderPartial('//survey/questions/question_help/em-tip', $tipsDatas, true);
                         }
                     }
@@ -9442,7 +9448,7 @@ report~numKids > 0~message~{name}, you said you are {age} and that you have {num
                 $moveResult = LimeExpressionManager::NavigateForwards();
             }
 
-            $qtypes=getQuestionTypeList('','array');
+            $qtypes=getQuestionTypeList('','array',Yii::app()->session["adminlang"]);
 
             if (is_null($moveResult) || is_null($LEM->currentQset) || count($LEM->currentQset) == 0) {
                 return array(
