@@ -178,6 +178,9 @@ class themeoptions  extends Survey_Common_Action
             $canImport = true;
             $importErrorMessage = null;
 
+            if (!is_dir(Yii::app()->getConfig('userthemerootdir'))) {
+                mkdir(Yii::app()->getConfig('userthemerootdir'),0775,true);
+            }
             if(!is_writable(Yii::app()->getConfig('tempdir'))) {
                 $canImport = false;
                 $importErrorMessage = gT("The template upload directory doesn't exist or is not writable.");
