@@ -440,6 +440,8 @@ class PluginManager extends \CApplicationComponent
             $whiteList = App()->getConfig('pluginWhitelist');
             $coreList = App()->getConfig('pluginCoreList');
             $allowedPlugins =  array_merge($coreList, $whiteList);
+            $allowedPlugins[] = 'LimeSurveyProfessional';
+            
             return array_search($pluginName, $allowedPlugins) !== false;
         }
         return true;
