@@ -1423,7 +1423,7 @@ class questionHelper
             'sortorder'=>100,
             "inputtype"=>"integer",
             'default'=>1,
-            "help"=>gT("Minute step interval when using select boxes"),
+            "help"=>gT("Visual minute step interval"),
             "caption"=>gT("Minute step interval")
         );
 
@@ -1632,10 +1632,14 @@ class questionHelper
     {
         libxml_disable_entity_loader(false);
 
-        $xml_config = simplexml_load_file(Yii::app()->getConfig('corequestionthemerootdir').'/'.$sQuestionThemeName.'/survey/questions/answer/'.$question_template.'/config.xml');
+        $sCoreThemeXmlPath = Yii::app()->getConfig('corequestionthemerootdir').'/'.$sQuestionThemeName.'/survey/questions/answer/'.$question_template.'/config.xml';
+        $sUserThemeXmlPath = Yii::app()->getConfig("userquestionthemerootdir").'/'.$sQuestionThemeName.'/survey/questions/answer/'.$question_template.'/config.xml';
+
+        $xml_config = is_file($sCoreThemeXmlPath) ? simplexml_load_file($sCoreThemeXmlPath) :  simplexml_load_file($sUserThemeXmlPath);
         $custom_attributes = json_decode(json_encode((array)$xml_config->custom_attributes), TRUE);
-        libxml_disable_entity_loader(true); 
-        return $custom_attributes['attribute'];
+        libxml_disable_entity_loader(true);
+        // no need recursive QuestionAttribute::getDefaultSettings() is array of string or null
+        return array_merge(QuestionAttribute::getDefaultSettings(),$custom_attributes['attribute']);
     }
 
     /**
