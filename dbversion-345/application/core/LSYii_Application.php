@@ -358,7 +358,12 @@ class LSYii_Application extends CWebApplication
     public function onException($event)
     {
         if (Yii::app() instanceof CWebApplication) {
-            $configExists = file_exists(__DIR__.'/../config/config.php');
+
+            // *************************LimeService Mod Start
+            // TODO: Any way to read config correctly on both hosting and local?
+            $configExists = file_exists($this->config['configdir'] . '/config.php');
+            // *************************LimeService Mod End
+
             $usingTestEnv = defined('PHP_ENV') && PHP_ENV == 'test';
             if ($usingTestEnv || !$configExists) {
                 // If run from phpunit, die with exception message.
