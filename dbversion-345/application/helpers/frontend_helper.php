@@ -525,14 +525,14 @@ function submittokens($quotaexit = false)
                 $bounce = $event->get('bounce');
                 // Start LimeService Mod =========================
                     $sCustomerID=substr(_getDbName(),6);
-                    $customheaders = array('1' => "X-surveyid: " . $surveyid,
+                    $aCustomHeaders = array('1' => "X-surveyid: " . $surveyid,
                                            '2' => "X-did: ".$sCustomerID,
                                            '3' => "X-type: confirmation"
                     );
                 // End LimeService Mod =========================
                 
                 if ($event->get('send', true) != false) {
-                    SendEmailMessage($message, $subject, $to, $from, Yii::app()->getConfig("sitename"), $ishtml, $bounce, $aRelevantAttachments);
+                    SendEmailMessage($message, $subject, $to, $from, Yii::app()->getConfig("sitename"), $ishtml, $bounce, $aRelevantAttachments, $aCustomHeaders);
                 }
             }
         //   } else {
