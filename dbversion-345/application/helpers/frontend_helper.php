@@ -383,6 +383,20 @@ function addtoarray_single($array1, $array2)
 */
 function submittokens($quotaexit = false)
 {
+   
+    // LimeService Mod Start _--------------------------
+    /**
+     * Get the database name
+     */
+    function _getDbName() {
+        // Yii doesn't give us a good way to get the database name
+        preg_match('/dbname=([^;]*)/', Yii::app()->db->getSchema()->getDbConnection()->connectionString, $aMatches);
+        $sDbName = $aMatches[1];
+
+        return $sDbName;
+    }
+    // LimeService Mod End --------------------------      
+
     $surveyid = Yii::app()->getConfig('surveyID');
     if (isset($_SESSION['survey_'.$surveyid]['s_lang'])) {
         $thissurvey = getSurveyInfo($surveyid, $_SESSION['survey_'.$surveyid]['s_lang']);
@@ -509,6 +523,14 @@ function submittokens($quotaexit = false)
                 $to = $event->get('to');
                 $from = $event->get('from');
                 $bounce = $event->get('bounce');
+                // Start LimeService Mod =========================
+                    $sCustomerID=substr(_getDbName(),6);
+                    $customheaders = array('1' => "X-surveyid: " . $surveyid,
+                                           '2' => "X-did: ".$sCustomerID,
+                                           '3' => "X-type: confirmation"
+                    );
+                // End LimeService Mod =========================
+                
                 if ($event->get('send', true) != false) {
                     SendEmailMessage($message, $subject, $to, $from, Yii::app()->getConfig("sitename"), $ishtml, $bounce, $aRelevantAttachments);
                 }
