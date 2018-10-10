@@ -456,7 +456,7 @@ class PluginManager extends \CApplicationComponent
         $config = $this->getGlobalConfig();
         if($config['usePluginWhitelist']) {
             $coreList = $config['pluginCoreList'];
-            if(array_search($pluginName, $coreList)) {
+            if(array_search($pluginName, $coreList)!==false) {
                 return true;
             }
             
