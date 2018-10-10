@@ -711,7 +711,7 @@ $config['force_xmlsettings_for_survey_rendering'] = false;
 $config['usePluginWhitelist'] = true;
 
 $config['pluginCoreList'] = [
-    'auditLog',
+    'AuditLog',
     'ExportR',
     'ExportSTATAxml',
     'extendedStartPage',
