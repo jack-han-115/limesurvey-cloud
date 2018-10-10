@@ -433,18 +433,38 @@ class PluginManager extends \CApplicationComponent
         $this->loadPlugins();
     }
 
+// LimeService Mod Start ===============
+
+    /**
+     * Combined global configurations loaded from the files
+     */
+    private $globalConfig = null;
+
+    // For some reason unknown the plugin amanger cannot find any changes made in the userdir config file
+    // The plugin whitelisting somehow needs to be enabled, though
+    private function  getGlobalConfig(){
+        if($this->globalConfig == null) {
+           $fullInternal = (include(__DIR__.'/../../config/internal.php'));
+           $defaults = (include(__DIR__.'/../../config/config-defaults.php'));
+           $config = array_merge($defaults, $fullInternal['config']);
+           $this->globalConfig = $config;
+        }
+         return $this->globalConfig;
+     }
 
     private function _checkWhitelist($pluginName){
-        if(App()->getConfig('usePluginWhitelist')) {
-
-            $whiteList = App()->getConfig('pluginWhitelist');
-            $coreList = App()->getConfig('pluginCoreList');
-            $allowedPlugins =  array_merge($coreList, $whiteList);
-            $allowedPlugins[] = 'LimeSurveyProfessional';
+        $config = $this->getGlobalConfig();
+        if($config['usePluginWhitelist']) {
+            $coreList = $config['pluginCoreList'];
+            if(array_search($pluginName, $coreList)) {
+                return true;
+            }
             
-            return array_search($pluginName, $allowedPlugins) !== false;
+            $whiteList = $config['pluginWhitelist'];            
+            return array_search($pluginName, $whiteList) !== false;
         }
         return true;
     }
 
+// LimeService Mod End ===============
 }
