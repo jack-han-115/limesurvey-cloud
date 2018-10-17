@@ -496,6 +496,7 @@ function getLanguageData($bOrderByNative = false, $sLanguageCode = 'en')
     $supportedLanguages['cnr']['radixpoint'] = 1;
     $supportedLanguages['cnr']['cldr'] ='sr_Latn_ME';
     
+
     // Myanmar / Burmese
     $supportedLanguages['mya']['description'] = gT('Myanmar (Burmese)');
     $supportedLanguages['mya']['nativedescription'] = '&#4121;&#4156;&#4116;&#4154;&#4121;&#4140;&#4120;&#4140;&#4126;&#4140;';
