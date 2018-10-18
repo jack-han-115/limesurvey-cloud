@@ -27,7 +27,8 @@ class PluginManager extends \CApplicationComponent
 
     protected $pluginDirs = array(
         'webroot.plugins', // User plugins
-        'application.core.plugins' // Core plugins
+        'application.core.plugins', // Core plugins
+        'userdir.plugins' //LimeService Mod
     );
 
     protected $stores = array();

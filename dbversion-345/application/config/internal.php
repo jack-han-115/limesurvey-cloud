@@ -57,6 +57,9 @@ $internalConfig = array(
         // yiiwheels configuration
         'yiiwheels' => realpath(__DIR__.'/../extensions/yiiwheels'),
         'vendor.twbs.bootstrap.dist',
+        // ========= LimeService Mod start
+        'userdir' => $userdir,
+        // ========= LimeService Mod end
 
         // Twig aliases. We don't want to change the file ETwigViewRenderer, so we can update it without difficulties
         // However, LimeSurvey directory tree is not a standard Yii Application tree.
