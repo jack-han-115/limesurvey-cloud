@@ -1512,6 +1512,7 @@ function getNavigatorDatas()
         App()->getClientScript()->registerScript("activateActionLink", "activateActionLink();\n", LSYii_ClientScript::POS_POSTSCRIPT);
 
         // Fill some test here, more clear ....
+        $bAnonymized                = $thissurvey["anonymized"] == 'Y';
         $bTokenanswerspersistence   = $thissurvey['tokenanswerspersistence'] == 'Y' && tableExists('tokens_'.$surveyid);
         $bAlreadySaved              = isset($_SESSION['survey_'.$surveyid]['scid']);
         $iSessionStep               = (isset($_SESSION['survey_'.$surveyid]['step']) ? $_SESSION['survey_'.$surveyid]['step'] : false);
@@ -1519,14 +1520,14 @@ function getNavigatorDatas()
 
         // Find out if the user has any saved data
         if ($thissurvey['format'] == 'A') {
-            if (!$bTokenanswerspersistence && !$bAlreadySaved) {
+            if ((!$bTokenanswerspersistence || $bAnonymized) && !$bAlreadySaved) {
                 $aNavigator['load']['show'] = true;
             }
             $aNavigator['save']['show'] = true;
         } elseif (!$iSessionStep) {
 
             //Welcome page, show load (but not save)
-            if (!$bTokenanswerspersistence && !$bAlreadySaved) {
+            if ((!$bTokenanswerspersistence || $bAnonymized) && !$bAlreadySaved) {
                 $aNavigator['load']['show'] = true;
             }
 
@@ -1535,7 +1536,7 @@ function getNavigatorDatas()
             }
         } elseif ($iSessionMaxStep == 1 && $thissurvey['showwelcome'] == "N") {
             //First page, show LOAD and SAVE
-            if (!$bTokenanswerspersistence && !$bAlreadySaved) {
+            if ((!$bTokenanswerspersistence || $bAnonymized) && !$bAlreadySaved) {
                 $aNavigator['load']['show'] = true;
             }
 
