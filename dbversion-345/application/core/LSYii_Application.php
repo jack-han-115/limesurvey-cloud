@@ -127,6 +127,20 @@ class LSYii_Application extends CWebApplication
             /* Set up not done : then no other part to update */
             return;
         }
+
+        /* Custom config file */
+        $configdir = $coreConfig['configdir'];
+        if (file_exists( $configdir .  '/config.php')) {
+            $userConfigs = require(  $configdir .'/config.php');
+            if (is_array($userConfigs['config'])) {
+
+                $this->config = array_merge($this->config, $userConfigs['config']);
+
+            }
+        }
+
+
+        
         /* User file config */
         $userConfigs = require(__DIR__.'/../config/config.php');
         if (is_array($userConfigs['config'])) {
