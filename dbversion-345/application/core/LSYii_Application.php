@@ -22,7 +22,7 @@ require_once(dirname(dirname(__FILE__)).'/helpers/globals.php');
 * @property CLogRouter $log Log router component.
 * @property string $language Returns the language that the user is using and the application should be targeted to.
 * @property CClientScript $clientScript CClientScript manages JavaScript and CSS stylesheets for views.
-* @property CHttpRequest $request The request component. 
+* @property CHttpRequest $request The request component.
 * @property CDbConnection $db The database connection.
 * @property string $baseUrl The relative URL for the application.
 * @property CWebUser $user The user session information.
@@ -30,7 +30,7 @@ require_once(dirname(dirname(__FILE__)).'/helpers/globals.php');
 * @property PluginManager $pluginManager The LimeSurvey Plugin manager
 * @property TbApi $bootstrap The bootstrap renderer
 * @property CHttpSession $session The HTTP session
-* 
+*
 */
 class LSYii_Application extends CWebApplication
 {
@@ -123,10 +123,6 @@ class LSYii_Application extends CWebApplication
         $versionConfig = require(__DIR__.'/../config/version.php');
         $updaterVersionConfig = require(__DIR__.'/../config/updater_version.php');
         $this->config = array_merge($this->config,$coreConfig, $emailConfig, $versionConfig, $updaterVersionConfig);
-        if(!file_exists(__DIR__.'/../config/config.php')) {
-            /* Set up not done : then no other part to update */
-            return;
-        }
 
         /* Custom config file */
         $configdir = $coreConfig['configdir'];
@@ -138,9 +134,13 @@ class LSYii_Application extends CWebApplication
 
             }
         }
-
-
         
+
+        if(!file_exists(__DIR__.'/../config/config.php')) {
+            /* Set up not done : then no other part to update */
+            return;
+        }
+
         /* User file config */
         $userConfigs = require(__DIR__.'/../config/config.php');
         if (is_array($userConfigs['config'])) {
@@ -242,8 +242,8 @@ class LSYii_Application extends CWebApplication
             $config = require_once(APPPATH . '/config/' . $file . '.php');
         }
         // *************************LimeService Mod End
-        
-        
+
+
         if(is_array($config))
         {
             foreach ($config as $k => $v)
