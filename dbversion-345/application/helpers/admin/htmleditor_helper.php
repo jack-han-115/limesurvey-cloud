@@ -61,7 +61,13 @@
                     } else {
                         $_SESSION['KCFINDER']['uploadURL'] = Yii::app()->getConfig('uploadurl')."/surveys/{$surveyid}/";
                     }
-                    $_SESSION['KCFINDER']['uploadDir'] = realpath(Yii::app()->getConfig('uploaddir')).DIRECTORY_SEPARATOR.'surveys'.DIRECTORY_SEPARATOR.$surveyid.DIRECTORY_SEPARATOR;
+
+                    if (Yii::app()->getConfig('uniq_upload_dir')){
+                        $_SESSION['KCFINDER']['uploadDir'] = realpath(Yii::app()->getConfig('uploaddir')).DIRECTORY_SEPARATOR.'surveys'.DIRECTORY_SEPARATOR;
+                    }else{
+                        $_SESSION['KCFINDER']['uploadDir'] = realpath(Yii::app()->getConfig('uploaddir')).DIRECTORY_SEPARATOR.'surveys'.DIRECTORY_SEPARATOR.$surveyid.DIRECTORY_SEPARATOR;
+                    }
+
                 }
             } elseif (preg_match('/^edit:label/', Yii::app()->session['FileManagerContext']) != 0) {
                 $contextarray = explode(':', Yii::app()->session['FileManagerContext'], 3);
@@ -215,7 +221,7 @@
         . "
             if($('#".$fieldname."').length >0){
                 var $oCKeditorVarName = CKEDITOR.instances['$fieldname'];
-                if ($oCKeditorVarName) { 
+                if ($oCKeditorVarName) {
                         CKEDITOR.remove($oCKeditorVarName);
                     $oCKeditorVarName = null;
                 }
@@ -238,4 +244,3 @@
 
         Yii::app()->getClientScript()->registerScript('ckEditorScriptsInline-'.$fieldname, $scriptCode, LSYii_ClientScript::POS_POSTSCRIPT);
     }
-

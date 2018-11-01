@@ -552,6 +552,8 @@ $config['characterset'] = 'auto';
 $config['iFileUploadTotalSpaceMB'] = 0;
 
 
+$config['uniq_upload_dir'] = false; // Use a single KCFinder upload directory for all surveys
+
 // defines if the CKeditor toolbar should be opened by default
 $config['ckeditexpandtoolbar'] = true;
 
