@@ -5083,7 +5083,7 @@ function crypto_rand_secure($min, $max) {
  */
 function isZipBomb($zip_filename)
 {
-    return ( get_zip_originalsize($zip_filename) >  getMaximumFileUploadSize() );
+    return ( get_zip_originalsize($zip_filename) >  Yii::app()->getConfig('maximum_unzipped_size') );
 }
 
 /**
@@ -5113,4 +5113,21 @@ function get_zip_originalsize($filename) {
     }
 
     return -1;
+}
+
+/**
+ * PHP7 has created a little nasty bomb with count throwing erroros on uncountables
+ * This is to "fix" this problem
+ * 
+ * @param mixed $element
+ * @return integer counted element
+ * @author
+ */
+function safecount($element)
+{
+    $isCountable = is_array($element) || $element instanceof Countable;
+    if($isCountable) {
+        return count($element);
+    }
+    return 0;
 }

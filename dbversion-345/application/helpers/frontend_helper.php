@@ -291,7 +291,7 @@ function checkUploadedFileValidity($surveyid, $move, $backok = null)
                     // else, its ajax, don't check, bypass it.
 
                     if ($json != "" && $json != "[]") {
-                        $phparray = json_decode(stripslashes($json));
+                        $phparray = json_decode(urldecode($json));
                         if ($phparray[0]->size != "") {
 // ajax
                             $filecount = count($phparray);
@@ -1338,8 +1338,8 @@ function renderRenderWayForm($renderWay, array $scenarios, $sTemplateViewPath, $
             $thissurvey['surveyUrl']        = App()->createUrl("/survey/index", array("sid"=>$surveyid));
             $thissurvey['include_content']  = 'userforms';
 
-
-
+            Yii::app()->clientScript->registerScriptFile(Yii::app()->getConfig("generalscripts").'nojs.js', CClientScript::POS_HEAD);
+            
             // Language selector
             if ($aSurveyInfo['alanguageChanger']['show']){
                 $aSurveyInfo['alanguageChanger']['datas']['targetUrl'] = $thissurvey['surveyUrl'];
@@ -1544,7 +1544,7 @@ function getNavigatorDatas()
         } elseif (getMove() != "movelast") {
             // Not on last page or submited survey
             $aNavigator['save']['show'] = true;
-        }
+        } 
     }
 
     return $aNavigator;
@@ -2086,6 +2086,11 @@ function killSurveySession($iSurveyID)
     unset($_SESSION['survey_'.$iSurveyID]);
     // Force EM to refresh
     LimeExpressionManager::SetDirtyFlag();
+
+    //  unsetting LEMsingleton from session so new survey execution would start with new LEM instance
+    //  SetDirtyFlag() method doesn't reset LEM properly
+    //  this solution fixes bug: https://bugs.limesurvey.org/view.php?id=10162
+    unset($_SESSION["LEMsingleton"]);
 }
 
 /**

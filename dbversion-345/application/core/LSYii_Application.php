@@ -117,6 +117,9 @@ class LSYii_Application extends CWebApplication
      * @return void
      */
     public function setConfigs() {
+
+        // TODO: check the whole configuration process. It must be easier and clearer. Too many repitions
+
         /* Default config */
         $coreConfig = require(__DIR__.'/../config/config-defaults.php');
         $emailConfig = require(__DIR__.'/../config/email.php');
@@ -387,7 +390,7 @@ class LSYii_Application extends CWebApplication
             } else {
                 /* Here we have different possibility : maybe 400/401/403/404 with debug < 2 except for forced superadmin (currently : the 4 part don't show intersting information with debug*/
                 /* 500 always if debug and for (forced) superadmin even if no debug is set (and try to show complete error in this case (see issue by olle about white page and log */
-                if ((Yii::app()->getConfig('debug')<1  /* || Permission::hasGlobalPermission('superadmin') */) || $event->exception->statusCode=='404') {
+                if ((Yii::app()->getConfig('debug')<1  /* || Permission::hasGlobalPermission('superadmin') */) || (isset($event->exception->statusCode) &&$event->exception->statusCode=='404')) {
                     Yii::app()->setComponent('errorHandler', array(
                         'errorAction'=>'surveys/error',
                     ));
