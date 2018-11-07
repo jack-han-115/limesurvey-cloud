@@ -277,12 +277,18 @@ class SurveyDynamic extends LSActiveRecord
      */
     public function getButtons()
     {
+    	$sBrowseLanguage=sanitize_languagecode(Yii::app()->request->getParam('browselang', ''));
         $sViewUrl     = App()->createUrl("/admin/responses/sa/view/surveyid/".self::$sid."/id/".$this->id);
         $sViewPDFUrl     = App()->createUrl("/admin/responses/sa/viewquexmlpdf/surveyid/".self::$sid."/id/".$this->id);
         $sEditUrl     = App()->createUrl("admin/dataentry/sa/editdata/subaction/edit/surveyid/".self::$sid."/id/".$this->id);
         $sDownloadUrl = App()->createUrl("admin/responses",array("sa"=>"actionDownloadfiles","surveyid"=>self::$sid,"sResponseId"=>$this->id));
         $sDeleteUrl   = App()->createUrl("admin/responses",array("sa"=>"actionDelete","surveyid"=>self::$sid));
         $sAttachmentDeleteUrl = App()->createUrl("admin/responses",array("sa"=>"actionDeleteAttachments"));
+        if (!empty($sBrowseLanguage)) {
+			$sViewUrl.='?browselang='.$sBrowseLanguage;
+			$sViewPDFUrl.='?browselang='.$sBrowseLanguage;
+			$sEditUrl.='?browselang='.$sBrowseLanguage;
+        }
         $button       = "";
 
         // View detail icon
