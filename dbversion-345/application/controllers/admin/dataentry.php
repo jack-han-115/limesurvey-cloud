@@ -271,6 +271,12 @@ class dataentry extends Survey_Common_Action
                 'label' => gT('Import timings (if exist)')
             );
 
+            $aData['settings']['preserveIDs'] = array(
+                'type' => 'checkbox',
+                'label' => gT('Preserve response IDs')
+            );
+            
+            
             //Get the menubar
             $aData['display']['menu_bars']['browse'] = gT("Quick statistics");
             $survey = Survey::model()->findByPk($iSurveyId);
@@ -315,6 +321,10 @@ class dataentry extends Survey_Common_Action
                 $iOldID = $sourceResponse->id;
                 // Using plugindynamic model because I dont trust surveydynamic.
                 $targetResponse = new PluginDynamic("{{survey_$iSurveyId}}");
+
+                if (isset($_POST['preserveIDs']) && $_POST['preserveIDs'] == 1) {
+                    $targetResponse->id=$sourceResponse->id;
+                }
 
                 foreach ($fieldMap as $sourceField => $targetField) {
                     $targetResponse[$targetField] = $sourceResponse[$sourceField];
@@ -378,7 +388,7 @@ class dataentry extends Survey_Common_Action
     {
         $list = array();
         if (empty($tables)) {
-            $list['none'] = gT('No old responses found.');
+            $list['none'] = gT('No old responses found.','unescaped');
         }
 
         foreach ($tables as $table) {
@@ -814,7 +824,7 @@ class dataentry extends Survey_Common_Action
                                 foreach ($answers as $ansrow) {
                                     (isset($currentvalues[$i - 1]) && $currentvalues[$i - 1] == $ansrow['code']) ? $selected = " selected=\"selected\"" : $selected = "";
                                     $aDataentryoutput .= "\t<option value=\"".$ansrow['code']."\" $selected>".flattenText($ansrow['answer'])."</option>\n";
-                                        }
+                                }
                                 $aDataentryoutput .= "</select\n";
                                 $aDataentryoutput .= "</li>";
                             }
@@ -1382,7 +1392,7 @@ class dataentry extends Survey_Common_Action
             $beforeDataEntryUpdate->set('iSurveyID', $surveyid);
             $beforeDataEntryUpdate->set('iResponseID', $id);
             App()->getPluginManager()->dispatchEvent($beforeDataEntryUpdate);
-            
+
              // ========================  Begin LimeService Mod
             $aRow = SurveyDynamic::model($surveyid)->findByPk($id);
             if ($_POST['completed']!= "N" && $aRow->submitdate=='' )
