@@ -137,14 +137,12 @@ class LSYii_Application extends CWebApplication
 
             }
         }
-        
+
 
         if(!file_exists(__DIR__.'/../config/config.php')) {
             /* Set up not done : then no other part to update */
             return;
-        }
-
-        /* User file config */
+        }/* User file config */
         $userConfigs = require(__DIR__.'/../config/config.php');
         if (is_array($userConfigs['config'])) {
              $this->config = array_merge($this->config, $userConfigs['config']);
