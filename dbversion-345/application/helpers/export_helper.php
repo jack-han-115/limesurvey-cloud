@@ -2454,7 +2454,7 @@ function tsvSurveyExport($surveyid){
             $conditions[$condition['qid']][] = $condition;
         }
 
-        sortArrayByColumn($groups[$language], 'group_order');
+        $groups[$language] = sortArrayByColumn($groups[$language], 'group_order');
         foreach ($groups[$language] as $gid => $group) {
             $tsv_output = $fields;
             $tsv_output['id'] = $gid;
@@ -2469,7 +2469,7 @@ function tsvSurveyExport($surveyid){
             
             // questions
             if (array_key_exists($gid, $questions[$language])){
-                sortArrayByColumn($questions[$language][$gid], 'question_order');
+                $questions[$language][$gid] = sortArrayByColumn($questions[$language][$gid], 'question_order');
                 foreach ($questions[$language][$gid] as $qid => $question) {
                     $tsv_output = $fields;
                     $tsv_output['id'] = $question['qid'];
@@ -2530,7 +2530,7 @@ function tsvSurveyExport($surveyid){
                     }
                     
                     if (!empty($subquestions[$language][$qid])){
-                        sortArrayByColumn($subquestions[$language][$qid], 'question_order');
+                        $subquestions[$language][$qid] = sortArrayByColumn($subquestions[$language][$qid], 'question_order');
                         foreach ($subquestions[$language][$qid] as $key => $subquestion) {
                             $tsv_output = $fields;
                             $tsv_output['id'] = $subquestion['qid'];
@@ -2552,7 +2552,7 @@ function tsvSurveyExport($surveyid){
                     }
 
                     if (!empty($answers[$language][$qid])){
-                        sortArrayByColumn($answers[$language][$qid], 'sortorder');
+                        $answers[$language][$qid] = sortArrayByColumn($answers[$language][$qid], 'sortorder');
                         foreach ($answers[$language][$qid] as $key => $answer) {
                             $tsv_output = $fields;
                             $tsv_output['id'] = $answer['qid'];
@@ -2573,7 +2573,7 @@ function tsvSurveyExport($surveyid){
 
     // assessments
     if (!empty($assessments)){
-        //sortArrayByColumn($assessments[$gid], 'other');
+        //$assessments[$gid] = sortArrayByColumn($assessments[$gid], 'other');
         foreach ($assessments as $key => $assessment) {
             $tsv_output = $fields;
             $tsv_output['id'] = $assessment['id'];
@@ -2591,7 +2591,7 @@ function tsvSurveyExport($surveyid){
 
     // quotas
     if (!empty($quotas)){
-        sortArrayByColumn($quotas, 'id');
+        $quotas = sortArrayByColumn($quotas, 'id');
         foreach ($quotas as $key => $quota) {
             $tsv_output = $fields;
             $tsv_output['id'] = $quota['id'];
@@ -2632,10 +2632,13 @@ function tsvSurveyExport($surveyid){
  * @param array $array
  * @param string $column_name
  **/
-function sortArrayByColumn(&$array, $column_name){
-    uasort($array, function($a,$b) use (&$column_name) {
-        return @(strnatcmp($a["' . $column_name . '"], $b["' . $column_name . '"]));
-    });
+function sortArrayByColumn($array, $column_name){
+    $keys = array_keys($array);
+    array_multisort(
+        array_column($array, $column_name), SORT_ASC, SORT_NUMERIC, $array, $keys
+    );
+    $array = array_combine($keys, $array);
+    return $array;
 }
 
 /**
