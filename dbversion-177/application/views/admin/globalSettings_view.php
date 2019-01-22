@@ -356,35 +356,10 @@
                             <?php if ( $thisusercontrolSameGroupPolicy == false) { echo " selected='selected'";}?>
                             ><?php $clang->eT("No"); ?></option>
                     </select></li>
+        
 
-                <?php $thisforce_ssl = getGlobalSetting('force_ssl');
-                    $opt_force_ssl_on = $opt_force_ssl_off = $opt_force_ssl_neither = '';
-                    // LimeService Mod Start
-                    $warning_force_ssl =  $clang->gT("Attention: SSL is only available for *.limequery.com domains.");
-/*
-                    switch($thisforce_ssl)
-                    {
-                        case 'on':
-                            $warning_force_ssl = '&nbsp;';
-                            break;
-                        case 'off':
-                        case 'neither':
-                            break;
-                        default:
-                            $thisforce_ssl = 'neither';
-                    };
-                    */
-                    // LimeService Mod Start end
-                    $this_opt = 'opt_force_ssl_'.$thisforce_ssl;
-                    $$this_opt = ' selected="selected"';
-                ?><li><label for="force_ssl"><?php $clang->eT('Force HTTPS:'); ?></label>
-                    <select name="force_ssl" id="force_ssl">
-                        <option value="on" <?php echo $opt_force_ssl_on; ?>><?php $clang->eT('On'); ?></option>
-                        <option value="off" <?php echo $opt_force_ssl_off; ?>><?php $clang->eT('Off'); ?></option>
-                        <option value="neither" <?php echo $opt_force_ssl_neither; ?>><?php $clang->eT("Don't force on or off"); ?></option>
-                    </select></li>
-                <li><span style='font-size:0.8em;font-weight:bold;'><?php echo $warning_force_ssl; ?></span></li>
-                <?php unset($thisforce_ssl,$opt_force_ssl_on,$opt_force_ssl_off,$opt_force_ssl_neither,$warning_force_ssl,$this_opt); ?>
+                <?php // LimeService Mod Remove SSL setting ?>
+                
             </ul></div>
 
         <div id='presentation'><ul>

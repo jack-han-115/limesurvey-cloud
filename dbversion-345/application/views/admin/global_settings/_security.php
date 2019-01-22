@@ -66,24 +66,7 @@
     </div>
 </div>
 
-<div class="form-group">
-    <label class=" control-label"  for="force_ssl">
-    <?php if (Yii::app()->getConfig("demoMode")==true){ ?>
-    <span class="text-danger asterisk"></span>
-    <?php }; ?>    
-    <?php eT('Force HTTPS:'); echo ((Yii::app()->getConfig("demoMode")==true)?'*':'');?></label>
-    <div class="">
-        <?php $this->widget('yiiwheels.widgets.buttongroup.WhButtonGroup', array(
-            'name' => 'force_ssl',
-            'value'=> getGlobalSetting('force_ssl'),
-            'selectOptions'=>array(
-                "neither"=>gT("Don't force on/off",'unescaped'),
-                "on"=>gT("On",'unescaped'),
-                "off"=>gT("Off",'unescaped')
-            )
-        ));?>
-    </div>
-</div>
+<?php // LimeService Mod Remove SSL setting ?>
 <?php
 $warning_force_ssl = sprintf(gT('Warning: Before turning on HTTPS,%s check if this link works.%s'),'<a href="https://'.$_SERVER['HTTP_HOST'].$this->createUrl("admin/globalsettings/sa").'" title="'. gT('Test if your server has SSL enabled by clicking on this link.').'">','</a>')
 .'<br/> '

@@ -66,20 +66,7 @@
     </div>
 </div>
 
-<div class="form-group">
-    <label class="col-sm-5 control-label"  for="force_ssl"><?php eT('Force HTTPS:'); ?></label>
-    <div class="col-sm-6">
-        <?php $this->widget('yiiwheels.widgets.buttongroup.WhButtonGroup', array(
-            'name' => 'force_ssl',
-            'value'=> getGlobalSetting('force_ssl'),
-            'selectOptions'=>array(
-                "neither"=>gT("Don't force on/off",'unescaped'),
-                "on"=>gT("On",'unescaped'),
-                "off"=>gT("Off",'unescaped')
-            )
-        ));?>
-    </div>
-</div>
+<?php // LimeService Mod Remove SSL settings ?>
 <?php
 $warning_force_ssl = sprintf(gT('Warning: Before turning on HTTPS,%s check if this link works.%s'),'<a href="https://'.$_SERVER['HTTP_HOST'].$this->createUrl("admin/globalsettings/sa").'" title="'. gT('Test if your server has SSL enabled by clicking on this link.').'">','</a>')
 .'<br/> '

@@ -253,7 +253,8 @@ class GlobalSettings extends Survey_Common_Action
                 SettingGlobal::setSetting('defaulttheme', $sTemplate);
             }
             SettingGlobal::setSetting('x_frame_options', Yii::app()->getRequest()->getPost('x_frame_options'));
-            SettingGlobal::setSetting('force_ssl', Yii::app()->getRequest()->getPost('force_ssl'));
+            // LimeService Mod Remove SSL setting
+            // SettingGlobal::setSetting('force_ssl', Yii::app()->getRequest()->getPost('force_ssl'));
         }
 
         // we set the admin theme
