@@ -491,7 +491,7 @@ $config['showqnumcode'] = 'choose';
 * If LimeSurvey comes up as normal, then everything is fine. If you
 * get a page not found error or permission denied error then
 */
-$config['force_ssl'] = 'neither'; // DO not turn on unless you are sure your server supports SSL/HTTPS
+$config['force_ssl'] = 'on'; // DO not turn on unless you are sure your server supports SSL/HTTPS
 
 
 /**
