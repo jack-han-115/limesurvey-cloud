@@ -37,11 +37,12 @@ function createChart($iQuestionID, $iSurveyID, $type = null, $lbl, $gdata, $graw
         return false;
     }
     $rootdir = Yii::app()->getConfig("rootdir");
-    $admintheme = Yii::app()->getConfig("admintheme");
     $chartfontfile = Yii::app()->getConfig("chartfontfile");
     $chartfontsize = Yii::app()->getConfig("chartfontsize");
     $alternatechartfontfile = Yii::app()->getConfig("alternatechartfontfile");
     $cachefilename = "";
+
+    $adminThemePath = AdminTheme::getInstance()->path;
 
     /* Set the fonts for the chart */
     if ($chartfontfile == 'auto') {
@@ -65,7 +66,7 @@ function createChart($iQuestionID, $iSurveyID, $type = null, $lbl, $gdata, $graw
             $cachefilename = basename($cache->GetFileFromCache("graph".$iSurveyID.$sLanguageCode.$iQuestionID, $DataSet));
         } else {
             $graph = new pChart(690, 200);
-            $graph->loadColorPalette(Yii::app()->getConfig('styledir').DIRECTORY_SEPARATOR.$admintheme.DIRECTORY_SEPARATOR.'images/limesurvey.pal');
+            $graph->loadColorPalette($adminThemePath . DIRECTORY_SEPARATOR . 'images/limesurvey.pal');
             $graph->setFontProperties($rootdir.DIRECTORY_SEPARATOR.'assets'.DIRECTORY_SEPARATOR.'fonts'.DIRECTORY_SEPARATOR.$chartfontfile, $chartfontsize);
             $graph->setFontProperties($rootdir.DIRECTORY_SEPARATOR.'assets'.DIRECTORY_SEPARATOR.'fonts'.DIRECTORY_SEPARATOR.$chartfontfile, $chartfontsize);
             $graph->drawTitle(0, 0, gT('Sorry, but this question has too many answer options to be shown properly in a graph.', 'unescaped'), 30, 30, 30, 690, 200);
@@ -81,7 +82,7 @@ function createChart($iQuestionID, $iSurveyID, $type = null, $lbl, $gdata, $graw
             $cachefilename = basename($cache->GetFileFromCache("graph".$iSurveyID.$sLanguageCode.$iQuestionID, $DataSet));
         } else {
             $graph = new pChart(690, 200);
-            $graph->loadColorPalette(Yii::app()->getConfig('styledir').DIRECTORY_SEPARATOR.$admintheme.DIRECTORY_SEPARATOR.'images/limesurvey.pal');
+            $graph->loadColorPalette($adminThemePath . DIRECTORY_SEPARATOR . 'images/limesurvey.pal');
             $graph->setFontProperties($rootdir.DIRECTORY_SEPARATOR.'assets'.DIRECTORY_SEPARATOR.'fonts'.DIRECTORY_SEPARATOR.$chartfontfile, $chartfontsize);
             $graph->setFontProperties($rootdir.DIRECTORY_SEPARATOR.'assets'.DIRECTORY_SEPARATOR.'fonts'.DIRECTORY_SEPARATOR.$chartfontfile, $chartfontsize);
             $graph->drawTitle(0, 0, gT('Sorry, but this question has no responses yet so a graph cannot be shown.', 'unescaped'), 30, 30, 30, 690, 200);
@@ -171,7 +172,7 @@ function createChart($iQuestionID, $iSurveyID, $type = null, $lbl, $gdata, $graw
                 }
                 $graph = new pChart(690 + $legendsize[0], $gheight);
                 $graph->drawFilledRectangle(0, 0, 690 + $legendsize[0], $gheight, 254, 254, 254, false);
-                $graph->loadColorPalette(Yii::app()->getConfig('styledir').DIRECTORY_SEPARATOR.$admintheme.DIRECTORY_SEPARATOR.'images/limesurvey.pal');
+                $graph->loadColorPalette($adminThemePath . DIRECTORY_SEPARATOR . 'images/limesurvey.pal');
                 $graph->setFontProperties($rootdir.DIRECTORY_SEPARATOR.'assets'.DIRECTORY_SEPARATOR.'fonts'.DIRECTORY_SEPARATOR.$chartfontfile, $chartfontsize);
                 $graph->setGraphArea(50, 30, 500, $gheight - 60);
                 $graph->drawFilledRoundedRectangle(7, 7, 523 + $legendsize[0], $gheight - 7, 5, 254, 255, 254);
@@ -255,7 +256,7 @@ function createChart($iQuestionID, $iSurveyID, $type = null, $lbl, $gdata, $graw
                 $gheight = ceil($gheight);
                 $graph = new pChart(690, $gheight);
                 $graph->drawFilledRectangle(0, 0, 690, $gheight, 254, 254, 254, false);
-                $graph->loadColorPalette(Yii::app()->getConfig('styledir').DIRECTORY_SEPARATOR.$admintheme.'/images/limesurvey.pal');
+                $graph->loadColorPalette($adminThemePath . DIRECTORY_SEPARATOR . 'images/limesurvey.pal');
                 $graph->drawFilledRoundedRectangle(7, 7, 687, $gheight - 3, 5, 254, 255, 254);
                 $graph->drawRoundedRectangle(5, 5, 689, $gheight - 1, 5, 230, 230, 230);
 
@@ -325,7 +326,7 @@ function buildSelects($allfields, $surveyid, $language)
         }
     }
 
-    $postvars = array(); 
+    $postvars = array();
     // creates array of post variable names
     for (reset($_POST); $key = key($_POST); next($_POST)) { $postvars[] = $key; }
 
@@ -913,20 +914,20 @@ class statistics_helper
                 //other databases (MySQL, Postgres)
                 else {
                     //standard deviation
-                    $query = "SELECT STDDEV(CAST(".Yii::app()->db->quoteColumnName($fieldname)." AS DECIMAL(10,6))) as stdev";
+                    $query = "SELECT STDDEV(CAST(".Yii::app()->db->quoteColumnName($fieldname)." AS DECIMAL(26,6))) as stdev";
                 }
 
                 //sum
-                $query .= ", SUM(CAST(".Yii::app()->db->quoteColumnName($fieldname)." AS DECIMAL(10,6))) as sum";
+                $query .= ", SUM(CAST(".Yii::app()->db->quoteColumnName($fieldname)." AS DECIMAL(26,6))) as sum";
 
                 //average
-                $query .= ", AVG(CAST(".Yii::app()->db->quoteColumnName($fieldname)." AS DECIMAL(10,6))) as average";
+                $query .= ", AVG(CAST(".Yii::app()->db->quoteColumnName($fieldname)." AS DECIMAL(26,6))) as average";
 
                 //min
-                $query .= ", MIN(CAST(".Yii::app()->db->quoteColumnName($fieldname)." AS DECIMAL(10,6))) as minimum";
+                $query .= ", MIN(CAST(".Yii::app()->db->quoteColumnName($fieldname)." AS DECIMAL(26,6))) as minimum";
 
                 //max
-                $query .= ", MAX(CAST(".Yii::app()->db->quoteColumnName($fieldname)." AS DECIMAL(10,6))) as maximum";
+                $query .= ", MAX(CAST(".Yii::app()->db->quoteColumnName($fieldname)." AS DECIMAL(26,6))) as maximum";
                 //Only select responses where there is an actual number response, ignore nulls and empties (if these are included, they are treated as zeroes, and distort the deviation/mean calculations)
 
                 //special treatment for MS SQL databases
@@ -3096,7 +3097,7 @@ class statistics_helper
                 $am = 0;
 
                 $sumitems = $grawdata[0] + $grawdata[1] + $grawdata[2] + $grawdata[3] + $grawdata[4];
-                
+
                 //calculate arithmetic mean
                 if (isset($sumitems) && $sumitems > 0) {
 
@@ -3876,8 +3877,17 @@ class statistics_helper
             // set default header data
             // Since png crashes some servers (and we can not try/catch that) we use .gif (or .jpg) instead
             //$headerlogo = '$this->pdf';
+
             $headerlogo = '';
-            $this->pdf->SetHeaderData($headerlogo, 10, gT("Quick statistics", 'unescaped'), gT("Survey")." ".$surveyid." '".flattenText($surveyInfo['surveyls_title'], false, true, 'UTF-8')."'");
+            $logowidth = 10;
+            $at = AdminTheme::getInstance();
+            $path = array($at->path, 'images', 'logo_statistics.jpg');
+            if (file_exists(implode(DIRECTORY_SEPARATOR, $path))) {
+                $headerlogo = 'logo_statistics.jpg';
+                $logowidth= 85;
+            }
+
+            $this->pdf->SetHeaderData($headerlogo, $logowidth, gT("Quick statistics", 'unescaped'), gT("Survey")." ".$surveyid." '".flattenText($surveyInfo['surveyls_title'], false, true, 'UTF-8')."'");
             $this->pdf->SetFont($aPdfLanguageSettings['pdffont'], '', $aPdfLanguageSettings['pdffontsize']);
             // set default monospaced font
             $this->pdf->SetDefaultMonospacedFont(PDF_FONT_MONOSPACED);

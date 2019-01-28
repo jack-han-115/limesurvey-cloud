@@ -1807,7 +1807,7 @@
                             $validationEqn[$questionNum][] = array(
                             'qtype' => $type,
                             'type' => 'equals_num_value',
-                            'class' => 'sum_range',
+                            'class' => 'sum_equals',
                             'eqn' =>  ($qinfo['mandatory']=='Y')?'(' . $mainEqn . ' == (' . $equals_num_value . '))':'(' . $mainEqn . ' == (' . $equals_num_value . ')' . $noanswer_option . ')',
                             'qid' => $questionNum,
                             'sumEqn' => $sumEqn,
@@ -3212,7 +3212,7 @@
                 // equals_num_value
                 if ($equals_num_value!='')
                 {
-                    $qtips['sum_range']=sprintf($this->gT("The sum must equal %s."),'{fixnum('.$equals_num_value.')}');
+                    $qtips['sum_equals']=sprintf($this->gT("The sum must equal %s."),'{fixnum('.$equals_num_value.')}');
                 }
 
                 if($input_boxes)
@@ -3623,7 +3623,10 @@
             $now = microtime(true);
             $this->em->SetSurveyMode($this->surveyMode);
             $survey = Survey::model()->findByPk($surveyid);
-
+            if(empty($this->surveyOptions)) {
+                /* Log it as error : this need some test */
+                Yii::log('setVariableAndTokenMappingsForExpressionManager with an empty surveyOptions.','error','application.LimeExpressionManager');
+            }
             // TODO - do I need to force refresh, or trust that createFieldMap will cache langauges properly?
             $fieldmap=createFieldMap($survey,$style='full',$forceRefresh,false,$_SESSION['LEMlang']);
             $this->sid= $surveyid;
@@ -3658,6 +3661,14 @@
                 'jsName'=>'',
                 'readWrite'=>'N',
             );
+            if($survey->getIsAssessments()) {
+                $this->knownVars['ASSESSMENT_CURRENT_TOTAL'] = array(
+                    'code'=> 0,
+                    'jsName_on'=>'',
+                    'jsName'=>'',
+                    'readWrite'=>'N',
+                );
+            }
             /* Add the core replacement before question code : needed if use it in equation , use SID to never send error */
             templatereplace("{SID}");
 
@@ -4779,123 +4790,86 @@
         public static function GetAllVarNamesForQ($qseq,$varname)
         {
             $LEM =& LimeExpressionManager::singleton();
-
             $parts = explode('.',$varname);
             $qroot = '';
             $suffix = '';
             $sqpatts = array();
             $nosqpatts = array();
             $comments = '';
-
-            if ($parts[0] == 'self')
-            {
+            if ($parts[0] == 'self') {
                 $type = 'self';
-            }
-            else
-            {
+            } else {
                 $type = 'that';
                 array_shift($parts);
-                if (isset($parts[0]))
-                {
+                if (isset($parts[0])) {
                     $qroot = $parts[0];
-                }
-                else
-                {
+                } else {
                     return $varname;
                 }
             }
             array_shift($parts);
 
-            if (count($parts) > 0)
-            {
-                if (preg_match('/^' . ExpressionManager::$RDP_regex_var_attr . '$/',$parts[count($parts)-1]))
-                {
+            if (count($parts) > 0) {
+                if (preg_match('/^' . ExpressionManager::$RDP_regex_var_attr . '$/',$parts[count($parts)-1])) {
                     $suffix = '.' . $parts[count($parts)-1];
                     array_pop($parts);
                 }
             }
 
-            foreach($parts as $part)
-            {
-                if ($part == 'nocomments')
-                {
+            foreach($parts as $part) {
+                if ($part == 'nocomments') {
                     $comments = 'N';
-                }
-                else if ($part == 'comments')
-                {
+                } elseif ($part == 'comments') {
                     $comments = 'Y';
-                }
-                else if (preg_match('/^sq_.+$/',$part))
-                {
+                } elseif (preg_match('/^sq_.+$/',$part)) {
                     $sqpatts[] = substr($part,3);
-                }
-                else if (preg_match('/^nosq_.+$/',$part))
-                {
+                } elseif (preg_match('/^nosq_.+$/',$part)) {
                     $nosqpatts[] = substr($part,5);
-                }
-                else
-                {
+                } else {
                     return $varname;    // invalid
                 }
             }
             $sqpatt = implode('|',$sqpatts);
             $nosqpatt = implode('|',$nosqpatts);
             $vars = array();
-            if(isset($LEM->knownVars))
-            {
-                foreach ($LEM->knownVars as $kv)
-                {
-                    if ($type == 'self')
-                    {
-                        if (!isset($kv['qseq']) || $kv['qseq'] != $qseq || trim($kv['sgqa']) == '')
-                        {
+            if(isset($LEM->knownVars)) {
+                foreach ($LEM->knownVars as $kv) {
+                    if ($type == 'self') {
+                        if (!isset($kv['qseq']) || $kv['qseq'] != $qseq || trim($kv['sgqa']) == '') {
+                            continue;
+                        }
+                    } else {
+                        if (!isset($kv['rootVarName']) || $kv['rootVarName'] != $qroot) {
                             continue;
                         }
                     }
-                    else
-                    {
-                        if (!isset($kv['rootVarName']) || $kv['rootVarName'] != $qroot)
-                        {
+                    if ($comments != '') {
+                        if ($comments == 'Y' && !preg_match('/comment$/',$kv['sgqa'])) {
                             continue;
                         }
-                    }
-                    if ($comments != '')
-                    {
-                        if ($comments == 'Y' && !preg_match('/comment$/',$kv['sgqa']))
-                        {
-                            continue;
-                        }
-                        if ($comments == 'N' && preg_match('/comment$/',$kv['sgqa']))
-                        {
+                        if ($comments == 'N' && preg_match('/comment$/',$kv['sgqa'])) {
                             continue;
                         }
                     }
                     $sgq = $LEM->sid . 'X' . $kv['gid'] . 'X' . $kv['qid'];
                     $ext = (string)substr($kv['sgqa'],strlen($sgq));
-
-                    if ($sqpatt != '')
-                    {
-                        if (!preg_match('/'.$sqpatt.'/',$ext))
-                        {
+                    if ($sqpatt != '') {
+                        if (!preg_match('/'.$sqpatt.'/',$ext)) {
                             continue;
                         }
                     }
-                    if ($nosqpatt != '')
-                    {
-                        if (preg_match('/'.$nosqpatt.'/',$ext))
-                        {
+                    if ($nosqpatt != '') {
+                        if (preg_match('/'.$nosqpatt.'/',$ext)) {
                             continue;
                         }
                     }
-
                     $vars[] = $kv['sgqa'] . $suffix;
                 }
             }
-            if (count($vars) > 0)
-            {
+            if (count($vars) > 0) {
                 return implode(',',$vars);
             }
-            return $varname;    // invalid
+            return $varname; // invalid
         }
 
         /**
@@ -7058,8 +7032,7 @@
         public static function GetQuestionStatus($qid)
         {
             $LEM =& LimeExpressionManager::singleton();
-            if (isset($LEM->currentQset[$qid]))
-            {
+            if (isset($LEM->currentQset[$qid])) {
                 return $LEM->currentQset[$qid];
             }
             return NULL;
@@ -7645,6 +7618,7 @@
                                 switch ($vclass)
                                 {
                                     case 'sum_range':
+                                    case 'sum_equals':
                                         $valParts[] = "    isValidSum" . $arg['qid'] . "=false;\n";
                                         break;
                                     case 'other_comment_mandatory':
@@ -8834,11 +8808,11 @@ report~numKids > 0~message~{name}, you said you are {age} and that you have {num
             }
             $updatedValues=array();
             $radixchange = (($LEM->surveyOptions['radix']==',') ? true : false);
-            foreach ($LEM->currentQset as $qinfo)
-            {
+            foreach ($LEM->currentQset as $qinfo) {
                 $qid = $qinfo['info']['qid'];
                 $gseq = $qinfo['info']['gseq'];
                 /* Never use posted value : must be fixed and find real actual relevance */
+                /* Set current relevance using ProcessStepString tested in https://github.com/LimeSurvey/LimeSurvey/commit/9106dfe8afb07b99f14814d3fbcf7550e2b44bb9 */
                 $relevant = (isset($_POST['relevance' . $qid]) ? ($_POST['relevance' . $qid] == 1) : false);
                 $grelevant = (isset($_POST['relevanceG' . $gseq]) ? ($_POST['relevanceG' . $gseq] == 1) : false);
                 $_SESSION[$LEM->sessid]['relevanceStatus'][$qid] = $relevant;
@@ -8855,6 +8829,7 @@ report~numKids > 0~message~{name}, you said you are {age} and that you have {num
                             $_SESSION[$LEM->sessid]['relevanceStatus'][$rowdivid] = $sqrelevant;
                         }
                     }
+                    // Maybe set current relevance to 0 if count($sqrelevant) == 0 (hand have sq) , for 4.X
                     $type = $qinfo['info']['type'];
                     if (($relevant && $grelevant && $sqrelevant) || !$LEM->surveyOptions['deletenonvalues'])
                     {

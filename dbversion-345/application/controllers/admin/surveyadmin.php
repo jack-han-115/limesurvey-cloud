@@ -813,6 +813,10 @@ class SurveyAdmin extends Survey_Common_Action
                 $aData['sNewTimingsTableName'] = $sNewTimingsTableName;
             }
 
+            $event = new PluginEvent('afterSurveyDeactivate');
+            $event->set('surveyId', $iSurveyID);
+            App()->getPluginManager()->dispatchEvent($event);
+
             $aData['surveyid'] = $iSurveyID;
             Yii::app()->db->schema->refresh();
         }
@@ -1396,7 +1400,7 @@ class SurveyAdmin extends Survey_Common_Action
             LimeExpressionManager::SetSurveyId($aImportResults['newsid']);
             LimeExpressionManager::RevertUpgradeConditionsToRelevance($aImportResults['newsid']);
             LimeExpressionManager::UpgradeConditionsToRelevance($aImportResults['newsid']);
-            LimeExpressionManager::StartSurvey($oSurvey->sid, 'survey', $oSurvey->attributes, true);
+            @LimeExpressionManager::StartSurvey($oSurvey->sid, 'survey', $oSurvey->attributes, true);
             LimeExpressionManager::StartProcessingPage(true, true);
             $aGrouplist = QuestionGroup::model()->findAllByAttributes(['sid'=>$aImportResults['newsid']]);
             foreach ($aGrouplist as $aGroup) {
@@ -2286,7 +2290,7 @@ class SurveyAdmin extends Survey_Common_Action
                 if ($oSurveyConfig->options === 'inherit'){
                     $oSurveyConfig->setOptionKeysToInherit();
                 }
-                
+
                 foreach ($aThemeOptions as $key => $value) {
                         $oSurveyConfig->setOption($key, $value);
                 }
@@ -2309,7 +2313,7 @@ class SurveyAdmin extends Survey_Common_Action
         if(!Permission::model()->hasSurveyPermission($iSurveyID, 'surveycontent', 'update')) {
             return Yii::app()->getController()->renderPartial(
                 '/admin/super/_renderJson',
-                array('data' => ['success' => $success, 'message' => gT("You don't have suffisient right to upload image in this survey"), 'debug' => $debug]),
+                array('data' => ['success' => $success, 'message' => gT("You don't have sufficient permissions to upload images in this survey"), 'debug' => $debug]),
                 false,
                 false
             );
@@ -2359,7 +2363,7 @@ class SurveyAdmin extends Survey_Common_Action
                 false
             );
         }
-        
+
         $filename = sanitize_filename($_FILES['file']['name'], false, false, false); // Don't force lowercase or alphanumeric
         $fullfilepath = $destdir.$filename;
         $debug[] = $destdir;

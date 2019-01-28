@@ -100,7 +100,7 @@ const globalWindowMethods = {
             $("<input type='hidden'>").attr("name", key).attr("value", value).appendTo($form);
         });
         
-        $("<input type='hidden'>").attr("name", 'YII_CSRF_TOKEN').attr("value", LS.data.csrfToken).appendTo($form);
+        $("<input type='hidden'>").attr("name", LS.data.csrfTokenName).attr("value", LS.data.csrfToken).appendTo($form);
         $form.appendTo("body");
         $form.submit();
     },
@@ -111,11 +111,6 @@ const globalWindowMethods = {
         $('#accordion').on('shown.bs.collapse',".panel-collapse.collapse", function (e) {
             if(e.target != this) return;
             $('#accordion').find('.panel-collapse.collapse').not('#'+$(this).attr('id')).collapse('hide');
-            setTimeout(function(){
-                $('html, body').animate({
-                    scrollTop: $(this).closest('.panel.panel-default').offset().top-20
-                }, 500);
-            }, 500);
         });
     }
 };

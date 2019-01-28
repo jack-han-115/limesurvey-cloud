@@ -99,10 +99,11 @@ class Question extends LSActiveRecord
                     array('title', 'length', 'min' => 1, 'max'=>20, 'on' => 'update, insert'),
                     array('qid,sid,gid,parent_qid', 'numerical', 'integerOnly'=>true),
                     array('qid', 'unique', 'criteria'=>array(
-                                    'condition'=>'language=:language',
-                                    'params'=>array(':language'=>$this->language)
-                            ),
-                            'message'=>'{attribute} "{value}" is already in use.'),
+                            'condition'=>'language=:language',
+                            'params'=>array(':language'=>$this->language)
+                        ),
+                        'message'=>sprintf(gT("Question ID (qid): '%s' is already in use."),$this->qid),// Usage of {attribute} need attributeLabels, {value} never exist in message
+                    ),
                     array('language', 'length', 'min' => 2, 'max'=>20), // in array languages ?
                     array('title,question,help', 'LSYii_Validators'),
                     array('other', 'in', 'range'=>array('Y', 'N'), 'allowEmpty'=>true),
@@ -116,16 +117,18 @@ class Question extends LSActiveRecord
                 );
         // Always enforce unicity on Sub question code (DB issue).
         if ($this->parent_qid) {
-            $aRules[] = array('title', 'unique', 'caseSensitive'=>false, 'criteria'=>array(
-                                'condition' => 'language=:language AND sid=:sid AND parent_qid=:parent_qid and scale_id=:scale_id',
-                                'params' => array(
-                                    ':language' => $this->language,
-                                    ':sid' => $this->sid,
-                                    ':parent_qid' => $this->parent_qid,
-                                    ':scale_id' => $this->scale_id
-                                    )
-                                ),
-                            'message' => gT('Subquestion codes must be unique.'));
+            $aRules[] = array('title', 'unique', 'caseSensitive'=>false,
+                'criteria'=>array(
+                    'condition' => 'language=:language AND sid=:sid AND parent_qid=:parent_qid and scale_id=:scale_id',
+                    'params' => array(
+                        ':language' => $this->language,
+                        ':sid' => $this->sid,
+                        ':parent_qid' => $this->parent_qid,
+                        ':scale_id' => $this->scale_id
+                    )
+                ),
+                'message' => gT('Subquestion codes must be unique.')
+            );
             // Disallow other title if question allow other
             $oParentQuestion = Question::model()->findByPk(array("qid"=>$this->parent_qid, 'language'=>$this->language));
             if ($oParentQuestion->other == "Y") {
@@ -141,11 +144,14 @@ class Question extends LSActiveRecord
         if (!$this->isNewRecord) {
             $oActualValue = Question::model()->findByPk(array("qid"=>$this->qid, 'language'=>$this->language));
             if ($oActualValue && $oActualValue->title == $this->title) {
-                return $aRules; // We don't change title, then don't put rules on title
+                /* We don't change title, then don't put rules on title */
+                /* We don't want to broke existing survey,  We only disallow to set it or update it according to this value */
+                return $aRules;
             }
         }
-        // 0 or empty
-        if (!$this->parent_qid) {
+        /* Question was new or title was updated : we add minor rules. This rules don't broke DB, only potential “Expression Manager” issue. */
+        if (!$this->parent_qid) { // 0 or empty
+            /* Unicity for ExpressionManager */
             $aRules[] = array('title', 'unique', 'caseSensitive'=>true,
                 'criteria'=>array(
                     'condition' => 'language=:language AND sid=:sid AND parent_qid=0',
@@ -157,9 +163,22 @@ class Question extends LSActiveRecord
                 'message' => gT('Question codes must be unique.'),
                 'except' => 'archiveimport'
             );
+            /* ExpressionManager basic rule */
             $aRules[] = array('title', 'match', 'pattern' => '/^[a-z,A-Z][[:alnum:]]*$/',
                 'message' => gT('Question codes must start with a letter and may only contain alphanumeric characters.'),
-                'except' => 'archiveimport');
+                'except' => 'archiveimport'
+            );
+            /* ExpressionManager reserved word (partial) */
+            $aRules[] = array('title', 'in', 'not' => true,
+                'range' => array(
+                    'LANG','SID', // Global var
+                    'SAVEDID','TOKEN', // current survey related var
+                    'QID','GID','SGQ', // current question related var
+                    'self','that','this', // EM reserved variables
+                ),
+                'message'=> sprintf(gT("Code: '%s' is a reserved word."),$this->title), // Usage of {attribute} need attributeLabels, {value} never exist in message
+                'except' => 'archiveimport'
+            );
         } else {
             $aRules[] = array('title', 'compare', 'compareValue'=>'time', 'operator'=>'!=',
                 'message'=> gT("'time' is a reserved word and can not be used for a subquestion."),
@@ -997,12 +1016,12 @@ class Question extends LSActiveRecord
         $criteria2->compare('t.title', $this->title, true, 'OR');
         $criteria2->compare('t.question', $this->title, true, 'OR');
         $criteria2->compare('t.type', $this->title, true, 'OR');
-
-        $qid_reference = (Yii::app()->db->getDriverName() == 'pgsql' ? ' t.qid::varchar' : 't.qid');
-        $criteria2->compare($qid_reference, $this->title, true, 'OR');
-
-        if ($this->gid != '') {
-            $criteria->compare('groups.gid', $this->gid, true, 'AND');
+        /* search id exactly */
+        if(is_numeric($this->title)) {
+            $criteria2->compare('t.qid', $this->title, false, 'OR');
+        }
+        if ($this->gid != '' and is_numeric($this->gid)) {
+            $criteria->compare('groups.gid', $this->gid, false, 'AND');
         }
 
         $criteria->mergeWith($criteria2, 'AND');

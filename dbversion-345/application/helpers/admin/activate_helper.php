@@ -254,7 +254,7 @@ function checkQuestions($postsid, $iSurveyID, $qtypes)
 /**
 * Function to activate a survey
 * @param int $iSurveyID The Survey ID
-* @param bool $simulate
+* @param bool $simulate Set to true to test the activation regarding table size limit
 * @return array
 */
 function activateSurvey($iSurveyID, $simulate = false)
@@ -497,6 +497,12 @@ function activateSurvey($iSurveyID, $simulate = false)
     }
     $sQuery = "UPDATE {{surveys}} SET active='Y' WHERE sid=".$iSurveyID;
     Yii::app()->db->createCommand($sQuery)->query();
+
+    $event = new PluginEvent('afterSurveyActivate');
+    $event->set('surveyId', $iSurveyID);
+    $event->set('simulate', $simulate);
+    App()->getPluginManager()->dispatchEvent($event);
+
     return $aResult;
 }
 

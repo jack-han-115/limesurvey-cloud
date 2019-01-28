@@ -21103,7 +21103,7 @@ const globalWindowMethods = {
             $("<input type='hidden'>").attr("name", key).attr("value", value).appendTo($form);
         });
         
-        $("<input type='hidden'>").attr("name", 'YII_CSRF_TOKEN').attr("value", LS.data.csrfToken).appendTo($form);
+        $("<input type='hidden'>").attr("name", LS.data.csrfTokenName).attr("value", LS.data.csrfToken).appendTo($form);
         $form.appendTo("body");
         $form.submit();
     },
@@ -21114,11 +21114,6 @@ const globalWindowMethods = {
         $('#accordion').on('shown.bs.collapse',".panel-collapse.collapse", function (e) {
             if(e.target != this) return;
             $('#accordion').find('.panel-collapse.collapse').not('#'+$(this).attr('id')).collapse('hide');
-            setTimeout(function(){
-                $('html, body').animate({
-                    scrollTop: $(this).closest('.panel.panel-default').offset().top-20
-                }, 500);
-            }, 500);
         });
     }
 };
@@ -27323,6 +27318,19 @@ const SaveController = () => {
     //###########PRIVATE
     checks = () => {
         return {
+            _checkExportButton: {
+                check: '[data-submit-form]',
+                run: function(ev) {
+                    ev.preventDefault();
+                    const $form = getForm(this);
+                    formSubmitting = true;
+                    for (let instanceName in CKEDITOR.instances) {
+                        CKEDITOR.instances[instanceName].updateElement();
+                    }
+                    $form.find('[type="submit"]').first().trigger('click');
+                },
+                on: 'click'
+            },
             _checkSaveButton: {
                 check: '#save-button',
                 run: function(ev) {
@@ -27536,7 +27544,7 @@ const ConfirmDeleteModal = function (options) {
                 formObject.append('<input name="' + key + '" value="' + value + '" type="' + type + '" ' + (htmlClass ? 'class="' + htmlClass + '"' : '') + ' />');
             }
 
-            formObject.append('<input name="YII_CSRF_TOKEN" value="' + LS.data.csrfToken + '" type="hidden" />');
+            formObject.append('<input name="' + LS.data.csrfTokenName + '" value="' + LS.data.csrfToken + '" type="hidden" />');
             modalObject.find('.modal-body').append(formObject)
             modalObject.find('.modal-body').append('<p>' + confirmText + '</p>');
 
@@ -27926,7 +27934,7 @@ const gridButton = {
         $.bsconfirm(text,utf8,function onClickOK() {
             $('#'+gridid).yiiGridView('update', {
                 type : 'POST',
-                url : actionUrl, // No need to add csrfToken, already in ajaxSetup
+                url : actionUrl,
                 success: function(data) {
                     jQuery('#'+gridid).yiiGridView('update');
                     $('#identity__bsconfirmModal').modal('hide');

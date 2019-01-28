@@ -517,7 +517,17 @@ class Template extends LSActiveRecord
     {
         self::$instance = null;
     }
-
+        
+    /**
+    * Alias function for resetAssetVersion()
+    * Don't delete this one to maintain updgrade compatibilty
+    * @return void
+    */
+    public function forceAssets()
+    {
+        $this->resetAssetVersion();    
+    }
+                    
     /**
      * Reset assets for this template
      * Using DB only
@@ -545,8 +555,7 @@ class Template extends LSActiveRecord
      */
     public static function getStandardTemplateList()
     {
-        $standardTemplates = array('vanilla', 'bootswatch', 'fruity');
-        return $standardTemplates;
+        return array_keys(self::getTemplateInStandard());
     }
 
 
@@ -581,7 +590,6 @@ class Template extends LSActiveRecord
             $standardTemplateRootDir       = Yii::app()->getConfig("standardthemerootdir");
             self::$aTemplatesInStandardDir = self::getTemplateInFolder($standardTemplateRootDir);
         }
-
         return self::$aTemplatesInStandardDir;
     }
 
@@ -614,6 +622,7 @@ class Template extends LSActiveRecord
         $this->deleteAssetVersion();
         Survey::model()->updateAll(array('template' => $sNewName), "template = :oldname", array(':oldname'=>$this->name));
         Template::model()->updateAll(array('name' => $sNewName, 'folder' => $sNewName), "name = :oldname", array(':oldname'=>$this->name));
+        Template::model()->updateAll(array('extends' => $sNewName), "extends = :oldname", array(':oldname'=>$this->name));
         TemplateConfiguration::rename($this->name, $sNewName);
         TemplateManifest::rename($this->name, $sNewName);
     }

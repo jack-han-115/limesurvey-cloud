@@ -596,7 +596,6 @@ class UserAction extends Survey_Common_Action
     {
         // Save Data
         if (Yii::app()->request->getPost("action")) {
-
             $oUserModel                       = User::model()->findByPk(Yii::app()->session['loginID']);
             $oUserModel->lang                 = Yii::app()->request->getPost('lang');
             $oUserModel->dateformat           = Yii::app()->request->getPost('dateformat');
@@ -662,7 +661,7 @@ class UserAction extends Survey_Common_Action
             }
 
             if (Yii::app()->request->getPost("saveandclose")) {
-                $this->getController()->redirect(array("admin/survey/sa/index"));
+                $this->getController()->redirect(array("admin/index"));
             }
         } else {
             $aData = array();
@@ -686,7 +685,7 @@ class UserAction extends Survey_Common_Action
         $aData['fullpagebar']['savebutton']['form'] = 'personalsettings';
         $aData['fullpagebar']['saveandclosebutton']['form'] = 'personalsettings';
         $aData['fullpagebar']['closebutton']['url_keep'] = true;
-        $aData['fullpagebar']['closebutton']['url'] = Yii::app()->request->getUrlReferrer(Yii::app()->createUrl("admin/user/sa/index"));
+        $aData['fullpagebar']['closebutton']['url'] = Yii::app()->request->getUrlReferrer(Yii::app()->createUrl("admin"));
 
         //Get data for personal menues
         $oSurveymenu = Surveymenu::model();
