@@ -286,9 +286,9 @@ class LSYii_Application extends CWebApplication
         $sLanguage = preg_replace('/[^a-z0-9-]/i', '', $sLanguage);
         /// LimeService modification start
         $uploaddir=str_replace('instances','installations',dirname(dirname(dirname(dirname(__FILE__))))).'/'.$_SERVER['SERVER_NAME'].'/userdata/upload';
-        if (file_exists($uploaddir.'/locale250/'.$sLanguage.'/'.$sLanguage.'.mo'))
+        if (file_exists($uploaddir.'/locale345/'.$sLanguage.'/'.$sLanguage.'.mo'))
         {
-            $this->messages->basePath=$uploaddir.'/locale250';
+            $this->messages->basePath=$uploaddir.'/locale345';
         }
         else
         {
