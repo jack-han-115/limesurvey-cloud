@@ -1559,20 +1559,22 @@ class dataentry extends Survey_Common_Action
                                 $json = $_POST[$fieldname];
                                 $phparray = json_decode(stripslashes($json));
                                 $filecount = 0;
-                                $iArrayCount = count($phparray);
-                                for ($i = 0; $filecount < $iArrayCount; $i++) {
-                                    if ($_FILES[$fieldname."_file_".$i]['error'] != 4) {
-                                        $target = Yii::app()->getConfig('uploaddir')."/surveys/".$thissurvey['sid']."/files/".randomChars(20);
-                                        $size = 0.001 * $_FILES[$fieldname."_file_".$i]['size'];
-                                        $name = rawurlencode($_FILES[$fieldname."_file_".$i]['name']);
+                                if (is_array($phparray)){
+                                    $iArrayCount = count($phparray);
+                                    for ($i = 0; $filecount < $iArrayCount; $i++) {
+                                        if ($_FILES[$fieldname."_file_".$i]['error'] != 4) {
+                                            $target = Yii::app()->getConfig('uploaddir')."/surveys/".$thissurvey['sid']."/files/".randomChars(20);
+                                            $size = 0.001 * $_FILES[$fieldname."_file_".$i]['size'];
+                                            $name = rawurlencode($_FILES[$fieldname."_file_".$i]['name']);
 
-                                        if (move_uploaded_file($_FILES[$fieldname."_file_".$i]['tmp_name'], $target)) {
-                                            $phparray[$filecount]->filename = basename($target);
-                                            $phparray[$filecount]->name = $name;
-                                            $phparray[$filecount]->size = $size;
-                                            $pathinfo = pathinfo($_FILES[$fieldname."_file_".$i]['name']);
-                                            $phparray[$filecount]->ext = $pathinfo['extension'];
-                                            $filecount++;
+                                            if (move_uploaded_file($_FILES[$fieldname."_file_".$i]['tmp_name'], $target)) {
+                                                $phparray[$filecount]->filename = basename($target);
+                                                $phparray[$filecount]->name = $name;
+                                                $phparray[$filecount]->size = $size;
+                                                $pathinfo = pathinfo($_FILES[$fieldname."_file_".$i]['name']);
+                                                $phparray[$filecount]->ext = $pathinfo['extension'];
+                                                $filecount++;
+                                            }
                                         }
                                     }
                                 }
@@ -1580,7 +1582,11 @@ class dataentry extends Survey_Common_Action
                                 $insert_data[$fieldname] = ls_json_encode($phparray);
 
                             } else {
-                                $insert_data[$fieldname] = count($phparray);
+                                if (is_array($phparray)){
+                                    $insert_data[$fieldname] = count($phparray);
+                                } else {
+                                    $insert_data[$fieldname] = 0;
+                                }
                             }
                         } elseif ($irow['type'] == 'D') {
                             $qidattributes = QuestionAttribute::model()->getQuestionAttributes($irow['qid']);
@@ -2002,7 +2008,7 @@ class dataentry extends Survey_Common_Action
                             if (trim($qidattributes['display_columns']) != '') {
                                 $dcols = $qidattributes['display_columns'];
                             } else {
-                                $dcols = 0;
+                                $dcols = 1;
                             }
                             $meaquery = "SELECT title, question FROM {{questions}} WHERE parent_qid={$deqrow['qid']} AND language='{$sDataEntryLanguage}' ORDER BY question_order";
                             $mearesult = dbExecuteAssoc($meaquery);
