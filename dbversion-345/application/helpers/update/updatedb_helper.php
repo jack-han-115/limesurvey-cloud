@@ -2346,7 +2346,10 @@ function db_upgrade_all($iOldDBVersion, $bSilent = false)
             $oTransaction = $oDB->beginTransaction();
             $oDB->createCommand("UPDATE {{boxes}} SET ico = CONCAT('icon-', ico)")->execute();
 
+            // LimeService Mod start ===========================================
+            // Do not yet show LimeStore on LimeServce - wait until plugins are available there.
             // Only change label box if it's there.
+            /*
             $labelBox = $oDB->createCommand("SELECT * FROM {{boxes}} WHERE id = 5 AND position = 5 AND title = 'Label sets'")->queryRow();
             if ($labelBox) {
                 $oDB
@@ -2362,6 +2365,8 @@ function db_upgrade_all($iOldDBVersion, $bSilent = false)
                         'id = 5'
                     );
             }
+             */
+            // LimeService Mod end ===========================================
 
             $oDB->createCommand()->update('{{settings_global}}', ['stg_value'=>356], "stg_name='DBVersion'");
             $oTransaction->commit();
