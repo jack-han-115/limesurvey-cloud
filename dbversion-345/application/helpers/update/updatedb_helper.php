@@ -49,6 +49,7 @@ function db_upgrade_all($iOldDBVersion, $bSilent = false)
     /// older versions to match current functionality
 
     Yii::app()->loadHelper('database');
+    Yii::import('application.helpers.admin.import_helper', true);
     $sUserTemplateRootDir       = Yii::app()->getConfig('userthemerootdir');
     $sStandardTemplateRootDir   = Yii::app()->getConfig('standardthemerootdir');
     $oDB                        = Yii::app()->getDb();
@@ -2252,8 +2253,8 @@ function db_upgrade_all($iOldDBVersion, $bSilent = false)
                 $oTheme->setGlobalOption("ajaxmode", "off");
             }
 
-            $oTransaction->commit();
             $oDB->createCommand()->update('{{settings_global}}', ['stg_value'=>352], "stg_name='DBVersion'");
+            $oTransaction->commit();
         }
 
         if ($iOldDBVersion < 353) {
@@ -2265,8 +2266,8 @@ function db_upgrade_all($iOldDBVersion, $bSilent = false)
                 $oTheme->addOptionFromXMLToLiveTheme();
             }
 
-            $oTransaction->commit();
             $oDB->createCommand()->update('{{settings_global}}', ['stg_value'=>353], "stg_name='DBVersion'");
+            $oTransaction->commit();
         }
 
 
@@ -2285,12 +2286,14 @@ function db_upgrade_all($iOldDBVersion, $bSilent = false)
 
             $aIdMap = [];
             $aDefaultSurveyMenus = LsDefaultDataSets::getSurveyMenuData();
+            switchMSSQLIdentityInsert('surveymenu', true);
             foreach ($aDefaultSurveyMenus as $i => $aSurveymenu) {
                 $oDB->createCommand()->delete('{{surveymenu}}', 'name=:name', [':name' => $aSurveymenu['name']]);
                 $oDB->createCommand()->delete('{{surveymenu}}', 'id=:id', [':id' => $aSurveymenu['id']]);
                 $oDB->createCommand()->insert('{{surveymenu}}', $aSurveymenu);
                 $aIdMap[$aSurveymenu['name']] = $aSurveymenu['id'];
             }
+            switchMSSQLIdentityInsert('surveymenu', false);
             
             $aDefaultSurveyMenuEntries = LsDefaultDataSets::getSurveyMenuEntryData();
             foreach($aDefaultSurveyMenuEntries as $i => $aSurveymenuentry) {
@@ -2304,8 +2307,8 @@ function db_upgrade_all($iOldDBVersion, $bSilent = false)
                 $oDB->createCommand()->insert('{{surveymenu_entries}}', $aSurveymenuentry);
             }
 
-            $oTransaction->commit();
             $oDB->createCommand()->update('{{settings_global}}', ['stg_value'=>354], "stg_name='DBVersion'");
+            $oTransaction->commit();
         }
 
         if ($iOldDBVersion < 355) {
@@ -2334,11 +2337,35 @@ function db_upgrade_all($iOldDBVersion, $bSilent = false)
             }
 
 
-            $oTransaction->commit();
             $oDB->createCommand()->update('{{settings_global}}', ['stg_value'=>355], "stg_name='DBVersion'");
+            $oTransaction->commit();
         }
 
+        // Replace "Label sets" box with "LimeStore" box.
+        if ($iOldDBVersion < 356) {
+            $oTransaction = $oDB->beginTransaction();
+            $oDB->createCommand("UPDATE {{boxes}} SET ico = CONCAT('icon-', ico)")->execute();
 
+            // Only change label box if it's there.
+            $labelBox = $oDB->createCommand("SELECT * FROM {{boxes}} WHERE id = 5 AND position = 5 AND title = 'Label sets'")->queryRow();
+            if ($labelBox) {
+                $oDB
+                    ->createCommand()
+                    ->update(
+                        '{{boxes}}',
+                        [
+                            'title' => 'LimeStore',
+                            'ico'   => 'fa fa-cart-plus',
+                            'desc'  => 'LimeSurvey extension marketplace',
+                            'url'   => 'https://www.limesurvey.org/limestore'
+                        ],
+                        'id = 5'
+                    );
+            }
+
+            $oDB->createCommand()->update('{{settings_global}}', ['stg_value'=>356], "stg_name='DBVersion'");
+            $oTransaction->commit();
+        }
     } catch (Exception $e) {
         Yii::app()->setConfig('Updating', false);
         $oTransaction->rollback();
