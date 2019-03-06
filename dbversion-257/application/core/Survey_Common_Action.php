@@ -479,7 +479,7 @@ class Survey_Common_Action extends CAction
                             'Warning: Your installation is storage locked. You are using more storage than your current subscription package allows. Please free data by deleting uploaded files, templates or label sets. See the <a href=%s target="_blank">LimeSurvey FAQ</a> for more information.',
                             'js'
                         ),
-                        'https://www.limesurvey.org/your-account/frequently-asked-questions?view=faq&tag=storage'
+                        'https://www.limesurvey.org/customer-support/frequently-asked-questions?view=faq&tag=storage'
                     )
                 );
             }
