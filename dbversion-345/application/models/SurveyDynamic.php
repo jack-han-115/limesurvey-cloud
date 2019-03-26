@@ -825,7 +825,7 @@ class SurveyDynamic extends LSActiveRecord
                     "type" => "T",
                     "parent_qid" => $oQuestion->qid,
                     "qid" => "other",
-                    "question" => "other",
+                    "question" => !empty($attributes['other_replace_text'][$oQuestion->language]) ? $attributes['other_replace_text'][$oQuestion->language] : gT("Other"),
                     "title" => "other",
                 ), false);
                 $aQuestionAttributes['subquestions']["other"] = $this->getQuestionArray($oOtherQuestion, $oResponses,  $bHonorConditions, true);
@@ -878,8 +878,12 @@ class SurveyDynamic extends LSActiveRecord
                 return $aQuestionAttributes['answervalue'] == $oAnswer->code ? $oAnswer : $carry;
             });
 
-            if($oSelectedAnswerOption !== null)
+            if($oSelectedAnswerOption !== null){
                 $aQuestionAttributes['answeroption'] = $oSelectedAnswerOption->attributes;
+            } elseif ($oQuestion->other == 'Y'){
+                $aQuestionAttributes['answervalue'] = !empty($attributes['other_replace_text'][$oQuestion->language]) ? $attributes['other_replace_text'][$oQuestion->language] : gT("Other");
+                $aQuestionAttributes['answeroption']['answer'] = isset($oResponses[$fieldname.'other']) ? $oResponses[$fieldname.'other'] : null;
+            }
         }
 
         if ($aQuestionAttributes['questionclass'] === 'language') {

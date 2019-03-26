@@ -1581,7 +1581,7 @@ class statistics_helper
 
             //"other" handling
             //"Answer" means that we show an option to list answer to "other" text field
-            elseif ($al[0] === gT("Other") || $al[0] === "Answer" || ($outputs['qtype'] === "O" && $al[0] === gT("Comments")) || $outputs['qtype'] === "P") {
+            elseif (($al[0] === gT("Other") || $al[0] === "Answer" || ($outputs['qtype'] === "O" && $al[0] === gT("Comments")) || $outputs['qtype'] === "P") && count($al) > 2) {
 
                 if ($outputs['qtype'] == "P") {
                     $sColumnName = $al[2]."comment";
@@ -3881,6 +3881,9 @@ class statistics_helper
             $headerlogo = '';
             $logowidth = 10;
             $at = AdminTheme::getInstance();
+            if (!defined('K_PATH_IMAGES')) {
+                define($at->path.DIRECTORY_SEPARATOR.'images');
+            }
             $path = array($at->path, 'images', 'logo_statistics.jpg');
             if (file_exists(implode(DIRECTORY_SEPARATOR, $path))) {
                 $headerlogo = 'logo_statistics.jpg';

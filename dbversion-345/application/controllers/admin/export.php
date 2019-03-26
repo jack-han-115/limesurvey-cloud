@@ -257,7 +257,6 @@ class export extends Survey_Common_Action
 
             $data['display']['menu_bars']['browse'] = gT('Browse responses'); // browse is independent of the above
             $data['title_bar']['title'] = gT('Browse responses').': '.$survey->currentLanguageSettings->surveyls_title;
-            $data['title_bar']['subaction'] = gT('Export results');
             $data['subaction'] = gT('Export results');
 
             $this->_renderWrappedTemplate('export', 'exportresults_view', $data);
@@ -353,7 +352,7 @@ class export extends Survey_Common_Action
 
         $filterstate = incompleteAnsFilterState();
         if (!Yii::app()->session['spssversion']) {
-// Default to 2 (16 and up)
+            // Default to 2 (16 and up)
             Yii::app()->session['spssversion'] = 2;
         }
         $spssver = Yii::app()->request->getParam('spssver', Yii::app()->session['spssversion']);
@@ -444,8 +443,10 @@ class export extends Survey_Common_Action
             if ($spssver == 2) {
                 echo "\xEF\xBB\xBF";
             }
-
-            $sNoAnswerValue = (isset($_POST['noanswervalue']) && $_POST['noanswervalue'] != '') ? '\''.$_POST['noanswervalue'].'\'' : '';
+            $sNoAnswerValue = Yii::app()->getRequest()->getPost('noanswervalue');
+            if(!empty($sNoAnswerValue)) {
+                $sNoAnswerValue = '\''.$sNoAnswerValue.'\'';
+            }
             SPSSExportData($iSurveyID, $iLength, $sNoAnswerValue, '\'', false, $sLanguage);
 
             App()->end();
@@ -608,7 +609,6 @@ class export extends Survey_Common_Action
 
             $aData['display']['menu_bars']['browse'] = gT('Browse responses'); // browse is independent of the above
             $aData['title_bar']['title'] = gT('Browse responses').': '.$survey->currentLanguageSettings->surveyls_title;
-            $aData['title_bar']['subaction'] = gt('Export a VV survey file');
             $aData['subaction'] = gt('Export a VV survey file');
 
             $aData['sidemenu']['state'] = false;

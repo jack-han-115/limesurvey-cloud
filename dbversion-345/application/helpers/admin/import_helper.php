@@ -807,7 +807,7 @@ function XMLImportSurvey($sFullFilePath, $sXMLdata = null, $sNewSurveyName = nul
         $sXMLdata = (string) file_get_contents($sFullFilePath);    
     }
 
-    $xml = @simplexml_load_string($sXMLdata, 'SimpleXMLElement', LIBXML_NONET);
+    $xml = @simplexml_load_string($sXMLdata, 'SimpleXMLElement', LIBXML_NONET | LIBXML_PARSEHUGE);
 
     if (!$xml || $xml->LimeSurveyDocType != 'Survey') {
         $results['error'] = gT("This is not a valid LimeSurvey survey structure XML file.");
@@ -863,11 +863,10 @@ function XMLImportSurvey($sFullFilePath, $sXMLdata = null, $sNewSurveyName = nul
         }
         $iOldSID = $results['oldsid'] = $insertdata['sid'];
 
-        if ($iDesiredSurveyId != null) {
-            $insertdata['wishSID'] = GetNewSurveyID($iDesiredSurveyId);
-        } else {
-            $insertdata['wishSID'] = $iOldSID;
-        }
+        // Fix#14609
+        // wishSID overwrite sid
+        $iDesiredSurveyId = ($iDesiredSurveyId == null) ? $iOldSID : $iDesiredSurveyId;
+        $insertdata['wishSID'] = GetNewSurveyID($iDesiredSurveyId);
 
         if ($iDBVersion < 145) {
             if (isset($insertdata['private'])) {

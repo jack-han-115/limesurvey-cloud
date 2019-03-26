@@ -347,6 +347,62 @@ function LEMlist()
 }
 
 /**
+ * Implementation of listifop( cmpAttr, op, value, retAttr, glue, sgqa1, ..., sgqaN )
+ * Returns a list of retAttr from sgqa1...sgqaN which pass the critiera (cmpAttr op value)
+ */
+function LEMlistifop()
+{
+    // takes variable number of arguments
+    var result = "";
+    var cmpAttr = arguments[0];
+    var op = arguments[1];
+    var value = arguments[2];
+    var retAttr = arguments[3];
+    var glue = arguments[4];
+
+    var validAttributes = "/code|gid|grelevance|gseq|jsName|mandatory|NAOK|qid|qseq|question|readWrite|relevanceStatus|relevance|rowdivid|sgqa|shown|type|valueNAOK|value/";
+
+    if ( ! cmpAttr.match( validAttributes ) ) {
+        return cmpAttr +" not recognized ?!";
+    }
+    if ( ! retAttr.match( validAttributes ) ) {
+        return retAttr +" not recognized ?!";
+    }
+
+    if ( op == 'RX' ) {
+        var reg = new RegExp( value.substr( 1, value.length-2 ) );
+    }
+
+    for ( i=5; i < arguments.length; ++i ) {
+        var sgqa = arguments[i];
+        var cmpVal = LEMval( sgqa +"."+ cmpAttr ); // Equal to LimeExpressionManager::GetVarAttribute($sgqa,$cmpAttr,null,-1,-1) ?
+        var match = false;
+
+        switch(op)
+        {
+            case '==': case 'eq': match = (cmpVal == value); break;
+            case '>=': case 'ge': match = (cmpVal >= value); break;
+            case '>':  case 'gt': match = (cmpVal > value);  break;
+            case '<=': case 'le': match = (cmpVal <= value); break;
+            case '<':  case 'lt': match = (cmpVal < value);  break;
+            case '!=': case 'ne': match = (cmpVal != value); break;
+            case 'RX': try { match = reg.test( cmpVal ); }
+            catch (err) { return "Invalid RegEx"; } break;
+        }
+
+        if ( match ) {
+            retVal = LEMval( sgqa +"."+ retAttr ); // Equal to LimeExpressionManager::GetVarAttribute($sgqa,$retAttr,null,-1,-1) ?
+            if ( result != "" ) {
+                result += glue;
+            }
+            result += retVal;
+        }
+    }
+
+    return result;
+}
+
+/**
  *  Returns Natural logarithm of a number
  */
 
@@ -509,11 +565,6 @@ function LEMval(alias)
     var varName = alias;
     var suffix = 'code';    // the default
     var value = "";
-    if(typeof bNumRealValue == 'undefined'){
-        bNumRealValue=false;
-    } // Allow to update {QCODE} even with text
-
-    /* If passed a number, return that number */
     if (str == '') return '';
     newval = str;
     if (LEMradix === ',') {
@@ -797,12 +848,13 @@ function LEMval(alias)
             }
 
             if (typeof attr.onlynum !== 'undefined' && attr.onlynum==1) {
-                if(value=="")
-                {
+                if(value=="") {
                     return "";
                 }
+
                 var checkNumericRegex = new RegExp(/^(-)?[0-9]*(,|\.)[0-9]*$/);
-                if(checkNumericRegex.test(value) && !bNumRealValue)
+                /* Set as number if regexp is OK AND lenght is > 1 (then not fix [-.,] #14533 and no need to fix single number) */
+                if( checkNumericRegex.test(value) && value.length > 1 )
                 {
                     var length = value.length;
                     var firstLetterIsNull = value.split("").shift() === '0';
@@ -810,6 +862,7 @@ function LEMval(alias)
                         var numtest = new Decimal(value);
                     } catch(e){
                         var numtest = new Decimal(value.toString().replace(/,/,'.'));
+                        // Error can still happen maybe but don't catch to know (and fix) it
                     }
 
                     // If value is on same page : value use LEMradix, else use . (dot) : bug #10001
@@ -821,6 +874,9 @@ function LEMval(alias)
                     if(value.length < length && firstLetterIsNull){
                         value = str_repeat('0', length).substr(0,(length - value.length))+''+value.toString();
                     }
+                }
+                if(LSvar.bNumRealValue) {
+                    return value;
                 }
                 return Number(value);
             }

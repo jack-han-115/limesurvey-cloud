@@ -67,7 +67,7 @@ $(document).on('ready pjax:scriptcomplete',function()
 
 /**
  * setJsVar : Get all global used var
- * @deprecated in 3.0.0 not lauched …
+ * @deprecated in 3.0.0 not lauched under certain condition … …
  */
 function setJsVar(){
     bFixNumAuto=LSvar.bFixNumAuto;
@@ -170,17 +170,13 @@ function fixnum_checkconditions(value, name, type, evt_type, intonly)
             }
         } else {
             newval = cleansedValue;
-            // clear field if first character isn't number
-            if(cleansedValue == ''){
-                window.correctNumberField = setTimeout(function(){$('#answer'+name).val(newval);}, 400);
-            }
         }
     }
 
     /**
      * If have to fix numbers automatically.
      */
-    if(LSvar.bFixNumAuto && (newval != ""))
+    if(LSvar.bFixNumAuto)
     {
         if(window.correctNumberField!=null) {
             clearTimeout(window.correctNumberField);
@@ -192,9 +188,16 @@ function fixnum_checkconditions(value, name, type, evt_type, intonly)
             addition = cleansedValue.split("").pop();
         }
 
-        var matchFollowingZeroes =  cleansedValue.match(/^-?([0-9])*(,|\.)(0+)$/);
+        var matchFollowingZeroes =  cleansedValue.match(/^-?([0-9])*(,|\.)(0+)$/); /* 1.0 : keep .0 */
+        var matchMustGetZeroes =  cleansedValue.match(/^-?([0-9])*(,|\.)([0-9]*)$/); /* Maybe have 0 */
         if(matchFollowingZeroes){
             addition = LEMradix+matchFollowingZeroes[3];
+        } else if(matchMustGetZeroes) {
+            /* Don‘t find good regexp … */
+            while (cleansedValue.substr(-1) === "0") {
+                addition += "0";
+                cleansedValue = cleansedValue.slice(0, -1);
+            }
         }
         if(decimalValue == undefined){
             try{
@@ -225,12 +228,14 @@ function fixnum_checkconditions(value, name, type, evt_type, intonly)
         if (displayVal=='NaN')
         {
             newval=displayVal;
-            displayVal=value;
+            if(cleansedValue == '') {
+                window.correctNumberField = setTimeout(function(){$('#answer'+name).val(cleansedValue).trigger("keyup");}, 400);
+            }
         }
         else{
-            if(LEMradix==",")
+            if(LEMradix==",") {
                 displayVal = displayVal.replace(/\./,',');
-
+            }
             newval = displayVal+addition
 
             if (name.match(/other$/)) {

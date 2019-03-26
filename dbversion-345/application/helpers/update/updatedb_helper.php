@@ -2344,7 +2344,16 @@ function db_upgrade_all($iOldDBVersion, $bSilent = false)
         // Replace "Label sets" box with "LimeStore" box.
         if ($iOldDBVersion < 356) {
             $oTransaction = $oDB->beginTransaction();
-            $oDB->createCommand("UPDATE {{boxes}} SET ico = CONCAT('icon-', ico)")->execute();
+            switch (Yii::app()->db->driverName) {
+                case 'sqlsrv':
+                case 'dblib':
+                case 'mssql':
+                    $oDB->createCommand("UPDATE {{boxes}} SET ico = 'icon-' + ico")->execute();
+                    break;
+                default:
+                    $oDB->createCommand("UPDATE {{boxes}} SET ico = CONCAT('icon-', ico)")->execute();
+                    break;
+            }
 
             // LimeService Mod start ===========================================
             // Do not yet show LimeStore on LimeServce - wait until plugins are available there.
@@ -3178,7 +3187,7 @@ function upgradeTokens176()
     $arSurveys = $oDB
     ->createCommand()
     ->select('*')
-    ->from('surveys')
+    ->from('{{surveys}}')
     ->queryAll();
     // Fix any active token tables
     foreach ( $arSurveys as $arSurvey )
