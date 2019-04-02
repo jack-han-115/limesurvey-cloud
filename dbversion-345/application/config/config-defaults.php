@@ -731,7 +731,8 @@ $config['pluginCoreList'] = [
     'AuthLDAP',
     'Authdb',
     'Authwebserver',
-    'LimeSurveyProfessional'
+    'LimeSurveyProfessional',
+    'TwoFactorAdminLogin'
 ];
 
 $config['pluginWhitelist'] = [];

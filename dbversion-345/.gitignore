@@ -63,6 +63,7 @@
 !/plugins/index.html
 !/plugins/Demo/
 !/plugins/AuditLog/
+!/plugins/TwoFactorAdminLogin/
 
 #ignore old styles
 /styles/
