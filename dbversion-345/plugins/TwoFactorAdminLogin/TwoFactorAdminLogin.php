@@ -143,7 +143,7 @@ class TwoFactorAdminLogin extends AuthPluginBase
         $extraLine = ""
         ."<span>"
             ."<label for='twofactor'>"  . gT("AuthKey (optional)") . "</label>
-            <input class='form-control' name='twofactor' id='twofactor' type='text' size='".$this->get('digits')."' maxlength='".$this->get('digits')."' value='' />"
+            <input class='form-control' name='twofactor' id='twofactor' type='text' size='".$this->get('digits',null,null,6)."' maxlength='".$this->get('digits',null,null,6)."' value='' />"
         ."</span>";
 
         $oEvent->getContent('Authdb')->addContent($extraLine, 'append');
@@ -217,7 +217,7 @@ class TwoFactorAdminLogin extends AuthPluginBase
         $oEvent = $this->getEvent();
         $oTFAModel =  TFAUserKey::model()->findByPk(App()->user->id);
 
-        if ($oTFAModel == null && $this->get('force2fa') == 1) {
+        if ($oTFAModel == null && $this->get('force2fa', null,null, 0) == 1) {
             Yii::app()->getController()->redirect($this->api->createUrl('admin/pluginhelper/sa/fullpagewrapper/plugin/TwoFactorAdminLogin/method/userindex', []));
         }
     }
@@ -264,7 +264,7 @@ class TwoFactorAdminLogin extends AuthPluginBase
 
         $aData = [
             'oTFAModel' => $oTFAModel,
-            'force2FA' => $this->get('force2fa') == 1
+            'force2FA' => $this->get('force2fa',null,null,0) == 1
         ];
 
         $this->pageScripts();
@@ -392,10 +392,10 @@ class TwoFactorAdminLogin extends AuthPluginBase
         if ($this->o2FA == null) {
             $mp = new TFAQrCodeGenerator();
             $this->o2FA = new RobThree\Auth\TwoFactorAuth(
-                $this->get('issuer'),
-                ((int) $this->get('digits')),
-                ((int) $this->get('period')),
-                $this->get('algorithm'),
+                $this->get('issuer',null,null,'LimeSurvey - survey software'),
+                ((int) $this->get('digits',null,null,6)),
+                ((int) $this->get('period',null,null,30)),
+                $this->get('algorithm',null,null,'sha1'),
                 $mp
             );
         }
