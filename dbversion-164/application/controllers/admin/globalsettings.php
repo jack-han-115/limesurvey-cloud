@@ -200,7 +200,6 @@ class GlobalSettings extends Survey_Common_Action
         setGlobalSetting('googleMapsAPIKey', $_POST['googleMapsAPIKey']);
         setGlobalSetting('googleanalyticsapikey',$_POST['googleanalyticsapikey']);
         setGlobalSetting('googletranslateapikey',$_POST['googletranslateapikey']);
-        / 
         //setGlobalSetting('force_ssl', $_POST['force_ssl']);
         setGlobalSetting('surveyPreview_require_Auth', $_POST['surveyPreview_require_Auth']);
         setGlobalSetting('RPCInterface', $_POST['RPCInterface']);
