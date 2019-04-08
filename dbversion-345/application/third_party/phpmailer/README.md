@@ -89,7 +89,7 @@ While installing the entire package manually or with Composer is simple, conveni
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
-// Load Composer's autoloader
+//Load Composer's autoloader
 require 'vendor/autoload.php';
 
 // Instantiation and passing `true` enables exceptions
@@ -127,7 +127,7 @@ try {
     $mail->send();
     echo 'Message has been sent';
 } catch (Exception $e) {
-    echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
+    echo 'Message could not be sent. Mailer Error: ', $mail->ErrorInfo;
 }
 ```
 
