@@ -1455,11 +1455,10 @@ class tokens extends Survey_Common_Action
                             if (!empty($aAttachments)) {
                                 if (isset($aAttachments[$sTemplate])) {
                                     LimeExpressionManager::singleton()->loadTokenInformation($aData['thissurvey']['sid'], $emrow['token']);
+
                                     foreach ($aAttachments[$sTemplate] as $aAttachment) {
-                                        if(Yii::app()->is_file($aAttachment['url'],Yii::app()->getConfig('uploaddir').DIRECTORY_SEPARATOR."surveys".DIRECTORY_SEPARATOR.$iSurveyId)) {
-                                            if (LimeExpressionManager::singleton()->ProcessRelevance($aAttachment['relevance'])) {
-                                                $aRelevantAttachments[] = $aAttachment['url'];
-                                            }
+                                        if (LimeExpressionManager::singleton()->ProcessRelevance($aAttachment['relevance'])) {
+                                            $aRelevantAttachments[] = $aAttachment['url'];
                                         }
                                     }
                                 }

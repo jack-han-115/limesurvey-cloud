@@ -33,8 +33,8 @@
                     </td>
                     <td>
                         <?php
-                            LimeExpressionManager::ProcessString('{' . $grow['grelevance'] . '}');
-                            echo viewHelper::stripTagsEM(LimeExpressionManager::GetLastPrettyPrintExpression());
+                            templatereplace('{' . $grow['grelevance'] . '}');
+                            echo LimeExpressionManager::GetLastPrettyPrintExpression();
                         ?>
                     </td>
                 </tr>
@@ -57,8 +57,9 @@
                             {
                                 foreach ($deprow['conditions'] as $depqid => $depcid)
                                 {
+
                                     $listcid=implode("-",$depcid);?>
-                                    <a href='<?php echo $this->createUrl("admin/conditions/sa/index/subaction/conditions/surveyid/$surveyid/gid/$depgid/qid/$depqid",array('markcid'=>implode("-",$depcid))); ?>'>[QID: <?php echo $depqid; ?>]</a>
+                                <a href='<?php echo $this->createUrl("admin/conditions/sa/index/subaction/conditions/surveyid/$surveyid/gid/$depgid/qid/$depqid",array('markcid'=>implode("-",$depcid))); ?>'>[QID: <?php echo $depqid; ?>]</a>
                                 <?php }
                         } ?>
                     </td></tr>
