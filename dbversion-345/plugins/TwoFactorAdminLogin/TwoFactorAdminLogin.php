@@ -79,6 +79,7 @@ class TwoFactorAdminLogin extends AuthPluginBase
     public function init()
     {
         //System events
+        $this->subscribe('direct');
         $this->subscribe('newDirectRequest');
         $this->subscribe('beforeActivate');
         $this->subscribe('beforeDeactivate');
@@ -112,6 +113,23 @@ class TwoFactorAdminLogin extends AuthPluginBase
     }
 
     /**
+     * Event direct happen
+     * Usage : index --target=value [--function=] [--option=]
+     * @return @void
+     */
+    public function direct()
+    {
+        $oEvent = $this->getEvent();
+        if ($oEvent->get('target') != 'TwoFactorAdminLogin') {
+            return;
+        }
+        $option = $this->event->get("option");
+        $action = $oEvent->get('function');
+        if (method_exists($this, $action)) {
+            call_user_func([$this, $action], $oEvent, $option);
+        }
+    }
+    /**
      * Register new table and populate it.
      *
      * @return void
@@ -143,7 +161,7 @@ class TwoFactorAdminLogin extends AuthPluginBase
         $extraLine = ""
         ."<span>"
             ."<label for='twofactor'>"  . gT("AuthKey (optional)") . "</label>
-            <input class='form-control' name='twofactor' id='twofactor' type='text' size='".$this->get('digits',null,null,6)."' maxlength='".$this->get('digits',null,null,6)."' value='' />"
+            <input class='form-control' name='twofactor' id='twofactor' type='text' size='".$this->get('digits', null, null, 6)."' maxlength='".$this->get('digits', null, null, 6)."' value='' />"
         ."</span>";
 
         $oEvent->getContent('Authdb')->addContent($extraLine, 'append');
@@ -217,7 +235,7 @@ class TwoFactorAdminLogin extends AuthPluginBase
         $oEvent = $this->getEvent();
         $oTFAModel =  TFAUserKey::model()->findByPk(App()->user->id);
 
-        if ($oTFAModel == null && $this->get('force2fa', null,null, 0) == 1) {
+        if ($oTFAModel == null && $this->get('force2fa', null, null, 0) == 1) {
             Yii::app()->getController()->redirect($this->api->createUrl('admin/pluginhelper/sa/fullpagewrapper/plugin/TwoFactorAdminLogin/method/userindex', []));
         }
     }
@@ -264,7 +282,7 @@ class TwoFactorAdminLogin extends AuthPluginBase
 
         $aData = [
             'oTFAModel' => $oTFAModel,
-            'force2FA' => $this->get('force2fa',null,null,0) == 1
+            'force2FA' => $this->get('force2fa', null, null, 0) == 1
         ];
 
         $this->pageScripts();
@@ -357,12 +375,55 @@ class TwoFactorAdminLogin extends AuthPluginBase
     public function directCallDeleteKey($oEvent, $oRequest)
     {
         $uid = $oRequest->getPost('uid', null);
+        $uid = $uid ?? Yii::app()->user->id;
         if (!Permission::model()->hasGlobalPermission('users', 'update') && $uid !== Yii::app()->user->id) {
             return $this->createJSONResponse(false, gT('You have no permission for this action'));
         }
-        $oTFAModel =  TFAUserKey::model()->findByPk(Yii::app()->user->id);
+        $oTFAModel =  TFAUserKey::model()->findByPk($uid);
         $success = $oTFAModel->delete();
         return $this->createJSONResponse($success, ($success ? 'Successfully deleted' : 'Deleting failed'));
+    }
+
+    /**
+    * Deletes a users secret, effectively ending the 2FA login mechanism for that user CLI version.
+    * Returns a String
+    *
+    * @param PluginEvent $oEvent
+    * @param string $sOption
+    * @return string
+    */
+    public function deleteKeyForUserId($oEvent, $iUserId)
+    {
+        $uid = (int) $iUserId;
+        require(__DIR__.'/models/TFAUserKey.php');
+        $oTFAModel =  TFAUserKey::model()->findByPk($uid);
+        if($oTFAModel == null ) { 
+            echo "No 2FA key set for user ".$iUserId;
+            return; 
+        }
+        $success = $oTFAModel->delete();
+        echo($success ? 'Successfully deleted' : 'Deleting failed');
+    }
+
+    /**
+    * Deletes a users secret, effectively ending the 2FA login mechanism for that user CLI version.
+    * Returns a String
+    *
+    * @param PluginEvent $oEvent
+    * @param string $sOption
+    * @return string
+    */
+    public function deleteKeyForUserName($oEvent, $sUserName)
+    {
+        $oUser = User::model()->findByAttributes(['users_name' => $sUserName]);
+        require(__DIR__.'/models/TFAUserKey.php');
+        $oTFAModel =  TFAUserKey::model()->findByPk($oUser->uid);
+        if($oTFAModel == null ) { 
+            echo "No 2FA key set for user ".$sUserName;
+            return; 
+        }
+        $success = $oTFAModel->delete();
+        echo($success ? 'Successfully deleted' : 'Deleting failed');
     }
 
     
@@ -392,10 +453,10 @@ class TwoFactorAdminLogin extends AuthPluginBase
         if ($this->o2FA == null) {
             $mp = new TFAQrCodeGenerator();
             $this->o2FA = new RobThree\Auth\TwoFactorAuth(
-                $this->get('issuer',null,null,'LimeSurvey - survey software'),
-                ((int) $this->get('digits',null,null,6)),
-                ((int) $this->get('period',null,null,30)),
-                $this->get('algorithm',null,null,'sha1'),
+                $this->get('issuer', null, null, 'LimeSurvey - survey software'),
+                ((int) $this->get('digits', null, null, 6)),
+                ((int) $this->get('period', null, null, 30)),
+                $this->get('algorithm', null, null, 'sha1'),
                 $mp
             );
         }

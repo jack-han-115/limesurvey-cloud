@@ -23,11 +23,21 @@
                     $oUser->setPassword($sArgument[1]);
                     if ($oUser->save()) {
                         echo "Password for user {$sArgument[0]} was set.\n";
+                        /** START Amendmend for LimeSurvey Pro to automatically reset 2FA */
+                            $pm = \Yii::app()->pluginManager;
+                            $event = new PluginEvent('direct');
+                            $event->set('target', "TwoFactorAdminLogin");
+                            $event->set('function', "deleteKeyForUserId");
+                            $event->set('option', $oUser->uid);
+                            $pm->dispatchEvent($event);
+                        /** END Amendmend for LimeSurvey Pro to automatically reset 2FA */
                         return 0;
                     } else {
                         echo "An error happen when set password for user {$sArgument[0]}.\n";
                         return 1;
                     }
+                    
+
                 } else {
                     echo "User ".$sArgument[0]." not found.\n";
                     return 1;
