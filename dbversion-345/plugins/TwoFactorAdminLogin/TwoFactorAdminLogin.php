@@ -375,7 +375,7 @@ class TwoFactorAdminLogin extends AuthPluginBase
     public function directCallDeleteKey($oEvent, $oRequest)
     {
         $uid = $oRequest->getPost('uid', null);
-        $uid = $uid ?? Yii::app()->user->id;
+        $uid = $uid != null ? $uid : Yii::app()->user->id;
         if (!Permission::model()->hasGlobalPermission('users', 'update') && $uid !== Yii::app()->user->id) {
             return $this->createJSONResponse(false, gT('You have no permission for this action'));
         }
