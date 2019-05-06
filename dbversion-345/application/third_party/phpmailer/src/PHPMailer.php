@@ -341,19 +341,6 @@ class PHPMailer
     public $Timeout = 300;
 
     /**
-     * Comma separated list of DSN notifications
-     * 'NEVER' under no circumstances a DSN must be returned to the sender.
-     *         If you use NEVER all other notifications will be ignored.
-     * 'SUCCESS' will notify you when your mail has arrived at its destination.
-     * 'FAILURE' will arrive if an error occurred during delivery.
-     * 'DELAY'   will notify you if there is an unusual delay in delivery, but the actual
-     *           delivery's outcome (success or failure) is not yet decided.
-     *
-     * @see https://tools.ietf.org/html/rfc3461 See section 4.1 for more information about NOTIFY
-     */
-    public $dsn = '';
-
-    /**
      * SMTP class debug output mode.
      * Debug output level.
      * Options:
@@ -940,8 +927,6 @@ class PHPMailer
      * @param string $address The email address to send to
      * @param string $name
      *
-     * @throws Exception
-     *
      * @return bool true on success, false if address already used or invalid in some way
      */
     public function addAddress($address, $name = '')
@@ -954,8 +939,6 @@ class PHPMailer
      *
      * @param string $address The email address to send to
      * @param string $name
-     *
-     * @throws Exception
      *
      * @return bool true on success, false if address already used or invalid in some way
      */
@@ -970,8 +953,6 @@ class PHPMailer
      * @param string $address The email address to send to
      * @param string $name
      *
-     * @throws Exception
-     *
      * @return bool true on success, false if address already used or invalid in some way
      */
     public function addBCC($address, $name = '')
@@ -984,8 +965,6 @@ class PHPMailer
      *
      * @param string $address The email address to reply to
      * @param string $name
-     *
-     * @throws Exception
      *
      * @return bool true on success, false if address already used or invalid in some way
      */
@@ -1810,7 +1789,7 @@ class PHPMailer
         // Attempt to send to all recipients
         foreach ([$this->to, $this->cc, $this->bcc] as $togroup) {
             foreach ($togroup as $to) {
-                if (!$this->smtp->recipient($to[0], $this->dsn)) {
+                if (!$this->smtp->recipient($to[0])) {
                     $error = $this->smtp->getError();
                     $bad_rcpt[] = ['to' => $to[0], 'error' => $error['detail']];
                     $isSent = false;
@@ -2667,10 +2646,12 @@ class PHPMailer
                 if (!defined('PKCS7_TEXT')) {
                     throw new Exception($this->lang('extension_missing') . 'openssl');
                 }
-                $file = fopen('php://temp', 'rb+');
-                $signed = fopen('php://temp', 'rb+');
-                fwrite($file, $body);
-
+                // @TODO would be nice to use php://temp streams here
+                $file = tempnam(sys_get_temp_dir(), 'mail');
+                if (false === file_put_contents($file, $body)) {
+                    throw new Exception($this->lang('signing') . ' Could not write temp file');
+                }
+                $signed = tempnam(sys_get_temp_dir(), 'signed');
                 //Workaround for PHP bug https://bugs.php.net/bug.php?id=69197
                 if (empty($this->sign_extracerts_file)) {
                     $sign = @openssl_pkcs7_sign(
@@ -2691,16 +2672,16 @@ class PHPMailer
                         $this->sign_extracerts_file
                     );
                 }
-                fclose($file);
+                @unlink($file);
                 if ($sign) {
                     $body = file_get_contents($signed);
-                    fclose($signed);
+                    @unlink($signed);
                     //The message returned by openssl contains both headers and body, so need to split them up
                     $parts = explode("\n\n", $body, 2);
                     $this->MIMEHeader .= $parts[0] . static::$LE . static::$LE;
                     $body = $parts[1];
                 } else {
-                    fclose($signed);
+                    @unlink($signed);
                     throw new Exception($this->lang('signing') . openssl_error_string());
                 }
             } catch (Exception $exc) {

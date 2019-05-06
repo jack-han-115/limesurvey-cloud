@@ -504,7 +504,7 @@ function submittokens($quotaexit = false)
                     foreach ($aAttachments['confirmation'] as $aAttachment) {
                         $relevance = $aAttachment['relevance'];
                         // If the attachment is relevant it will be added to the mail.
-                        if (LimeExpressionManager::ProcessRelevance($relevance) && file_exists($aAttachment['url'])) {
+                        if (LimeExpressionManager::ProcessRelevance($relevance) && Yii::app()->is_file($aAttachment['url'],Yii::app()->getConfig('uploaddir').DIRECTORY_SEPARATOR."surveys".DIRECTORY_SEPARATOR.$surveyid,false)) {
                             $aRelevantAttachments[] = $aAttachment['url'];
                         }
                     }
@@ -649,7 +649,7 @@ function sendSubmitNotifications($surveyid)
         foreach ($aAttachments['admin_notification'] as $aAttachment) {
             $relevance = $aAttachment['relevance'];
             // If the attachment is relevant it will be added to the mail.
-            if (LimeExpressionManager::ProcessRelevance($relevance) && file_exists($aAttachment['url'])) {
+            if (LimeExpressionManager::ProcessRelevance($relevance) && Yii::app()->is_file($aAttachment['url'],Yii::app()->getConfig('uploaddir').DIRECTORY_SEPARATOR."surveys".DIRECTORY_SEPARATOR.$surveyid,false)) {
                 $aRelevantAttachments[] = $aAttachment['url'];
             }
         }
@@ -669,15 +669,15 @@ function sendSubmitNotifications($surveyid)
         }
     }
 
-        $aRelevantAttachments = array();
+    $aRelevantAttachments = array();
     /*
      * Iterate through attachments and check them for relevance.
      */
-    if (isset($aAttachments['detailed_admin_notification'])) {
-        foreach ($aAttachments['detailed_admin_notification'] as $aAttachment) {
+    if (isset($aAttachments['admin_detailed_notification'])) {
+        foreach ($aAttachments['admin_detailed_notification'] as $aAttachment) {
             $relevance = $aAttachment['relevance'];
             // If the attachment is relevant it will be added to the mail.
-            if (LimeExpressionManager::ProcessRelevance($relevance) && file_exists($aAttachment['url'])) {
+            if (LimeExpressionManager::ProcessRelevance($relevance) && Yii::app()->is_file($aAttachment['url'],Yii::app()->getConfig('uploaddir').DIRECTORY_SEPARATOR."surveys".DIRECTORY_SEPARATOR.$surveyid,false)) {
                 $aRelevantAttachments[] = $aAttachment['url'];
             }
         }
@@ -2228,7 +2228,7 @@ function getSideBodyClass($sideMenustate = false)
 function cookieConsentLocalization()
 {
     return array(
-        gT('This website uses cookies. By continuing this survey you approve the data protection policy of the service provider.'),
+        gT('By continuing this survey you approve the data protection policy of the service provider.'),
         gT('OK'),
         gT('View policy'),
         gT('Please be patient until you are forwarded to the final URL.')
