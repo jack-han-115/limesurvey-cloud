@@ -1500,6 +1500,7 @@ function do_list_radio($ia)
             'answer'        => $ansrow['answer'],
             'checkedState'  => $checkedState,
             'myfname'       => $myfname,
+            'i'             => $i
             ), true);
 
         ////
