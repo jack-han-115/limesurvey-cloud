@@ -484,13 +484,12 @@ class LSETwigViewRenderer extends ETwigViewRenderer
             if (isset($_SESSION['survey_'.$aDatas['aSurveyInfo']['sid']]) && isset($_SESSION['survey_'.$aDatas['aSurveyInfo']['sid']]['totalquestions'])) {
                 $aDatas["aSurveyInfo"]['iTotalquestions'] = $_SESSION['survey_'.$aDatas['aSurveyInfo']['sid']]['totalquestions'];
             }
-        }
-
-
-        // Add the template options
-        if ($oTemplate->oOptions) {
-            foreach ($oTemplate->oOptions as $key => $value) {
-                $aDatas["aSurveyInfo"]["options"][$key] = (string) $value;
+            
+            // Add the survey theme options
+            if ($oTemplate->oOptions) {
+                foreach ($oTemplate->oOptions as $key => $value) {
+                    $aDatas["aSurveyInfo"]["options"][$key] = (string) $value;
+                }
             }
             //LIMESERVICE SPECIFIC START
                 //-> FORCE DEACTIVATE AJAX MODE!

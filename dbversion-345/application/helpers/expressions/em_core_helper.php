@@ -1757,10 +1757,20 @@ class ExpressionManager
 
     /**
      * If the equation contains reference to this, expand to comma separated list if needed.
+     *
      * @param string $src
+     * @return string
      */
     function ExpandThisVar($src)
     {
+        /** @var array */
+        static $cache = [];
+
+        if (isset($cache[$src])) {
+            return $cache[$src];
+        }
+
+        /** @var string */
         $expandedVar = "";
         $tokens = $this->Tokenize($src,1);
         foreach ($tokens as $token) {
@@ -1795,6 +1805,7 @@ class ExpressionManager
                     $expandedVar .= $token[0];
             }
         }
+        $cache[$src] = $expandedVar;
         return $expandedVar;
     }
 
@@ -2200,6 +2211,15 @@ class ExpressionManager
      */
     private function RDP_Tokenize($sSource, $bOnEdit = false)
     {
+        /** @var array Memoize result in local cache variable. */
+        static $cache = [];
+
+        /** @var string */
+        $cacheKey = $sSource . json_encode($bOnEdit);
+        if (isset($cache[$cacheKey])) {
+            return $cache[$cacheKey];
+        }
+
         // $aInitTokens = array of tokens from equation, showing value and offset position.  Will include SPACE.
         if ($bOnEdit) {
                     $aInitTokens = preg_split($this->RDP_TokenizerRegex, $sSource, -1, (PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_OFFSET_CAPTURE));
@@ -2227,9 +2247,10 @@ class ExpressionManager
                 }
             }
         }
+
+        $cache[$cacheKey] = $aTokens;
         return $aTokens;
     }
-
 
     /**
      * Show a table of allowable Expression Manager functions
