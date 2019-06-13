@@ -1318,7 +1318,7 @@ function quexml_set_default_value(&$element, $iResponseID, $qid, $iSurveyID, $fi
             $search = "sqid";
         }
         foreach ($fieldmap as $key => $detail) {
-            if ($detail[$search] == $qid) {
+            if (array_key_exists($search, $detail) && $detail[$search] == $qid) {
                 if (($fieldadd == false || substr($key, (strlen($fieldadd) * -1)) == $fieldadd) &&
                     ($usesaid == false || ($detail["aid"] == $usesaid)) &&
                     ($usesscale == false || ($detail["scale_id"] == $usesscale))) {
@@ -1466,7 +1466,25 @@ function quexml_export($surveyi, $quexmllan, $iResponseID = false)
         $questionnaire->appendChild($questionnaireInfo);
     }
 
-
+    // substitute token placeholders for real token values
+    $RowQReplacements = array();
+    if ($oSurvey->anonymized == 'N' && $oSurvey->hasTokensTable && (int) $iResponseID > 0){
+        $response = Response::model($iSurveyID)->findByPk($iResponseID);
+        if (!empty($response)){
+            $token = TokenDynamic::model($iSurveyID)->find(array('condition' => 'token = \'' . $response->token . '\''));
+            if (!empty($token)){
+                $RowQReplacements['TOKEN'] = $token->token;
+                $RowQReplacements['TOKEN:EMAIL'] = $token->email;
+                $RowQReplacements['TOKEN:FIRSTNAME'] = $token->firstname;
+                $RowQReplacements['TOKEN:LASTNAME'] = $token->lastname;
+                
+                $customAttributes = $token->getCustom_attributes();
+                foreach($customAttributes as $key => $val){
+                    $RowQReplacements['TOKEN:' . strtoupper($key)] = $token->$key;
+                }
+            }
+        }
+    }
 
     //section == group
 
@@ -1475,7 +1493,7 @@ function quexml_export($surveyi, $quexmllan, $iResponseID = false)
         ->from("{{groups}}")
         ->where('sid=:sid', array(':sid'=>$iSurveyID))
         ->andWhere(' language=:lang', array(':lang'=>$quexmllang))
-        ->order('group_order desc')
+        ->order('group_order asc')
         ->queryAll();
 
 
@@ -1528,6 +1546,8 @@ function quexml_export($surveyi, $quexmllan, $iResponseID = false)
             ->queryAll();
 
         foreach ($Rows as $RowQ) {
+            // placeholder substitution
+            $RowQ['question'] = templatereplace($RowQ['question'], $RowQReplacements);
             $sectionInfo = $dom->createElement("sectionInfo");
             $position = $dom->createElement("position", "before");
             $text = $dom->createElement("text", QueXMLCleanup($RowQ['question']));
@@ -1554,6 +1574,8 @@ function quexml_export($surveyi, $quexmllan, $iResponseID = false)
             $type = $RowQ['type'];
             $qid = $RowQ['qid'];
 
+            // placeholder substitution
+            $RowQ['question'] = templatereplace($RowQ['question'], $RowQReplacements);
             $other = false;
             if ($RowQ['other'] == 'Y') {
                 $other = true;
