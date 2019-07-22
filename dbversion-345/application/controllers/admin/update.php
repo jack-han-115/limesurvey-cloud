@@ -139,7 +139,7 @@ class update extends Survey_Common_Action
                     $updateKey = $updateModel->setUpdateKey($submittedUpdateKey);
                     Yii::app()->session['flashmessage'] = gT("Your key has been updated and validated! You can now use ComfortUpdate.");
                     // then, we render the what returned the server (views and key infos or error )
-                    App()->getController()->redirect('admin/update/sa/managekey');
+                    App()->getController()->redirect(Yii::app()->getController()->createUrl('admin/update/sa/managekey'));
                 } else {
                     switch ($check->error) {
                         case 'out_of_updates':
@@ -168,7 +168,7 @@ class update extends Survey_Common_Action
                     }
 
                     App()->setFlashMessage('<strong>'.gT($title).'</strong> '.gT($message), 'error');
-                    App()->getController()->redirect('managekey');
+                    App()->getController()->redirect(Yii::app()->getController()->createUrl('admin/update/sa/managekey'));
                 }
 
             }
@@ -185,7 +185,7 @@ class update extends Survey_Common_Action
         if (Permission::model()->hasGlobalPermission('superadmin')) {
             SettingGlobal::model()->deleteByPk('update_key');
             App()->setFlashMessage('Your update key has been removed');
-            App()->getController()->redirect('admin/update/sa/managekey');
+            App()->getController()->redirect(Yii::app()->getController()->createUrl('admin/update/sa/managekey'));
         }
     }
 
