@@ -429,7 +429,7 @@ class QuestionTemplate extends CFormModel
                                 $fileInfo = [
                                     'type'     => count($parts) === 2 ? 'image/' . $parts[1] : 'wrong_path_format',
                                     'tmp_name' => $previewPath
-                                ]
+                                ];
                                 /** @var array */
                                 $check = LSYii_ImageValidator::validateImage($fileInfo);
                                 if(is_file($previewPath) && $check['check']) {
