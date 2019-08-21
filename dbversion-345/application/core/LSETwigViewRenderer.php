@@ -497,11 +497,16 @@ class LSETwigViewRenderer extends ETwigViewRenderer
                     $aDatas["aSurveyInfo"]["options"][$key] = (string) $value;
                 }
             }
-            //LIMESERVICE SPECIFIC START
-                //-> FORCE DEACTIVATE AJAX MODE!
-                $aDatas["aSurveyInfo"]["options"]['ajaxmode'] = "off";
-            //LIMESERVICE SPECIFIC END
+        } else {
+            // Add the global theme options
+            $oTemplateConfigurationCurrent = TemplateConfiguration::getInstance($oTemplate->sTemplateName);
+            $aDatas["aSurveyInfo"]["options"] = isJson($oTemplateConfigurationCurrent['options'])?(array)json_decode($oTemplateConfigurationCurrent['options']):$oTemplateConfigurationCurrent['options'];
         }
+
+        //LIMESERVICE SPECIFIC START
+        //-> FORCE DEACTIVATE AJAX MODE!
+        $aDatas["aSurveyInfo"]["options"]['ajaxmode'] = "off";
+        //LIMESERVICE SPECIFIC END
 
         $aDatas = $this->fixDataCoherence($aDatas);
 
