@@ -298,13 +298,7 @@ class LS_Twig_Extension extends Twig_Extension
         }
 
         // check if this is a true image
-        $aParts = explode('.', $sFullPath);
-        $aFileInfo = [
-            'type'     => 'image/' . $aParts[count($aParts) - 1],
-            'tmp_name' => $sFullPath
-        ];
-        $checkImage = LSYii_ImageValidator::validateImage($aFileInfo);
-
+        $checkImage = LSYii_ImageValidator::validateImage($sFullPath);
 
         if (!$checkImage['check']) {
             return false;

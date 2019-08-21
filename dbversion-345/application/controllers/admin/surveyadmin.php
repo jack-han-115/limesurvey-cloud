@@ -233,7 +233,7 @@ class SurveyAdmin extends Survey_Common_Action
         $aData          = array_merge($aData, $this->_tabPublicationAccess($survey));
         $aData          = array_merge($aData, $this->_tabNotificationDataManagement($esrow));
         $aData          = array_merge($aData, $this->_tabTokens($esrow));
-        $aData          = array_merge($aData, $this->_tabPanelIntegration($survey));
+        $aData          = array_merge($aData, $this->_tabPanelIntegration($survey, $survey->language));
         $aData          = array_merge($aData, $this->_tabResourceManagement($survey));
 
         $oResult = Question::model()->getQuestionsWithSubQuestions($iSurveyID, $esrow['language'], "({{questions}}.type = 'T'  OR  {{questions}}.type = 'Q'  OR  {{questions}}.type = 'T' OR {{questions}}.type = 'S')");
@@ -1222,7 +1222,7 @@ class SurveyAdmin extends Survey_Common_Action
             $aData = array_merge($aData, $this->_tabPublicationAccess($survey));
             $aData = array_merge($aData, $this->_tabNotificationDataManagement($esrow));
             $aData = array_merge($aData, $this->_tabTokens($esrow));
-            $aData = array_merge($aData, $this->_tabPanelIntegration($survey));
+            $aData = array_merge($aData, $this->_tabPanelIntegration($survey, $sLang));
             $aData = array_merge($aData, $this->_tabResourceManagement($survey));
 
             $oResult = Question::model()->getQuestionsWithSubQuestions($iSurveyID, $esrow['language'], "({{questions}}.type = 'T'  OR  {{questions}}.type = 'Q'  OR  {{questions}}.type = 'T' OR {{questions}}.type = 'S')");
@@ -1863,13 +1863,42 @@ class SurveyAdmin extends Survey_Common_Action
      * @param Survey $survey
      * @return array
      */
-    private function _tabPanelIntegration($survey)
+    private function _tabPanelIntegration($survey, $sLang = null)
     {
-
-        App()->getClientScript()->registerPackage('jquery-datatable');
+        $sLang = $sLang == null ? $survey->language : $sLang;
         $aData = [];
-        $oResult = Question::model()->getQuestionsWithSubQuestions($survey->sid, $survey->language, "({{questions}}.type = 'T'  OR  {{questions}}.type = 'Q'  OR  {{questions}}.type = 'T' OR {{questions}}.type = 'S')");
-        $aData['questions'] = $oResult;
+        $oResult = Question::model()->findAll("sid=:sid AND (type = 'T'  OR type = 'Q'  OR  type = 'T' OR type = 'S') AND language = :lang", [":sid" => $survey->sid, ":lang" => $sLang]);
+        $aQuestions = [];
+        foreach ($oResult as $aRecord) {
+            $aQuestions[] = $aRecord->attributes;
+        }
+        $aData['jsData'] = [
+            'i10n' => [
+                'ID' => gT('ID'),
+                'Action' => gT('Action'),
+                'Parameter' => gT('Parameter'),
+                'Target question' => gT('Target question'),
+                'Survey ID' => gT('Survey id'),
+                'Question ID' => gT('Question id'),
+                'Subquestion ID' => gT('Subquestion ID'),
+                'Add URL parameter' => gT('Add URL parameter'),
+                'Edit URL parameter' => gT('Edit URL parameter'),
+                'Add URL parameter' => gT('Add URL parameter'),
+                'Parameter' => gT('Parameter'),
+                'Target question' => gT('Target question'),
+                'No target question' => gT('(No target question)'),
+                'Are you sure you want to delete this URL parameter?' => gT('Are you sure you want to delete this URL parameter?'),
+                'No, cancel' => gT('No, cancel'),
+                'Yes, delete' => gT('Yes, delete'),
+                'Save' => gT('Save'),
+                'Cancel' => gT('Cancel'),
+            ],
+            "questionList" => $aQuestions,
+            "surveyid" => $survey->sid,            
+            "getParametersUrl" => Yii::app()->createUrl('admin/survey/sa/getUrlParamsJson', array('surveyid' => $survey->sid)),
+        ];
+
+        App()->getClientScript()->registerPackage('panelintegration');
         return $aData;
     }
 
