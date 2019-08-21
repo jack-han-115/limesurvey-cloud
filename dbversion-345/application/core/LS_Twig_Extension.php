@@ -300,7 +300,7 @@ class LS_Twig_Extension extends Twig_Extension
         // check if this is a true image
         $aParts = explode('.', $sFullPath);
         $aFileInfo = [
-            'type'     => count($aParts) === 2 ? 'image/' . $aParts[1] : 'wrong_path_format',
+            'type'     => 'image/' . $parts[count($parts) - 1],
             'tmp_name' => $sFullPath
         ];
         $checkImage = LSYii_ImageValidator::validateImage($aFileInfo);

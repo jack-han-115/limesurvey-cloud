@@ -427,7 +427,7 @@ class QuestionTemplate extends CFormModel
                                 $previewPath = $sFullPathToQuestionTemplate."/assets/".$fileName;
                                 $parts = explode('.', $fileName);
                                 $fileInfo = [
-                                    'type'     => count($parts) === 2 ? 'image/' . $parts[1] : 'wrong_path_format',
+                                    'type'     => 'image/' . $parts[count($parts) - 1],
                                     'tmp_name' => $previewPath
                                 ];
                                 /** @var array */

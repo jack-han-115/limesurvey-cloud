@@ -809,7 +809,7 @@ class TemplateConfiguration extends TemplateConfig
 
         $parts = explode('.', $file);
         $fileInfo = [
-            'type'     => count($parts) === 2 ? 'image/' . $parts[1] : 'wrong_path_format',
+            'type'     => 'image/' . $parts[count($parts) - 1],
             'tmp_name' => $file
         ];
         $checkImage = LSYii_ImageValidator::validateImage($fileInfo);
