@@ -13,4 +13,5 @@ pipelines:
         script:
           - apt-get update && apt-get install -y unzip
           - cd dbversion-345
+            # NB: Negating the result with ! doesn't work without quotes.
           - '! find application/ -type f -name "*.php" -exec php -l {} \;  | grep -v "No syntax errors"'
