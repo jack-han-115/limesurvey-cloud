@@ -721,6 +721,7 @@ class dataentry extends Survey_Common_Action
 
                                 if (!isset($optCategorySeparator)) {
                                     foreach ($lresult->readAll() as $llrow) {
+                                        $llrow['answer'] = flattenText($llrow['answer']);
                                         $aDataentryoutput .= "<option value='{$llrow['code']}'";
                                         if ($idrow[$fname['fieldname']] == $llrow['code']) {$aDataentryoutput .= " selected='selected'"; }
                                         $aDataentryoutput .= ">{$llrow['answer']}</option>\n";
@@ -729,6 +730,7 @@ class dataentry extends Survey_Common_Action
                                     $defaultopts = array();
                                     $optgroups = array();
                                     foreach ($lresult->readAll() as $llrow) {
+                                        $llrow['answer'] = flattenText($llrow['answer']);
                                         list ($categorytext, $answertext) = explode($optCategorySeparator, $llrow['answer']);
                                         if ($categorytext == '') {
                                             $defaultopts[] = array('code' => $llrow['code'], 'answer' => $answertext);
@@ -777,6 +779,7 @@ class dataentry extends Survey_Common_Action
                             $aDataentryoutput .= ">".gT("Please choose")."..</option>\n";
 
                             foreach ($lresult->readAll() as $llrow) {
+                                $llrow['answer'] = flattenText($llrow['answer']);
                                 $aDataentryoutput .= "<option value='{$llrow['code']}'";
                                 if ($idrow[$fname['fieldname']] == $llrow['code']) {$aDataentryoutput .= " selected='selected'"; }
                                 $aDataentryoutput .= ">{$llrow['answer']}</option>\n";

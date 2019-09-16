@@ -106,8 +106,7 @@ class Survey_Common_Action extends CAction
             'id' => 'iId',
             'gid' => 'iGroupId',
             'qid' => 'iQuestionId',
-            /* Unsure we set 'iSurveyId', 'iSurveyID','surveyid' to same final survey id */
-            /* priority is surveyid,surveyId,sid : surveyId=1&sid=2 set sid surveyid to 1 */
+            /* priority is surveyid,surveyId,sid : surveyId=1&sid=2 set iSurveyId to 1 */
             'sid' => array('iSurveyId', 'iSurveyID', 'surveyid'), // Old link use sid
             'surveyId' => array('iSurveyId', 'iSurveyID', 'surveyid'), // PluginHelper->sidebody : if disable surveyId usage : broke API
             'surveyid' => array('iSurveyId', 'iSurveyID', 'surveyid'),
@@ -122,19 +121,22 @@ class Survey_Common_Action extends CAction
             'browselang' => 'sBrowseLang',
             'tokenids' => 'aTokenIds',
             'tokenid' => 'iTokenId',
-            'subaction' => 'sSubAction',
+            'subaction' => 'sSubAction', // /!\ Already filled by sa : can be different (usage of subaction in quota at 2019-09-04)
         );
-
         // Foreach pseudo, take the key, if it exists,
         // Populate the values (taken as an array) as keys in params
         // with that key's value in the params
-        // (only if that place is empty)
+        // Chek is 2 params are equal for security issue.
         foreach ($pseudos as $key => $pseudo) {
-            if (isset($params[$key])) {
+            // We care only for user parameters, not by code parameters (see issue #15221)
+            if ($checkParam = Yii::app()->getRequest()->getParam($key)) {
                 $pseudo = (array) $pseudo;
                 foreach ($pseudo as $pseud) {
                     if (empty($params[$pseud])) {
-                        $params[$pseud] = $params[$key];
+                        $params[$pseud] = $checkParam;
+                    } elseif($params[$pseud] != $checkParam){
+                        // Throw error about multiple params (and if they are different) #15204
+                        throw new CHttpException(403, sprintf(gT("Invalid parameter %s (%s already set)"),$pseud,$key));
                     }
                 }
             }
@@ -286,7 +288,6 @@ class Survey_Common_Action extends CAction
                         // Output
                     case 'output' :
                         //// TODO : http://goo.gl/ABl5t5
-
                         $content .= $viewUrl;
 
                         if (isset($aViewUrls['afteroutput'])) {
@@ -320,7 +321,7 @@ class Survey_Common_Action extends CAction
     protected function _renderWrappedTemplate($sAction = '', $aViewUrls = array(), $aData = array(), $sRenderFile = false)
     {
         // Gather the data
-        $aData = $this->_addPseudoParams($aData); //// the check of the surveyid should be done in the Admin controller it self.
+        $aData = $this->_addPseudoParams($aData); // This call 2 times _addPseudoParams because it's already done in runWithParams : why ?
 
         $basePath = (string) Yii::getPathOfAlias('application.views.admin.super');
         
@@ -440,6 +441,16 @@ class Survey_Common_Action extends CAction
                         gT("Warning: You are still using the default password ('password'). Please change your password and re-login again.")
                 ));
                 $not->save();
+            }
+            if (strtolower(getGlobalSetting('force_ssl')!='on') && Yii::app()->getConfig("debug") < 2) {
+                $not = new UniqueNotification(array(
+                    'user_id' => App()->user->id,
+                    'importance' => Notification::HIGH_IMPORTANCE,
+                    'title' => gT('SSL not enforced'),
+                    'message' => '<span class="fa fa-exclamation-circle text-warning"></span>&nbsp;'.
+                        gT("Warning: Please enforce SSL encrpytion in Global settings/Security after SSL is properly configured for your webserver.")
+                ));
+                $not->save();                
             }
 
             // LimeService Mod Start

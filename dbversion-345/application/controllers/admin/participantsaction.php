@@ -1003,7 +1003,6 @@ $url .= "_view"; });
                     $thisduplicate = 1;
                     $dupcount++;
                     if ($overwrite == "true") {
-                        
                         // We want all the non filtering internal attributes to be updated,too
                         $oParticipant = Participant::model()->findByPk($aData);
                         foreach ($writearray as $attribute => $value) {

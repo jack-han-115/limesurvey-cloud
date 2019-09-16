@@ -382,6 +382,7 @@ $config['notsupportlanguages'] = array(
     );
 $config['pdffontsize']    = 9; //Fontsize for normal text; Surveytitle is +4; grouptitle is +2
 $config['pdforientation'] = 'P'; // Set L for Landscape or P for portrait format
+$config['pdfshowsurveytitle'] = 'Y'; // Show header in pdf answer export
 $config['pdfshowheader'] = 'N'; // Show header in pdf answer export
 $config['pdflogofile'] = 'logo_pdf.png'; // File name of logo for single answer export. Path is theme path, i.e. theme/default/logo_pdf.png.
                                             // If not found, resulting pdf doesn't have header. A large image implies slower pdf generation.
@@ -512,11 +513,11 @@ $config['ssl_emergency_override'] = false;
 /**
 * Sets if any part of LimeSUrvey may be embedded in an iframe
 * Valid values are allow, sameorigin
-* Default: allow
-* Recommended: sameorigin
+* Default / Recommended: sameorigin
+* To disable the header, set it to allow
 * Using 'deny' is currently not supported as it will disable the theme editor preview and probably file upload.
 */
-$config['x_frame_options'] = 'allow';
+$config['x_frame_options'] = 'sameorigin';
 
 
 // Get your IP Info DB key from http://ipinfodb.com/
@@ -555,6 +556,21 @@ $config['iFileUploadTotalSpaceMB'] = 0;
 
 
 $config['uniq_upload_dir'] = false; // Use a single KCFinder upload directory for all surveys
+
+/**
+ * Allow to use a different MIME database for finfo_open
+ * @see https://www.php.net/manual/en/function.finfo-open.php
+ * Example : '/usr/share/misc/magic.mgc' for redhat based linux
+ */
+$config['magic_database'] = null;
+
+/**
+ * Allow to use a different magic file array 
+ * @see https://www.yiiframework.com/doc/api/1.1/CFileHelper#getExtensionByMimeType-detail
+ * This file must return a PHP array of extension by mimeTypes
+ * Example : https://github.com/LimeSurvey/LimeSurvey/blob/master/framework/utils/fileExtensions.php
+ */
+$config['magic_file'] = null;
 
 
 // defines if the CKeditor toolbar should be opened by default
@@ -737,6 +753,5 @@ $config['pluginCoreList'] = [
 ];
 
 $config['pluginWhitelist'] = [];
-
 return $config;
 //settings deleted
