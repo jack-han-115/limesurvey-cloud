@@ -35,7 +35,7 @@ class LSETwigViewRenderer extends ETwigViewRenderer
      */
     public function renderTemplateFromFile($sLayout, $aDatas, $bReturn)
     {
-        $oTemplate = Template::model()->getInstance();
+        $oTemplate = Template::getLastInstance();
         $oLayoutTemplate = $this->getTemplateForView($sLayout, $oTemplate);
         if ($oLayoutTemplate) {
             $line       = file_get_contents($oLayoutTemplate->viewPath.$sLayout);
@@ -588,7 +588,7 @@ class LSETwigViewRenderer extends ETwigViewRenderer
      */
     public function renderPartial($twigView,$aData)
     {
-        $oTemplate = Template::model()->getInstance();
+        $oTemplate = Template::getLastInstance();
         $aData = $this->getAdditionalInfos($aData, $oTemplate);
         $this->addRecursiveTemplatesPath($oTemplate);
         return $this->_twig->loadTemplate($twigView)->render($aData);
@@ -606,7 +606,7 @@ class LSETwigViewRenderer extends ETwigViewRenderer
     public function getPathOfFile($twigView,$oTemplate=null,$extraPath=array(),$dirName = null)
     {
         if(!$oTemplate) {
-            $oTemplate = Template::model()->getInstance();
+            $oTemplate = Template::getLastInstance();
         }
         $this->addRecursiveTemplatesPath($oTemplate,$extraPath,$dirName);
         if(!$this->_twig->getLoader()->exists($twigView)) {
