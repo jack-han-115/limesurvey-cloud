@@ -6,16 +6,7 @@
 echo viewHelper::getViewTestTag('2faUsersIndex');
 
 ?>
-<?php if(!Permission::model()->hasGlobalPermission('users', 'update')) :?>
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-12">
-            <h2><?=gT("You don't have permission to enter this page!")?></h2>
-        </div>
-    </div>
-</div>
-<?php App()->end();?>
-<?php endif; ?>
+
 <?php
     App()->getClientScript()->registerScript('TFA-User-wrap', 'window.TFAUser = window.TFAUser || new TFAUserSettingsClass();', LSYii_ClientScript::POS_BEGIN);
 ?>

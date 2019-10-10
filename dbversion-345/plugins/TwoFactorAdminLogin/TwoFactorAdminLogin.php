@@ -37,13 +37,13 @@ class TwoFactorAdminLogin extends AuthPluginBase
         ),
         'digits' => array(
             'type' => 'string',
-            'label' => 'Digits',
+            'label' => 'Digits (6 is needed for most tools)',
             'default' => '6',
             'help' => 'The number of digits the resulting codes will be. Please leave it at 6 for Google-Authenticator.'
         ),
         'period' => array(
             'type' => 'string',
-            'label' => 'TimePeriod',
+            'label' => 'Time period (30 is needed for most tools)',
             'default' => '30',
             'help' => 'The number of seconds a code will be valid. Please leave it at 30 for Google-Authenticator.'
         ),
@@ -55,14 +55,14 @@ class TwoFactorAdminLogin extends AuthPluginBase
         ),
         'algorithm' => array(
             'type' => 'select',
-            'label' => 'Algorithm',
+            'label' => 'Algorithm (SHA1 is needed for most tools)',
             'default' => 'sha1',
             'options' => [
                 'sha1' => 'SHA1 (Default)',
                 'sha256 ' => 'SHA256',
                 'md5' => 'MD5',
             ],
-            'help' => 'The algorithm used'
+            'help' => 'The algorithm used, please keep in mind, that most tools only work with SHA1 hashing'
         ),
         'force2fa' => array(
             'type' => 'select',
@@ -336,12 +336,12 @@ class TwoFactorAdminLogin extends AuthPluginBase
     */
     public function directCallConfirmKey($oEvent, $oRequest)
     {
-        $uid = $oRequest->getPost('uid', null);
-        if (!Permission::model()->hasGlobalPermission('users', 'update') && $uid !== Yii::app()->user->id) {
+        $aTFAUserKey = Yii::app()->getRequest()->getPost('TFAUserKey', []);
+        $uid = $aTFAUserKey['uid'];
+        if (!(Permission::model()->hasGlobalPermission('users', 'update') || $uid == Yii::app()->user->id)) {
             return $this->createJSONResponse(false, "No permission for this");
         }
-
-        $aTFAUserKey = Yii::app()->getRequest()->getPost('TFAUserKey', []);
+        
         $o2FA = $this->get2FAObject();
 
         $sConfirmationKey = Yii::app()->getRequest()->getPost('confirmationKey', '');
@@ -375,7 +375,7 @@ class TwoFactorAdminLogin extends AuthPluginBase
     public function directCallDeleteKey($oEvent, $oRequest)
     {
         $uid = $oRequest->getPost('uid', null);
-        $uid = $uid != null ? $uid : Yii::app()->user->id;
+        $uid = $uid ?? Yii::app()->user->id;
         if (!Permission::model()->hasGlobalPermission('users', 'update') && $uid !== Yii::app()->user->id) {
             return $this->createJSONResponse(false, gT('You have no permission for this action'));
         }
