@@ -52,12 +52,13 @@ return array(
             'class' => 'CDbConnection'
         ),
         
-		// Uncomment the following line if you need table-based sessions
-		// 'session' => array (
+		 'session' => array (
+          'sessionName' => '#sessionname'
+        // Uncomment the following line if you need table-based sessions
 			// 'class' => 'system.web.CDbHttpSession',
 			// 'connectionID' => 'db',
 			// 'sessionTableName' => '{{sessions}}',
-		// ),
+		),
 		
 		'urlManager' => array(
 			'urlFormat' => 'path',
