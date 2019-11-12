@@ -207,7 +207,7 @@ class remotecontrol_handle
     }
 
     /**
-     * Import a survey in a known format
+     * Import survey in a known format (RPC function)
      *
      * Allow importing lss, csv, xls or survey zip archive in BASE 64 encoded.
      *
@@ -253,13 +253,13 @@ class remotecontrol_handle
     }
 
     /**
-     * RPC Routine to copy a survey.
+     * Copy survey (RPC function)
      *
      * @access public
      * @param string $sSessionKey Auth credentials
      * @param int $iSurveyID_org Id of the source survey
      * @param string $sNewname name of the new survey
-     * @return On success: new $iSurveyID in array['newsid']. On failure array with error information
+     * @return array On success: new $iSurveyID in array['newsid']. On failure array with error information
      * */
     public function copy_survey($sSessionKey, $iSurveyID_org, $sNewname)
     {
@@ -306,9 +306,9 @@ class remotecontrol_handle
     }
 
     /**
-     * RPC Routine to get survey properties.
+     * Get survey properties (RPC function)
+     * 
      * Get properties of a survey
-     *
      * All internal properties of a survey are available.
      * @see \Survey for the list of available properties
      *
@@ -353,7 +353,7 @@ class remotecontrol_handle
     }
 
     /**
-     * Set survey properties.
+     * Set survey properties (RPC function)
      *
      * @see \Survey for the list of available properties
      * Properties available are restricted
@@ -439,7 +439,7 @@ class remotecontrol_handle
 
 
     /**
-     * Activate an existing survey
+     * Activate survey (RPC function)
      *
      * Return the result of the activation
      * Failure status : Invalid Survey ID, Constistency check error, Activation Error, Invalid session key, No permission
@@ -481,7 +481,7 @@ class remotecontrol_handle
     }
 
     /**
-     * Export statistics of a survey to a user.
+     * Export survey statistics (RPC function)
      *
      * Allow to export statistics available Returns string - base64 encoding of the statistics.
      *
@@ -582,7 +582,8 @@ class remotecontrol_handle
     }
 
     /**
-     * RPC Routine to export submission timeline.
+     * Export submission timeline (RPC function)
+     * 
      * Returns an array of values (count and period)
      *
      * @access public
@@ -629,7 +630,7 @@ class remotecontrol_handle
     }
 
     /**
-     * Get survey summary, regarding token usage and survey participation.
+     * Get survey summary, regarding token usage and survey participation (RPC function)
      *
      * Returns the requested value as string, or all status in an array
      *
@@ -731,7 +732,7 @@ class remotecontrol_handle
     /*Survey language specific functions */
 
     /**
-     * RPC Routine to add a survey language.
+     * Add a survey language (RPC function)
      *
      * @access public
      * @param string $sSessionKey Auth credentials
@@ -791,7 +792,7 @@ class remotecontrol_handle
     }
 
     /**
-     * RPC Routine to delete a language from a survey.
+     * Delete a language from a survey (RPC function)
      *
      * @access public
      * @param string $sSessionKey Auth credentials
@@ -841,7 +842,7 @@ class remotecontrol_handle
 
 
     /**
-     * Get survey language properties.
+     * Get survey language properties (RPC function)
      *
      * @see \SurveyLanguageSetting for available properties
      *
@@ -895,7 +896,7 @@ class remotecontrol_handle
     }
 
     /**
-     * Set survey language properties.
+     * Set survey language properties (RPC function)
      *
      * @see \SurveyLanguageSetting for available properties.
      *
@@ -973,9 +974,10 @@ class remotecontrol_handle
     /* Group specific functions */
 
     /**
-     * Add an empty group with minimum details to a chosen survey.
+     * Add empty page with minimum details (RPC function)
+     * 
      * Used as a placeholder for importing questions.
-     * Returns the groupid of the created group.
+     * Returns the groupid of the created page.
      *
      * @access public
      * @param string $sSessionKey Auth credentials
@@ -1018,7 +1020,8 @@ class remotecontrol_handle
     }
 
     /**
-     * Delete a group from a chosen survey .
+     * Delete a page from a chosen survey (RPC function)
+     * 
      * Returns the id of the deleted group.
      *
      * @access public
@@ -1069,7 +1072,7 @@ class remotecontrol_handle
     }
 
     /**
-     * Import a group and add to a chosen survey - imports lsg,csv
+     * Import a group and add to a survey (RPC function)
      *
      * @access public
      * @param string $sSessionKey Auth credentials
@@ -1151,7 +1154,8 @@ class remotecontrol_handle
     }
 
     /**
-     * Find response IDs given a survey ID and a token.
+     * Find response IDs given a survey ID and a token (RPC function)
+     * 
      * @param string $sSessionKey
      * @param int $iSurveyID
      * @param string $sToken
@@ -1174,7 +1178,7 @@ class remotecontrol_handle
     }
 
     /**
-     * Get the properties of a group of a survey .
+     * Get the properties of a survey page (RPC function)
      *
      * Returns array of properties needed or all properties
      * @see \QuestionGroup for available properties
@@ -1220,7 +1224,7 @@ class remotecontrol_handle
 
 
     /**
-     * Set group properties.
+     * Set group properties (RPC function)
      *
      * @see \QuestionGroup for available properties and restriction
      *
@@ -1295,7 +1299,8 @@ class remotecontrol_handle
 
 
     /**
-     * Delete a question from a survey .
+     * Delete question from a survey (RPC function)
+     * 
      * Returns the id of the deleted question.
      *
      * @access public
@@ -1358,6 +1363,8 @@ class remotecontrol_handle
 
 
     /**
+     * Import question (RPC function)
+     * 
      * Import a question from lsq file
      *
      * @access public
@@ -1718,7 +1725,7 @@ class remotecontrol_handle
 
 
     /**
-     * Add participants to the tokens collection of the survey.
+     * Add participants to the survey.
      *
      * The parameters $aParticipantData is a 2 dimensionnal array containing needed participant data.
      * @see \Token for all available attribute,
@@ -1768,7 +1775,8 @@ class remotecontrol_handle
     }
 
     /**
-     * Delete multiple participants from the survey participants table of a survey.
+     * Delete multiple participants from the survey participants table (RPC function)
+     * 
      * Returns the id of the deleted token
      *
      * @access public
@@ -1814,8 +1822,8 @@ class remotecontrol_handle
 
 
     /**
-     * Get settings of a token/participant of a survey.
-     *
+     * Get settings of a survey participant (RPC function)
+     * 
      * Allow to request for a specific participant. If more than one participant is returned with specified attribute(s) an error is returned.
      *
      * @access public
@@ -1874,7 +1882,7 @@ class remotecontrol_handle
     }
 
     /**
-     * Set properties of a survey participant/token.
+     * Set properties of a survey participant (RPC function)
      *
      * Allow to set properties about a specific participant, only one particpant can be updated.
      * @see \Token for available properties
@@ -1941,7 +1949,9 @@ class remotecontrol_handle
 
 
     /**
-     * Return the ids and all attributes of groups belonging to survey.
+     * Get survey pages (RPC function)
+     * 
+     * Returns the ids and all attributes of all survey pages
      *
      * @access public
      * @param string $sSessionKey Auth credentials
@@ -1976,7 +1986,7 @@ class remotecontrol_handle
     }
 
     /**
-     * Return the ids and propertries of token/participants of a survey.
+     * Return the ids and propertries of survey participants (RPC function)
      *
      * if $bUnused is true, user will get the list of uncompleted tokens (token_return functionality).
      * Parameters iStart and iLimit are used to limit the number of results of this call.
@@ -2061,7 +2071,8 @@ class remotecontrol_handle
     }
 
     /**
-     * Return the ids and info of (sub-)questions of a survey/group.
+     * Return the ids and info of (sub-)questions of a survey/group (RPC function)
+     * 
      * Returns array of ids and info.
      *
      * @access public
@@ -2121,7 +2132,8 @@ class remotecontrol_handle
     }
 
     /**
-     * Set Quota Attributes
+     * Set quota attributes (RPC function)
+     * 
      * Retuns an array containing the boolean 'success' and 'message' with either errors or Quota attributes (on success)
      * @access public
      * @param string $sSessionKey Auth credentials
@@ -2167,7 +2179,7 @@ class remotecontrol_handle
     }
 
     /**
-     * List the survey belonging to a user
+     * List the survey belonging to a user (RPC function)
      *
      * If user is admin he can get surveys of every user (parameter sUser) or all surveys (sUser=null)
      * Else only the surveys belonging to the user requesting will be shown.
@@ -2221,7 +2233,7 @@ class remotecontrol_handle
     }
 
 /**
- * Get list the ids and info of users.
+ * Get list the ids and info of administration user(s) (RPC function)
  *
  * Returns array of ids and info.
  *
@@ -2270,7 +2282,9 @@ class remotecontrol_handle
     }
 
     /**
-     * Initialise the token system of a survey where new participant tokens may be later added.
+     * Activate survey participants (RPC function)
+     * 
+     * Initialise the survey participant table of a survey where new participant tokens may be later added.
      *
      * @access public
      * @param string $sSessionKey Auth credentials
@@ -2308,7 +2322,7 @@ class remotecontrol_handle
     }
 
     /**
-     * Send register mails to participants in a survey
+     * Send e-mails to registered participants in a survey (RPC function)
      *
      * Returns array of results of sending
      *
@@ -2401,7 +2415,7 @@ class remotecontrol_handle
     }
 
     /**
-     * Invite participants in a survey
+     * Invite participants in a survey (RPC function)
      *
      * Returns array of results of sending
      *
@@ -2467,7 +2481,8 @@ class remotecontrol_handle
 
 
     /**
-     * Send a reminder to participants in a survey
+     * Send a reminder to participants in a survey (RPC function) 
+     * 
      * Returns array of results of sending
      *
      * @access public
@@ -2541,6 +2556,7 @@ class remotecontrol_handle
 
     /**
      * Add a response to the survey responses collection.
+     * 
      * Returns the id of the inserted survey response
      *
      * @access public
@@ -2632,6 +2648,7 @@ class remotecontrol_handle
 
     /**
      * Update a response in a given survey.
+     * 
      * Routine supports only single response updates.
      * Response to update will be identified either by the response id, or the token if response id is missing.
      * Routine is only applicable for active surveys with alloweditaftercompletion = Y.
@@ -2712,6 +2729,7 @@ class remotecontrol_handle
 
     /**
      * Uploads one file to be used later.
+     * 
      * Returns the metadata on success.
      *
      * @access public
@@ -2878,6 +2896,7 @@ class remotecontrol_handle
 
     /**
      * Export token response in a survey.
+     * 
      * Returns the requested file as base64 encoded string
      *
      * @access public
@@ -3084,7 +3103,9 @@ class remotecontrol_handle
 
 
     /**
-     * Import a participant into the LimeSurvey cpd. It stores attributes as well, if they are registered before within ui
+     * Import a participant into the LimeSurvey CPDB 
+     * 
+     * It stores attributes as well, if they are registered before within ui
      *
      * Call the function with $response = $myJSONRPCClient->cpd_importParticipants( $sessionKey, $aParticipants);
      *

@@ -15,5 +15,11 @@
         <testsuite name="Controllers">
             <directory>tests/controllers</directory>
         </testsuite>
+        <testsuite name="Unit">
+            <directory>tests/unit</directory>
+        </testsuite>
+        <testsuite name="Acceptance">
+            <directory>tests/functional/acceptance</directory>
+        </testsuite>
     </testsuites>
 </phpunit>
