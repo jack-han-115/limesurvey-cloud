@@ -480,9 +480,7 @@ $config['showqnumcode'] = 'choose';
 * @var $force_ssl string - forces LimeSurvey to run through HTTPS or to block HTTPS
 * 	'on' =	force SSL/HTTPS to be on (This will cause LimeSurvey
 *		to fail in SSL is turned off)
-*	'off' =	block SSL/HTTPS (this prevents LimeSurvey from
-*		running through SSL)
-*	'' =	do nothing (default)
+*	Any other string value = do nothing (default)
 *
 * DO NOT turn on secure unless you are sure SSL/HTTPS is working and
 * that you have a current, working, valid certificate. If you are
