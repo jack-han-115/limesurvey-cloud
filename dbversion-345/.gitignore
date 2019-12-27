@@ -91,7 +91,6 @@ chromedriver
 # RFC and commons directory and files
 /.well-known/
 /sitemap.xml
-/robots.txt
 
 # Some global "temporary files" (see
 *~
