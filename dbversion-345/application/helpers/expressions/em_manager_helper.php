@@ -5489,7 +5489,7 @@
                 {
                     $srid = null;
                     $message .= $this->gT("Unable to insert record into survey table"); // TODO - add SQL error?
-                    submitfailed($this->gT("Unable to insert record into survey table"));
+                    echo submitfailed('');  // TODO - report SQL error?
                 }
                 //Insert Row for Timings, if needed
                 if ($this->surveyOptions['savetimings']) {
@@ -5507,6 +5507,7 @@
             }
             if (count($updatedValues) > 0 || $finished)
             {
+                
                  // ========================  Begin LimeService Mod
                 if (!isset($_SESSION[$this->sessid]['limeservice_start']) && $this->surveyOptions['active']=='Y' && ($_SESSION[$this->sessid]['step']==1 || ($_SESSION[$this->sessid]['totalsteps']==1 && $_SESSION[$this->sessid]['step']==2)))
                 {
@@ -5521,8 +5522,10 @@
                     } 
                     $_SESSION[$this->sessid]['limeservice_start']=true;
                 }
-                // ========================  End LimeService Mod              
-                $aResponseAttributes = array();
+                // ========================  End LimeService Mod  
+                            
+                $query = 'UPDATE ' . $this->surveyOptions['tablename'] . ' SET ';
+                $setter = array();
                 switch ($this->surveyMode)
                 {
                     case 'question':
@@ -5539,14 +5542,14 @@
                         $thisstep = 0;
                         break;
                 }
-                $aResponseAttributes['lastpage'] = $thisstep;
+                $setter[] = App()->db->quoteColumnName('lastpage') . "=" . App()->db->quoteValue($thisstep);
 
                 if ($this->surveyOptions['datestamp'] && isset($_SESSION[$this->sessid]['datestamp'])) {
-                    $_SESSION[$this->sessid]['datestamp'] = dateShift(date("Y-m-d H:i:s"), "Y-m-d H:i:s", $this->surveyOptions['timeadjust']);
-                    $aResponseAttributes['datestamp'] = $_SESSION[$this->sessid]['datestamp'];
+                    $_SESSION[$this->sessid]['datestamp']=dateShift(date("Y-m-d H:i:s"), "Y-m-d H:i:s", $this->surveyOptions['timeadjust']);
+                    $setter[] = App()->db->quoteColumnName('datestamp') . "=" . App()->db->quoteValue(dateShift(date("Y-m-d H:i:s"), "Y-m-d H:i:s", $this->surveyOptions['timeadjust']));
                 }
                 if ($this->surveyOptions['ipaddr']) {
-                    $aResponseAttributes['ipaddr'] = getIPAddress();
+                    $setter[] = App()->db->quoteColumnName('ipaddr') . "=" . App()->db->quoteValue(getIPAddress());
                 }
 
                 foreach ($updatedValues as $key=>$value)
@@ -5581,35 +5584,45 @@
                     }
                     if (is_null($val))
                     {
-                        $aResponseAttributes[$key] = NULL;
+                        $setter[] = App()->db->quoteColumnName($key) . "=NULL";
                     }
                     else
                     {
-                        $aResponseAttributes[$key] = stripCtrlChars($val);
+                        $setter[] = App()->db->quoteColumnName($key) . "=" . App()->db->quoteValue(stripCtrlChars($val));
                     }
                 }
+                $query .= implode(', ', $setter);
+                $query .= " WHERE ID=";
 
                 if (isset($_SESSION[$this->sessid]['srid']) && $this->surveyOptions['active'])
                 {
-                    $oResponse = Response::model($this->sid)->findByPk($_SESSION[$this->sessid]['srid']);
-                    //If the responses already have been submitted once they are marked as completed already, so they shouldn't be changed.
-                    if ($oResponse->submitdate == null || Survey::model()->findByPk($this->sid)->alloweditaftercompletion == 'Y') {
-                        $oResponse->setAttributes($aResponseAttributes, false);
-                        if (!$oResponse->save()) {
-                            $message = submitfailed('', print_r($response->getErrors())); // $response->getErrors() is array[string[]], then can not join
+                    $query .= $_SESSION[$this->sessid]['srid'];
 
-                            if (($this->debugLevel & LEM_DEBUG_VALIDATION_SUMMARY) == LEM_DEBUG_VALIDATION_SUMMARY) {
-                                $message .= CHTml::errorSummary($response,$this->gT('Error on response update'));  // Add SQL error according to debugLevel
-                            }
-                            LimeExpressionManager::addFrontendFlashMessage('error', $message, $this->sid);
-                        } else { // Action in case its saved with success : to be move in Response::aferSave ?
-                            // Save Timings if needed
-                            if ($this->surveyOptions['savetimings']) {
-                                Yii::import("application.libraries.Save");
-                                $cSave = new Save();
-                                $cSave->set_answer_time();
-                            }
+                    //If the responses already have been submitted once they are marked as completed already, so they shouldn't be changed.
+                    $oSurveyResponse = SurveyDynamic::model($this->sid)->findByAttributes(['id' => $_SESSION[$this->sessid]['srid']]);
+                    $result = true;
+                    if ($oSurveyResponse->submitdate == null || Survey::model()->findByPk($this->sid)->alloweditaftercompletion == 'Y') {
+                        $result = !Yii::app()->db->createCommand($query)->query();
+                        //$result = !dbExecuteAssoc($query);
+                    }
+
+                    if ($result)
+                    {
+                        // TODO: This kills the session if adminemail is defined, so the queries below won't work.
+                        $message = submitfailed('', $query);  // TODO - report SQL error?
+
+                        if (($this->debugLevel & LEM_DEBUG_VALIDATION_SUMMARY) == LEM_DEBUG_VALIDATION_SUMMARY) {
+                            $message .= $this->gT('Error in SQL update');  // TODO - add  SQL error?
                         }
+
+                        LimeExpressionManager::addFrontendFlashMessage('error', $message, $this->sid);
+
+                    }
+                    // Save Timings if needed
+                    elseif ($this->surveyOptions['savetimings']) {
+                        Yii::import("application.libraries.Save");
+                        $cSave = new Save();
+                        $cSave->set_answer_time();
                     }
 
                     if ($finished) {
@@ -5623,8 +5636,13 @@
                         if($savedControl){
                             $savedControl->delete();
                         }
+
+                        if (($this->debugLevel & LEM_DEBUG_VALIDATION_SUMMARY) == LEM_DEBUG_VALIDATION_SUMMARY) {
+                            $message .= ';<br />'.$query;
+                        }
+
                     }
-                    elseif ($this->surveyOptions['allowsave'] && isset($_SESSION[$this->sessid]['scid']))
+                    else if ($this->surveyOptions['allowsave'] && isset($_SESSION[$this->sessid]['scid']))
                     {
                         SavedControl::model()->updateByPk($_SESSION[$this->sessid]['scid'], array('saved_thisstep'=>$thisstep));
                     }
@@ -5636,19 +5654,26 @@
                     }
                     else
                     {
-                        if ($finished && ($oResponse->submitdate == null || Survey::model()->findByPk($this->sid)->alloweditaftercompletion == 'Y')) {
+                        if ($finished && ($oSurveyResponse->submitdate == null || Survey::model()->findByPk($this->sid)->alloweditaftercompletion == 'Y')) {
+                            $sQuery = 'UPDATE '.$this->surveyOptions['tablename'] . " SET ";
                             if($this->surveyOptions['datestamp'])
                             {
-                                $oResponse->submitdate = dateShift(date("Y-m-d H:i:s"), "Y-m-d H:i:s", $this->surveyOptions['timeadjust']);
+                                // Replace with date("Y-m-d H:i:s") ? See timeadjust
+                                $sQuery .= App()->db->quoteColumnName('submitdate') . "=" . App()->db->quoteValue(dateShift(date("Y-m-d H:i:s"), "Y-m-d H:i:s", $this->surveyOptions['timeadjust']));
                             }
                             else
                             {
-                                $oResponse->submitdate = date("Y-m-d H:i:s",mktime(0,0,0,1,1,1980));
+                                $sQuery .= App()->db->quoteColumnName('submitdate') . "=" . App()->db->quoteValue(date("Y-m-d H:i:s",mktime(0,0,0,1,1,1980)));
                             }
-                            $oResponse->save();
+                            $sQuery .= " WHERE ID=".$_SESSION[$this->sessid]['srid'];
+                            Yii::app()->db->createCommand($sQuery)->query();
+                            //dbExecuteAssoc($sQuery);   // Checked
                         }
                     }
 
+                }
+                if (($this->debugLevel & LEM_DEBUG_VALIDATION_SUMMARY) == LEM_DEBUG_VALIDATION_SUMMARY) {
+                    $message .= $query;
                 }
             }
             $this->knownVars["SAVEDID"] = array(

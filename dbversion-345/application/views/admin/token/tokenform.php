@@ -147,10 +147,7 @@ foreach ($tokendata as $Key => $Value) {
                 <?php eT("First name:"); ?>
                 </label>
                 <div class="">
-                    <?=TbHtml::textField('firstname', $firstname, [
-                        'class' => 'form-control',
-                        'size' => '30',
-                    ]);?>
+                <input class='form-control' type='text' size='30' id='firstname' name='firstname' value="<?php if (isset($firstname)) {echo $firstname; } ?>" />
                 </div>
             </div>
             <div class="form-group">
@@ -158,10 +155,7 @@ foreach ($tokendata as $Key => $Value) {
                 <?php eT("Last name:"); ?>
                 </label>
                 <div class="">
-                    <?=TbHtml::textField('lastname', $lastname, [
-                        'class' => 'form-control',
-                        'size' => '30',
-                    ]);?>
+                <input class='form-control' type='text' size='30' id='lastname' name='lastname' value="<?php if (isset($lastname)) {echo $lastname; } ?>" />
                 </div>
             </div>
 
@@ -195,11 +189,7 @@ foreach ($tokendata as $Key => $Value) {
                 <?php eT("Email:"); ?>
             </label>
             <div class="">
-                <?=TbHtml::emailField('email', $email, [
-                        'class' => 'form-control',
-                        'size' => '50',
-                        'maxlength' => '320' 
-                ]);?>
+                <input class='form-control' type='text' maxlength='320' size='50' id='email' name='email' value="<?php if (isset($email)) {echo $email; } ?>" />
             </div>
             </div>
 
@@ -209,12 +199,7 @@ foreach ($tokendata as $Key => $Value) {
                 <?php eT("Email status:"); ?>
             </label>
             <div class="">
-                <?=TbHtml::textField('emailstatus', $emailstatus, [
-                        'class' => 'form-control',
-                        'size' => '50',
-                        'maxlength' => '320',
-                        'placeholder' => 'OK'
-                ]);?>
+                <input class='form-control' type='text' maxlength='320' size='50' id='emailstatus' name='emailstatus' placeholder='OK' value="<?php if (isset($emailstatus)) {echo $emailstatus; } else {echo " OK "; }?>" />
             </div>
             </div>
 
