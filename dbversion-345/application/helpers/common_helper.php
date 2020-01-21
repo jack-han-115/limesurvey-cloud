@@ -1096,7 +1096,7 @@ function getExtendedAnswer($iSurveyID, $sFieldCode, $sValue, $sLanguage)
     //Fieldcode used to determine question, $sValue used to match against answer code
     //Returns NULL if question type does not suit
     if (strpos($sFieldCode, "{$iSurveyID}X") === 0) {
-//Only check if it looks like a real fieldcode
+        //Only check if it looks like a real fieldcode
         $fieldmap = createFieldMap($survey, 'short', false, false, $sLanguage);
         if (isset($fieldmap[$sFieldCode])) {
             $fields = $fieldmap[$sFieldCode];
@@ -1121,7 +1121,12 @@ function getExtendedAnswer($iSurveyID, $sFieldCode, $sValue, $sLanguage)
                 break;
             case 'K':
             case 'N':
+                // Fix the value : Value is stored as decimal in SQL
                 if (trim($sValue) != '') {
+                    if($sValue[0] === ".") {
+                        // issue #15685 mssql SAVE 0.01 AS .0100000000, set it at 0.0100000000
+                        $sValue = "0".$sValue;
+                    }
                     if (strpos($sValue, ".") !== false) {
                         $sValue = rtrim(rtrim($sValue, "0"), ".");
                     }
@@ -2318,7 +2323,9 @@ function SendEmailMessage($body, $subject, $to, $from, $sitename, $ishtml = fals
         }
     }
     $mail->AddCustomHeader("X-Surveymailer: $sitename Emailer (LimeSurvey.org)");
-    if (get_magic_quotes_gpc() != "0") {$body = stripcslashes($body); }
+    if(function_exists('get_magic_quotes_gpc') && get_magic_quotes_gpc()) {
+        $body = stripcslashes($body); 
+    }
     if ($ishtml) {
         $mail->IsHTML(true);
         if (strpos($body, "<html>") === false) {
@@ -2864,7 +2871,7 @@ function randomChars($length, $pattern = "23456789abcdefghijkmnpqrstuvwxyz")
     $patternlength = strlen($pattern) - 1;
     $key = '';
     for ($i = 0; $i < $length; $i++) {
-        $key .= $pattern{mt_rand(0, $patternlength)};
+        $key .= $pattern[mt_rand(0, $patternlength)];
     }
     return $key;
 }
@@ -4329,7 +4336,7 @@ function modifyDatabase($sqlfile = '', $sqlstring = '')
         }
     } else {
         $sqlstring = trim($sqlstring);
-        if ($sqlstring{strlen($sqlstring) - 1} != ";") {
+        if ($sqlstring[strlen($sqlstring) - 1] != ";") {
             $sqlstring .= ";"; // add it in if it's not there.
         }
         $lines[] = $sqlstring;
@@ -4624,7 +4631,7 @@ function fixSubquestions()
 */
 function ls_json_encode($content)
 {
-    if (is_string($content) && get_magic_quotes_gpc()) {
+    if (function_exists('get_magic_quotes_gpc') && get_magic_quotes_gpc() && is_string($content)) {
         $content = stripslashes($content);
     }
     $ans = json_encode($content);

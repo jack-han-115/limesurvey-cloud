@@ -5594,15 +5594,17 @@
                     $oResponse = Response::model($this->sid)->findByPk($_SESSION[$this->sessid]['srid']);
                     //If the responses already have been submitted once they are marked as completed already, so they shouldn't be changed.
                     if ($oResponse->submitdate == null || Survey::model()->findByPk($this->sid)->alloweditaftercompletion == 'Y') {
-                        $oResponse->setAttributes($aResponseAttributes, false);
-                        if (!$oResponse->save()) {
-                            $message = submitfailed('', print_r($response->getErrors())); // $response->getErrors() is array[string[]], then can not join
-
-                            if (($this->debugLevel & LEM_DEBUG_VALIDATION_SUMMARY) == LEM_DEBUG_VALIDATION_SUMMARY) {
-                                $message .= CHTml::errorSummary($response,$this->gT('Error on response update'));  // Add SQL error according to debugLevel
+                        $iCountUpdated = Response::model($this->sid)->updateByPk($oResponse->id,$aResponseAttributes);
+                        if (!$iCountUpdated) {
+                            // Fix #15733 comparing values of previous response
+                            $aReponseCurrentAttributes = $oResponse->getAttributes();
+                            $aIntersect = array_intersect_key($aReponseCurrentAttributes,$aResponseAttributes);
+                            if (!empty(array_diff_assoc($aResponseAttributes,$aIntersect))) {
+                                $message = submitfailed('',$this->gT('Error on response update'));
+                                LimeExpressionManager::addFrontendFlashMessage('error', $message, $this->sid);
                             }
-                            LimeExpressionManager::addFrontendFlashMessage('error', $message, $this->sid);
-                        } else { // Action in case its saved with success : to be move in Response::aferSave ?
+                        } else {
+                            // Action in case its saved with success : to be move in Response::aferSave ?
                             // Save Timings if needed
                             if ($this->surveyOptions['savetimings']) {
                                 Yii::import("application.libraries.Save");
@@ -5610,6 +5612,8 @@
                                 $cSave->set_answer_time();
                             }
                         }
+                    } else {
+                        LimeExpressionManager::addFrontendFlashMessage('error', $this->gT('This response was already submitted.'), $this->sid);
                     }
 
                     if ($finished) {
@@ -5637,15 +5641,15 @@
                     else
                     {
                         if ($finished && ($oResponse->submitdate == null || Survey::model()->findByPk($this->sid)->alloweditaftercompletion == 'Y')) {
-                            if($this->surveyOptions['datestamp'])
-                            {
-                                $oResponse->submitdate = dateShift(date("Y-m-d H:i:s"), "Y-m-d H:i:s", $this->surveyOptions['timeadjust']);
+                            /* Less update : just do what you need to to */
+                            if($this->surveyOptions['datestamp']) {
+                                $submitdate = dateShift(date("Y-m-d H:i:s"), "Y-m-d H:i:s", $this->surveyOptions['timeadjust']);
+                            } else {
+                                $submitdate = date("Y-m-d H:i:s",mktime(0,0,0,1,1,1980));
                             }
-                            else
-                            {
-                                $oResponse->submitdate = date("Y-m-d H:i:s",mktime(0,0,0,1,1,1980));
+                            if (!Response::model($this->sid)->updateByPk($oResponse->id,array('submitdate'=>$submitdate))) {
+                                LimeExpressionManager::addFrontendFlashMessage('error', $this->gT('An error happen when try to submit your response.'), $this->sid);
                             }
-                            $oResponse->save();
                         }
                     }
 
@@ -8373,7 +8377,7 @@ report~numKids > 0~message~{name}, you said you are {age} and that you have {num
             foreach(explode("\n",$tests) as $test)
             {
                 $args = explode("~",$test);
-                $type = (($args[1]=='expr') ? '*' : ($args[1]=='message') ? 'X' : 'S');
+                $type = $args[1]=='expr' ? '*' : ($args[1]=='message' ? 'X' : 'S');
                 $vars[$args[0]] = array('sgqa'=>$args[0], 'code'=>'', 'jsName'=>'java' . $args[0], 'jsName_on'=>'java' . $args[0], 'readWrite'=>'Y', 'type'=>$type, 'relevanceStatus'=>'1', 'gid'=>1, 'gseq'=>1, 'qseq'=>$i, 'qid'=>$i);
                 $varSeq[] = $args[0];
                 $testArgs[] = $args;
@@ -9162,7 +9166,8 @@ report~numKids > 0~message~{name}, you said you are {age} and that you have {num
                     || ($this->surveyMode=='group' && $gseq != -1 && isset($var['gseq']) && $gseq == $var['gseq'])
                     || ($this->surveyMode=='question' && $qseq != -1 && isset($var['qseq']) && $qseq == $var['qseq']))
                     {
-                        return (isset($var['jsName_on']) ? $var['jsName_on'] : (isset($var['jsName'])) ? $var['jsName'] : $default);
+                        // TODO: jsName_on will never be returned?
+                        return (isset($var['jsName_on']) ? $var['jsName_on'] : isset($var['jsName'])) ? $var['jsName'] : $default;
                     }
                     else {
                         return (isset($var['jsName']) ? $var['jsName'] : $default);
