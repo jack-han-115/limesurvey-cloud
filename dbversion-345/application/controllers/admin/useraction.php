@@ -101,11 +101,18 @@ class UserAction extends Survey_Common_Action
 
 
         // LimeService Mod start =============
-        // Limie number of administrators on the Free package to prevent spam.
+        // Limit number of administrators on the Free package to prevent spam.
         $iUserCount = User::model()->count();
-        $sPlan = Yii::app()->dbstats->createCommand('SELECT subscription_alias FROM limeservice_system.installations WHERE user_id='.getInstallationID())->queryRow());
-        if ($sPlan === 'free' && $iUserCount > 9) {
-            Yii::app()->setFlashMessage(gT("When using the Free package, maximum number of survey administrators is 10. Please upgrade your package."), 'error');
+        $sPlan = Yii::app()->dbstats->createCommand('SELECT subscription_alias FROM limeservice_system.installations WHERE user_id='.getInstallationID())->queryRow();
+        if ($sPlan['subscription_alias'] === 'free' && $iUserCount > 9) {
+            Yii::app()->setFlashMessage(
+                sprintf(
+                    gT("When using the Free package, the maximum number of survey administrators is 10. Please %supgrade your package%s to remove this limit."),
+                    '<a target="_blank" href="https://www.limesurvey.org/editions-and-prices/limesurvey-pro/editions-and-prices-professional">',
+                    '</a>'
+                ),
+                'error'
+            );
             $this->getController()->redirect(array('/admin/user/sa/index'));
         }
         // LimeService Mod end =============
