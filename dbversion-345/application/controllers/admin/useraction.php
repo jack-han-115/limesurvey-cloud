@@ -99,6 +99,17 @@ class UserAction extends Survey_Common_Action
             $this->getController()->redirect(array("admin/user/sa/index"));
         }
 
+
+        // LimeService Mod start =============
+        // Limie number of administrators on the Free package to prevent spam.
+        $iUserCount = User::model()->count();
+        $sPlan = Yii::app()->dbstats->createCommand('SELECT subscription_alias FROM limeservice_system.installations WHERE user_id='.getInstallationID())->queryRow());
+        if ($sPlan === 'free' && $iUserCount > 9) {
+            Yii::app()->setFlashMessage(gT("When using the Free package, maximum number of survey administrators is 10. Please upgrade your package."), 'error');
+            $this->getController()->redirect(array('/admin/user/sa/index'));
+        }
+        // LimeService Mod end =============
+
         $new_user = flattenText(Yii::app()->request->getPost('new_user'), false, true);
         $aViewUrls = array();
         if (empty($new_user)) {
