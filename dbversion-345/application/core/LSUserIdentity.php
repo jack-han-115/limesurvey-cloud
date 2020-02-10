@@ -542,4 +542,139 @@ class LSUserIdentity extends CUserIdentity
     {
         $this->config = $config;
     }
+
+    // LimeService Mod start =============
+    /**
+     * Show popup for user experience survey.
+     * OpenProject #330.
+     *
+     * @return void
+     */
+    protected function showUserExperienceSurveyPopup()
+    {
+        // Init vars.
+        $rpcUrl      = 'https://survey.limesurvey.org/admin/remotecontrol';
+        $rpcUser     = 'tmp_api';
+        $rpcPassword = 'O432KCB3jzcTq4wV4KtCau9XkhUv8/t6EWaVLGkajHI=';
+        $surveyId    = '189495';
+
+        Yii::app()->loadLibrary('jsonRPCClient');
+
+        /** @var JsonRPCClient */
+        $rpc = new JsonRPCClient($rpcUrl);
+
+        /** @var string|array */
+        $sessionKey = $rpc->get_session_key($rpcUser, $rpcPassword);
+
+        if (is_array($sessionKey)
+            && isset($sessionKey['status'])) {
+            // Could not get session key for some reason.
+            $this->mailError('Could not get session key to survey.limesurvey.org', $sessionKey);
+            return;
+        }
+
+        $user = Yii::app()->user;
+
+        /** @var int */
+        $installationId = (int) getInstallationId();
+
+        /** @var string */
+        $uuid = $installationId . '_' . $user->id;
+
+        /** @var array */
+        $participant = $rpc->get_participant_properties($sessionKey, $surveyId, ['firstname' => $uuid]);
+
+        if (is_array($participant)
+            && isset($participant['status'])) {
+            // Found no participant, add a new one.
+            /** @var array */
+            $participantData = [
+                [
+                    "firstname" => $uuid
+                ]
+            ];
+
+            $result = $rpc->add_participants($sessionKey, $surveyId, $participantData, true);
+
+            if (is_array($result)
+                && isset($result['status'])) {
+                // FAIL: Could not add participant.
+                $this->mailError('Could not add participant', $result);
+                return;
+            }
+
+            $participant = $rpc->get_participant_properties($sessionKey, $surveyId, ['firstname' => $uuid]);
+
+            if (is_array($participant)
+                && isset($participant['status'])) {
+                // FAIL: Could not get participant.
+                $this->mailError('Could not get participant', $participant);
+                return;
+            }
+        }
+
+        if ($participant['completed'] === 'Y'
+            || $participant['emailstatus'] === 'OptOut') {
+            // Remove notification, or do nothing.
+        } else {
+            $optoutUrl  = 'https://survey.limesurvey.org/index.php/optout/participants?surveyid='
+                . $surveyId . '&token='
+                . $participant['token'];
+            $token = $participant['token'];
+            $not = new UniqueNotification(
+                [
+                    'user_id'    => $user->id,
+                    'importance' => Notification::HIGH_IMPORTANCE,
+                    'markAsNew'  => true,
+                    'title'      => 'Leave feedback on LimeSurvey',
+                    'message'    => <<<HTML
+<p>We're right now gathering feedback about our program. We want you to share your opinions and feedback about your usage. The survey will take around 10 minutes to complete.</p>
+<a href="https://survey.limesurvey.org/189495?lang=en&token=$token" target="_blank" class="btn btn-default"><i class="fa fa-external-link"></i>&nbsp;Participate</a>&nbsp;
+<button href="$optoutUrl" target="_blank" class="btn btn-default">Don't participate</button>&nbsp;
+<button class="btn btn-default" data-dismiss="modal">Maybe later</button>
+HTML
+                ]
+            );
+            $not->save();
+        }
+
+        $rpc->release_session_key($sessionKey);
+
+/*
+        // TODO: Link should include token
+        // TODO: RPC integration to check if survey is already finished by this user.
+        // Load token for this user, use email as uuid.
+        // If not exist, create it
+        $optoutUrl  = 'https://survey.limesurvey.org/index.php/optout/participants?surveyid=189495&token=123';
+        $not = new UniqueNotification(array(
+            'user_id' => App()->user->id,
+            'importance' => Notification::HIGH_IMPORTANCE,
+            'markAsNew' => true,
+            'title' => 'Leave feedback on LimeSurvey',
+            'message' => <<<HTML
+<p>We're right now gathering feedback about our program. We want you to share your opinions and feedback about your usage. The survey will take around 10 minutes to complete.</p>
+<a href="https://survey.limesurvey.org/189495?lang=en" target="_blank" class="btn btn-default"><i class="fa fa-external-link"></i>&nbsp;Participate</a>&nbsp;
+<a href="$optoutUrl" target="_blank" class="btn btn-default">Don't participate</a>&nbsp;
+<button class="btn btn-default" data-dismiss="modal">Maybe later</button>
+HTML
+        ));
+        $not->save();
+ */
+    }
+
+    /**
+     * @param string $header
+     * @param mixed $var
+     * @return void
+     */
+    protected function mailError($header, $var = 'no data')
+    {
+        mail(
+            'alert@limesurvey.org',
+            '[Usability survey] ' . $header,
+            json_encode($var) . PHP_EOL
+            . print_r($_SERVER, true)
+        );
+    }
+    // LimeService Mod end =============
 }
