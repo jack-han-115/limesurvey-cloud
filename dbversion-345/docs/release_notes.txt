@@ -34,6 +34,42 @@ Thank you to everyone who helped with this new release!
 
 CHANGE LOG
 ------------------------------------------------------
+Changes from 3.22.4 (build 200212) to 3.22.5 (build 200218) February 18, 2020
+-Fixed issue: Notice on survey completion (Carsten Schmitz)
+-Fixed issue: Incomplete headers when exporting 'Multiple choice with comment' questions (Carsten Schmitz)
+
+
+Changes from 3.22.3 (build 200211) to 3.22.4 (build 200212) February 12, 2020
+-Fixed issues [security] #14379: Stored XSS through SVG file upload. (Thanks to Denis Chenu and Maxime Roy) (Marc Leonhardt)
+-Fixed issues [security] #14380: Stored XSS through SVG file upload. 
+-Fixed issues [security] #15796: Stored XSS through SVG file upload.
+#Updated translation: Polish (Informal) by elissa
+#Updated translation: Kinyarwanda by c_schmitz
+#Updated translation: Italian by lfanfoni
+#Updated translation: Italian (Informal) by lfanfoni
+#Updated translation: German by c_schmitz
+#Updated translation: German (Informal) by eddylackmann
+#Updated translation: French (France) by jayce, eddylackmann
+#Updated translation: Croatian by rovinj
+#Updated translation: Catalan by qualitatuvic
+
+
+Changes from 3.22.2 (build 200204) to 3.22.3 (build 200211) February 11, 2020
+-Fixed issue: Missing translation file (Carsten Schmitz)
+-Fixed issue: HTML editor shows on invite (not in email templates) eventhough text format was activated for survey invitations/reminders (Carsten Schmitz)
+-Fixed issue: DB update issues when updating from old Limesurvey versions (#1377) (Marko Bischof)
+#Updated translation: Portuguese (Portugal) by algarvio
+#Updated translation: Polish by elissa
+#Updated translation: Polish (Informal) by elissa
+#Updated translation: German by c_schmitz
+#Updated translation: French (France) by DenisChenu
+#Updated translation: Catalan by qualitatuvic
+
+
+Changes from 3.22.1 (build 200129) to 3.22.2 (build 200204) February 4, 2020
+-Fixed issue #15791: Can't load a lengthy label set, buttons not visible (lacrioque)
+
+
 Changes from 3.22.0 (build 200127) to 3.22.1 (build 200129) January 29, 2020
 -Fixed issue [security] #15782: Remote Code Execution (RCE) in emplate options  file uploader. Thanks to Maxime Roy (lacrioque)
 -Fixed issue #15529: Print answer wrongly includes hidden questions (#1378) (Denis Chenu)
