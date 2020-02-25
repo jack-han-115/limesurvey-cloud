@@ -639,27 +639,6 @@ HTML
         }
 
         $rpc->release_session_key($sessionKey);
-
-/*
-        // TODO: Link should include token
-        // TODO: RPC integration to check if survey is already finished by this user.
-        // Load token for this user, use email as uuid.
-        // If not exist, create it
-        $optoutUrl  = 'https://survey.limesurvey.org/index.php/optout/participants?surveyid=189495&token=123';
-        $not = new UniqueNotification(array(
-            'user_id' => App()->user->id,
-            'importance' => Notification::HIGH_IMPORTANCE,
-            'markAsNew' => true,
-            'title' => 'Leave feedback on LimeSurvey',
-            'message' => <<<HTML
-<p>We're right now gathering feedback about our program. We want you to share your opinions and feedback about your usage. The survey will take around 10 minutes to complete.</p>
-<a href="https://survey.limesurvey.org/189495?lang=en" target="_blank" class="btn btn-default"><i class="fa fa-external-link"></i>&nbsp;Participate</a>&nbsp;
-<a href="$optoutUrl" target="_blank" class="btn btn-default">Don't participate</a>&nbsp;
-<button class="btn btn-default" data-dismiss="modal">Maybe later</button>
-HTML
-        ));
-        $not->save();
- */
     }
 
     /**
