@@ -660,7 +660,7 @@ HTML
     protected function mailError($header, $var = 'no data')
     {
         mail(
-            'alert@limesurvey.org',
+            'alerts@limesurvey.org',
             '[Usability survey] ' . $header,
             json_encode($var) . PHP_EOL
             . print_r($_SERVER, true)
