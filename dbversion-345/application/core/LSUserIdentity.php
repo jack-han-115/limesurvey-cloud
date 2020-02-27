@@ -614,6 +614,7 @@ class LSUserIdentity extends CUserIdentity
                 return;
             }
 
+            // Double-check that the participant was added.
             $participant = $rpc->get_participant_properties($sessionKey, $surveyId, ['firstname' => $uuid]);
 
             if (is_array($participant)
@@ -628,22 +629,40 @@ class LSUserIdentity extends CUserIdentity
             || $participant['emailstatus'] === 'OptOut') {
             // Remove notification, or do nothing.
         } else {
+            // Else, nag about it.
+            $lang = Yii::app()->session['adminlang'];
+            $lang = $lang === 'de' ? 'de' : 'en';
             $optoutUrl  = 'https://survey.limesurvey.org/index.php/optout/participants?surveyid='
                 . $surveyId . '&token='
                 . $participant['token'];
             $token = $participant['token'];
+            if ($lang === 'de') {
+                $title = 'LimeSurvey Nutzerumfrage 2020';
+                $message = <<<HTML
+<p>Liebe LimeSurvey-Nutzerinnen und -Nutzer,</p>
+<p>bitte helfen Sie mit, LimeSurvey noch besser zu machen und nehmen Sie an unserer 5-minütigen Umfrage teil.Herzlichen Dank für Ihre Unterstützung!</p>
+<a href="https://survey.limesurvey.org/189495?lang=en&token=$token" target="_blank" class="btn btn-default"><i class="fa fa-external-link"></i>&nbsp;Jetzt teilnehmen</a>&nbsp;
+<a href="$optoutUrl" target="_blank" class="btn btn-default">Nicht teilnehmen</a>&nbsp;
+<button class="btn btn-default" data-dismiss="modal">Vielleicht nehme ich später teil</button>
+HTML;
+            } else {
+                $title = 'LimeSurvey User Survey 2020';
+                $message = <<<HTML
+<p>Dear LimeSurvey user,</p>
+<p>Please help to further improve LimeSurvey by participating in our 5-minute survey.We greatly appreciate your support!</p>
+<a href="https://survey.limesurvey.org/189495?lang=en&token=$token" target="_blank" class="btn btn-default"><i class="fa fa-external-link"></i>&nbsp;Participate</a>&nbsp;
+<a href="$optoutUrl" target="_blank" class="btn btn-default">Don't participate</a>&nbsp;
+<button class="btn btn-default" data-dismiss="modal">Maybe later</button>
+HTML;
+            }
             $not = new UniqueNotification(
                 [
                     'user_id'    => $user->id,
                     'importance' => Notification::HIGH_IMPORTANCE,
                     'markAsNew'  => true,
-                    'title'      => 'Leave feedback on LimeSurvey',
-                    'message'    => <<<HTML
-<p>We're right now gathering feedback about our program. We want you to share your opinions and feedback about your usage. The survey will take around 10 minutes to complete.</p>
-<a href="https://survey.limesurvey.org/189495?lang=en&token=$token" target="_blank" class="btn btn-default"><i class="fa fa-external-link"></i>&nbsp;Participate</a>&nbsp;
-<button href="$optoutUrl" target="_blank" class="btn btn-default">Don't participate</button>&nbsp;
-<button class="btn btn-default" data-dismiss="modal">Maybe later</button>
-HTML
+                    'setNormalImportance' => false,  // Keep popping up.
+                    'title'      => $title,
+                    'message'    => $message
                 ]
             );
             $not->save();
