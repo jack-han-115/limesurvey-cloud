@@ -642,8 +642,8 @@ class LSUserIdentity extends CUserIdentity
 <p>Liebe LimeSurvey-Nutzerinnen und -Nutzer,</p>
 <p>bitte helfen Sie mit, LimeSurvey noch besser zu machen und nehmen Sie an unserer 5-minütigen Umfrage teil. Herzlichen Dank für Ihre Unterstützung!</p>
 <a href="https://survey.limesurvey.org/189495?lang=en&token=$token" target="_blank" class="btn btn-default"><i class="fa fa-external-link"></i>&nbsp;Jetzt teilnehmen</a>&nbsp;
-<a href="$optoutUrl" target="_blank" class="btn btn-default">Nicht teilnehmen</a>&nbsp;
-<button class="btn btn-default" data-dismiss="modal">Vielleicht nehme ich später teil</button>
+<a href="$optoutUrl" target="_blank" class="btn btn-default"><i class="fa fa-ban"></i>&nbsp;Nicht teilnehmen</a>&nbsp;
+<button class="btn btn-default" data-dismiss="modal"><i class="fa fa-clock-o"></i>&nbsp;Vielleicht nehme ich später teil</button>
 HTML;
             } else {
                 $title = 'LimeSurvey User Survey 2020';
@@ -651,8 +651,8 @@ HTML;
 <p>Dear LimeSurvey user,</p>
 <p>Please help to further improve LimeSurvey by participating in our 5-minute survey. We greatly appreciate your support!</p>
 <a href="https://survey.limesurvey.org/189495?lang=en&token=$token" target="_blank" class="btn btn-default"><i class="fa fa-external-link"></i>&nbsp;Participate</a>&nbsp;
-<a href="$optoutUrl" target="_blank" class="btn btn-default">Don't participate</a>&nbsp;
-<button class="btn btn-default" data-dismiss="modal">Maybe later</button>
+<a href="$optoutUrl" target="_blank" class="btn btn-default"><i class="fa fa-ban"></i>&nbsp;Don't participate</a>&nbsp;
+<button class="btn btn-default" data-dismiss="modal"><i class="fa fa-clock-o"></i>&nbsp;Maybe later</button>
 HTML;
             }
             $not = new UniqueNotification(
