@@ -497,17 +497,6 @@ class LSUserIdentity extends CUserIdentity
             $not->save();
         }
 
-        /*
-        try {
-            $this->showUserExperienceSurveyPopup();
-        } catch (Exception $ex) {
-            $this->mailError(
-                'Exception during showUserExperienceSurveyPopup: ' . $ex->getMessage(),
-                $ex->getTraceAsString()
-            );
-        }
-         */
-
         if ((int) App()->request->getPost('width', '1220') < 1220) {
 // Should be 1280 but allow 60 lenience pixels for browser frame and scrollbar
             Yii::app()->setFlashMessage(gT("Your browser screen size is too small to use the administration properly. The minimum size required is 1280*1024 px."), 'error');
@@ -536,6 +525,17 @@ class LSUserIdentity extends CUserIdentity
 
         Yii::app()->session['adminlang'] = $sLanguage;
         App()->setLanguage($sLanguage);
+
+        /*
+        try {
+            $this->showUserExperienceSurveyPopup();
+        } catch (Exception $ex) {
+            $this->mailError(
+                'Exception during showUserExperienceSurveyPopup: ' . $ex->getMessage(),
+                $ex->getTraceAsString()
+            );
+        }
+         */
 
         // Read all plugin config files if superadmin logged in
         if (Permission::model()->hasGlobalPermission('superadmin')) {
