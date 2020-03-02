@@ -526,6 +526,7 @@ class LSUserIdentity extends CUserIdentity
         Yii::app()->session['adminlang'] = $sLanguage;
         App()->setLanguage($sLanguage);
 
+        /*
         try {
             $this->showUserExperienceSurveyPopup();
         } catch (Exception $ex) {
@@ -535,6 +536,7 @@ class LSUserIdentity extends CUserIdentity
                 . $ex->getTraceAsString()
             );
         }
+         */
 
         // Read all plugin config files if superadmin logged in
         if (Permission::model()->hasGlobalPermission('superadmin')) {
