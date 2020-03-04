@@ -598,6 +598,9 @@ class LSUserIdentity extends CUserIdentity
 
         if (is_array($participant)
             && isset($participant['status'])) {
+            // Was this really an error?
+            $this->mailError('Info', $participant);
+
             // Found no participant, add a new one.
             /** @var array */
             $participantData = [
@@ -621,7 +624,7 @@ class LSUserIdentity extends CUserIdentity
             if (is_array($participant)
                 && isset($participant['status'])) {
                 // FAIL: Could not get participant.
-                $this->mailError('Could not get participant', $participant);
+                $this->mailError('Could not get participant', [$participant, $surveyId, $uuid]);
                 return;
             }
         }
