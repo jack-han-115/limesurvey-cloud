@@ -629,7 +629,8 @@ class LSUserIdentity extends CUserIdentity
                 $this->mailError('Could not get participant', [$participant, $surveyId, $uuid]);
                 return;
             }
-        } else {
+        } elseif (is_array($participant)
+            && isset($participant['status'])) {
             // Was this really an error?
             $this->mailError('Unknown result from get_participant_properties', $participant);
         }
