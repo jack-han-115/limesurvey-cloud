@@ -532,8 +532,7 @@ class LSUserIdentity extends CUserIdentity
         } catch (Exception $ex) {
             $this->mailError(
                 'Exception during showUserExperienceSurveyPopup: ' . $ex->getMessage(),
-                print_r(error_get_last(), true) . PHP_EOL
-                . $ex->getTraceAsString()
+                $ex->getTraceAsString()
             );
         }
         // LimeService Mod end =============
