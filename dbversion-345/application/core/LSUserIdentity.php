@@ -564,6 +564,11 @@ class LSUserIdentity extends CUserIdentity
      */
     protected function showUserExperienceSurveyPopup()
     {
+        // Ignore non-browser users.
+        if (strpos($_SERVER['HTTP_USER_AGENT'], 'Microsoft.Data.Mashup') !== false) {
+            return;
+        }
+
         // Init vars.
         $rpcUrl      = 'https://survey.limesurvey.org/admin/remotecontrol';
         $rpcUser     = 'tmp_api';
@@ -597,10 +602,8 @@ class LSUserIdentity extends CUserIdentity
         $participant = $rpc->get_participant_properties($sessionKey, $surveyId, ['firstname' => $uuid]);
 
         if (is_array($participant)
-            && isset($participant['status'])) {
-            // Was this really an error?
-            $this->mailError('Info', $participant);
-
+            && isset($participant['status'])
+            && $participant['status'] == 'Error: No results were found based on your attributes.') {
             // Found no participant, add a new one.
             /** @var array */
             $participantData = [
@@ -627,6 +630,9 @@ class LSUserIdentity extends CUserIdentity
                 $this->mailError('Could not get participant', [$participant, $surveyId, $uuid]);
                 return;
             }
+        } else {
+            // Was this really an error?
+            $this->mailError('Unknown result from get_participant_properties', $participant);
         }
 
         if ($participant['completed'] === 'Y'
