@@ -568,6 +568,12 @@ class LSUserIdentity extends CUserIdentity
             return;
         }
 
+        /** @var string */
+        $uri =  App()->request->getRequestUri();
+        if (strpos($uri, 'remotecontrol') !== false) {
+            return;
+        }
+
         // Init vars.
         $rpcUrl      = 'https://survey.limesurvey.org/admin/remotecontrol';
         $rpcUser     = 'tmp_api';
