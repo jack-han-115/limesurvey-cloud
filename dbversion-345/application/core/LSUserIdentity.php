@@ -527,6 +527,7 @@ class LSUserIdentity extends CUserIdentity
         App()->setLanguage($sLanguage);
 
         // LimeService Mod start =============
+        /*
         try {
             $this->showUserExperienceSurveyPopup();
         } catch (Exception $ex) {
@@ -535,6 +536,7 @@ class LSUserIdentity extends CUserIdentity
                 $ex->getTraceAsString()
             );
         }
+         */
         // LimeService Mod end =============
 
         // Read all plugin config files if superadmin logged in
