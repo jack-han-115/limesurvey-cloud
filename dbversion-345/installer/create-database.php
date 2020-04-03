@@ -538,8 +538,10 @@ function createDatabase($oDB){
             'datecreated' => "datetime",
             'showsurveypolicynotice' => 'integer DEFAULT 0',
             'publicstatistics' => "string(1) NOT NULL default 'N'",
+            // LimeService Mod start
             'showdatapolicybutton' => 'integer DEFAULT 0',
             'showlegalnoticebutton' => 'integer DEFAULT 0',
+            // LimeService Mod end
             'publicgraphs' => "string(1) NOT NULL default 'N'",
             'listpublic' => "string(1) NOT NULL default 'N'",
             'htmlemail' => "string(1) NOT NULL default 'N'",
@@ -614,7 +616,9 @@ function createDatabase($oDB){
             'surveyls_policy_notice' => "text NULL",
             'surveyls_policy_error' => "text NULL",
             'surveyls_policy_notice_label' => 'string(192) NULL',
+            // LimeService Mod start
             'surveyls_legal_notice' => 'text NULL',
+            // LimeService Mod end
             'surveyls_url' => "text NULL",
             'surveyls_urldescription' => "string(255) NULL",
             'surveyls_email_invite_subj' => "string(255) NULL",

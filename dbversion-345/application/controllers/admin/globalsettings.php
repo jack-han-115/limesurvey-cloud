@@ -107,6 +107,7 @@ class GlobalSettings extends Survey_Common_Action
         $data['thischaracterset'] = getGlobalSetting('characterset');
         $data['sideMenuBehaviour'] = getGlobalSetting('sideMenuBehaviour');
         $data['aListOfThemeObjects'] = AdminTheme::getAdminThemeList();
+        // LimeService Mod start
         $data['sGlobalLegalNotice'] = getGlobalSetting('legalnotice');
         $data['sGlobalDataPolicy'] = getGlobalSetting('datapolicy');
         $data['sShowGlobalLegalNoticeButton'] = getGlobalSetting('showlegalnoticebutton');
@@ -114,6 +115,7 @@ class GlobalSettings extends Survey_Common_Action
         App()->loadHelper("admin/htmleditor");
         $data['scripts'] = PrepareEditorScript(false, $this->getController());
         $data['sCurrentDefaultLanguage'] = getGlobalSetting('defaultlang');
+        // LimeService Mod end
 
         $this->_renderWrappedTemplate('', 'globalSettings_view', $data);
     }
@@ -343,10 +345,12 @@ class GlobalSettings extends Survey_Common_Action
         }
         SettingGlobal::setSetting('timeadjust', $savetime);
         SettingGlobal::setSetting('usercontrolSameGroupPolicy', strip_tags(Yii::app()->getRequest()->getPost('usercontrolSameGroupPolicy')));
+        // LimeService Mod start
         SettingGlobal::setSetting('datapolicy', App()->getRequest()->getPost('datapolicy'));
         SettingGlobal::setSetting('legalnotice', App()->getRequest()->getPost('legalnotice'));
         SettingGlobal::setSetting('showdatapolicybutton', App()->getRequest()->getPost('showdatapolicybutton'));
         SettingGlobal::setSetting('showlegalnoticebutton', App()->getRequest()->getPost('showlegalnoticebutton'));
+        // LimeService Mod end
 
         Yii::app()->session['flashmessage'] = $warning.gT("Global settings were saved.");
 

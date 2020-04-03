@@ -67,6 +67,7 @@ echo viewHelper::getViewTestTag('surveyTexts');
                 </div>
             </div>
         </div>
+        <?php // LimeService Mod start ?>
         <div class="row">
             <div class="col-sm-12 col-lg-6">
                 <!-- Survey legal notice -->
@@ -81,6 +82,7 @@ echo viewHelper::getViewTestTag('surveyTexts');
                 </div>
             </div>
         </div>
+        <?php // LimeService Mod end ?>
     </div>
 </div>
 

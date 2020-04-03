@@ -39,10 +39,12 @@
                 'sSiteAdminEmail'              => Yii::app()->getConfig("siteadminemail"),
                 'bShowClearAll'                => false,
                 'surveyls_title'               => Yii::app()->getConfig('sitename'),
+                // LimeService Mod start
                 'sGlobalLegalNotice'           => getGlobalSetting('legalnotice'),
                 'sGlobalDataPolicy'            => getGlobalSetting('datapolicy'),
                 'sShowGlobalLegalNoticeButton' => getGlobalSetting('showlegalnoticebutton'),
                 'sShowGlobalDataPolicyButton'  => getGlobalSetting('showdatapolicybutton')
+                // LimeService Mod end
             );
 
             $aData['alanguageChanger']['show'] = false;

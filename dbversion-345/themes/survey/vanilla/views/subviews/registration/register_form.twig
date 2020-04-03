@@ -49,10 +49,12 @@
             </div>
         </div>
 
+        {# LimeService mod start #}
         {# Privay Message #}
         <div class='form-group'>
             {{ include('./subviews/privacy/privacy.twig') }}
         </div>
+        {# LimeService mod end #}
 
         {# Loop to add extra attributes #}
         {% for key, aExtraAttribute in aSurveyInfo.aExtraAttributes  %}

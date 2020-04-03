@@ -890,7 +890,9 @@ function getSurveyInfo($surveyid, $languagecode = '')
             $thissurvey['datasecurity_notice_label'] = $thissurvey['surveyls_policy_notice_label'];
             $thissurvey['datasecurity_error'] = $thissurvey['surveyls_policy_error'];
             $thissurvey['datasecurity_notice'] = $thissurvey['surveyls_policy_notice'];
+            // LimeService Mod start
             $thissurvey['datasecurity_legal_notice'] = $thissurvey['surveyls_legal_notice'];
+            // LimeService Mod end
             $thissurvey['templatedir'] = $thissurvey['template'];
             $thissurvey['adminname'] = $thissurvey['admin'];
             $thissurvey['tablename'] = $oSurvey->responsesTableName;

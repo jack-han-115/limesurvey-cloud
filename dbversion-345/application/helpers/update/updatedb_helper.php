@@ -2441,6 +2441,7 @@ function db_upgrade_all($iOldDBVersion, $bSilent = false)
             $oTransaction->commit();
         }
 
+        // LimeService Mod start
         if ($iOldDBVersion < 360) {
             $oTransaction = $oDB->beginTransaction();
             addColumn('{{surveys_languagesettings}}','surveyls_legal_notice',"text");
@@ -2449,6 +2450,7 @@ function db_upgrade_all($iOldDBVersion, $bSilent = false)
             $oDB->createCommand()->update('{{settings_global}}', ['stg_value'=>360], "stg_name='DBVersion'");
             $oTransaction->commit();
         }
+        // LimeService Mod end
 
     } catch (Exception $e) {
         Yii::app()->setConfig('Updating', false);

@@ -161,8 +161,10 @@ class Survey extends LSActiveRecord
     public $searched_value;
 
     public $showsurveypolicynotice = 0;
+    // LimeService Mod start
     public $showdatapolicybutton = 0;
     public $showlegalnoticebutton = 0;
+    // LimeService Mod end
 
     private $sSurveyUrl;
 
@@ -468,8 +470,10 @@ class Survey extends LSActiveRecord
             array('shownoanswer', 'in', 'range'=>array('Y', 'N'), 'allowEmpty'=>true),
             array('showwelcome', 'in', 'range'=>array('Y', 'N'), 'allowEmpty'=>true),
             array('showsurveypolicynotice', 'in', 'range'=>array('0', '1', '2'), 'allowEmpty'=>true),
+            // LimeService Mod start
             array('showdatapolicybutton', 'in', 'range'=>array('0', '1'), 'allowEmpty'=>true),
             array('showlegalnoticebutton', 'in', 'range'=>array('0', '1'), 'allowEmpty'=>true),
+            // LimeService Mod end
             array('showprogress', 'in', 'range'=>array('Y', 'N'), 'allowEmpty'=>true),
             array('questionindex', 'numerical', 'min' => 0, 'max' => 2, 'allowEmpty'=>false),
             array('nokeyboard', 'in', 'range'=>array('Y', 'N'), 'allowEmpty'=>true),

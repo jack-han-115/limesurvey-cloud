@@ -67,8 +67,10 @@ class database extends Survey_Common_Action
                 'shownoanswer' => ['type'=> 'yesno', 'default' => false, 'dbname'=>false, 'active'=>true, 'required'=>[]],
                 'showwelcome' => ['type'=> 'yesno', 'default' => false, 'dbname'=>false, 'active'=>true, 'required'=>[]],
                 'showsurveypolicynotice' => ['type'=> '', 'default' => 0, 'dbname'=>false, 'active'=>true, 'required'=>[]],
+                // LimeService Mod Start
                 'showdatapolicybutton' => ['type'=> '', 'default' => 0, 'dbname'=>false, 'active'=>true, 'required'=>[]],
                 'showlegalnoticebutton' => ['type'=> '', 'default' => 0, 'dbname'=>false, 'active'=>true, 'required'=>[]],
+                // LimeService Mod end
                 'allowprev' => ['type'=> 'yesno', 'default' => false, 'dbname'=>false, 'active'=>true, 'required'=>[]],
                 'questionindex' => ['type'=> '', 'default' => false, 'dbname'=>false, 'active'=>true, 'required'=>[]],
                 'nokeyboard' => ['type'=> 'yesno', 'default' => false, 'dbname'=>false, 'active'=>true, 'required'=>[]],
@@ -831,7 +833,9 @@ class database extends Survey_Common_Action
                     $datasec = Yii::app()->request->getPost('datasec_'.$langname, null);
                     $datasecerror = Yii::app()->request->getPost('datasecerror_'.$langname, null);
                     $dataseclabel = Yii::app()->request->getPost('dataseclabel_'.$langname, null);
+                    // LimeService Mod start
                     $legalnotice = Yii::app()->request->getPost('legalnotice_'.$langname, null);
+                    // LimeService Mod end
                     $dateformat = Yii::app()->request->getPost('dateformat_'.$langname, null);
                     $numberformat = Yii::app()->request->getPost('numberformat_'.$langname, null);
 
@@ -868,11 +872,13 @@ class database extends Survey_Common_Action
                     if ($dataseclabel !== null) {
                         $data['surveyls_policy_notice_label'] = $dataseclabel;
                     }
+                    // LimeService Mod start
                     if ($legalnotice !== null) {
                         // Fix bug with FCKEditor saving strange BR types
                         $legalnotice = $this->oFixCKeditor->fixCKeditor($legalnotice);
                         $data['surveyls_legal_notice'] = $legalnotice;
                     }
+                    // LimeService Mod end
                     if ($sURL !== null) {
                         $data['surveyls_url'] = htmlspecialchars($sURL);
                     }
@@ -975,8 +981,10 @@ class database extends Survey_Common_Action
             }
             $oSurvey->showwelcome = $this->_filterEmptyFields($oSurvey, 'showwelcome');
             $oSurvey->showsurveypolicynotice = $this->_filterEmptyFields($oSurvey, 'showsurveypolicynotice');
+            // LimeService Mod start
             $oSurvey->showdatapolicybutton = $this->_filterEmptyFields($oSurvey, 'showdatapolicybutton');
             $oSurvey->showlegalnoticebutton = $this->_filterEmptyFields($oSurvey, 'showlegalnoticebutton');
+            // LimeService Mod end
             $oSurvey->allowprev = $this->_filterEmptyFields($oSurvey, 'allowprev');
             $oSurvey->questionindex = (int) $this->_filterEmptyFields($oSurvey, 'questionindex');
             $oSurvey->nokeyboard = $this->_filterEmptyFields($oSurvey, 'nokeyboard');

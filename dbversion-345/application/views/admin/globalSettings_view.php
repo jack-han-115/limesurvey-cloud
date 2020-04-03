@@ -11,9 +11,11 @@ App()->getClientScript()->registerScript('GlobalSettingsBSSwitcher', "
 LS.renderBootstrapSwitch();
 ", LSYii_ClientScript::POS_POSTSCRIPT);
 
+// LimeService Mod start
 if (isset($scripts)) {
     echo $scripts;
 }
+// LimeService Mod end
 ?>
 <script type="text/javascript">
     var msgCantRemoveDefaultLanguage = '<?php eT("You can't remove the default language.",'js'); ?>';
@@ -29,7 +31,9 @@ if (isset($scripts)) {
         <li role="presentation" ><a role="tab" data-toggle="tab" href='#bounce'><?php eT("Bounce settings"); ?></a></li>
         <li role="presentation" ><a role="tab" data-toggle="tab" href='#security'><?php eT("Security"); ?></a></li>
         <li role="presentation" ><a role="tab" data-toggle="tab" href='#presentation'><?php eT("Presentation"); ?></a></li>
+        <?php // LimeService Mod start ?>
         <li role="presentation" ><a role="tab" data-toggle="tab" href='#datapolicy_legalnotice'><?php eT("Data policy"); ?></a></li>
+        <?php // LimeService Mod end ?>
         <li role="presentation" ><a role="tab" data-toggle="tab" href='#language'><?php eT("Language"); ?></a></li>
         <li role="presentation" ><a role="tab" data-toggle="tab" href='#interfaces'><?php eT("Interfaces"); ?></a></li>
         <li role="presentation" ><a role="tab" data-toggle="tab" href='#storage'><?php eT("Storage"); ?></a></li>
@@ -73,6 +77,7 @@ if (isset($scripts)) {
         <?php $this->renderPartial("./global_settings/_presentation"); ?>
     </div>
 
+    <?php // LimeService Mod start ?>
     <div id="datapolicy_legalnotice" class="tab-pane col-md-10 col-md-offset-1">
         <?php $this->renderPartial("./global_settings/_datapolicy", [
             'sLanguage' => $sCurrentDefaultLanguage,
@@ -83,6 +88,7 @@ if (isset($scripts)) {
         ]);
         ?>
     </div>
+    <?php // LimeService Mod end ?>
 
     <div id="language" class="tab-pane col-md-10 col-md-offset-1">
         <?php $this->renderPartial("./global_settings/_language", array(

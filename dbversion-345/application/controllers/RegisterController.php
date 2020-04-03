@@ -168,16 +168,18 @@ class RegisterController extends LSYii_Controller
             }
         }
 
-        $aSurveyInfo['datasecuritynotaccepted'] = false;
+        // LimeService Mod start
         if ($aSurveyInfo['oSurvey']->showsurveypolicynotice > 0) {
             $data_security_accepted = App()->request->getPost('datasecurity_accepted', false);
-
             if ($data_security_accepted !== 'on') {
                 if (empty($aSurveyInfo['datasecurity_error'])) {
                     $this->aRegisterErrors[] = gT("We are sorry but you can't proceed without first agreeing to our survey data policy.");
+                } else {
+                    $this->aRegisterErrors[] = $aSurveyInfo['datasecurity_error'];
                 }
             }
         }
+        // LimeService Mod end
 
         $aFieldValue = $this->getFieldValue($iSurveyId);
         $aRegisterAttributes = $this->getExtraAttributeInfo($iSurveyId);
@@ -518,7 +520,7 @@ class RegisterController extends LSYii_Controller
         $this->aReplacementData['sMessage'] = $this->sMessage;
 
         $oTemplate = Template::model()->getInstance('', $iSurveyId);
-        $aSurveyInfo  =  getsurveyinfo($iSurveyId, $sLanguage);
+        $aSurveyInfo  =  getsurveyinfo($iSurveyId, /* LimeService Mod start */ $sLanguage /* LimeService Mod start */);
 
         if ($iTokenId !== null) {
             $aData['aSurveyInfo'] = self::getRegisterSuccess($iSurveyId, $iTokenId);
@@ -526,7 +528,6 @@ class RegisterController extends LSYii_Controller
         } else {
             $aData['aSurveyInfo'] = self::getRegisterForm($iSurveyId);
         }
-        $aData['aSurveyInfo']['datasecurity_notice_label'] = Survey::replacePolicyLink($aSurveyInfo['datasecurity_notice_label'], $aSurveyInfo['sid']);
         $aData['aSurveyInfo']['registration_view'] = $registerContent;
         $aData['aSurveyInfo']['registerform']['hiddeninputs'] = '<input value="'.$aData['aSurveyInfo']['sLanguage'].'"  type="hidden" name="lang" id="register_lang" />';
         $aData['aSurveyInfo']['include_content'] = 'register';
@@ -540,7 +541,10 @@ class RegisterController extends LSYii_Controller
             $aData['aSurveyInfo']['alanguageChanger']['show']  = true;
             $aData['aSurveyInfo']['alanguageChanger']['datas'] = $alanguageChangerDatas;
         }
+        // LimeService Mod start
+        $aData['aSurveyInfo']['datasecurity_notice_label'] = Survey::replacePolicyLink($aSurveyInfo['datasecurity_notice_label'], $aSurveyInfo['sid']);
         $aData['aSurveyInfo']['surveyUrl'] = App()->createUrl("/survey/index", array("sid" => $surveyid));
+        // LimeService Mod end
 
         Yii::app()->clientScript->registerScriptFile(Yii::app()->getConfig("generalscripts") . 'nojs.js', CClientScript::POS_HEAD);
         Yii::app()->twigRenderer->renderTemplateFromFile('layout_global.twig', $aData, false);

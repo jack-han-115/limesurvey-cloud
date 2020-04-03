@@ -21,6 +21,7 @@ if(isset($data)){
 PrepareEditorScript(false, $this);
 ?>
 <div class="container-fluid">
+    <?php // LimeService Mod start ?>
     <div class="data-policy-buttons">
         <!-- security notice -->
         <div class="row">
@@ -84,6 +85,7 @@ PrepareEditorScript(false, $this);
             </div>
         </div>
     </div>
+    <?php // LimeService Mod end ?>
     <div class="row ls-space margin top-15">
         <ul class="nav nav-tabs" id="edit-survey-datasecurity-element-language-selection">
             <?php foreach ($aTabTitles as $i=>$eachtitle):?>
