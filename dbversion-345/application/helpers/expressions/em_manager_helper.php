@@ -7304,11 +7304,6 @@
                 Yii::app()->clientScript->registerScript('lemscripts', $sScripts, LSYii_ClientScript::POS_BEGIN);
                 Yii::app()->clientScript->registerScript('triggerEmRelevance', "triggerEmRelevance();", LSYii_ClientScript::POS_END);
                 Yii::app()->clientScript->registerScript('updateMandatoryErrorClass', "updateMandatoryErrorClass();", LSYii_ClientScript::POS_POSTSCRIPT); /* Maybe only if we have mandatory error ?*/      
-
-                $sHiddenInputs = implode('', $aScriptsAndHiddenInputs['inputs']);
-                $LEM->FinishProcessingPage();
-                
-                return $sHiddenInputs;
                 
                 $sHiddenInputs = implode('', $aScriptsAndHiddenInputs['inputs']);
                 $LEM->FinishProcessingPage();
