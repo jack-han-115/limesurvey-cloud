@@ -949,7 +949,7 @@ function XMLImportSurvey($sFullFilePath, $sXMLdata = null, $sNewSurveyName = nul
             unset($insertdata['surveyls_attributecaptions']);
         }
 
-        SurveyLanguageSetting::model()->insertNewSurvey($insertdata) or safeDie(gT("Error").": Failed to insert data [2]<br />");
+        SurveyLanguageSetting::model()->insertNewSurvey($insertdata) or safeDie(gT("Error").": Failed to import survey language settings - data is invalid<br />");
     }
 
 
@@ -2138,6 +2138,8 @@ function TSVImportSurvey($sFullFilePath)
     $file = preg_replace('~\R~u', "\n", $file);
     $tmp = fopen('php://temp', 'r+');
     fwrite($tmp, $file);
+    // Release the file, otherwise it will saty in memory
+    unset($file);
     rewind($tmp);
     $rowheaders = fgetcsv($tmp, 0, "\t", '"');
     $rowheaders = array_map('trim', $rowheaders);
@@ -2157,11 +2159,15 @@ function TSVImportSurvey($sFullFilePath)
             if (preg_match('/^".*"$/', $val)) {
                 $val = str_replace('""', '"', substr($val, 1, -1));
             }
-            $rowarray[$rowheaders[$i]] = $val;
+            if (mb_strlen($val)>0){
+                $rowarray[$rowheaders[$i]] = $val;
+            }
         }
         $adata[] = $rowarray;
     }
     fclose($tmp);
+    unset($rowheaders);
+    unset($rowarray) ;
 
     // collect information about survey and its language settings
     $surveyinfo = array();
@@ -2520,7 +2526,7 @@ function TSVImportSurvey($sFullFilePath)
         }
 
     }
-
+    unset($adata);
     // combine all xml data into $output variable 
     if (!empty($surveyinfo)){
         $output['surveys']['fields']['fieldname'] = array_keys($surveyinfo);    
