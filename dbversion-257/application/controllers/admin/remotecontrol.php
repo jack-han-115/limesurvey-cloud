@@ -90,6 +90,14 @@ class remotecontrol extends Survey_Common_Action
                 $this->_renderWrappedTemplate('remotecontrol', array('index_view'), $aData);
             }
         }
+		$session = Yii::app()->session;
+        // check if a session is already open
+		if ($session->isActive){
+			// close a session
+			$session->close();
+			// destroys all data registered to a session.
+			$session->destroy();        
+		}        
     }
 
     /**
