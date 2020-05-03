@@ -69,7 +69,7 @@ class remotecontrol extends Survey_Common_Action
             foreach (App()->log->routes as $route) {
                 $route->enabled = $route->enabled && !($route instanceOf CWebLogRoute);
             }
-
+			Yii::app()->session->destroy();
             exit;
         } else {
             // Disabled output of API methods for now
@@ -89,15 +89,7 @@ class remotecontrol extends Survey_Common_Action
                 $aData['list'] = $list;
                 $this->_renderWrappedTemplate('remotecontrol', array('index_view'), $aData);
             }
-        }
-		$session = Yii::app()->session;
-        // check if a session is already open
-		if ($session->isActive){
-			// close a session
-			$session->close();
-			// destroys all data registered to a session.
-			$session->destroy();        
-		}        
+        }      
     }
 
     /**
