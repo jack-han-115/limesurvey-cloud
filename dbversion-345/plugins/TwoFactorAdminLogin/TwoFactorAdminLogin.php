@@ -175,6 +175,13 @@ class TwoFactorAdminLogin extends AuthPluginBase
     public function newUserSession()
     {
         $oEvent = $this->getEvent();
+        $onepass = App()->request->getParam('onepass');
+
+        // skip 2fa when theres an active and verified onetimepassword used (verification is allready done before getting here)
+        if (App()->getConfig('use_one_time_passwords') && isset($onepass) ) {
+            return;
+        }
+
         $oIdentity = $oEvent->get('identity');
         $oTFAModel =  TFAUserKey::model()->findByPk($oIdentity->id);
 
@@ -375,7 +382,7 @@ class TwoFactorAdminLogin extends AuthPluginBase
     public function directCallDeleteKey($oEvent, $oRequest)
     {
         $uid = $oRequest->getPost('uid', null);
-        $uid = $uid==null ? Yii::app()->user->id : $uid;
+        $uid = $uid ?? Yii::app()->user->id;
         if (!Permission::model()->hasGlobalPermission('users', 'update') && $uid !== Yii::app()->user->id) {
             return $this->createJSONResponse(false, gT('You have no permission for this action'));
         }
@@ -551,7 +558,12 @@ class TwoFactorAdminLogin extends AuthPluginBase
             $cssToRegister = Yii::app()->getAssetManager()->publish(
                 Yii::app()->getBasePath().'/core/plugins/'.$parentPlugin.'/'.$relativePathToCss
             );
+        } elseif (file_exists(__DIR__ . DIRECTORY_SEPARATOR . $relativePathToScript)) {
+            $scriptToRegister = Yii::app()->getAssetManager()->publish(
+                __DIR__ . DIRECTORY_SEPARATOR . $relativePathToScript
+            );
         }
+
         Yii::app()->getClientScript()->registerCssFile($cssToRegister);
     }
 }
