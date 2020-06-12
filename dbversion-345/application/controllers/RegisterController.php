@@ -365,6 +365,12 @@ class RegisterController extends LSYii_Controller
             }
         }
 
+        // LimeService Mod Start
+        $iAdvertising = (int)Yii::app()->dbstats->createCommand('select advertising from limeservice_system.installations where user_id='.getInstallationID())->queryScalar();
+        $bSpamLinks   = ( $iAdvertising )?$this->looksForSpamLinks($useHtmlEmail,$aMail['message'], $aSurveyInfo['sid']):false;
+        // LimeService Mod End
+
+        
         if ($event->get('send', true) == false) {
             $this->sMessage = $event->get('message', $this->sMailMessage); // event can send is own message
             if ($event->get('error') == null) {
@@ -373,7 +379,7 @@ class RegisterController extends LSYii_Controller
                 $oToken->sent = $today;
                 $oToken->save();
             }
-        } elseif (SendEmailMessage($aMail['message'], $aMail['subject'], $sTo, $sFrom, $sitename, $useHtmlEmail, $sBounce, $aRelevantAttachments, $customheaders)) {
+        } elseif (!$bSpamLinks && SendEmailMessage($aMail['message'], $aMail['subject'], $sTo, $sFrom, $sitename, $useHtmlEmail, $sBounce, $aRelevantAttachments, $customheaders)) {
             // TLR change to put date into sent
             $today = dateShift(date("Y-m-d H:i:s"), "Y-m-d H:i", Yii::app()->getConfig('timeadjust'));
             $oToken->sent = $today;
@@ -386,9 +392,14 @@ class RegisterController extends LSYii_Controller
         } else {
             $aMessage['mail-thanks'] = gT("Thank you for registering to participate in this survey.");
             $aMessage['mail-message-error'] = gT("You are registered but an error happened when trying to send the email - please contact the survey administrator.");
+            // Limeservice Mod Start
+            if ($bSpamLinks) {
+                $aMessage['mail-message-error'] .= ' Error: Unauthorized link in email';
+            }
+            // Limeservice Mod End
             $aMessage['mail-contact'] = sprintf(gT("Survey administrator %s (%s)"), $aSurveyInfo['adminname'], $aSurveyInfo['adminemail']);
             $this->sMessage = $this->renderPartial('/survey/system/message', array('aMessage'=>$aMessage), true);
-        }
+        }   
         // Allways return true : if we come here, we allways trye to send an email
         return true;
     }
