@@ -4201,7 +4201,7 @@ function checkMoveQuestionConstraintsForConditions($sid, $qid, $newgid = "all")
     . "{{conditions}} AS tc, "
     . "{{questions}} AS tq, "
     . "{{questions}} AS tq2, "
-    . Yii::app()->db->quoteTableName('{{groups}}')." AS tg, "
+    . Yii::app()->db->quoteTableName('{{groups}}')." AS tg ,"
     . Yii::app()->db->quoteTableName('{{groups}}')." AS tg2 "
     . "WHERE tq.language='{$baselang}' AND tq2.language='{$baselang}' AND tc.qid = tq.qid AND tq.sid=$sid "
     . "AND  tq2.qid=tc.cqid AND tg.gid=tq.gid AND tg2.gid=tq2.gid AND tq.qid=$qid ORDER BY tg2.group_order DESC";
@@ -4231,7 +4231,7 @@ function checkMoveQuestionConstraintsForConditions($sid, $qid, $newgid = "all")
     . "tc.cid FROM {{conditions}} AS tc, "
     . "{{questions}} AS tq, "
     . "{{questions}} AS tq2, "
-    . Yii::app()->db->quoteTableName('{{groups}}')." AS tg, "
+    . Yii::app()->db->quoteTableName('{{groups}}')." AS tg ,"
     . Yii::app()->db->quoteTableName('{{groups}}')." AS tg2 "
     . "WHERE tq.language='{$baselang}' AND tq2.language='{$baselang}' AND tc.qid = tq.qid AND tq.sid=$sid "
     . "AND  tq2.qid=tc.cqid AND tg.gid=tq.gid AND tg2.gid=tq2.gid AND tq2.qid=$qid ORDER BY tg.group_order";
