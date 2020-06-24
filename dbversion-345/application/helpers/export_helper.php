@@ -790,7 +790,7 @@ function surveyGetXMLStructure($iSurveyID, $xmlwriter, $exclude = array())
     FROM $quotedGroups
     WHERE sid=$iSurveyID
     ORDER BY gid";
-    buildXMLFromQuery($xmlwriter, $gquery);
+    buildXMLFromQuery($xmlwriter, $gquery, 'groups');
 
     //Questions
     $qquery = "SELECT *
