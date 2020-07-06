@@ -34,6 +34,31 @@ Thank you to everyone who helped with this new release!
 
 CHANGE LOG
 ------------------------------------------------------
+Changes from 3.22.23 (build 200626) to 3.22.24 (build 200630) June 29, 2020
+-Fixed issue #16316: Condition for list radio questions with question design "image_select" broken for questions on the same page (Gabriel Jenik)
+#Updated translation: German by xibit12
+
+
+Changes from 3.22.22 (build 200625) to 3.22.23 (build 200626) June 26, 2020
+-Fixed issue: Various SQL errors when running on MySQL 8 (Olle Haerstedt)
+-Fixed issue #16415: Can't upload files with Google Chrome (#1445) (Gabriel Jenik)
+
+
+Changes from 3.22.21 (build 200622) to 3.22.22 (build 200625) June 25, 2020
+-Fixed issue: Various SQL errors when running on MySQL 8 (Olle Harstedt)
+-Fixed issue: Various SQL errors when running on MySQL 8 (Carsten Schmitz)
+-Fixed issue #16419: Faulty if-condition in export helper (Olle Harstedt)
+-Fixed issue #15596: Problem saving question with question type list (options) design image_select  (Gabriel Jenik)
+-Fixed issue #15037: Data protection statement texts not save if text for checkbox is too long (Gabriel Jenik)
+
+
+Changes from 3.22.20 (build 200617) to 3.22.21 (build 200622) June 22, 2020
+-Fixed issue: Various SQL errors when running on MySQL 8 (Carsten Schmitz , Olle Harstedt)
+-Fixed issue [security] #16396: Multiple self-stored XSS in printanswer (Denis Chenu)
+-Fixed issue [security] #15452: XSS in print answer view : Array/text (Denis Chenu)
+#Updated translation: Catalan by qualitatuvic
+
+
 Changes from 3.22.19 (build 200605) to 3.22.20 (build 200617) June 16, 2020
 -Fixed issue #16372: Unable to save any settings on "General Settings" screen when using MSSQL (Carsten Schmitz)
 -Fixed issue #15063: Left sidebar is not shown with console error Local Storage QuotaExceededError: The quota has been exceeded. (Carsten Schmitz)

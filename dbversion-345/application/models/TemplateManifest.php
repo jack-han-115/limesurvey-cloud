@@ -849,15 +849,27 @@ class TemplateManifest extends TemplateConfiguration
      */
     public static function changeDateInDOM($oNewManifest, $sDate = '')
     {
-        $date           = (empty($date)) ?dateShift(date("Y-m-d H:i:s"), "Y-m-d H:i", Yii::app()->getConfig("timeadjust")) : $date;
+        $sDate           = (empty($date)) ?dateShift(date("Y-m-d H:i:s"), "Y-m-d H:i", Yii::app()->getConfig("timeadjust")) : $date;
         $oConfig        = $oNewManifest->getElementsByTagName('config')->item(0);
         $ometadata = $oConfig->getElementsByTagName('metadata')->item(0);
-        $oOldDateNode   = $ometadata->getElementsByTagName('creationDate')->item(0);
+        if($ometadata->getElementsByTagName('creationDate')) {
+            $oOldDateNode   = $ometadata->getElementsByTagName('creationDate')->item(0);
+        }
         $oNvDateNode    = $oNewManifest->createElement('creationDate', $sDate);
-        $ometadata->replaceChild($oNvDateNode, $oOldDateNode);
-        $oOldUpdateNode = $ometadata->getElementsByTagName('last_update')->item(0);
+        if(empty($oOldDateNode)) {
+            $ometadata->appendChild($oNvDateNode);
+        } else {
+            $ometadata->replaceChild($oNvDateNode, $oOldDateNode);
+        }
+        if($ometadata->getElementsByTagName('last_update')) {
+            $oOldUpdateNode   = $ometadata->getElementsByTagName('last_update')->item(0);
+        }
         $oNvDateNode    = $oNewManifest->createElement('last_update', $sDate);
-        $ometadata->replaceChild($oNvDateNode, $oOldUpdateNode);
+        if(empty($oOldUpdateNode)) {
+            $ometadata->appendChild($oNvDateNode);
+        } else {
+            $ometadata->replaceChild($oNvDateNode, $oOldUpdateNode);
+        }
     }
 
     /**
@@ -1352,7 +1364,33 @@ class TemplateManifest extends TemplateConfiguration
         return $sTemplateNames;
     }
 
+    /**
+     * Twig statements can be used in Theme description
+     * Override method from TemplateConfiguration to use the description from the XML
+     * @return string description from the xml
+     */
+    public function getDescription()
+    {
+        $sDescription = $this->config->metadata->description;
 
+        // If wrong Twig in manifest, we don't want to block the whole list rendering
+        // Note: if no twig statement in the description, twig will just render it as usual
+        try {
+            $sDescription = Yii::app()->twigRenderer->convertTwigToHtml($this->config->metadata->description);
+        } catch (\Exception $e) {
+            // It should never happen, but let's avoid to anoy final user in production mode :)
+            if (YII_DEBUG) {
+                Yii::app()->setFlashMessage(
+                    "Twig error in template " .
+                    $this->sTemplateName .
+                    " description <br> Please fix it and reset the theme <br>" . $e->getMessage(),
+                    'error'
+                );
+            }
+        }
+
+        return $sDescription;
+    }
 
     /**
      * PHP getter magic method.

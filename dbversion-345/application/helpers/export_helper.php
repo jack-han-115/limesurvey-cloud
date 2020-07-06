@@ -790,7 +790,7 @@ function surveyGetXMLStructure($iSurveyID, $xmlwriter, $exclude = array())
     FROM $quotedGroups
     WHERE sid=$iSurveyID
     ORDER BY gid";
-    buildXMLFromQuery($xmlwriter, $gquery, 'groups');
+    buildXMLFromQuery($xmlwriter, $gquery,'groups');
 
     //Questions
     $qquery = "SELECT *
@@ -939,7 +939,7 @@ function getXMLDataSingleTable($iSurveyID, $sTableName, $sDocType, $sXMLTableTag
     buildXMLFromQuery($xml, $aquery, $sXMLTableTagName);
     $xml->endElement(); // close columns
     $xml->endDocument();
-    if ($sFileName = '') {
+    if ($sFileName == '') {
         return $xml->outputMemory(true);
     } else {
         return $bOK;
