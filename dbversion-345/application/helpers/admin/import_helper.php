@@ -923,6 +923,10 @@ function XMLImportSurvey($sFullFilePath, $sXMLdata = null, $sNewSurveyName = nul
         if ($bTranslateInsertansTags) {
             $insertdata['surveyls_title'] = translateLinks('survey', $iOldSID, $iNewSID, $insertdata['surveyls_title']);
             if (isset($insertdata['surveyls_description'])) {
+                //limit survey description length to 64kb (65,535 characters) for mysql db when importing survey archives from postgresql db
+                if (Yii::app()->db->driverName == 'mysql') {
+                    $insertdata['surveyls_description'] =  substr($insertdata['surveyls_description'], 0, 65535);
+                }
                 $insertdata['surveyls_description'] = translateLinks('survey', $iOldSID, $iNewSID, $insertdata['surveyls_description']);
             }
             if (isset($insertdata['surveyls_welcometext'])) {
