@@ -7759,7 +7759,8 @@
                             $relParts[] = "  $('#question" . $arg['qid'] . "').trigger('relevance:on');\n";
                             if ($arg['type'] == 'S')
                             {
-                                $relParts[] = "  if($('#question" . $arg['qid'] . " div[id^=\"gmap_canvas\"]').length > 0)\n";
+                                $relParts[] = "  if($('#question" . $arg['qid'] . " div[id^=\"gmap_canvas\"]').length > 0 || \n";
+                                $relParts[] = "     $('#question" . $arg['qid'] . " div[id^=\"map\"]').length > 0)\n";
                                 $relParts[] = "  {\n";
                                 $relParts[] = "      resetMap(" . $arg['qid'] . ");\n";
                                 $relParts[] = "  }\n";
