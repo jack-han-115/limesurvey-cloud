@@ -24,7 +24,7 @@
     $sDomain=substr($sDomain,strpos($sDomain,'.')+1);
 
     $iResponses = Yii::app()->dbstats->createCommand("select responses_avail from limeservice_system.balances where user_id=".substr(Yii::app()->db->username,6))->queryScalar();
-    echo "<div class='menubar-title-right'><small>".sprintf($clang->gT('Your response balance: %s'),$iResponses)."</small> <a href='https://www.limesurvey.org/services#pricingHostedSubscription'>".'(Buy more)'.'</a>
+    echo "<div class='menubar-title-right'><small>".sprintf($clang->gT('Your response balance: %s'),$iResponses)."</small> <a href='https://www.limesurvey.org/pricing'>".'(Buy more)'.'</a>
           <small>- New update (2.50+) available: </small><a href="'.$this->createUrl("admin/globalsettings").'">'.$clang->gT('Update now and get 20 free responses!').'</a>
     </div>';
     //===============End LimeService Mod
