@@ -129,7 +129,7 @@
             $data = Yii::app()->dbstats->createCommand("SELECT i.upload_storage_size, b.storage_used, b.responses_avail FROM limeservice_system.balances b JOIN limeservice_system.installations i ON b.user_id = i.user_id WHERE i.user_id = ". $iUserId)->queryRow();
             if ($data) {
                 printf(
-                    "<li data-toggle='tooltip' data-placement='bottom' data-title='%s'><a href='https://www.limesurvey.org/services#pricingHostedSubscription'><span class='fa fa-comments'></span>&nbsp;%d</a></li>",
+                    "<li data-toggle='tooltip' data-placement='bottom' data-title='%s'><a href='https://www.limesurvey.org/pricing'><span class='fa fa-comments'></span>&nbsp;%d</a></li>",
                     gT('Response balance'),
                     $data['responses_avail']
                 );
