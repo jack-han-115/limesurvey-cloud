@@ -2444,7 +2444,7 @@ function db_upgrade_all($iOldDBVersion, $bSilent = false)
         // LimeService Mod start
         if ($iOldDBVersion < 360) {
             $oTransaction = $oDB->beginTransaction();
-            addColumn('{{surveys_languagesettings}}','surveyls_legal_notice',"text");
+			addColumn('{{surveys_languagesettings}}','surveyls_legal_notice',"text");
             addColumn('{{surveys}}', 'showdatapolicybutton', 'integer DEFAULT 0');
             addColumn('{{surveys}}', 'showlegalnoticebutton', 'integer DEFAULT 0');
             $oDB->createCommand()->update('{{settings_global}}', ['stg_value'=>360], "stg_name='DBVersion'");
@@ -2452,6 +2452,23 @@ function db_upgrade_all($iOldDBVersion, $bSilent = false)
         }
         // LimeService Mod end
 
+        /**
+         * Correct permission for survey menu Survey Participants (tokens, not surveysettings).
+         */
+        if ($iOldDBVersion < 361) {
+            $oTransaction = $oDB->beginTransaction();
+            $oDB->createCommand()->update(
+                '{{surveymenu_entries}}',
+                [
+                    'permission' => 'tokens',
+                ],
+                'name=\'participants\''
+            );
+            $oDB->createCommand()->update('{{settings_global}}', ['stg_value'=>361], "stg_name='DBVersion'");
+            $oTransaction->commit();
+        }
+
+        
     } catch (Exception $e) {
         Yii::app()->setConfig('Updating', false);
         $oTransaction->rollback();

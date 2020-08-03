@@ -663,11 +663,14 @@ protected function insertCondition(array $args)
 {
     // Extract p_scenario, p_cquestions, ...
     extract($args);
+
+    $editSourceTab = $request->getPost('editSourceTab');
     
-    if (isset($p_cquestions) && $p_cquestions != '') {
+    if (isset($p_cquestions) && $p_cquestions != '' && $editSourceTab == '#SRCPREVQUEST') {
         $conditionCfieldname = $p_cquestions;
     } elseif (isset($p_csrctoken) && $p_csrctoken != '') {
         $conditionCfieldname = $p_csrctoken;
+        $p_cqid = 0;  // Reset cqid if condition is based on token attribute
     }
     
     $condition_data = array(
