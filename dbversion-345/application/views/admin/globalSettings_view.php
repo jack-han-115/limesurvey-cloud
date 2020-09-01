@@ -30,6 +30,9 @@ if (isset($scripts)) {
         <li role="presentation" ><a role="tab" data-toggle="tab" href='#email'><?php eT("Email settings"); ?></a></li>
         <li role="presentation" ><a role="tab" data-toggle="tab" href='#bounce'><?php eT("Bounce settings"); ?></a></li>
         <li role="presentation" ><a role="tab" data-toggle="tab" href='#security'><?php eT("Security"); ?></a></li>
+        <?php // LimeService Mod start ?>
+        <li role="presentation" ><a role="tab" data-toggle="tab" href='#useradmin'><?php eT("User administration"); ?></a></li>
+        <?php // LimeService Mod end ?>
         <li role="presentation" ><a role="tab" data-toggle="tab" href='#presentation'><?php eT("Presentation"); ?></a></li>
         <?php // LimeService Mod start ?>
         <li role="presentation" ><a role="tab" data-toggle="tab" href='#datapolicy_legalnotice'><?php eT("Data policy"); ?></a></li>
