@@ -73,6 +73,17 @@ if (isset($scripts)) {
         <?php $this->renderPartial("./global_settings/_security"); ?>
     </div>
 
+    <?php // LimeService Mod start ?>
+    <div id="useradmin" class="tab-pane col-md-10 col-md-offset-1">
+        <?php $this->renderPartial("./global_settings/_useradministration", [
+                'sSendAdminCreationEmail'       => $sGlobalSendAdminCreationEmail,
+                'sAdminCreationEmailSubject'    => $sGlobalAdminCreationEmailSubject,   
+                'sAdminCreationEmailTemplate'   => $sGlobalAdminCreationEmailTemplate,     
+            ]);
+        ?>
+    </div>
+    <?php // LimeService Mod end ?>
+
     <div id="presentation" class="tab-pane col-md-10 col-md-offset-1">
         <?php $this->renderPartial("./global_settings/_presentation"); ?>
     </div>

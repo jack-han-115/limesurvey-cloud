@@ -145,48 +145,50 @@ class UserAction extends Survey_Common_Action
                 $sresult = User::model()->getAllRecords(array('uid' => $iNewUID));
                 $srow = count($sresult);
 
-                // send Mail
-                $body = sprintf(gT("Hello %s,"), $new_full_name)."<br /><br />\n";
-                $body .= sprintf(gT("this is an automated email to notify that a user has been created for you on the site '%s'."), Yii::app()->getConfig("sitename"))."<br /><br />\n";
-                $body .= gT("You can use now the following credentials to log into the site:")."<br />\n";
-                $body .= gT("Username").": ".htmlspecialchars($new_user)."<br />\n";
-                // authent is not delegated to web server or LDAP server
-                if (Yii::app()->getConfig("auth_webserver") === false && Permission::model()->hasGlobalPermission('auth_db', 'read', $iNewUID)) {
-                    // send password (if authorized by config)
-                    if (Yii::app()->getConfig("display_user_password_in_email") === true) {
-                        $body .= gT("Password").": ".$new_pass."<br />\n";
-                    } else {
-                        $body .= gT("Password").": ".gT("Please contact your LimeSurvey administrator for your password.")."<br />\n";
-                    }
-                }
+                /**LIMESERVICE MOD START */
+                //Get admin creation email template an replace placeholders 
+                $aAdminEmail = $this->generateAdminCreationEmail($new_full_name, $new_user, $new_pass, $iNewUID);
+                $subject = $aAdminEmail["subject"];
+                $body = $aAdminEmail["body"];
+                $to = $new_user . " <$new_email>";
+                $from = Yii::app()->getConfig("siteadminname") . " <" . Yii::app()->getConfig("siteadminemail") . ">";
 
-                $body .= "<a href='".$this->getController()->createAbsoluteUrl("/admin")."'>".gT("Click here to log in.")."</a><br /><br />\n";
-                $body .= sprintf(gT('If you have any questions regarding this mail please do not hesitate to contact the site administrator at %s. Thank you!'), Yii::app()->getConfig("siteadminemail"))."<br />\n";
-
-                $subject = sprintf(gT("User registration at '%s'", "unescaped"), Yii::app()->getConfig("sitename"));
-                $to = $new_user." <$new_email>";
-                $from = Yii::app()->getConfig("siteadminname")." <".Yii::app()->getConfig("siteadminemail").">";
                 $extra = '';
                 $classMsg = '';
-                if (SendEmailMessage($body, $subject, $to, $from, Yii::app()->getConfig("sitename"), true, Yii::app()->getConfig("siteadminbounce"))) {
-                    $extra .= "<br />".gT("Username").": $new_user<br />".gT("Email").": $new_email<br />";
-                    $extra .= "<br />".gT("An email with a generated password was sent to the user.");
+                $sHeader = '';
+
+                if (Yii::app()->getConfig("sendadmincreationemail")) {
+                    if (SendEmailMessage($body, $subject, $to, $from, Yii::app()->getConfig("sitename"), true, Yii::app()->getConfig("siteadminbounce"))) {
+                        $extra .= "<br />" . gT("Username") . ": $new_user<br />" . gT("Email") . ": $new_email<br />";
+                        $extra .= "<br />" . gT("An email was sent to the user.");
+                        $classMsg = 'text-success';
+                        $sHeader = gT("Success");
+                    } else {
+                        // has to be sent again or no other way
+                        $tmp = str_replace("{NAME}", "<strong>" . $new_user . "</strong>", gT("Email to {NAME} ({EMAIL}) failed."));
+                        $extra .= "<br />" . str_replace("{EMAIL}", $new_email, $tmp) . "<br />";
+                        $classMsg = 'text-warning';
+                        $sHeader = gT("Warning");
+                    }
+                } else {
+                    $extra .= "<br />" . gT("Username") . ": $new_user<br />" . gT("Email") . ": $new_email<br />";
                     $classMsg = 'text-success';
                     $sHeader = gT("Success");
-                } else {
-                    // has to be sent again or no other way
-                    $tmp = str_replace("{NAME}", "<strong>".$new_user."</strong>", gT("Email to {NAME} ({EMAIL}) failed."));
-                    $extra .= "<br />".str_replace("{EMAIL}", $new_email, $tmp)."<br />";
-                    $classMsg = 'text-warning';
-                    $sHeader = gT("Warning");
                 }
-
-                $aViewUrls['mboxwithredirect'][] = $this->_messageBoxWithRedirect(gT("Add user"), $sHeader, $classMsg, $extra,
-                $this->getController()->createUrl("admin/user/sa/setuserpermissions"), gT("Set user permissions"),
-                array('action' => 'setuserpermissions', 'user' => $new_user, 'uid' => $iNewUID));
+                /**LIMESERVICE MOD END */
+                
+                $aViewUrls['mboxwithredirect'][] = $this->_messageBoxWithRedirect(
+                    gT("Add user"),
+                    $sHeader,
+                    $classMsg,
+                    $extra,
+                    $this->getController()->createUrl("admin/user/sa/setuserpermissions"),
+                    gT("Set user permissions"),
+                    array('action' => 'setuserpermissions', 'user' => $new_user, 'uid' => $iNewUID)
+                );
             }
         }
-
+                
         $this->_renderWrappedTemplate('user', $aViewUrls);
     }
 
@@ -839,6 +841,50 @@ class UserAction extends Survey_Common_Action
 
         return $aData;
     }
+
+    /**
+     * +++++++++++++++++++++++LIMESERVICE MOD++++++++++++++++++++++++++++++++ 
+     * This function prepare the email template to send to the new created user
+     * @param string $fullname 
+     * @param string $username 
+     * @param string $password 
+     * @return mixed $aAdminEmail array with subject and email nody
+     */
+    private function generateAdminCreationEmail($fullname, $username, $password, $iNewUID)
+    {
+        $aAdminEmail = [];
+        $siteName = Yii::app()->getConfig("sitename");
+        $loginUrl = $this->getController()->createAbsoluteUrl("/admin");
+        $siteAdminEmail = Yii::app()->getConfig("siteadminemail");
+        $emailSubject = Yii::app()->getConfig("admincreationemailsubject");
+        $emailTemplate = Yii::app()->getConfig("admincreationemailtemplate");
+
+        // authent is not delegated to web server or LDAP server
+        if (Yii::app()->getConfig("auth_webserver") === false && Permission::model()->hasGlobalPermission('auth_db', 'read', $iNewUID)) {
+            // send password (if authorized by config)
+            if (!Yii::app()->getConfig("display_user_password_in_email") === true) {
+                $password = "<p>" . gT("Please contact your LimeSurvey administrator for your password.") . "</p>";
+            }
+        }
+
+        //Replace placeholder in Email subject
+        $emailSubject = str_replace("{SITENAME}", $siteName, $emailSubject);
+        $emailSubject = str_replace("{SITEADMINEMAIL}", $siteAdminEmail, $emailSubject);
+
+        //Replace placeholder in Email body
+        $emailTemplate = str_replace("{SITENAME}", $siteName, $emailTemplate);
+        $emailTemplate = str_replace("{SITEADMINEMAIL}", $siteAdminEmail, $emailTemplate);
+        $emailTemplate = str_replace("{FULLNAME}", $fullname, $emailTemplate);
+        $emailTemplate = str_replace("{USERNAME}", $username, $emailTemplate);
+        $emailTemplate = str_replace("{PASSWORD}", $password, $emailTemplate);
+        $emailTemplate = str_replace("{LOGINURL}", $loginUrl, $emailTemplate);
+
+        $aAdminEmail['subject'] = $emailSubject;
+        $aAdminEmail['body'] = $emailTemplate;
+
+        return $aAdminEmail;
+    }
+
 
     /**
      * Renders template(s) wrapped in header and footer

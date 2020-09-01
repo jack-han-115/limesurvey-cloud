@@ -112,10 +112,17 @@ class GlobalSettings extends Survey_Common_Action
         $data['sGlobalDataPolicy'] = getGlobalSetting('datapolicy');
         $data['sShowGlobalLegalNoticeButton'] = getGlobalSetting('showlegalnoticebutton');
         $data['sShowGlobalDataPolicyButton'] = getGlobalSetting('showdatapolicybutton');
-        App()->loadHelper("admin/htmleditor");
         $data['scripts'] = PrepareEditorScript(false, $this->getController());
         $data['sCurrentDefaultLanguage'] = getGlobalSetting('defaultlang');
         // LimeService Mod end
+
+        // LimeService - get user administration settings mod start 
+        $data['sGlobalSendAdminCreationEmail'] = getGlobalSetting('sendadmincreationemail');
+        $data['sGlobalAdminCreationEmailTemplate'] = getGlobalSetting('admincreationemailtemplate');
+        $data['sGlobalAdminCreationEmailSubject'] = getGlobalSetting('admincreationemailsubject');
+        // LimeService - get user administration settings mod end
+
+        App()->loadHelper("admin/htmleditor");
 
         $this->_renderWrappedTemplate('', 'globalSettings_view', $data);
     }
@@ -351,6 +358,13 @@ class GlobalSettings extends Survey_Common_Action
         SettingGlobal::setSetting('showdatapolicybutton', App()->getRequest()->getPost('showdatapolicybutton'));
         SettingGlobal::setSetting('showlegalnoticebutton', App()->getRequest()->getPost('showlegalnoticebutton'));
         // LimeService Mod end
+
+        //LimeService user admininistration settings mod start
+        SettingGlobal::setSetting('sendadmincreationemail', App()->getRequest()->getPost('sendadmincreationemail'));
+        SettingGlobal::setSetting('admincreationemailsubject', App()->getRequest()->getPost('admincreationemailsubject'));
+        SettingGlobal::setSetting('admincreationemailtemplate', App()->getRequest()->getPost('admincreationemailtemplate'));
+        //LimeService user admininistration settings mod end
+        
 
         Yii::app()->session['flashmessage'] = $warning.gT("Global settings were saved.");
 
