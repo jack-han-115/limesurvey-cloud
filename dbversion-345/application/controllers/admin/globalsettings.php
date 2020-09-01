@@ -112,6 +112,7 @@ class GlobalSettings extends Survey_Common_Action
         $data['sGlobalDataPolicy'] = getGlobalSetting('datapolicy');
         $data['sShowGlobalLegalNoticeButton'] = getGlobalSetting('showlegalnoticebutton');
         $data['sShowGlobalDataPolicyButton'] = getGlobalSetting('showdatapolicybutton');
+        App()->loadHelper("admin/htmleditor");
         $data['scripts'] = PrepareEditorScript(false, $this->getController());
         $data['sCurrentDefaultLanguage'] = getGlobalSetting('defaultlang');
         // LimeService Mod end
@@ -122,7 +123,7 @@ class GlobalSettings extends Survey_Common_Action
         $data['sGlobalAdminCreationEmailSubject'] = getGlobalSetting('admincreationemailsubject');
         // LimeService - get user administration settings mod end
 
-        App()->loadHelper("admin/htmleditor");
+        
 
         $this->_renderWrappedTemplate('', 'globalSettings_view', $data);
     }
