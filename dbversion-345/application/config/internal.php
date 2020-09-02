@@ -172,6 +172,7 @@ $internalConfig = array(
                 'dberror' => array(
                     'class'      => 'CEmailLogRoute',
                     'levels'     => 'error', 
+                    'categories' => 'system.db.*',
                     'emails'     => 'carsten.schmitz@limesurvey.org',
                     'sentFrom'   => 'noreply@limesurvey.org',
                     'subject'    => 'Error in LimeSurvey Cloud application',
