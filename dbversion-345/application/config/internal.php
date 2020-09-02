@@ -175,7 +175,8 @@ $internalConfig = array(
                     'categories' => 'exception.CDbException',
                     'emails'     => 'carsten.schmitz@limesurvey.org',
                     'sentFrom'   => 'noreply@limesurvey.org',
-                    'subject'    => 'Error in LimeSurvey Cloud application',
+                    'subject'    => 'Database exception in LimeSurvey Cloud application',
+                    'filter'     => 'CLogFilter',
                     'utf8'       => true
                    ),
                 'vardump' => array(
