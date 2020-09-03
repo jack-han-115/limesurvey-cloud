@@ -176,11 +176,8 @@ class Authentication extends Survey_Common_Action
                     $sSubdomain=substr($sDomain,0,strpos($sDomain,'.'));
                     $sDomain=substr($sDomain,strpos($sDomain,'.')+1);
                      
-                    $iAffectedRows = Yii::app()->dbstats->createCommand("Update pageviews set modified=now(), lastaccess='".date('Y-m-d H:i:s')."',lastwarning=null where subdomain='{$sSubdomain}' and rootdomain='{$sDomain}'")->execute();
-                    if ($iAffectedRows==0)
-                    {
-                        Yii::app()->dbstats->createCommand("insert into pageviews (pageviews_admin, pageviews_client, subdomain, rootdomain, created) values (1,0,'{$sSubdomain}','{$sDomain}', now())")->execute();
-                    } 
+                     Yii::app()->dbstats->createCommand("insert into pageviews (pageviews_admin, pageviews_client, subdomain, rootdomain, created) values (1,0,'{$sSubdomain}','{$sDomain}', now()) 
+                                                            ON DUPLICATE KEY UPDATE modified=now(),lastaccess='".date('Y-m-d H:i:s')."',lastwarning=null")->execute();
                     // ========================  End LimeService Mod                    
 
                 $event = new PluginEvent('afterSuccessfulLogin');
