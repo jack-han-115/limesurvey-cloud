@@ -187,3 +187,5 @@ FakesAssemblies/
 
 # .vs
 .vs/
+/.travis.yml
+/composer.json
