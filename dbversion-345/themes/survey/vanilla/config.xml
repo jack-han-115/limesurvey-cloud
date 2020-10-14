@@ -296,7 +296,12 @@
                   <file type="view" role="subview">./subviews/logincomponents/captcha.twig</file>
                 </token>
 
-
+                <!-- LimeService Modification Start -->
+                <maintenance>
+                    <file type="view" role="layout">layout_maintenance.twig</file>
+                    <file type="view" role="subview">./subviews/footer/footer.twig</file>
+                </maintenance>
+                <!-- LimeService Modification End -->
             </screens>
 
             <!-- Data for preview in Theme Editor and Twig Cache command line generator  -->
