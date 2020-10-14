@@ -177,6 +177,10 @@ class TemplateManifest extends TemplateConfiguration
           $aScreens['pdf']             = gT('PDF', 'unescaped');
           $aScreens['navigation']      = gT('Navigation', 'unescaped');
           $aScreens['misc']            = gT('Miscellaneous files', 'unescaped');
+          
+          # LimeService Modification Start #
+          $aScreens['maintenance']     = gT('Maintenance', 'unescaped');
+          # LimeService Modification End #
       }
 
       return $aScreens;
@@ -666,7 +670,7 @@ class TemplateManifest extends TemplateConfiguration
 
             //
 
-        $sLoadLink = CHtml::form( array("/admin/themeoptions/sa/importmanifest/"), 'post',array('id'=>'frmÃ­nstalltheme','name'=>'frmÃ­nstalltheme')) .
+        $sLoadLink = CHtml::form( array("/admin/themeoptions/sa/importmanifest/"), 'post',array('id'=>'frm’nstalltheme','name'=>'frm’nstalltheme')) .
                 "<input type='hidden' name='templatename' value='".$this->sTemplateName."'>
                 <button id='template_options_link_".$this->sTemplateName."'
                 class='btn btn-default btn-block'>
