@@ -202,7 +202,7 @@
         </ul>
     </div><!-- /.nav-collapse -->
     
-    # LimeService Modification Start #
+    <!-- LimeService Modification Start -->
     <!-- Maintenance mode -->
     <?php $sMaintenanceMode = App()->getConfig('maintenancemode');
     if ($sMaintenanceMode == 'hard' || $sMaintenanceMode == 'soft'){ ?>
@@ -217,7 +217,7 @@
             </ul>
         </div>
     <?php } ?>
-    # LimeService Modification End #
+    <!-- LimeService Modification End -->
 </nav>
 <script type="text/javascript">
     //show tooltips 
