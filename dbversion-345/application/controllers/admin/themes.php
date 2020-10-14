@@ -1095,7 +1095,10 @@ class themes extends Survey_Common_Action
                     ]
                 ];
                 break;
-
+            # LimeService Modification Start #
+            case 'maintenance':
+                break;
+            # LimeService Modification End #
             case 'error':
                 break;
         }
