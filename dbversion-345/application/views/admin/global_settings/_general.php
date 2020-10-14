@@ -9,6 +9,7 @@ $thisdefaulttheme=getGlobalSetting('defaulttheme');
 $templatenames=array_keys(getTemplateList());
 $thisadmintheme=getGlobalSetting('admintheme');
 $thisdefaulthtmleditormode=getGlobalSetting('defaulthtmleditormode');
+$thismaintenancemode=!empty(App()->getConfig('maintenancemode')) ? App()->getConfig('maintenancemode') : 'off';
 $thisdefaultquestionselectormode=getGlobalSetting('defaultquestionselectormode');
 $thisdefaultthemeteeditormode=getGlobalSetting('defaultthemeteeditormode');
 $dateformatdata=getDateFormatData(Yii::app()->session['dateformat']);
@@ -163,7 +164,32 @@ $dateformatdata=getDateFormatData(Yii::app()->session['dateformat']);
         </div>
     </div>
     <div class="ls-flex-column ls-space padding left-5 right-5 col-md-5">
-
+        # LimeService Modification Start #
+         <!-- Maintenance mode -->
+        <div class="row ls-space margin top-10">
+            <div class="form-group col-xs-12">
+                <label class="col-sm-12 text-left control-label" for="maintenancemode" title="<?php echo gT('Maintenance modes: 
+Off
+Soft lock - participants are able to finish started surveys, no new participants are allowed
+Full lock - none of participants are allowed to take survey, even if they already started to take it'); ?> ">
+                    <?php eT("Maintenance mode:"); ?>
+                </label>
+                <div class="col-sm-12">
+                    <?php
+                    $this->widget('yiiwheels.widgets.buttongroup.WhButtonGroup', array(
+                        'name' => 'maintenancemode',
+                        'value'=> $thismaintenancemode,
+                        'selectOptions'=>array(
+                            "off"=>gT("Off",'unescaped'),
+                            "soft"=>gT("Soft lock",'unescaped'),
+                            "hard"=>gT("Full lock",'unescaped')
+                        )
+                    ));
+                    ?>
+                </div>
+            </div>
+        </div>
+        # LimeService Modification End #
         <!-- Refresh assets -->
         <div class="row ls-space margin top-10">
             <div class="form-group col-xs-12">
