@@ -2571,6 +2571,20 @@ function db_upgrade_all($iOldDBVersion, $bSilent = false)
             $oDB->createCommand()->update('{{settings_global}}', ['stg_value'=>364], "stg_name='DBVersion'");
             $oTransaction->commit();
         }
+        if ($iOldDBVersion < 365) {
+            $oTransaction = $oDB->beginTransaction();
+            /* Does not apply to LimeService
+            $oDB->createCommand()->insert("{{plugins}}", [
+                'name'               => 'ComfortUpdateChecker',
+                'active'             => 1,
+                'version'            => '1.0.0',
+            ]);*/
+
+            $oDB->createCommand()->update('{{settings_global}}', array('stg_value' => 365), "stg_name='DBVersion'");
+            $oTransaction->commit();
+        }
+
+
         
     } catch (Exception $e) {
         Yii::app()->setConfig('Updating', false);
