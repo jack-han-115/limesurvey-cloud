@@ -2548,6 +2548,7 @@ function db_upgrade_all($iOldDBVersion, $bSilent = false)
                 alterColumn('{{settings_user}}','stg_value',"mediumtext");
                 alterColumn('{{surveymenu_entries}}','data',"mediumtext");
                 $oDB->createCommand()->update('{{surveys}}', ['expires'=>NULL], "expires=0");
+                $oDB->createCommand()->update('{{surveys}}', ['startdate'=>NULL], "startdate=0");
                 alterColumn('{{surveys}}','attributedescriptions',"mediumtext");
                 alterColumn('{{surveys_languagesettings}}','surveyls_description',"mediumtext");
                 alterColumn('{{surveys_languagesettings}}','surveyls_welcometext',"mediumtext");
