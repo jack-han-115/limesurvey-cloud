@@ -1521,18 +1521,22 @@ class tokens extends Survey_Common_Action
                             $maildebug = (string)$event->get('error', $maildebug);
                             $success = $event->get('error') == null;
                         } else {
-                            // LimeService Mod Start
+
+                            // LimeService Mod Start ==================
                             $iAdvertising = (int)Yii::app()->dbstats->createCommand('select advertising from limeservice_system.installations where user_id='.getInstallationID())->queryScalar();
                             $bSpamLinks   = ( $iAdvertising )?$this->looksForSpamLinks($bHtml,$modmessage, $iSurveyId):false;
-
-                            if (!$bSpamLinks) {
-                            	$success = SendEmailMessage($modmessage, $modsubject, $to, $from, Yii::app()->getConfig("sitename"), $bHtml, $bounce, $aRelevantAttachments, $customheaders);
-                            } else {
+                            $iEmailLocked = (int)Yii::app()->dbstats->createCommand('select email_lock from limeservice_system.installations where user_id='.getInstallationID())->queryScalar();
+                            if ($iEmailLocked && Yii::app()->getConfig('emailmethod')!='smtp'){
+                                $success=false;
+                                $maildebug =  gT('You are currently banned from sending emails using the LimeSurvey email servers. Please configure your global settings to use your own SMTP server, instead. If you have any questions regarding this ban, please contact support@limesurvey.org.');
+                            } elseif ($bSpamLinks) {
                                 $success=false;
                                 $maildebug =  gT('Your email contains external links. In the free version only links to your survey are allowed.');
+                            } else {
+                                $success = SendEmailMessage($modmessage, $modsubject, $to, $from, Yii::app()->getConfig("sitename"), $bHtml, $bounce, $aRelevantAttachments, $customheaders);
                             }
+                            // LimeService Mod End =======================
 
-                            // LimeService Mod End
                         }
 
                         if ($success) {

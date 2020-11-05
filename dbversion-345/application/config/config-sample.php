@@ -77,8 +77,7 @@ return array(
         'debugsql'=>0, // Set this to 1 to enanble sql logging, only active when debug = 2
         'defaultuser'=>html_entity_decode('#aduser',ENT_QUOTES),
         'defaultpass'=>html_entity_decode('#adpass',ENT_QUOTES),
-        'siteadminemail'=>'#adminemail',
-        'locked'=>false
+        'siteadminemail'=>'#adminemail'
 	)
 );
 /* End of file config.php */

@@ -640,8 +640,6 @@ $config['forcedsuperadmin'] = array(1);
 $config['defaultfixedtheme'] = 'vanilla';
 
 // LimeService Mod Start ===============
-$config['locked'] = false;
-
 if (!isset($_SERVER['SERVER_NAME'])) {
     $_SERVER['SERVER_NAME'] = '';
     if (is_array($argv) && count($argv)>1) {
