@@ -153,7 +153,7 @@ class TFAUser extends User
         $criteria->compare('users_name', $this->users_name);
         $criteria->compare('full_name', $this->full_name);
         $criteria->compare('email', $this->email);
-        $criteria->compare('userkeys', Yii::app()->request->getParam('userkeys_authType'));
+        $criteria->compare('authType', Yii::app()->request->getParam('userkeys_authType'));
         $paramHasAuthSet = Yii::app()->request->getParam('userkeys_secretKey', '');
         if ($paramHasAuthSet === '1') {
             $criteria->addCondition('secretKey IS NOT NULL');
