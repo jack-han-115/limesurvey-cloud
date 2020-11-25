@@ -1,20 +1,21 @@
 <?php
+
 /**
  * Plugin to enable two factor authentication for LimeSurvey Admin Backend
  * @author Markus FLür <markus.fluer@limesurvey.org>
  * @license GPL 2.0 or later
  */
 
- //Get necessary libraries and component plugins
-require_once(__DIR__.'/vendor/autoload.php');
+//Get necessary libraries and component plugins
+require_once(__DIR__ . '/vendor/autoload.php');
 spl_autoload_register(function ($class_name) {
     if (preg_match("/^TFA.*/", $class_name)) {
-        if (file_exists(__DIR__.DIRECTORY_SEPARATOR.'models'.DIRECTORY_SEPARATOR.$class_name . '.php')) {
-            include __DIR__.DIRECTORY_SEPARATOR.'models'.DIRECTORY_SEPARATOR.$class_name . '.php';
-        } elseif (file_exists(__DIR__.DIRECTORY_SEPARATOR.'helper'.DIRECTORY_SEPARATOR.$class_name . '.php')) {
-            include __DIR__.DIRECTORY_SEPARATOR.'helper'.DIRECTORY_SEPARATOR.$class_name . '.php';
-        } elseif (file_exists(__DIR__.DIRECTORY_SEPARATOR.'installer'.DIRECTORY_SEPARATOR.$class_name . '.php')) {
-            include __DIR__.DIRECTORY_SEPARATOR.'installer'.DIRECTORY_SEPARATOR.$class_name . '.php';
+        if (file_exists(__DIR__ . DIRECTORY_SEPARATOR . 'models' . DIRECTORY_SEPARATOR . $class_name . '.php')) {
+            include __DIR__ . DIRECTORY_SEPARATOR . 'models' . DIRECTORY_SEPARATOR . $class_name . '.php';
+        } elseif (file_exists(__DIR__ . DIRECTORY_SEPARATOR . 'helper' . DIRECTORY_SEPARATOR . $class_name . '.php')) {
+            include __DIR__ . DIRECTORY_SEPARATOR . 'helper' . DIRECTORY_SEPARATOR . $class_name . '.php';
+        } elseif (file_exists(__DIR__ . DIRECTORY_SEPARATOR . 'installer' . DIRECTORY_SEPARATOR . $class_name . '.php')) {
+            include __DIR__ . DIRECTORY_SEPARATOR . 'installer' . DIRECTORY_SEPARATOR . $class_name . '.php';
         }
     }
 });
@@ -90,7 +91,6 @@ class TwoFactorAdminLogin extends AuthPluginBase
         $this->subscribe('afterLoginFormSubmit');
         $this->subscribe('newUserSession');
     }
-    
     //##############  Plugin event handlers ##############//
     /**
      * Listen to direct requests
@@ -140,15 +140,15 @@ class TwoFactorAdminLogin extends AuthPluginBase
     }
 
     /**
-    * Delete the created tables again
-    *
-    * @return void
-    */
+     * Delete the created tables again
+     *
+     * @return void
+     */
     public function beforeDeactivate()
     {
         TFAPluginInstaller::instance()->uninstall();
     }
-    
+
 
     /**
      * Add Two-Factor field to login page.
@@ -159,10 +159,10 @@ class TwoFactorAdminLogin extends AuthPluginBase
     {
         $oEvent = $this->getEvent();
         $extraLine = ""
-        ."<span>"
-            ."<label for='twofactor'>"  . gT("AuthKey (optional)") . "</label>
-            <input class='form-control' name='twofactor' id='twofactor' type='text' size='".$this->get('digits', null, null, 6)."' maxlength='".$this->get('digits', null, null, 6)."' value='' />"
-        ."</span>";
+            . "<span>"
+            . "<label for='twofactor'>"  . gT("AuthKey (optional)") . "</label>
+            <input class='form-control' name='twofactor' id='twofactor' type='text' size='" . $this->get('digits', null, null, 6) . "' maxlength='" . $this->get('digits', null, null, 6) . "' value='' />"
+            . "</span>";
 
         $oEvent->getContent('Authdb')->addContent($extraLine, 'append');
     }
@@ -178,7 +178,7 @@ class TwoFactorAdminLogin extends AuthPluginBase
         $onepass = App()->request->getParam('onepass');
 
         // skip 2fa when theres an active and verified onetimepassword used (verification is allready done before getting here)
-        if (App()->getConfig('use_one_time_passwords') && isset($onepass) ) {
+        if (App()->getConfig('use_one_time_passwords') && isset($onepass)) {
             return;
         }
 
@@ -193,11 +193,11 @@ class TwoFactorAdminLogin extends AuthPluginBase
         }
         return;
     }
-    
+
     /**
-    * Add menue to the top bar
-    * @return void
-    */
+     * Add menue to the top bar
+     * @return void
+     */
     public function beforeAdminMenuRender()
     {
         $oEvent = $this->getEvent();
@@ -230,13 +230,13 @@ class TwoFactorAdminLogin extends AuthPluginBase
             'iconClass' => 'fa fa-lock fa-lg',
         ];
         $oNewMenu = new TFAMenuClass($aNewMenuOptions);
-        $oEvent->set('extraMenus', [$oNewMenu]);
+        $oEvent->append('extraMenus', [$oNewMenu]);
     }
 
     /**
-    * If force 2FA login is enabled, redirect to the 2FA page
-    * @return void
-    */
+     * If force 2FA login is enabled, redirect to the 2FA page
+     * @return void
+     */
     public function afterSuccessfulLogin()
     {
         $oEvent = $this->getEvent();
@@ -250,11 +250,11 @@ class TwoFactorAdminLogin extends AuthPluginBase
     //################# View rendering ###################
 
     /**
-    * Renders a list of users including their 2FA settings
-    * To be called by fullpagewrapper
-    *
-    * @return string
-    */
+     * Renders a list of users including their 2FA settings
+     * To be called by fullpagewrapper
+     *
+     * @return string
+     */
     public function index()
     {
         if (Yii::app()->getRequest()->getQuery('pageSize')) {
@@ -265,23 +265,23 @@ class TwoFactorAdminLogin extends AuthPluginBase
         $model->setAttributes(Yii::app()->getRequest()->getParam('TFAUser'));
 
         $iPageSize = Yii::app()->user->getState('pageSize', Yii::app()->params['defaultPageSize']);
-        
+
         $aData = [
             'model' => $model,
             'pageSize' => $iPageSize,
         ];
         $this->pageScripts();
-        
+
 
         return $this->renderPartial('index', $aData, true);
     }
 
     /**
-    * Renders the user configuration page
-    * To be called by fullpagewrapper
-    *
-    * @return string
-    */
+     * Renders the user configuration page
+     * To be called by fullpagewrapper
+     *
+     * @return string
+     */
     public function userindex()
     {
         $iUserId = Yii::app()->getRequest()->getPost('iUserId', Yii::app()->user->id);
@@ -299,16 +299,16 @@ class TwoFactorAdminLogin extends AuthPluginBase
     //################ Direct access methods ###############
 
     /**
-    * Renders the content of the modal to create a 2FA key registration
-    *
-    * @param PluginEvent $oEvent
-    * @param CHttpRequest $oRequest
-    * @return string
-    */
+     * Renders the content of the modal to create a 2FA key registration
+     *
+     * @param PluginEvent $oEvent
+     * @param CHttpRequest $oRequest
+     * @return string
+     */
     public function directCallCreateNewKey($oEvent, $oRequest)
     {
         $iUserId = Yii::app()->getRequest()->getParam('uid', Yii::app()->user->id);
-        
+
         if (!Permission::model()->hasGlobalPermission('users', 'update') && $iUserId !== Yii::app()->user->id) {
             return $this->renderPartial('_partial.error', [
                 'errors' => ["Keine Berechtigung für diese Aktion"]
@@ -320,12 +320,12 @@ class TwoFactorAdminLogin extends AuthPluginBase
         if ($oTFAModel == null) {
             $oTFAModel = new TFAUserKey();
         }
-        
+
         $o2FA = $this->get2FAObject();
-        
+
         $oTFAModel->uid = $iUserId;
         $oTFAModel->secretKey = $o2FA->createSecret();
-        $sQRCodeContent = '<img src="'.$o2FA->getQRCodeImageAsDataUri('Login ID:'.Yii::app()->user->id, $oTFAModel->secretKey).'">';
+        $sQRCodeContent = '<img src="' . $o2FA->getQRCodeImageAsDataUri('Login ID:' . Yii::app()->user->id, $oTFAModel->secretKey) . '">';
 
         return $this->renderPartial('_partial/create', [
             'model' => $oTFAModel,
@@ -334,13 +334,13 @@ class TwoFactorAdminLogin extends AuthPluginBase
     }
 
     /**
-    * Checks a submitted authentication code and stores the underlaying secret key into the Database.
-    * Returns a JSON document
-    *
-    * @param PluginEvent $oEvent
-    * @param CHttpRequest $oRequest
-    * @return boolean
-    */
+     * Checks a submitted authentication code and stores the underlaying secret key into the Database.
+     * Returns a JSON document
+     *
+     * @param PluginEvent $oEvent
+     * @param CHttpRequest $oRequest
+     * @return boolean
+     */
     public function directCallConfirmKey($oEvent, $oRequest)
     {
         $aTFAUserKey = Yii::app()->getRequest()->getPost('TFAUserKey', []);
@@ -348,7 +348,7 @@ class TwoFactorAdminLogin extends AuthPluginBase
         if (!(Permission::model()->hasGlobalPermission('users', 'update') || $uid == Yii::app()->user->id)) {
             return $this->createJSONResponse(false, "No permission for this");
         }
-        
+
         $o2FA = $this->get2FAObject();
 
         $sConfirmationKey = Yii::app()->getRequest()->getPost('confirmationKey', '');
@@ -367,22 +367,22 @@ class TwoFactorAdminLogin extends AuthPluginBase
         if (!$oTFAModel->save()) {
             return $this->createJSONResponse(false, "The 2-FActor authentication could not be stored.");
         }
-        
+
         return $this->createJSONResponse(true, "2-Factor Method successfully stored", ['reload' => true]);
     }
 
     /**
-    * Deletes a users secret, effectively ending the 2FA login mechanism for that user.
-    * Returns a JSON document
-    *
-    * @param PluginEvent $oEvent
-    * @param CHttpRequest $oRequest
-    * @return boolean
-    */
+     * Deletes a users secret, effectively ending the 2FA login mechanism for that user.
+     * Returns a JSON document
+     *
+     * @param PluginEvent $oEvent
+     * @param CHttpRequest $oRequest
+     * @return boolean
+     */
     public function directCallDeleteKey($oEvent, $oRequest)
     {
         $uid = $oRequest->getPost('uid', null);
-        $uid = $uid ?? Yii::app()->user->id;
+        $uid = Yii::app()->user->id;
         if (!Permission::model()->hasGlobalPermission('users', 'update') && $uid !== Yii::app()->user->id) {
             return $this->createJSONResponse(false, gT('You have no permission for this action'));
         }
@@ -392,48 +392,48 @@ class TwoFactorAdminLogin extends AuthPluginBase
     }
 
     /**
-    * Deletes a users secret, effectively ending the 2FA login mechanism for that user CLI version.
-    * Returns a String
-    *
-    * @param PluginEvent $oEvent
-    * @param string $sOption
-    * @return string
-    */
+     * Deletes a users secret, effectively ending the 2FA login mechanism for that user CLI version.
+     * Returns a String
+     *
+     * @param PluginEvent $oEvent
+     * @param string $sOption
+     * @return string
+     */
     public function deleteKeyForUserId($oEvent, $iUserId)
     {
         $uid = (int) $iUserId;
-        require(__DIR__.'/models/TFAUserKey.php');
+        require(__DIR__ . '/models/TFAUserKey.php');
         $oTFAModel =  TFAUserKey::model()->findByPk($uid);
-        if($oTFAModel == null ) { 
-            echo "No 2FA key set for user ".$iUserId;
-            return; 
+        if ($oTFAModel == null) {
+            echo "No 2FA key set for user " . $iUserId;
+            return;
         }
         $success = $oTFAModel->delete();
-        echo($success ? 'Successfully deleted' : 'Deleting failed');
+        echo ($success ? 'Successfully deleted' : 'Deleting failed');
     }
 
     /**
-    * Deletes a users secret, effectively ending the 2FA login mechanism for that user CLI version.
-    * Returns a String
-    *
-    * @param PluginEvent $oEvent
-    * @param string $sOption
-    * @return string
-    */
+     * Deletes a users secret, effectively ending the 2FA login mechanism for that user CLI version.
+     * Returns a String
+     *
+     * @param PluginEvent $oEvent
+     * @param string $sOption
+     * @return string
+     */
     public function deleteKeyForUserName($oEvent, $sUserName)
     {
         $oUser = User::model()->findByAttributes(['users_name' => $sUserName]);
-        require(__DIR__.'/models/TFAUserKey.php');
+        require(__DIR__ . '/models/TFAUserKey.php');
         $oTFAModel =  TFAUserKey::model()->findByPk($oUser->uid);
-        if($oTFAModel == null ) { 
-            echo "No 2FA key set for user ".$sUserName;
-            return; 
+        if ($oTFAModel == null) {
+            echo "No 2FA key set for user " . $sUserName;
+            return;
         }
         $success = $oTFAModel->delete();
-        echo($success ? 'Successfully deleted' : 'Deleting failed');
+        echo ($success ? 'Successfully deleted' : 'Deleting failed');
     }
 
-    
+
     //################### Utility methods ##################
 
     /**
@@ -497,8 +497,8 @@ class TwoFactorAdminLogin extends AuthPluginBase
      */
     protected function pageScripts()
     {
-        $this->registerScript('./assets/tfaScripts.js', null, LSYii_ClientScript::POS_HEAD);
-        $this->registerCss('./assets/tfaStyles.css', null);
+        $this->registerScript('assets/tfaScripts.js', null, LSYii_ClientScript::POS_HEAD);
+        $this->registerCss('assets/tfaStyles.css', null);
     }
 
     /**
@@ -509,24 +509,24 @@ class TwoFactorAdminLogin extends AuthPluginBase
      * @param integer $pos See LSYii_ClientScript constants for options, default: LSYii_ClientScript::POS_BEGIN
      * @return void
      */
-    protected function registerScript($relativePathToScript, $pos=LSYii_ClientScript::POS_BEGIN)
+    protected function registerScript($relativePathToScript, $pos = LSYii_ClientScript::POS_BEGIN)
     {
         $parentPlugin = get_class($this);
+        $pathPossibilities = [
+            YiiBase::getPathOfAlias('userdir') . '/plugins/' . $parentPlugin . '/' . $relativePathToScript,
+            YiiBase::getPathOfAlias('webroot') . '/plugins/' . $parentPlugin . '/' . $relativePathToScript,
+            Yii::app()->getBasePath() . '/application/core/plugins/' . $parentPlugin . '/' . $relativePathToScript,
+            //added limesurvey 4 compatibilities
+            YiiBase::getPathOfAlias('webroot') . '/upload/plugins/' . $parentPlugin . '/' . $relativePathToScript,
+        ];
 
         $scriptToRegister = null;
-        if (file_exists(YiiBase::getPathOfAlias('userdir').'/plugins/'.$parentPlugin.'/'.$relativePathToScript)) {
-            $scriptToRegister = Yii::app()->getAssetManager()->publish(
-                YiiBase::getPathOfAlias('userdir').'/plugins/'.$parentPlugin.'/'.$relativePathToScript
-            );
-        } elseif (file_exists(YiiBase::getPathOfAlias('webroot').'/plugins/'.$parentPlugin.'/'.$relativePathToScript)) {
-            $scriptToRegister = Yii::app()->getAssetManager()->publish(
-                YiiBase::getPathOfAlias('webroot').'/plugins/'.$parentPlugin.'/'.$relativePathToScript
-            );
-        } elseif (file_exists(Yii::app()->getBasePath().'/core/plugins/'.$parentPlugin.'/'.$relativePathToScript)) {
-            $scriptToRegister = Yii::app()->getAssetManager()->publish(
-                Yii::app()->getBasePath().'/core/plugins/'.$parentPlugin.'/'.$relativePathToScript
-            );
+        foreach ($pathPossibilities as $path) {
+            if (file_exists($path)) {
+                $scriptToRegister = Yii::app()->getAssetManager()->publish($path);
+            }
         }
+
         Yii::app()->getClientScript()->registerScriptFile($scriptToRegister, $pos);
     }
 
@@ -537,31 +537,23 @@ class TwoFactorAdminLogin extends AuthPluginBase
      * @param string $relativePathToCss
      * @return void
      */
-    protected function registerCss($relativePathToCss, $parentPlugin=null)
+    protected function registerCss($relativePathToCss, $parentPlugin = null)
     {
         $parentPlugin = get_class($this);
+
         $pathPossibilities = [
-            YiiBase::getPathOfAlias('userdir').'/plugins/'.$parentPlugin.'/'.$relativePathToCss,
-            YiiBase::getPathOfAlias('webroot').'/plugins/'.$parentPlugin.'/'.$relativePathToCss,
-            Yii::app()->getBasePath().'/application/core/plugins/'.$parentPlugin.'/'.$relativePathToCss
+            YiiBase::getPathOfAlias('userdir') . '/plugins/' . $parentPlugin . '/' . $relativePathToCss,
+            YiiBase::getPathOfAlias('webroot') . '/plugins/' . $parentPlugin . '/' . $relativePathToCss,
+            Yii::app()->getBasePath() . '/application/core/plugins/' . $parentPlugin . '/' . $relativePathToCss,
+            //added limesurvey 4 compatibilities
+            YiiBase::getPathOfAlias('webroot') . '/upload/plugins/' . $parentPlugin . '/' . $relativePathToCss,
         ];
+
         $cssToRegister = null;
-        if (file_exists(YiiBase::getPathOfAlias('userdir').'/plugins/'.$parentPlugin.'/'.$relativePathToCss)) {
-            $cssToRegister = Yii::app()->getAssetManager()->publish(
-                YiiBase::getPathOfAlias('userdir').'/plugins/'.$parentPlugin.'/'.$relativePathToCss
-            );
-        } elseif (file_exists(YiiBase::getPathOfAlias('webroot').'/plugins/'.$parentPlugin.'/'.$relativePathToCss)) {
-            $cssToRegister = Yii::app()->getAssetManager()->publish(
-                YiiBase::getPathOfAlias('webroot').'/plugins/'.$parentPlugin.'/'.$relativePathToCss
-            );
-        } elseif (file_exists(Yii::app()->getBasePath().'/core/plugins/'.$parentPlugin.'/'.$relativePathToCss)) {
-            $cssToRegister = Yii::app()->getAssetManager()->publish(
-                Yii::app()->getBasePath().'/core/plugins/'.$parentPlugin.'/'.$relativePathToCss
-            );
-        } elseif (file_exists(__DIR__ . DIRECTORY_SEPARATOR . $relativePathToScript)) {
-            $scriptToRegister = Yii::app()->getAssetManager()->publish(
-                __DIR__ . DIRECTORY_SEPARATOR . $relativePathToScript
-            );
+        foreach ($pathPossibilities as $path) {
+            if (file_exists($path)) {
+                $cssToRegister = Yii::app()->getAssetManager()->publish($path);
+            }
         }
 
         Yii::app()->getClientScript()->registerCssFile($cssToRegister);
