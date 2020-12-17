@@ -86,6 +86,7 @@ class TwoFactorAdminLogin extends AuthPluginBase
         $this->subscribe('beforeDeactivate');
         $this->subscribe('beforeAdminMenuRender');
         $this->subscribe('afterSuccessfulLogin');
+
         //Login events
         $this->subscribe('newLoginForm');
         $this->subscribe('afterLoginFormSubmit');
@@ -201,7 +202,8 @@ class TwoFactorAdminLogin extends AuthPluginBase
     public function beforeAdminMenuRender()
     {
         $oEvent = $this->getEvent();
-
+        $aMenuItems = [];
+       
         $aMenuItemUserOptions = [
             'isDivider' => false,
             'isSmallText' => false,
@@ -209,6 +211,7 @@ class TwoFactorAdminLogin extends AuthPluginBase
             'href' => $this->api->createUrl('admin/pluginhelper/sa/fullpagewrapper/plugin/TwoFactorAdminLogin/method/userindex', []),
             'iconClass' => 'fa fa-user-secret',
         ];
+
         $aMenuItems[] = (new \LimeSurvey\Menu\MenuItem($aMenuItemUserOptions));
 
         if (Permission::model()->hasGlobalPermission('users', 'update')) {
@@ -230,7 +233,12 @@ class TwoFactorAdminLogin extends AuthPluginBase
             'iconClass' => 'fa fa-lock fa-lg',
         ];
         $oNewMenu = new TFAMenuClass($aNewMenuOptions);
-        $oEvent->append('extraMenus', [$oNewMenu]);
+        
+        //enable menu only if plugin is active
+        if(TFAHelper::isPluginActive()){
+            $oEvent->append('extraMenus', [$oNewMenu]);
+        }
+      
     }
 
     /**
@@ -402,7 +410,6 @@ class TwoFactorAdminLogin extends AuthPluginBase
     public function deleteKeyForUserId($oEvent, $iUserId)
     {
         $uid = (int) $iUserId;
-        require(__DIR__ . '/models/TFAUserKey.php');
         $oTFAModel =  TFAUserKey::model()->findByPk($uid);
         if ($oTFAModel == null) {
             echo "No 2FA key set for user " . $iUserId;
@@ -423,7 +430,6 @@ class TwoFactorAdminLogin extends AuthPluginBase
     public function deleteKeyForUserName($oEvent, $sUserName)
     {
         $oUser = User::model()->findByAttributes(['users_name' => $sUserName]);
-        require(__DIR__ . '/models/TFAUserKey.php');
         $oTFAModel =  TFAUserKey::model()->findByPk($oUser->uid);
         if ($oTFAModel == null) {
             echo "No 2FA key set for user " . $sUserName;
@@ -529,6 +535,8 @@ class TwoFactorAdminLogin extends AuthPluginBase
 
         Yii::app()->getClientScript()->registerScriptFile($scriptToRegister, $pos);
     }
+
+    
 
     /**
      * Adding a stylesheet depending on path of the plugin
