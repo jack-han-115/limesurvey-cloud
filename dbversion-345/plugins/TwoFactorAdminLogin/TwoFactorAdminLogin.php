@@ -333,7 +333,7 @@ class TwoFactorAdminLogin extends AuthPluginBase
 
         $oTFAModel->uid = $iUserId;
         $oTFAModel->secretKey = $o2FA->createSecret();
-        $sQRCodeContent = '<img src="' . $o2FA->getQRCodeImageAsDataUri('Login ID:' . Yii::app()->user->id, $oTFAModel->secretKey) . '">';
+        $sQRCodeContent = '<img src="' . $o2FA->getQRCodeImageAsDataUri('LimeSurvey - User id: ' . Yii::app()->user->id, $oTFAModel->secretKey) . '">';
 
         return $this->renderPartial('_partial/create', [
             'model' => $oTFAModel,
@@ -390,7 +390,7 @@ class TwoFactorAdminLogin extends AuthPluginBase
     public function directCallDeleteKey($oEvent, $oRequest)
     {
         $uid = $oRequest->getPost('uid', null);
-        $uid = Yii::app()->user->id;
+
         if (!Permission::model()->hasGlobalPermission('users', 'update') && $uid !== Yii::app()->user->id) {
             return $this->createJSONResponse(false, gT('You have no permission for this action'));
         }
