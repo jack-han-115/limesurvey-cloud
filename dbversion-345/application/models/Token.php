@@ -263,6 +263,15 @@ abstract class Token extends Dynamic
         return preg_replace('/[^0-9a-zA-Z_~]/', '', $token);
     }
 
+    /**
+     * Sanitize string for any attribute
+     * @param string $attribute to sanitize
+     * @return string sanitized attribute
+     */
+    public static function sanitizeAttribute($attribute)
+    {
+        return filter_var($attribute, FILTER_SANITIZE_STRING);
+    }
 
     /**
      * Generates a token for all token objects in this survey.
@@ -352,21 +361,33 @@ abstract class Token extends Dynamic
     {
         $aRules = array(
             array('token', 'unique', 'allowEmpty' => true),
-            array('firstname', 'LSYii_Validators'),
-            array('lastname', 'LSYii_Validators'),
+            array('token', 'length', 'min' => 0, 'max'=>36),
+            array('token', 'filter', 'filter' => array(self::class, 'sanitizeToken')),
+            array('firstname', 'filter', 'filter' => array(self::class, 'sanitizeAttribute')),
+            array('lastname', 'filter', 'filter' => array(self::class, 'sanitizeAttribute')),
+            array('language', 'LSYii_Validators', 'isLanguage'=>true),
             array(implode(',', $this->tableSchema->columnNames), 'safe'),
+            /* pseudo date : force date or specific string ? */
+            array('remindersent', 'length', 'min' => 0, 'max'=>17),
+            array('remindersent', 'filter', 'filter' => array(self::class, 'sanitizeAttribute')),
+            array('completed', 'length', 'min' => 0, 'max'=>17),
+            array('remindersent', 'filter', 'filter' => array(self::class, 'sanitizeAttribute')),
             array('remindercount', 'numerical', 'integerOnly'=>true, 'allowEmpty'=>true),
             array('email', 'filter', 'filter'=>'trim'),
             array('email', 'LSYii_EmailIDNAValidator', 'allowEmpty'=>true, 'allowMultiple'=>true, 'except'=>'allowinvalidemail'),
             array('usesleft', 'numerical', 'integerOnly'=>true, 'allowEmpty'=>true, 'min'=>-2147483647, 'max'=>2147483647),
             array('mpid', 'numerical', 'integerOnly'=>true, 'allowEmpty'=>true),
             array('blacklisted', 'in', 'range'=>array('Y', 'N'), 'allowEmpty'=>true),
-            array('validfrom', 'date','format'=>['yyyy-M-d H:m:s','yyyy-M-d H:m'],'allowEmpty'=>true),
-            array('validuntil','date','format'=>['yyyy-M-d H:m:s','yyyy-M-d H:m'],'allowEmpty'=>true),
+            array('validfrom', 'date','format'=>['yyyy-M-d H:m:s.???','yyyy-M-d H:m:s','yyyy-M-d H:m'],'allowEmpty'=>true),
+            array('validuntil','date','format'=>['yyyy-M-d H:m:s.???','yyyy-M-d H:m:s','yyyy-M-d H:m'],'allowEmpty'=>true),
             array('emailstatus', 'default', 'value' => 'OK'),
         );
         foreach (decodeTokenAttributes($this->survey->attributedescriptions) as $key => $info) {
-                $aRules[] = array($key, 'LSYii_Validators', 'except'=>'FinalSubmit');
+            $aRules[] = array(
+                $key, 'filter',
+                'filter' => array(self::class, 'sanitizeAttribute'),
+                'except'=>'FinalSubmit'
+            );
         }
         return $aRules;
     }
