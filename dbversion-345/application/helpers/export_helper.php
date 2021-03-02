@@ -966,7 +966,18 @@ function getXMLDataSingleTable($iSurveyID, $sTableName, $sDocType, $sXMLTableTag
 */
 function QueXMLCleanup($string, $allow = '<p><b><u><i><em>')
 {
-    return str_replace("&", "&amp;", html_entity_decode(trim(strip_tags(str_ireplace("<br />", "\n", $string), $allow)), ENT_QUOTES, 'UTF-8'));
+    $sAllowedTags = str_replace(">", "", str_replace("<", "", str_replace("><", ",", $allow)));
+    $sResult = str_ireplace("<br />", "\n", $string);
+    $oPurifier = new CHtmlPurifier();
+    $oPurifier->options = array(
+        'HTML.Allowed' => $sAllowedTags,
+        'Output.Newline' => "\n"
+    );
+    $sResult = $oPurifier->purify($sResult);
+    $sResult = trim($sResult);
+    $sResult = html_entity_decode($sResult, ENT_QUOTES, 'UTF-8');
+    $sResult = str_replace("&", "&amp;", $sResult);
+    return $sResult;
 }
 
 /**
@@ -2619,7 +2630,7 @@ function tsvSurveyExport($surveyid){
                 $tsv_output['type/scale'] = $group['group_order'];
                 $tsv_output['name'] = !empty($group['group_name']) ? $group['group_name'] : '';
                 $tsv_output['text'] = !empty($group['description']) ? str_replace(array("\n", "\r"), '', $group['description']) : '';
-                $tsv_output['relevance'] = !empty($group['grelevance']) ? $group['grelevance'] : '';
+                $tsv_output['relevance'] = isset($group['grelevance']) ? $group['grelevance'] : '';
                 $tsv_output['random_group'] = !empty($group['randomization_group']) ? $group['randomization_group'] : '';
                 $tsv_output['language'] = $language;
                 fputcsv($out, array_map('MaskFormula',$tsv_output), chr(9));
@@ -2633,7 +2644,7 @@ function tsvSurveyExport($surveyid){
                         $tsv_output['class'] = 'Q';
                         $tsv_output['type/scale'] = $question['type'];
                         $tsv_output['name'] = !empty($question['title']) ? $question['title'] : '';
-                        $tsv_output['relevance'] = !empty($question['relevance']) ? $question['relevance'] : '';
+                        $tsv_output['relevance'] = isset($question['relevance']) ? $question['relevance'] : '';
                         $tsv_output['text'] = !empty($question['question']) ? str_replace(array("\n", "\r"), '', $question['question']) : '';
                         $tsv_output['help'] = !empty($question['help']) ? str_replace(array("\n", "\r"), '', $question['help']) : '';
                         $tsv_output['language'] = $question['language'];

@@ -1,6 +1,6 @@
 /*
-Copyright (c) 2003-2017, CKSource - Frederico Knabben. All rights reserved.
-For licensing, see LICENSE.md or http://ckeditor.com/license
+Copyright (c) 2003-2021, CKSource - Frederico Knabben. All rights reserved.
+For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
 */
 
 .cke_balloon
@@ -26,14 +26,14 @@ For licensing, see LICENSE.md or http://ckeditor.com/license
 .cke_balloon_title
 {
 	font-weight: bold;
-	font-size: 14px;
+	font-size: 13px;
 	cursor: default;
 
 	color: #474747;
 	text-shadow: 0 1px 0 rgba(255,255,255,.75);
 
-	padding: 3px 3px 8px;
-	border-bottom: 1px solid #eee;
+	border-bottom: 1px solid #999;
+	padding: 6px 10px;
 
 	-moz-border-radius: 2px 2px 0 0;
 	-webkit-border-radius: 2px 2px 0 0;
@@ -42,24 +42,35 @@ For licensing, see LICENSE.md or http://ckeditor.com/license
 	-moz-box-shadow: 0 1px 0 #fff inset;
 	-webkit-box-shadow: 0 1px 0 #fff inset;
 	box-shadow: 0 1px 0 #fff inset;
+
+	/* Let's the title and close don't overlap each other */
+	padding-right: 30px;
+
+	background: #cfd1cf;
+	background-image: -webkit-gradient(linear, left top, left bottom, from(#f5f5f5), to(#cfd1cf));
+	background-image: -moz-linear-gradient(top, #f5f5f5, #cfd1cf);
+	background-image: -webkit-linear-gradient(top, #f5f5f5, #cfd1cf);
+	background-image: -o-linear-gradient(top, #f5f5f5, #cfd1cf);
+	background-image: -ms-linear-gradient(top, #f5f5f5, #cfd1cf);
+	background-image: linear-gradient(top, #f5f5f5, #cfd1cf);
+	filter: progid:DXImageTransform.Microsoft.gradient(gradientType=0, startColorstr='#f5f5f5', endColorstr='#cfd1cf');
 }
 
 /* The close button at the top of the panel. */
 a.cke_balloon_close_button
 {
-	background-image: url(../../../../skins/kama/images/sprites.png);
+	background-image: url(images/close.png);
 	background-repeat: no-repeat;
-	background-position: 0 -1022px;
+	background-position: 50%;
 	position: absolute;
 	cursor: pointer;
 	text-align: center;
 	height: 20px;
 	width: 20px;
-	top: 5px;
-}
-
-a.cke_balloon_close_button:hover {
-	background-position: 0 -1045px;
+	top: 3px;
+	z-index: 5;
+	opacity: 0.8;
+	filter: alpha(opacity = 80);
 }
 
 .cke_balloon_content
@@ -72,6 +83,12 @@ a.cke_balloon_close_button:hover {
 {
 	opacity: 1;
 	filter: alpha(opacity = 100);
+}
+
+.cke_hidpi .cke_balloon_close_button
+{
+	background-image: url(images/hidpi/close.png);
+	background-size: 16px;
 }
 
 .cke_balloon_close_button span
@@ -144,7 +161,7 @@ a.cke_balloon_close_button:hover {
 
 	.cke_balloon_triangle_inner.cke_balloon_triangle_top
 	{
-		border-color: #fff transparent;
+		border-color: #f5f5f5 transparent;
 		border-width: 0 20px 20px;
 		top: 1px;
 	}
