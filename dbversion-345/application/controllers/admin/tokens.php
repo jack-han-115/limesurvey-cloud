@@ -1532,7 +1532,9 @@ class tokens extends Survey_Common_Action
                                 $success=false;
                                 $maildebug =  gT('Your email contains external links. In the free version only links to your survey are allowed.');
                             } else {
-                                $success = SendEmailMessage($modmessage, $modsubject, $to, $from, Yii::app()->getConfig("sitename"), $bHtml, $bounce, $aRelevantAttachments, $customheaders);
+	                            Yii::import('application.helpers.mailHelper');
+	                            mailHelper::setModeForNext(mailHelper::PREVIOUS_INSTANCE_MODE, ['smtpKeepAlive' => true]);
+	                            $success = SendEmailMessage($modmessage, $modsubject, $to, $from, Yii::app()->getConfig("sitename"), $bHtml, $bounce, $aRelevantAttachments, $customheaders);
                             }
                             // LimeService Mod End =======================
 
