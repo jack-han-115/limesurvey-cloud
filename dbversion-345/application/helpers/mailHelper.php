@@ -153,9 +153,12 @@ class mailHelper
             }
         }
         switch ($emailmethod) {
-            case "qmail":
+            // LimeService Mod start
+            /*case "qmail":
                 $mailer->IsQmail();
-                break;
+                break;*/
+            // LimeService Mod end
+    
             case "smtp":
                 $mailer->IsSMTP();
                 if ($emailsmtpdebug > 0) {
@@ -172,15 +175,23 @@ class mailHelper
                 if (trim($emailsmtpuser) != "") {
                     $mailer->SMTPAuth = true;
                 }
-
                 break;
-            case "sendmail":
-                $mailer->IsSendmail();
-                break;
+            // LimeService Mod start
+            /*case "sendmail":
+                $mail->IsSendmail();
+                break;*/
+            // LimeService Mod end
             default:
                 $mailer->IsMail();
+            // LimeService Mod start
+                $mailer->AddReplyTo($fromemail, $fromname);
+                $fromemail='noreply@limesurvey.org';
+                if (trim($fromname)=='')
+                    $fromname='LimeSurvey Professional';
+                $senderemail='bounces@limesurvey.org';
+            // LimeService Mod end
+    
         }
-
         return $mailer;
     }
 }
