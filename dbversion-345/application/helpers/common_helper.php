@@ -2260,11 +2260,11 @@ function SendEmailMessage($body, $subject, $to, $from, $sitename, $ishtml = fals
     if (strpos($sender, '<')) {
         $senderemail = substr($sender, strpos($sender, '<') + 1, strpos($sender, '>') - 1 - strpos($sender, '<'));
     }
-    
+
     // LimeService Mod start
     $emailmethod = Yii::app()->getConfig('emailmethod');
     if ($emailmethod != 'smtp'){
-        $mailer->AddReplyTo($fromemail, $fromname);
+        $mail->AddReplyTo($fromemail, $fromname);
         $fromemail='noreply@limesurvey.org';
         if (trim($fromname)=='')
             $fromname='LimeSurvey Professional';
