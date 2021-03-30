@@ -2527,8 +2527,9 @@ function db_upgrade_all($iOldDBVersion, $bSilent = false)
             $oTransaction->commit();
         }        
 
-        /**
-         * Implemented default value for user administration global settings
+        /*
+         * Extend text datafield lengths for MySQL
+         * Extend datafield length for additional languages in survey table
          */
         if ($iOldDBVersion < 364) {
 
@@ -2547,6 +2548,7 @@ function db_upgrade_all($iOldDBVersion, $bSilent = false)
                 alterColumn('{{settings_global}}','stg_value',"mediumtext",false);
                 alterColumn('{{settings_user}}','stg_value',"mediumtext");
                 alterColumn('{{surveymenu_entries}}','data',"mediumtext");
+                // The following line fixes invalid entries having set 0000-00-00 00:00:00 as date
                 $oDB->createCommand()->update('{{surveys}}', ['expires'=>NULL], "expires=0");
                 $oDB->createCommand()->update('{{surveys}}', ['startdate'=>NULL], "startdate=0");
                 alterColumn('{{surveys}}','attributedescriptions',"mediumtext");
@@ -2571,7 +2573,10 @@ function db_upgrade_all($iOldDBVersion, $bSilent = false)
             alterColumn('{{surveys}}','additional_languages',"text");
             $oDB->createCommand()->update('{{settings_global}}', ['stg_value'=>364], "stg_name='DBVersion'");
             $oTransaction->commit();
-        }
+        }  
+        
+        
+        
         if ($iOldDBVersion < 365) {
             $oTransaction = $oDB->beginTransaction();
             /* Does not apply to LimeService
@@ -2586,7 +2591,6 @@ function db_upgrade_all($iOldDBVersion, $bSilent = false)
         }
 
 
-        
     } catch (Exception $e) {
         Yii::app()->setConfig('Updating', false);
         $oTransaction->rollback();
@@ -3166,10 +3170,68 @@ function upgradeSurveyTables255()
         "DELETE FROM {{boxes}}"
     )->execute();
 
+    // Then we recreate them
     $oDB = Yii::app()->db;
-    foreach( $boxesData=LsDefaultDataSets::getBoxesData() as $box){
-        $oDB->createCommand()->insert("{{boxes}}", $box);
-    }
+    $oDB->createCommand()->insert('{{boxes}}', array(
+        'position' =>  '1',
+        'url'      => 'admin/survey/sa/newsurvey',
+        'title'    => 'Create survey',
+        'ico'      => 'add',
+        'desc'     => 'Create a new survey',
+        'page'     => 'welcome',
+        'usergroup' => '-2',
+    ));
+
+    $oDB->createCommand()->insert('{{boxes}}', array(
+        'position' =>  '2',
+        'url'      =>  'admin/survey/sa/listsurveys',
+        'title'    =>  'List surveys',
+        'ico'      =>  'list',
+        'desc'     =>  'List available surveys',
+        'page'     =>  'welcome',
+        'usergroup' => '-1',
+    ));
+
+    $oDB->createCommand()->insert('{{boxes}}', array(
+        'position' =>  '3',
+        'url'      =>  'admin/globalsettings',
+        'title'    =>  'Global settings',
+        'ico'      =>  'global',
+        'desc'     =>  'Edit global settings',
+        'page'     =>  'welcome',
+        'usergroup' => '-2',
+    ));
+
+    $oDB->createCommand()->insert('{{boxes}}', array(
+        'position' =>  '4',
+        'url'      =>  'admin/update',
+        'title'    =>  'ComfortUpdate',
+        'ico'      =>  'shield',
+        'desc'     =>  'Stay safe and up to date',
+        'page'     =>  'welcome',
+        'usergroup' => '-2',
+    ));
+
+    $oDB->createCommand()->insert('{{boxes}}', array(
+        'position' =>  '5',
+        'url'      =>  'admin/labels/sa/view',
+        'title'    =>  'Label sets',
+        'ico'      =>  'labels',
+        'desc'     =>  'Edit label sets',
+        'page'     =>  'welcome',
+        'usergroup' => '-2',
+    ));
+
+    $oDB->createCommand()->insert('{{boxes}}', array(
+        'position' =>  '6',
+        'url'      =>  'admin/themes/sa/view',
+        'title'    =>  'Template editor',
+        'ico'      =>  'templates',
+        'desc'     =>  'Edit LimeSurvey templates',
+        'page'     =>  'welcome',
+        'usergroup' => '-2',
+    ));
+
 }
 
 function upgradeSurveyTables254()
@@ -3226,6 +3288,60 @@ function createBoxes250()
         'img' => 'text',
         'desc' => 'text',
         'page'=>'text',
+    ));
+
+    $oDB->createCommand()->insert('{{boxes}}', array(
+        'position' =>  '1',
+        'url'      => 'admin/survey/sa/newsurvey',
+        'title'    => 'Create survey',
+        'img'      => 'add.png',
+        'desc'     => 'Create a new survey',
+        'page'     => 'welcome',
+    ));
+
+    $oDB->createCommand()->insert('{{boxes}}', array(
+        'position' =>  '2',
+        'url'      =>  'admin/survey/sa/listsurveys',
+        'title'    =>  'List surveys',
+        'img'      =>  'surveylist.png',
+        'desc'     =>  'List available surveys',
+        'page'     =>  'welcome',
+    ));
+
+    $oDB->createCommand()->insert('{{boxes}}', array(
+        'position' =>  '3',
+        'url'      =>  'admin/globalsettings',
+        'title'    =>  'Global settings',
+        'img'      =>  'global.png',
+        'desc'     =>  'Edit global settings',
+        'page'     =>  'welcome',
+    ));
+
+    $oDB->createCommand()->insert('{{boxes}}', array(
+        'position' =>  '4',
+        'url'      =>  'admin/update',
+        'title'    =>  'ComfortUpdate',
+        'img'      =>  'shield&#45;update.png',
+        'desc'     =>  'Stay safe and up to date',
+        'page'     =>  'welcome',
+    ));
+
+    $oDB->createCommand()->insert('{{boxes}}', array(
+        'position' =>  '5',
+        'url'      =>  'admin/labels/sa/view',
+        'title'    =>  'Label sets',
+        'img'      =>  'labels.png',
+        'desc'     =>  'Edit label sets',
+        'page'     =>  'welcome',
+    ));
+
+    $oDB->createCommand()->insert('{{boxes}}', array(
+        'position' =>  '6',
+        'url'      =>  'admin/themes/sa/view',
+        'title'    =>  'Template editor',
+        'img'      =>  'templates.png',
+        'desc'     =>  'Edit LimeSurvey templates',
+        'page'     =>  'welcome',
     ));
 }
 
