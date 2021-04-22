@@ -1934,6 +1934,9 @@ function upgradeTokenTables181($sMySQLCollation)
                         break;
                     case 'mysql':
                     case 'mysqli':
+                        try { setTransactionBookmark(); $oDB->createCommand()->update($sTableName,array('submitdate'=>'1980-01-01 00:00:00'),"submitdate=0"); } catch(Exception $e) { rollBackToTransactionBookmark();}
+                        try { setTransactionBookmark(); $oDB->createCommand()->update($sTableName,array('startdate'=>'1980-01-01 00:00:00'),"startdate=0"); } catch(Exception $e) { rollBackToTransactionBookmark();}
+                        try { setTransactionBookmark(); $oDB->createCommand()->update($sTableName,array('datestamp'=>'1980-01-01 00:00:00'),"datestamp=0"); } catch(Exception $e) { rollBackToTransactionBookmark();}
                         alterColumn($sTableName, 'token', "string(35) COLLATE '{$sMySQLCollation}'");
                         break;
                     default: die('Unknown database driver');
