@@ -20,7 +20,7 @@
                 'name' => 'bounceaccounttype',
                 'value'=> getGlobalSetting('bounceaccounttype') ,
                 'selectOptions'=>array(
-                "off"=>gT("LimeSurvey Professional",'unescaped'),
+                "off"=>gT("LimeSurvey Cloud",'unescaped'),
                 "IMAP"=>gT("IMAP",'unescaped'),
                 "POP"=>gT("POP",'unescaped')
                 )

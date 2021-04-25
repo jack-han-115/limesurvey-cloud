@@ -8,7 +8,7 @@
 class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
 {
     protected $storage = 'DbStorage';
-    static protected $description = 'LimeSurvey Professional extras';
+    static protected $description = 'LimeSurvey Cloud extras';
     static protected $name = 'LimeSurveyProfessional';
 
     protected $settings = array();

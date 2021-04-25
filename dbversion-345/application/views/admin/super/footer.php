@@ -115,7 +115,7 @@ foreach($systemInfos as &$systemInfo) {
                 <?php } else { 
                 // Limeservice mod start --------------------
                     ?>
-                    <h4><?=gT("We are sorry but this information is not available on LimeSurvey Professional.")?></h4>
+                    <h4><?=gT("We are sorry but this information is not available on LimeSurvey Cloud.")?></h4>
                 <?php 
                 // Limeservice mod end --------------------
                 
