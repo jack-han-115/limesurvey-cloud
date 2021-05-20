@@ -330,10 +330,10 @@ $internalConfig = array(
                     'number_format',
                 ),
                 'methods' => array(
-                    'ETwigViewRendererStaticClassProxy' =>  array("encode", "textfield", "form", "link", "emailField", "beginForm", "endForm", "dropDownList", "htmlButton", "passwordfield", "hiddenfield", "textArea", "checkBox"),
-                    'Survey'                            =>  array("getAllLanguages", "localizedtitle"),
+                    'ETwigViewRendererStaticClassProxy' =>  array("encode", "textfield", "form", "link", "emailField", "beginForm", "endForm", "dropDownList", "htmlButton", "passwordfield", "hiddenfield", "textArea", "checkBox", "showdatapolicybutton", "showlegalnoticebutton"),
+                    'Survey'                            =>  array("getAllLanguages", "localizedtitle","showdatapolicybutton"),
                     'LSHttpRequest'                     =>  array("getParam"),
-                    'LSCaptcha'                          =>  array("renderOut")
+                    'LSCaptcha'                         =>  array("renderOut")
                 ),
                 'properties' => array(
                     'ETwigViewRendererYiiCoreStaticClassesProxy' => array("Html"),
