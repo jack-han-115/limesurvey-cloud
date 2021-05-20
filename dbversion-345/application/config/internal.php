@@ -60,15 +60,6 @@ $internalConfig = array(
         // ========= LimeService Mod start
         'userdir' => $userdir,
         // ========= LimeService Mod end
-
-        // Twig aliases. We don't want to change the file ETwigViewRenderer, so we can update it without difficulties
-        // However, LimeSurvey directory tree is not a standard Yii Application tree.
-        // we use 'third_party' instead of 'vendor'
-        // This line just point application.vendor.Twig to application/third_party/Twig
-        // @see: ETwigViewRenderer::$twigPathAlias
-        'application.vendor.Twig'=>'application.third_party.Twig',
-        // 'CaptchaExtendedAction' => realpath(__DIR__ . '/../extensions/captchaExtended/CaptchaExtendedAction.php'),
-        // 'CaptchaExtendedValidator' => realpath(__DIR__ . '/../extensions/captchaExtended/CaptchaExtendedValidator.php')
     ),
 
     'modules'=>array(
@@ -105,7 +96,7 @@ $internalConfig = array(
         ,'application.extensions.phpass.*',
 // LimeService Mod end =============
     ),
-    'preload' => array('log'),
+    'preload' => array('log', 'ETwigViewRenderer'),
     'components' => array(
 // LimeService Mod start =============
         'phpass'=>array (
@@ -226,9 +217,14 @@ $internalConfig = array(
         'format'=>array(
             'class'=>'application.extensions.CustomFormatter'
         ),
+        'ETwigViewRenderer' => array(
+            'class' => 'third_party.yiiext.twig-renderer.ETwigViewRenderer',
+            'twigPathAlias' => 'third_party.twig.twig.lib.Twig'
+        ),
 
         'twigRenderer' => array(
             'class' => 'application.core.LSETwigViewRenderer',
+            'twigPathAlias' => 'third_party.twig.twig.lib.Twig',
 
             // All parameters below are optional, change them to your needs
             'fileExtension' => '.twig',
