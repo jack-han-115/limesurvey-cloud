@@ -4,20 +4,17 @@ namespace ls\tests;
 
 /**
  * Test expression warning.
+ *
+ * Test for feature "16263: New config setting for date format and question code"
+ * @see https://bugs.limesurvey.org/view.php?id=16263
  */
 class QuexmlPDFTest extends TestBaseClass
 {
     /**
      * Import survey in tests/surveys/.
      */
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
-        global $dom, $quexmllang, $iSurveyID;
-
-        $dom = null;
-        $quexmllang = null;
-        $iSurveyID = null;
-
         parent::setUpBeforeClass();
         $surveyFile = self::$surveysFolder . '/survey_archive_821351.lsa';
         self::importSurvey($surveyFile);
@@ -92,9 +89,9 @@ class QuexmlPDFTest extends TestBaseClass
     {
         // Disable the setting
         \Yii::app()->setConfig('quexmlusequestiontitleasid', false);
+
         $id = $this->getQuestionIdentifier();
         $this->assertEquals($id, "A1.", "Unexpected identifier for question 1.");
-
     }
 
     /**
@@ -104,11 +101,15 @@ class QuexmlPDFTest extends TestBaseClass
     {
         // Enable the setting
         \Yii::app()->setConfig('quexmlusequestiontitleasid', true);
+
         $id = $this->getQuestionIdentifier();
         $this->assertEquals($id, "q1.", "Unexpected identifier for question 1.");
 
     }
 
+    /**
+     * @return string
+     */
     protected function getQuestionIdentifier()
     {
         \Yii::app()->loadHelper('export');
@@ -126,6 +127,9 @@ class QuexmlPDFTest extends TestBaseClass
         return $xml['sections'][0]['questions'][0]['title'];
     }
 
+    /**
+     * @return DOMXpath
+     */
     protected function getXPath()
     {
         \Yii::app()->loadHelper('export');
@@ -133,8 +137,6 @@ class QuexmlPDFTest extends TestBaseClass
 
         $dom = new \DOMDocument('1.0', 'UTF-8');
         $dom->loadXML($quexml);
-        $xpath = new \DOMXpath($dom);
-        return $xpath;
+        return new \DOMXpath($dom);
     }
-
 }

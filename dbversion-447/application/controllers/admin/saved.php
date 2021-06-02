@@ -1,6 +1,5 @@
-<?php if (!defined('BASEPATH')) {
-    exit('No direct script access allowed');
-}
+<?php
+
 /*
  * LimeSurvey
  * Copyright (C) 2007-2019 The LimeSurvey Project Team / Carsten Schmitz
@@ -44,21 +43,19 @@ class saved extends Survey_Common_Action
         $oSavedControlModel->sid = $iSurveyId;
 
         // Filter state
-        if (Yii::app()->request->getParam('SavedControl',false)){
-          $aFilters = Yii::app()->request->getParam('SavedControl');
-          foreach($aFilters as $sFilterName => $sFilterValue){
-              $oSavedControlModel->$sFilterName = $sFilterValue;
-          }
+        $aFilters = App()->request->getParam('SavedControl');
+        if (!empty($aFilters)) {
+            $oSavedControlModel->setAttributes($aFilters, false);
         }
 
         $aData['model'] = $oSavedControlModel;
         $aData['sSurveyName'] = $aThisSurvey['name'];
         $aData['iSurveyId'] = $iSurveyId;
         // Set page size
-        if (Yii::app()->request->getPost('savedResponsesPageSize')) {
-            Yii::app()->user->setState('savedResponsesPageSize', Yii::app()->request->getPost('savedResponsesPageSize'));
+        if (App()->request->getPost('savedResponsesPageSize')) {
+            App()->user->setState('savedResponsesPageSize', App()->request->getPost('savedResponsesPageSize'));
         }
-        $aData['savedResponsesPageSize'] = Yii::app()->user->getState('savedResponsesPageSize', Yii::app()->params['defaultPageSize']);
+        $aData['savedResponsesPageSize'] = App()->user->getState('savedResponsesPageSize', App()->params['defaultPageSize']);
         $aViewUrls[] = 'savedlist_view';
         $this->_renderWrappedTemplate('saved', $aViewUrls, $aData);
     }
@@ -66,13 +63,13 @@ class saved extends Survey_Common_Action
     /**
      * Undocumented function
      *
-     * @todo write function 
+     * @todo write function
      * @param [type] $surveyid
      * @param [type] $id
      * @return void
      */
-    public function resend_accesscode($surveyid, $id) {
-
+    public function resend_accesscode($surveyid, $id)
+    {
     }
 
 
@@ -84,37 +81,37 @@ class saved extends Survey_Common_Action
      */
     public function actionDelete($surveyid)
     {
-        if(!Permission::model()->hasSurveyPermission($surveyid, 'responses', 'delete')) {
+        if (!Permission::model()->hasSurveyPermission($surveyid, 'responses', 'delete')) {
             throw new CHttpException(403, gT("You do not have permission to access this page."));
         }
-        if(!Yii::app()->getRequest()->isPostRequest) {
+        if (!Yii::app()->getRequest()->isPostRequest) {
             throw new CHttpException(405, gT("Invalid action"));
         }
         Yii::import('application.helpers.admin.ajax_helper', true);
 
         $iScid = App()->getRequest()->getParam('scid');
-        $oSavedControl = SavedControl::model()->find('scid = :scid',array(':scid'=>$iScid));
-        if(empty($oSavedControl)) {
+        $oSavedControl = SavedControl::model()->find('scid = :scid', array(':scid' => $iScid));
+        if (empty($oSavedControl)) {
             throw new CHttpException(401, gT("Saved response not found"));
         }
-        if($oSavedControl->delete()) {
+        if ($oSavedControl->delete()) {
             $oReponse = Response::model($surveyid)->findByPk($oSavedControl->srid);
-            if($oReponse) {
+            if ($oReponse) {
                 $oReponse->delete();
             }
         } else {
-            if(Yii::app()->getRequest()->isAjaxRequest) {
+            if (Yii::app()->getRequest()->isAjaxRequest) {
                 ls\ajax\AjaxHelper::outputError(gT('Unable to delete saved response.'));
                 Yii::app()->end();
             }
-            Yii::app()->setFlashMessage(gT('Unable to delete saved response.'),'danger');
+            Yii::app()->setFlashMessage(gT('Unable to delete saved response.'), 'danger');
             $this->getController()->redirect(array("admin/saved/sa/view/surveyid/{$surveyid}"));
         }
-        if(Yii::app()->getRequest()->isAjaxRequest) {
+        if (Yii::app()->getRequest()->isAjaxRequest) {
             ls\ajax\AjaxHelper::outputSuccess(gT('Saved response deleted.'));
             Yii::app()->end();
         }
-        Yii::app()->setFlashMessage(gT('Saved response deleted.'),'success');
+        Yii::app()->setFlashMessage(gT('Saved response deleted.'), 'success');
         $this->getController()->redirect(array("admin/saved/sa/view/surveyid/{$surveyid}"));
     }
 
@@ -131,9 +128,11 @@ class saved extends Survey_Common_Action
         $aData['surveyid'] = $iSurveyId = $aData['iSurveyId'];
         $oSurvey = Survey::model()->findByPk($aData['iSurveyId']);
 
-        $aData['title_bar']['title'] = gT('Browse responses').': '.$oSurvey->currentLanguageSettings->surveyls_title;
-        $aData['menu']['close'] = true;
-        $aData['menu']['edition'] = false;
+        $aData['title_bar']['title'] = gT('Browse responses') . ': ' . $oSurvey->currentLanguageSettings->surveyls_title;
+
+        $aData['topBar']['name'] = 'baseTopbar_view';
+        $aData['topBar']['leftSideView'] = 'responsesTopbarLeft_view';
+
         parent::_renderWrappedTemplate($sAction, $aViewUrls, $aData, $sRenderFile);
     }
 }

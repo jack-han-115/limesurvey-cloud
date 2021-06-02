@@ -31,9 +31,9 @@
                     data-color="<?php echo $color; // the background color for bar, etc. ?>"></canvas>
             </div>
         </div>
-        
-        <!-- legends -->
+
         <div class="row">
+            <!-- legends -->
             <div class="legend col-sm-12 vcenter">
                 <?php foreach($fullLabels as $i=>$label): ?>
                     <?php $colorindex = $color+$i; ?>

@@ -26,7 +26,7 @@ foreach ($tokendata as $Key => $Value) {
 
 <div class="row">
   <div class="col-md-12 content-right">
-    <?php echo CHtml::form(array("admin/tokens/sa/{$token_subaction}/surveyid/{$surveyid}/tokenid/{$tokenid}"), 'post', array('id'=>'edittoken', 'class'=>'', 'data-trigger-validation'=>true)); ?>
+    <?php echo CHtml::form(array("admin/tokens/sa/{$token_subaction}/surveyid/{$surveyid}/tokenid/{$tokenid}"), 'post', array('id'=>'edittoken', 'class'=>'')); ?>
       <!-- Tabs -->
       <?php if( count($attrfieldnames) > 0 ):?>
         <ul class="nav nav-tabs" id="edit-survey-text-element-language-selection">
@@ -127,7 +127,7 @@ foreach ($tokendata as $Key => $Value) {
 
                     <?php if ($oSurvey->anonymized != 'Y'):?>
                         <div class="">
-                            <div id="completed-date-container" class="date-container"  <?php if (!$bCompletedValue):?>style="display: none;"<?php endif; ?>>
+                            <div id="sent-date-container" class="date-container"  <?php if (!$bCompletedValue):?>style="display: none;"<?php endif; ?>>
                             <div id="completed-date_datetimepicker" class="input-group date">
                                 <input class="YesNoDatePicker form-control" id="completed-date" type="text" value="<?php echo isset($completed) ? $completed : ''?>" name="completed-date" data-date-format="<?php echo $dateformatdetails['jsdate']; ?> HH:mm">
                                 <span class="input-group-addon"><span class="fa fa-calendar"></span></span>
@@ -169,7 +169,7 @@ foreach ($tokendata as $Key => $Value) {
             <!-- Token, language -->
             <div class="form-group">
                 <label class=" control-label" for='token'>
-                <?php eT("Token:"); ?>
+                <?php eT("Access code:"); ?>
                 </label>
                 <div class="">
                 <?=TbHtml::textField('token',(isset($token) ? $token : ""), [
@@ -178,7 +178,7 @@ foreach ($tokendata as $Key => $Value) {
                     'maxlength' => $iTokenLength
                 ]);?>
                 <?php if ($token_subaction == "addnew"): ?>
-                    <span id="helpBlock" class="help-block"><?php eT("You can leave this blank, and automatically generate tokens using 'Generate Tokens'"); ?></span>
+                    <span id="helpBlock" class="help-block"><?php eT("You can leave this blank, and automatically generate access codes using 'Generate access codes'"); ?></span>
                 <?php endif; ?>
                 </div>
             </div>
@@ -287,13 +287,13 @@ foreach ($tokendata as $Key => $Value) {
                     <div id="sent-date-container" data-parent="#sent-switch" class="selector__date-container_hidden date-container" <?php if (!$bSwitchValue){ echo "style='display:none;'"; }?> >
                         <!-- Sent Date -->
                         <div id="sent-date_datetimepicker" class="input-group date">
-                        <input class="YesNoDatePicker form-control" id="sent-date" type="text" value="<?php echo isset($sent) && $sent!='N' ? $sent : ''?>" name="sent-date" data-date-format="<?php echo $dateformatdetails['jsdate']; ?> HH:mm">
+                        <input class="YesNoDatePicker form-control" id="sent-date" type="text" value="<?php echo isset($sent) ? $sent : ''?>" name="sent-date" data-date-format="<?php echo $dateformatdetails['jsdate']; ?> HH:mm">
                         <span class="input-group-addon"><span class="fa fa-calendar"></span></span>
                         </div>
                     </div>
                 </div>
                 </div>
-                <input class='form-control hidden YesNoDateHidden' type='text' size='20' id='sent' name='sent' value="<?php if (isset($sent) && $sent!='N') {echo $sent; } else {echo "N"; }?>" />
+                <input class='form-control hidden YesNoDateHidden' type='text' size='20' id='sent' name='sent' value="<?php if (isset($sent)) {echo $sent; } else {echo "N"; }?>" />
             </div>
             </div>
             <div class="form-group">
@@ -430,12 +430,12 @@ foreach ($tokendata as $Key => $Value) {
     switch ($token_subaction)
     {
         case "edit":?>
-          <input type='submit' class="hidden" value='<?php eT("Update token entry"); ?>' />
+          <input type='submit' class="hidden" value='<?php eT("Update participant entry"); ?>' />
           <input type='hidden' name='subaction' value='updatetoken' />
           <input type='hidden' name='tid' value='<?php echo $tokenid; ?>' />
         <?php break;
         case "addnew": ?>
-          <input type='submit' class='hidden' value='<?php eT("Add token entry"); ?>' />
+          <input type='submit' class='hidden' value='<?php eT("Add participant entry"); ?>' />
           <input type='hidden' name='subaction' value='inserttoken' />
         <?php break;
     } ?>

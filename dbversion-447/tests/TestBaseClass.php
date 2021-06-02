@@ -32,7 +32,7 @@ class TestBaseClass extends TestCase
     /** @var  integer */
     protected static $surveyId;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         parent::setUpBeforeClass();
 
@@ -49,12 +49,14 @@ class TestBaseClass extends TestCase
 
         self::$testHelper = new TestHelper();
 
-        self::$dataFolder = __DIR__.'/data';
-        self::$viewsFolder = self::$dataFolder."/views";
-        self::$surveysFolder = self::$dataFolder.'/surveys';
-        self::$tempFolder = __DIR__.'/tmp';
-        self::$screenshotsFolder = self::$tempFolder.'/screenshots';
+        self::$dataFolder = __DIR__ . '/data';
+        self::$viewsFolder = self::$dataFolder . "/views";
+        self::$surveysFolder = self::$dataFolder . '/surveys';
+        self::$tempFolder = __DIR__ . '/tmp';
+        self::$screenshotsFolder = self::$tempFolder . '/screenshots';
         self::$testHelper->importAll();
+
+        \Yii::import('application.helpers.globalsettings_helper', true);
     }
 
     /**
@@ -66,7 +68,7 @@ class TestBaseClass extends TestCase
         \Yii::app()->session['loginID'] = 1;
         $surveyFile = $fileName;
         if (!file_exists($surveyFile)) {
-            self::assertTrue(false, 'Found no survey file ' . $fileName);
+            throw new \Exception(sprintf('Survey file %s not found', $surveyFile));
         }
 
         $translateLinksFields = false;
@@ -82,14 +84,37 @@ class TestBaseClass extends TestCase
             self::$testSurvey = \Survey::model()->findByPk($result['newsid']);
             self::$surveyId = $result['newsid'];
         } else {
-            self::assertTrue(false, 'Could not import survey file ' . $fileName);
+            throw new \Exception(sprintf('Failed to import survey file %s', $surveyFile));
         }
+    }
+
+    /**
+     * Get all question inside current survey, key is question code
+     * @return array[]
+     */
+    public function getAllSurveyQuestions()
+    {
+        if (empty(self::$surveyId)) {
+            throw new \Exception('getAllSurveyQuestions call without survey.');
+        }
+        $survey = \Survey::model()->findByPk(self::$surveyId);
+        if (empty($survey)) {
+            throw new \Exception('getAllSurveyQuestions call with an invalid survey.');
+        }
+        $questions = [];
+        foreach ($survey->groups as $group) {
+            $questionObjects = $group->questions;
+            foreach ($questionObjects as $q) {
+                $questions[$q->title] = $q;
+            }
+        }
+        return $questions;
     }
 
     /**
      * @return void
      */
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         parent::tearDownAfterClass();
 
@@ -107,6 +132,39 @@ class TestBaseClass extends TestCase
                 );
             }
             self::$testSurvey = null;
+        }
+    }
+
+    /**
+     * Helper install and activate plugins by name
+     * @param string $pluginName
+     * @return void
+     */
+    public static function installAndActivatePlugin($pluginName)
+    {
+        $plugin = \Plugin::model()->findByAttributes(array('name' => $pluginName));
+        if (!$plugin) {
+            $plugin = new \Plugin();
+            $plugin->name = $pluginName;
+            $plugin->active = 1;
+            $plugin->save();
+        } else {
+            $plugin->active = 1;
+            $plugin->save();
+        }
+    }
+
+    /**
+     * Helper dactivate plugins by name
+     * @param string $pluginName
+     * @return void
+     */
+    public static function deActivatePlugin($pluginName)
+    {
+        $plugin = \Plugin::model()->findByAttributes(array('name' => $pluginName));
+        if ($plugin) {
+            $plugin->active = 0;
+            $plugin->save();
         }
     }
 }

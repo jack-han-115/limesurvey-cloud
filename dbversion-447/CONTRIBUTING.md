@@ -9,8 +9,9 @@ top of things.
 
 ## Getting started
 
-* Make sure you have a [LimeSurvey account](https://account.limesurvey.org)
+* Make sure you have a [LimeSurvey account](https://www.limesurvey.org)
 * Make sure you have a [GitHub account](https://github.com/signup/free)
+* Read the [manual entry about contributions](https://manual.limesurvey.org/How_to_contribute_new_features)
 * Submit a ticket at https://bugs.limesurvey.org for your issue, assuming one does not already exist.
   * Clearly describe the issue including steps to reproduce when it is a bug.
   * Make sure you fill in the earliest version that you know has the issue.
@@ -19,12 +20,11 @@ top of things.
 ## Making changes
 
 * Create a topic branch from where you want to base your work.
-  * This is usually the master branch.
-  * Only target release branches if you are certain your fix must be on that
-    branch.
-  * To quickly create a topic branch based on master; `git checkout -b
-    fix/master/my_contribution master`. Please avoid working directly on the
-    `master` branch.
+  * Bug fixes go into the master branch
+  * New features go into the develop branch
+  * To quickly create a topic branch based on develop; `git checkout -b
+    fix/develop/my_contribution develop`. Please avoid working directly on the
+    `develop` or `master` branch.
 * Make commits of logical units.
 * Check for unnecessary whitespace with `git diff --check` before committing.
 * Make sure your commit messages are in the proper format - check out our 

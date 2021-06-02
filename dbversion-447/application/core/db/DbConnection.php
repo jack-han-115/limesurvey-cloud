@@ -1,6 +1,7 @@
 <?php
+
 /**
-* @property boolean $active Whether the DB connection is established. 
+* @property boolean $active Whether the DB connection is established.
 */
 class DbConnection extends \CDbConnection
 {
@@ -47,7 +48,7 @@ class DbConnection extends \CDbConnection
                     return $value;
         } else {
             // the driver doesn't support quote (e.g. oci)
-            return "'".addcslashes(str_replace("'", "''", $str), "\000\n\r\\\032")."'";
+            return "'" . addcslashes(str_replace("'", "''", $str), "\000\n\r\\\032") . "'";
         }
     }
 }

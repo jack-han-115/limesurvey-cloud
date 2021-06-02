@@ -41,6 +41,7 @@
                 */
                 if($('textarea').length > 0){
                     CKEDITOR.on('instanceReady',CKeditor_OnComplete);
+                    
                     var oCKeditor = CKEDITOR.replace( 'MyTextarea' ,  { height	: '350',
                         width	: '98%',
                         toolbarStartupExpanded : true,
@@ -51,8 +52,9 @@
                         LimeReplacementFieldsQID : "<?php echo $iQuestionId; ?>",
                         LimeReplacementFieldsType: "<?php echo $sFieldType; ?>",
                         LimeReplacementFieldsAction: "<?php echo $sAction; ?>",
-                        LimeReplacementFieldsPath : "<?php echo $this->createUrl("/admin/limereplacementfields/sa/index"); ?>",
+                        LimeReplacementFieldsPath : "<?php echo $this->createUrl("/limereplacementfields/index"); ?>",
                         language : "<?php echo $ckLanguage ?>"
+                        <?php echo !is_null($contentsLangDirection) ? ",contentsLangDirection: '{$contentsLangDirection}'" : ''; ?>
                         <?php echo $htmlformatoption; ?> });
                 }
                 });
@@ -60,7 +62,7 @@
                 function CKeditor_OnComplete( evt )
                 {
                     var editor = evt.editor;
-                    editor.setData(window.opener.document.getElementsByName("<?php echo $sFieldName; ?>")[0].value);
+                    editor.setData(window.opener.document.getElementById("<?php echo $sFieldName; ?>").value);
                     editor.execCommand('maximize');
                     window.status='LimeSurvey <?php eT('Editing', 'js') . ' ' . 'javascriptEscape(' . $sFieldText . ', true)'; ?>';
                 }
@@ -89,7 +91,7 @@
                     }
                     ?>
 
-                    window.opener.document.getElementsByName('<?php echo $sFieldName; ?>')[0].value = editedtext;
+                    window.opener.document.getElementById('<?php echo $sFieldName; ?>').value = editedtext;
                 }
 
 
@@ -97,7 +99,7 @@
                 {
                     html_transfert();
 
-                    window.opener.document.getElementsByName('<?php echo $sFieldName; ?>')[0].readOnly= false;
+                    window.opener.document.getElementById('<?php echo $sFieldName; ?>').readOnly= false;
                     window.opener.document.getElementById('<?php echo $sControlIdEna; ?>').style.display='';
                     window.opener.document.getElementById('<?php echo $sControlIdDis; ?>').style.display='none';
                     window.opener.focus();

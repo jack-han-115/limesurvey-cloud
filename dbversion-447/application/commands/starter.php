@@ -1,5 +1,5 @@
 #!/usr/bin/php
-<?php   
+<?php
     /*
     * LimeSurvey (tm)
     * Copyright (C) 2011 The LimeSurvey Project Team / Carsten Schmitz
@@ -12,14 +12,16 @@
     * See COPYRIGHT.php for copyright notices and details.
     *
     */
-    if (!isset($argv[0])) {
-        die();
-    }
+if (!isset($argv[0])) {
+    die();
+}
     define('BASEPATH', '.');
     $sCurrentDir = dirname(__FILE__);
+    // LimeService Mod Start
     $config = require ($argv[1].DIRECTORY_SEPARATOR.'config.php');
-    unset ($config['defaultController']);
-    unset ($config['config']);
-    require (dirname(dirname($sCurrentDir)).DIRECTORY_SEPARATOR.'framework'.DIRECTORY_SEPARATOR.'yiic.php');
+    // LimeService Mod End
+    unset($config['defaultController']);
+    unset($config['config']);
+    require(dirname(dirname($sCurrentDir)) . DIRECTORY_SEPARATOR . 'framework' . DIRECTORY_SEPARATOR . 'yiic.php');
 
 ?>

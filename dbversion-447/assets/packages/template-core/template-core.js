@@ -81,8 +81,8 @@ var TemplateCoreClass = function () {
                         $parent.removeClass('hide-tip', 1);
                         $parent.addClass('tip-was-hidden', 1);
                     }
-                    var questionContainer = $(this).parents('div.question-container');
-                    window.templateCore.updateQuestionClassFromTips(questionContainer);
+                    $questionContainer = $(this).parents('div.question-container');
+                    $questionContainer.addClass('input-error'); /* No difference betwwen error after submit and error before submit : think (Shnoulle) it's better to have a difference */
                 });
 
                 $(this).on('classChangeGood', function () {
@@ -93,25 +93,12 @@ var TemplateCoreClass = function () {
                     if ($parent.hasClass('tip-was-hidden')) {
                         $parent.removeClass('tip-was-hidden').addClass('hide-tip');
                     }
-                    var questionContainer = $(this).parents('div.question-container');
-                    window.templateCore.updateQuestionClassFromTips(questionContainer);
+                    $questionContainer = $(this).parents('div.question-container');
+                    $questionContainer.removeClass('input-error'); /* Not working with mandatory question ... */
                 });
             });
-        },
-        /**
-         * Set error class on question container depending on validation tips status.
-         * 
-         * If any tip is marked as error (has 'text-danger' class), 'input-error' is added to
-         * the question container. Otherwise, 'input-error' is removed from the question container.
-         * 
-         * @param {Element} questionContainer 
-         */
-        updateQuestionClassFromTips: function(questionContainer) {
-            if (questionContainer.find('.question-valid-container .text-danger').length == 0) {
-                questionContainer.removeClass('input-error');
-            } else {
-                questionContainer.addClass('input-error');
-            }
+
+
         },
         /**
          * Hide/show question if all sub-questions is hidden

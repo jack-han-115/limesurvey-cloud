@@ -1,4 +1,7 @@
 <?php
+    /**
+     * TODO: Why is it here? Move it to root tests folder!
+     */
     class ExpressionManagerTest extends CTestCase
     {
         /**
@@ -7,7 +10,7 @@
          */
         protected $em;
 
-        public function setUp()
+        public function setUp(): void
         {
             parent::setUp();
             Yii::import('application.helpers.expressions.em_core_helper', 'true');

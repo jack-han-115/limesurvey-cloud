@@ -26,12 +26,11 @@
 {# Include the form opening tag #}
 {{ include('./subviews/header/start_form.twig') }} <!-- main form -->
 
-    {# This will display the script and the hidden inputs needed for Expression Manager #}
+    {# This will display the script and the hidden inputs needed for ExpressionScript Engine #}
     {{ aSurveyInfo.EM.ScriptsAndHiddenInputs  }}
 
     {# If survey mode is "All in One", this will add the welcome/privacy messages (if activated) #}
     {{ include('./subviews/messages/welcome.twig') }}
-    
 
     {{ include('./subviews/privacy/privacy.twig') }}
 

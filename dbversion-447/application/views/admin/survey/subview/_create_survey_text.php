@@ -50,7 +50,7 @@ $surveyid = $aTabContents['surveyid'];
                     <?php eT("Survey title:"); ?>
                 </label>
                 <div class="">
-                    <?php echo CHtml::textField("surveyls_title",$aSurveyLanguageSettings['surveyls_title'],array('class'=>'form-control','size'=>"80",'id'=>"surveyls_title",'maxlength'=>200)); ?>
+                    <?php echo CHtml::textField("surveyls_title",$aSurveyLanguageSettings['surveyls_title'],array('class'=>'form-control','size'=>"80",'id'=>"surveyls_title")); ?>
                 </div>
             </div>
         </div>

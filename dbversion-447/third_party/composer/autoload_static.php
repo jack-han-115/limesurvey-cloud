@@ -8,6 +8,7 @@ class ComposerStaticInitddb1a145e450f862353420acc5153e40
 {
     public static $files = array (
         '320cde22f66dd4f5d3fd621d3e88b98f' => __DIR__ . '/..' . '/symfony/polyfill-ctype/bootstrap.php',
+        '3109cb1a231dcd04bee1f9f620d46975' => __DIR__ . '/..' . '/paragonie/sodium_compat/autoload.php',
     );
 
     public static $prefixLengthsPsr4 = array (
@@ -22,8 +23,11 @@ class ComposerStaticInitddb1a145e450f862353420acc5153e40
         'L' => 
         array (
             'LimeSurvey\\PluginManager\\' => 25,
+            'LimeSurvey\\Models\\Services\\' => 27,
             'LimeSurvey\\Menu\\' => 16,
             'LimeSurvey\\Helpers\\' => 19,
+            'LimeSurvey\\ExtensionInstaller\\' => 30,
+            'LimeSurvey\\Datavalueobjects\\' => 28,
         ),
     );
 
@@ -31,7 +35,6 @@ class ComposerStaticInitddb1a145e450f862353420acc5153e40
         'Twig\\' => 
         array (
             0 => __DIR__ . '/..' . '/twig/twig/src',
-            1 => __DIR__ . '/..' . '/twig/twig/src',
         ),
         'Symfony\\Polyfill\\Ctype\\' => 
         array (
@@ -42,6 +45,10 @@ class ComposerStaticInitddb1a145e450f862353420acc5153e40
             0 => __DIR__ . '/../..' . '/application/libraries/PluginManager',
             1 => __DIR__ . '/../..' . '/application/libraries/PluginManager/Storage',
         ),
+        'LimeSurvey\\Models\\Services\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/application/models/services',
+        ),
         'LimeSurvey\\Menu\\' => 
         array (
             0 => __DIR__ . '/../..' . '/application/libraries/MenuObjects',
@@ -49,6 +56,14 @@ class ComposerStaticInitddb1a145e450f862353420acc5153e40
         'LimeSurvey\\Helpers\\' => 
         array (
             0 => __DIR__ . '/../..' . '/application/helpers',
+        ),
+        'LimeSurvey\\ExtensionInstaller\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/application/libraries/ExtensionInstaller',
+        ),
+        'LimeSurvey\\Datavalueobjects\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/application/datavalueobjects',
         ),
     );
 

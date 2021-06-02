@@ -90,8 +90,8 @@
 
                             <div class="col-sm-7 col-sm-offset-1">
                                 <?php if ($oSurvey->anonymized != 'Y'):?>
-                                    <div id="massedit_completed-date-container" class="date-container selector_datechange"  style="display: none;">
-                                        <div id="massedit_completed-date_datetimepicker" class="input-group date">
+                                    <div id="massedit_sent-date-container" class="date-container selector_datechange"  style="display: none;">
+                                        <div id="completed-date_datetimepicker" class="input-group date">
                                             <input
                                                 class="YesNoDatePicker form-control"
                                                 id="massedit_completed-date"
@@ -162,19 +162,12 @@
                             <input class='form-control custom-data selector_submitField action_validate_email' data-targetfield="#massedit_emailstatus" type='text' maxlength='320' size='50' id='massedit_email' name='email' value="lskeep" disabled />
                         </div>
                     </div>
-                </div>
-
-                <!-- Email status -->
-                <div class="form-group">
                     <div class="row">
                         <div class="col-sm-1">
-                            <label class="" >
-                                <input type="checkbox" class="action_check_to_keep_old_value"></input>
-                            </label>
                         </div>
                         <label class="col-sm-3 control-label"  for='massedit_emailstatus'><?php eT("Email status:"); ?></label>
                         <div class="col-sm-8">
-                            <input class='form-control custom-data selector_submitField' type='text' maxlength='320' size='50' id='massedit_emailstatus' name='emailstatus' placeholder='' value="lskeep" disabled />
+                            <input class='form-control custom-data selector_submitField' type='text' maxlength='320' size='50' id='massedit_emailstatus' name='emailstatus' placeholder='OK' value="lskeep" disabled />
                         </div>
                     </div>
                 </div>
@@ -217,9 +210,9 @@
                             </div>
 
                             <div class="col-sm-8">
-                                <div id="massedit_sent-date-container" class="date-container selector_datechange" style="display: none;">
+                                <div id="sent-date-container" class="date-container selector_datechange" style="display: none;">
                                     <!-- Sent Date -->
-                                    <div id="massedit_sent-date_datetimepicker" class="input-group date">
+                                    <div id="sent-date_datetimepicker" class="input-group date">
                                         <input
                                             class="YesNoDatePicker form-control"
                                             id="massedit_sent-date"
@@ -426,11 +419,15 @@
 <?php App()->getClientScript()->registerScript("Tokens:MassActionUpdateView_Scripts", "
 
    var bindBSSwitch = function(formGroup){
-        //Script to update the completed settings
-        formGroup.find('.YesNoSwitch').on('switchChange.bootstrapSwitch', function(e, state){        
-            formGroup.find('.selector_datechange').css('display', (state ? '' : 'none'));
-        });
-    };
+       console.log(\"bindBSSwitch run on:\",formGroup);
+    //Script to update the completed settings
+    formGroup.find('.YesNoSwitch').on('switchChange.bootstrapSwitch', function(e, state){
+        
+        formGroup.find('.selector_datechange').css('display', (state ? '' : 'none'));
+        formGroup.find('.selector_submitField').val(state ? 'Y' : 'N');
+
+    });
+   };
 
    var bindDatepicker = function(myFormGroup){
     myFormGroup.find('.action_datepickerUpdateHiddenField').on('change dp.change', function(){

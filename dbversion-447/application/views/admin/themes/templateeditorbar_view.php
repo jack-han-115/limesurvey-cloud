@@ -62,39 +62,10 @@ echo viewHelper::getViewTestTag('themeEditor');
         <!-- Left Menu -->
         <div class="col-md-5">
 
-            <!-- Import -->
+
             <?php $importModal=false;?>
             <?php if(is_writable($tempdir)):?>
-                <?php if(Permission::model()->hasGlobalPermission('templates','import')):?>
-                    <?php if (is_writable($userthemerootdir) && function_exists("zip_open")):?>
-                        <?php $importModal=true;?>
-                        <a class="btn btn-default" id="button-import" href="" role="button" data-toggle="modal" data-target="#importModal">
-                            <span class="icon-import text-success"></span>
-                            <?php eT("Import"); ?>
-                        </a>
-                        <?php else:
-                        if (function_exists("zip_open")){
-                            $sMessage=gT("The theme upload directory doesn't exist or is not writable.");
-                        }
-                        else{
-                            $sMessage=gT("You do not have the required ZIP library installed in PHP.");
-                        }
-                        ?>
-                        <span class="btntooltip" data-toggle="tooltip" data-placement="bottom" title="<?php echo $sMessage; ?>" style="display: inline-block" data-toggle="tooltip" data-placement="bottom">
-                            <button type="button" id="button-import" class="btn btn-default btntooltip" disabled="disabled">
-                                <span class="icon-import text-success"></span>
-                                <?php eT("Import"); ?>
-                            </button>
-                        </span>
-                        <?php endif;?>
-                    <?php else: ?>
-                    <span class="btntooltip" data-toggle="tooltip" data-placement="bottom" title="<?php eT("We are sorry but you don't have permissions to do this."); ?>" style="display: inline-block" data-toggle="tooltip" data-placement="bottom">
-                        <button type="button" id="button-import" class="btn btn-default btntooltip" disabled="disabled">
-                            <span class="icon-import text-success"></span>
-                            <?php eT("Import"); ?>
-                        </button>
-                    </span>
-                    <?php endif;?>
+
 
                 <!-- Export -->
                 <?php if(Permission::model()->hasGlobalPermission('templates','export') && class_exists('ZipArchive')):?>
@@ -102,7 +73,7 @@ echo viewHelper::getViewTestTag('themeEditor');
                         <span class="icon-export text-success"></span>
                         <?php eT("Export"); ?>
                     </a>
-                    <?php endif;?>
+                <?php endif;?>
 
                 <!-- Copy -->
                 <?php if(Permission::model()->hasGlobalPermission('templates','create')):?>
@@ -227,7 +198,7 @@ echo viewHelper::getViewTestTag('themeEditor');
                 <?php endif;?>
 
             <?php if(isset($fullpagebar['returnbutton'])):?>
-                <a class="btn btn-default" href="<?php echo $this->createUrl("admin/themeoptions"); ?>" role="button">
+                <a class="btn btn-default" href="<?php echo $this->createUrl("themeOptions/index"); ?>" role="button">
                     <span class="fa fa-backward" ></span>
                     &nbsp;&nbsp;
                     <?php eT("Return to theme list"); ?>
@@ -238,7 +209,7 @@ echo viewHelper::getViewTestTag('themeEditor');
 </div>
 
 <?php if($importModal):?>
-    <?php $this->renderPartial('themeoptions/import_modal',[]); ?>
+    <?php $this->renderPartial('themeOptions/import_modal', ['importTemplate' => 'importtemplate', 'importModal' => 'importModal']); ?>
 <?php endif;?>
 
 <div class="col-lg-12 templateeditor">

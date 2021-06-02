@@ -130,6 +130,10 @@ $(document).on('ready  pjax:scriptcomplete', function(){
     p2.methodId          = '#quick-add-method';
     p2.canswersToSelectId= '#quick-add-canswersToSelectId';
 	$('#quick-add-cquestions').change(p2.fun);
+
+	$('#csrctoken').change(function() {
+		$('#cqid').val(0);
+	});
 	
 	// At editing, if cquestions is set, populate answers
 	if ($('#cquestions').val() != '') {
@@ -189,8 +193,7 @@ $(document).on('ready  pjax:scriptcomplete', function(){
     $('#quick-add-condition-save-button').on('click', function(ev) {
         var formData = $('#quick-add-conditions-form').serializeArray();
         var url = $('#quick-add-url').html();
-        console.ls.log('formData', formData);
-        LS.ajax({
+        LS.AjaxHelper.ajax({
             url: url,
             data: formData,
             method: 'POST',
@@ -204,7 +207,7 @@ $(document).on('ready  pjax:scriptcomplete', function(){
     $('#quick-add-condition-save-and-close-button').on('click', function(ev) {
         var formData = $('#quick-add-conditions-form').serializeArray();
         var url = $('#quick-add-url').html();
-        LS.ajax({
+        LS.AjaxHelper.ajax({
             url: url,
             data: formData,
             method: 'POST',

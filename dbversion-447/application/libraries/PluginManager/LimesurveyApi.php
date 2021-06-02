@@ -7,6 +7,8 @@ use User;
 use PluginDynamic;
 use SurveyDynamic;
 use Template;
+use InvalidArgumentException;
+use Exception;
 
 /**
  * Class exposing a Limesurvey API to plugins.
@@ -37,9 +39,12 @@ class LimesurveyApi
     {
         return App()->getDb()->tablePrefix.strtolower($plugin->getName())."_$tableName";
     }
+
     /**
      * Sets a flash message to be shown to the user.
-     * @param html $message
+     * @param string $message
+     * @param string $key
+     * @return void
      */
     public function setFlash($message, $key = 'api')
     {
@@ -49,11 +54,11 @@ class LimesurveyApi
 
     /**
      * Builds and executes a SQL statement for creating a new DB table.
-     * @param \QuickMenu $plugin The plugin object, id or name.
+     * @param PluginBase $plugin The plugin object, id or name.
      * @param string $sTableName the name of the table to be created. The name will be properly quoted and prefixed by the method.
      * @param array $aColumns the columns (name=>definition) in the new table.
-     * @param string $sOptions additional SQL fragment that will be appended to the generated SQL.
-     * @return integer number of rows affected by the execution.
+     * @param ?string $sOptions additional SQL fragment that will be appended to the generated SQL.
+     * @return integer|false number of rows affected by the execution.
      */
     public function createTable($plugin, $sTableName, $aColumns, $sOptions = null)
     {
@@ -85,7 +90,7 @@ class LimesurveyApi
      * Gets an activerecord object associated to the table.
      * @param iPlugin $plugin
      * @param string $sTableName Name of the table.
-     * @param string $bPluginTable True if the table is plugin specific.
+     * @param ?boolean $bPluginTable True if the table is plugin specific.
      * @return \Plugin|null
      */
     public function getTable(iPlugin $plugin, $sTableName, $bPluginTable = true)
@@ -97,6 +102,8 @@ class LimesurveyApi
         }
         if (isset($table)) {
             return \PluginDynamic::model($table);
+        } else {
+            return null;
         }
     }
 
@@ -115,9 +122,9 @@ class LimesurveyApi
      * Creates a new active record object instance.
      * @param iPlugin $plugin
      * @param string $sTableName
-     * @param string $scenario
-     * @param string $bPluginTable True if the table is plugin specific.
-     * @return PluginDynamic
+     * @param ?string $scenario
+     * @param ?boolean $bPluginTable True if the table is plugin specific.
+     * @return ?\PluginDynamic
      */
     public function newModel(iPlugin $plugin, $sTableName, $scenario = 'insert', $bPluginTable = true)
     {
@@ -128,6 +135,8 @@ class LimesurveyApi
         }
         if (isset($table)) {
             return new \PluginDynamic($table, $scenario);
+        } else {
+            return null;
         }
     }
 
@@ -148,7 +157,7 @@ class LimesurveyApi
     }
 
     /**
-     * Evaluates an expression via Expression Manager
+     * Evaluates an expression via ExpressionScript Engine
      * Uses the current context.
      * @param string $expression
      * @return string
@@ -184,7 +193,7 @@ class LimesurveyApi
      * @param int $surveyId
      * @param int $responseId
      * @param bool $bMapQuestionCodes
-     * @return array
+     * @return array|SurveyDynamic|null
      */
     public function getResponse($surveyId, $responseId, $bMapQuestionCodes = true)
     {
@@ -224,11 +233,37 @@ class LimesurveyApi
         }
     }
 
+    /**
+     * Get the current Response
+     * @param integer $surveyId
+     * @return \Response|null
+     */
+    public function getCurrentResponses($surveyId = null)
+    {
+        if(empty($surveyId)) {
+            $surveyId = \LimeExpressionManager::getLEMsurveyId();
+        }
+        if(empty($surveyId)) {
+            return;
+        }
+        $sessionSurvey = Yii::app()->session["survey_{$surveyId}"];
+        if(empty($sessionSurvey['srid'])) {
+            return;
+        }
+        return \Response::model($surveyId)->findByPk($sessionSurvey['srid']);
+    }
+
+    /**
+     * @return \Response[]|null
+     */
     public function getResponses($surveyId, $attributes = array(), $condition = '', $params = array())
     {
         return \Response::model($surveyId)->findAllByAttributes($attributes, $condition, $params);
     }
 
+    /**
+     * @return ?\Token
+     */
     public function getToken($surveyId, $token)
     {
         return \Token::model($surveyId)->findByAttributes(array('token' => $token));
@@ -237,9 +272,9 @@ class LimesurveyApi
     /**
      * Return a token object from a token id and a survey id
      *
-     * @param integer $iSurveyId
-     * @param integer $iTokenId
-     * @return \Token Token
+     * @param int $iSurveyId
+     * @param int $iTokenId
+     * @return ?\Token Token
      */
     public function getTokenById($iSurveyId, $iTokenId)
     {
@@ -249,8 +284,8 @@ class LimesurveyApi
     /**
      * Gets a key value list using the group name as value and the group id
      * as key.
-     * @param boolean $surveyId
-     * @return type
+     * @param int $surveyId
+     * @return \QuestionGroup[]
      */
     public function getGroupList($surveyId)
     {
@@ -260,8 +295,7 @@ class LimesurveyApi
 
     /**
      * Retrieves user details for the currently logged in user
-     * Returns false if the user is not logged and returns null if the user does not exist anymore for some reason (should not really happen)
-     * @return User
+     * @return ?User|false Returns false if the user is not logged and returns null if the user does not exist anymore for some reason (should not really happen)
      */
     public function getCurrentUser()
     {
@@ -298,12 +332,13 @@ class LimesurveyApi
         }
         return $tables;
     }
+
     /**
      * Retrieves user details for a user
      * Returns null if the user does not exist anymore for some reason (should not really happen)
      *
      * @param int $iUserID The userid
-     * @return User
+     * @return ?User
      */
     public function getUser($iUserID)
     {
@@ -340,10 +375,10 @@ class LimesurveyApi
 
     /**
      * Retrieves user permission details for a user
-     * @param $iUserID int The User ID
-     * @param  $iSurveyID int The related survey IF for survey permissions - if 0 then global permissions will be retrieved
-     * Returns null if the user does not exist anymore for some reason (should not really happen)
-     * @return User
+     * @param int $iUserID The User ID
+     * @param ?int $iSurveyID The related survey IF for survey permissions - if 0 then global permissions will be retrieved
+     * @param ?string $sEntityName
+     * @return ?array Returns null if the user does not exist anymore for some reason (should not really happen)
      */
     public function getPermissionSet($iUserID, $iEntityID = null, $sEntityName = null)
     {
@@ -352,21 +387,27 @@ class LimesurveyApi
 
     /**
      * Retrieves Participant data
-     * @param $iParticipantID int The Participant ID
-     * Returns null if the user does not exist anymore for some reason (should not really happen)
-     * @return \Participant
+     * @param int $iParticipantID The Participant ID
+     * @return ?\Participant Returns null if the user does not exist anymore for some reason (should not really happen)
      */
     public function getParticipant($iParticipantID)
     {
         return \Participant::model()->findByPk($iParticipantID);
     }
 
+    /**
+     * @param int $surveyId
+     * @param string $language
+     * $param array $conditions
+     * @return \Question[]
+     */
     public function getQuestions($surveyId, $language = 'en', $conditions = array())
     {
         $conditions['sid'] = $surveyId;
         $conditions['language'] = $language;
         return \Question::model()->with('subquestions')->findAllByAttributes($conditions);
     }
+
     /**
      * Gets the metadata for a table.
      * For details on the object check: http://www.yiiframework.com/doc/api/1.1/CDbTableSchema
@@ -566,5 +607,26 @@ class LimesurveyApi
                 throw new InvalidArgumentException('user does not exist');
             }
         }
+    }
+
+    /**
+     * Returns an array of all the question attributes and their values for the
+     * specified question.
+     *
+     * @param int $questionId   the ID of the question
+     * @param string|null $language     restrict to this language
+     * @return array<string, mixed>    array of question attributes and values (name=>value)
+     * @throws \InvalidArgumentException
+     */
+    public function getQuestionAttributes($questionId, $language = null)
+    {
+        /** @var array<string,mixed>|false Array of question attributes or false if the question can't be found */
+        $questionAttributes = \QuestionAttribute::model()->getQuestionAttributes($questionId, $language);
+
+        if ($questionAttributes === false) {
+            throw new \InvalidArgumentException(gT("Question does not exist."));
+        }
+
+        return $questionAttributes;
     }
 }
