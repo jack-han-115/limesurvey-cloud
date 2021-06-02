@@ -57,8 +57,8 @@ function loadanswers()
         return false;
     }
     //===============Begin LimeService Mod
-    $_SESSION['survey_'.$surveyid]['limeservice_start']=true;
-    //===============End LimeService Mod    
+    $_SESSION['survey_' . $surveyid]['limeservice_start'] = true;
+    //===============End LimeService Mod
     $oResponses->decrypt();
 
     if (isset($oResponses->saved_control) && $oResponses->saved_control) {
@@ -375,19 +375,20 @@ function addtoarray_single($array1, $array2)
 */
 function submittokens($quotaexit = false)
 {
-   
+
     // LimeService Mod Start _--------------------------
     /**
      * Get the database name
      */
-    function _getDbName() {
+    function _getDbName()
+    {
         // Yii doesn't give us a good way to get the database name
         preg_match('/dbname=([^;]*)/', Yii::app()->db->getSchema()->getDbConnection()->connectionString, $aMatches);
         $sDbName = $aMatches[1];
 
         return $sDbName;
     }
-    // LimeService Mod End --------------------------      
+    // LimeService Mod End --------------------------
 
     $surveyid = Yii::app()->getConfig('surveyID');
     if (isset($_SESSION['survey_' . $surveyid]['s_lang'])) {
@@ -604,8 +605,8 @@ function submitfailed($errormsg = '', $query = null)
             $email .= gT("ERROR MESSAGE", "unescaped") . ":\n"
                . $errormsg . "\n\n";
         }
-		// LimeService Mod Start
-		/* Don't send this email ,  leads only to confusion
+        // LimeService Mod Start
+        /* Don't send this email ,  leads only to confusion
         $mailer = new \LimeMailer();
         $mailer->emailType = "errorsavingresults";
         $mailer->Subject = gT("Error saving results", "unescaped");
@@ -1141,7 +1142,7 @@ function testIfTokenIsValid(array $subscenarios, array $thissurvey, array $aEnte
             $aEnterTokenData['visibleToken'] = $clienttoken;
             $aEnterTokenData['token'] = $clienttoken;
             $renderToken = 'correct';
-            // Intentionally don't reset FailedLoginAttempt for this IP.  
+            // Intentionally don't reset FailedLoginAttempt for this IP.
             // FailedLoginAttempt::model()->deleteAttempts();
         }
     }
@@ -1839,8 +1840,8 @@ function checkCompletedQuota($surveyid, $return = false)
     $thissurvey['include_content'] = 'quotas';
     Yii::app()->twigRenderer->renderTemplateFromFile("layout_global.twig", array('oSurvey' => Survey::model()->findByPk($surveyid), 'aSurveyInfo' => $thissurvey), false);
     // LimeService modification start ==================================
-    /* 
-    $sAds=Yii::app()->dbstats->createCommand('select advertising from limeservice_system.installations where user_id='.getInstallationID())->queryScalar();    
+    /*
+    $sAds=Yii::app()->dbstats->createCommand('select advertising from limeservice_system.installations where user_id='.getInstallationID())->queryScalar();
     if ($sAds=='1')
     {
         echo '<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
@@ -1852,7 +1853,7 @@ function checkCompletedQuota($surveyid, $return = false)
     }
     */
     // LimeService modification end ==================================
-}    
+}
 }
 
 /**

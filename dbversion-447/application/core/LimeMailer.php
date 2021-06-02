@@ -251,7 +251,7 @@ class LimeMailer extends \PHPMailer\PHPMailer\PHPMailer
     {
         $this->addCustomHeader("X-surveyid", $surveyId);
         // LimeService Mod Start
-        $this->addCustomHeader("X-did", substr(Yii::app()->db->username,6));
+        $this->addCustomHeader("X-did", substr(Yii::app()->db->username, 6));
         // LimeService Mod End
 
         $this->eventName = "beforeSurveyEmail";
@@ -703,7 +703,7 @@ class LimeMailer extends \PHPMailer\PHPMailer\PHPMailer
         if (!array_key_exists($this->emailType, $this->_aAttachementByType)) {
             return;
         }
-        
+
         $attachementType = $this->_aAttachementByType[$this->emailType];
         $oSurveyLanguageSetting = SurveyLanguageSetting::model()->findByPk(array('surveyls_survey_id' => $this->surveyId, 'surveyls_language' => $this->mailLanguage));
         if (!empty($oSurveyLanguageSetting->attachments)) {
