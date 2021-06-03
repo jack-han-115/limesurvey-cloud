@@ -22,7 +22,7 @@ class LSSodium
             $this->checkIfKeyExists();
         }
     }
-    
+
     /**
      * Check if Sodium library is installed
      * @return bool
@@ -84,7 +84,7 @@ class LSSodium
     {
         return ParagonIE_Sodium_Compat::hex2bin(Yii::app()->getConfig('encryptionsecretkey'));
     }
-    
+
     /**
      * Encrypt input data using AES256 CBC encryption
      * @param unknown_type $sDataToEncrypt Data to encrypt. Could be a string or a serializable PHP object
@@ -103,7 +103,7 @@ class LSSodium
             return $sDataToEncrypt;
         }
     }
- 
+
     /**
      *
      * Decrypt encrypted string.
@@ -126,16 +126,19 @@ class LSSodium
             return $sEncryptedString;
         }
     }
- 
+
     /**
      *
      * Write encryption key to version.php config file
      */
-    protected function generateEncryptionKeys()
+    public function generateEncryptionKeys($keypath = null)
     {
-        if (is_file(APPPATH . 'config/security.php')) {
+        if (is_null($keypath)) {
+            $keypath = APPPATH . 'config/security.php';
+        }
+        if (is_file($keypath) {
             // Never replace an existing file
-            throw new CException(500, gT("Configuration file already exist"));
+            throw new CException(500, gT("Encryption key file already exist"));
         }
         $sEncryptionKeypair   = ParagonIE_Sodium_Compat::crypto_sign_keypair();
         $sEncryptionPublicKey = ParagonIE_Sodium_Compat::bin2hex(ParagonIE_Sodium_Compat::crypto_sign_publickey($sEncryptionKeypair));
@@ -145,7 +148,7 @@ class LSSodium
         if (empty($sEncryptionKeypair)) {
             return false;
         }
-        
+
         $sConfig = "<?php if (!defined('BASEPATH')) exit('No direct script access allowed');" . "\n"
             . "/*" . "\n"
             . " * LimeSurvey" . "\n"
@@ -174,8 +177,8 @@ class LSSodium
         Yii::app()->setConfig("encryptionkeypair", $sEncryptionKeypair);
         Yii::app()->setConfig("encryptionpublickey", $sEncryptionPublicKey);
         Yii::app()->setConfig("encryptionsecretkey", $sEncryptionSecretKey);
-        if (is_writable(APPPATH . 'config')) {
-            file_put_contents(APPPATH . 'config/security.php', $sConfig);
+        if (is_writable($keypath)) {
+            file_put_contents($keypath, $sConfig);
         } else {
             throw new CHttpException(500, gT("Configuration directory is not writable"));
         }
