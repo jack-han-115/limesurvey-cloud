@@ -113,7 +113,7 @@ $internalConfig = array(
         'ext.captchaExtended.CaptchaExtendedAction',
         'ext.captchaExtended.CaptchaExtendedValidator',
 // LimeService Mod start =============
-        ,'application.extensions.phpass.*',
+        'application.extensions.phpass.*',
 // LimeService Mod end =============
         'questiontypes.*'
     ),
