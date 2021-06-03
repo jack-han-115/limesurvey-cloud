@@ -136,7 +136,7 @@ class LSSodium
         if (is_null($keypath)) {
             $keypath = APPPATH . 'config/security.php';
         }
-        if (is_file($keypath) {
+        if (is_file($keypath)) {
             // Never replace an existing file
             throw new CException(500, gT("Encryption key file already exist"));
         }
