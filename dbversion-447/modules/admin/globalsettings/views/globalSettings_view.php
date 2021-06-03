@@ -91,7 +91,7 @@ if (isset($scripts)) {
 
     <?php // LimeService Mod start ?>
     <div id="useradmin" class="tab-pane col-md-10 col-md-offset-1">
-        <?php $this->renderPartial("./global_settings/_useradministration", [
+        <?php $this->renderPartial("./globalsettings/_useradministration", [
                 'sSendAdminCreationEmail'       => $sGlobalSendAdminCreationEmail,
                 'sAdminCreationEmailSubject'    => $sGlobalAdminCreationEmailSubject,   
                 'sAdminCreationEmailTemplate'   => $sGlobalAdminCreationEmailTemplate,     
@@ -106,7 +106,7 @@ if (isset($scripts)) {
 
     <?php // LimeService Mod start ?>
     <div id="datapolicy_legalnotice" class="tab-pane col-md-10 col-md-offset-1">
-        <?php $this->renderPartial("./global_settings/_datapolicy", [
+        <?php $this->renderPartial("./globalsettings/_datapolicy", [
             'sLanguage' => $sCurrentDefaultLanguage,
             'sLegalNotice' => $sGlobalLegalNotice,
             'sDataPolicy' => $sGlobalDataPolicy,
