@@ -7,7 +7,7 @@ class LSSodium
     protected $sEncryptionPublicKey = null;
     protected $sEncryptionSecretKey = null;
 
-    public function init()
+    public function init($keypath = null)
     {
         require_once Yii::app()->basePath . '/../third_party/paragonie/sodium_compat/src/Compat.php';
         require_once Yii::app()->basePath . '/../third_party/paragonie/sodium_compat/src/Core/Util.php';
@@ -19,7 +19,7 @@ class LSSodium
             /*throw new SodiumException(sprintf(gT("This operation uses data encryption functions which require Sodium library to be installed, but library was not found. If you don't want to use data encryption, you have to disable encryption in attribute settings. Here is a link to the manual page:
             %s", 'unescaped'), 'https://manual.limesurvey.org/Data_encryption#Errors'));*/
         } else {
-            $this->checkIfKeyExists();
+            $this->checkIfKeyExists($keypath);
         }
     }
 
@@ -39,10 +39,10 @@ class LSSodium
      * Check if encryption key exists in configuration
      * @return bool Return decrypted value (string or unsezialized object) if suceeded. Return FALSE if an error occurs (bad password/salt given) or inpyt encryptedString
      */
-    protected function checkIfKeyExists()
+    protected function checkIfKeyExists($keypath)
     {
         if (empty(Yii::app()->getConfig('encryptionkeypair'))) {
-            $this->generateEncryptionKeys(); //return false;
+            $this->generateEncryptionKeys($keypath); //return false;
         }
         if ($this->sEncryptionKeypair === null) {
             $this->sEncryptionKeypair = $this->getEncryptionKey();
@@ -131,7 +131,7 @@ class LSSodium
      *
      * Write encryption key to version.php config file
      */
-    public function generateEncryptionKeys($keypath = null)
+    protected function generateEncryptionKeys($keypath = null)
     {
         if (is_null($keypath)) {
             $keypath = APPPATH . 'config/security.php';
