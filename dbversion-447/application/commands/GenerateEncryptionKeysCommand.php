@@ -22,7 +22,7 @@ class GenerateEncryptionKeysCommand extends CConsoleCommand
     public function run($aArguments)
     {
         $sodium = new LSSodium($aArguments[0]);
-        $sodium-> init($aArguments[0]);
-        
+        $sodium->init($aArguments[0]);
+       
     }
 }
