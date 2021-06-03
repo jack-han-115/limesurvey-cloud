@@ -180,7 +180,7 @@ class LSSodium
         if (is_writable($keypath)) {
             file_put_contents($keypath, $sConfig);
         } else {
-            throw new CHttpException(500, gT("Configuration directory is not writable"));
+            throw new CHttpException(500, "Configuration directory is not writable");
         }
     }
 }

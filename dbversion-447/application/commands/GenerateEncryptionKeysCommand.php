@@ -21,6 +21,8 @@ class GenerateEncryptionKeysCommand extends CConsoleCommand
      */
     public function run($aArguments)
     {
-        $sodium = Yii::app()->sodium('');
+        $sodium = new LSSodium($aArguments[0]);
+        $sodium-> init($aArguments[0]);
+        
     }
 }
