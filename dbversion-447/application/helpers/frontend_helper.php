@@ -1844,16 +1844,10 @@ function checkCompletedQuota($surveyid, $return = false)
     $sAds=Yii::app()->dbstats->createCommand('select advertising from limeservice_system.installations where user_id='.getInstallationID())->queryScalar();
     if ($sAds=='1')
     {
-        echo '<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-            <!-- LimeSurvey Cloud -->
-            <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-8685097035430927" data-ad-slot="1489732692" data-ad-format="auto"></ins>
-            <script>
-            (adsbygoogle = window.adsbygoogle || []).push({});
-        </script>';
+       // Self advertisement could be included here.
     }
     */
     // LimeService modification end ==================================
-}
 }
 
 /**
