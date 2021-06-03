@@ -177,10 +177,10 @@ class LSSodium
         Yii::app()->setConfig("encryptionkeypair", $sEncryptionKeypair);
         Yii::app()->setConfig("encryptionpublickey", $sEncryptionPublicKey);
         Yii::app()->setConfig("encryptionsecretkey", $sEncryptionSecretKey);
-        if (is_writable($keypath)) {
+        if (is_writable(dirname($keypath))) {
             file_put_contents($keypath, $sConfig);
         } else {
-            throw new CHttpException(500, "Configuration directory is not writable");
+            throw new CHttpException(500, "Encryption key configuration file {$keypath} is not writable");
         }
     }
 }
