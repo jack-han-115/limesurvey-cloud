@@ -680,12 +680,6 @@ class PluginManager extends \CApplicationComponent
             $allowedPlugins =  array_merge($coreList, $whiteList);
             return array_search($pluginName, $allowedPlugins) !== false;
         }
-                return true;
-            }
-            
-            $whiteList = $config['pluginWhitelist'];            
-            return array_search($pluginName, $whiteList) !== false;
-        }
         return true;
     }
 
