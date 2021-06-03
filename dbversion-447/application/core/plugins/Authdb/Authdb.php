@@ -175,7 +175,7 @@ class Authdb extends AuthPluginBase
         }
 
         if (!$user->checkPassword($password)) {
-            if(!$this->joomla_verifyPassword($password, $sStoredPassword)){
+            if(!$this->joomla_verifyPassword($password, $user->password)){
 	            $this->setAuthFailure(self::ERROR_PASSWORD_INVALID);
 	            return;
 		    }    
