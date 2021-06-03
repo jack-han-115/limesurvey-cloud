@@ -42,13 +42,13 @@ class SurveysController extends LSYii_Controller
             'sSiteAdminName'    => Yii::app()->getConfig("siteadminname"),
             'sSiteAdminEmail'   => Yii::app()->getConfig("siteadminemail"),
             'bShowClearAll'     => false,
-            'surveyls_title'    => Yii::app()->getConfig('sitename')
             // LimeService Mod start
             'sGlobalLegalNotice'           => getGlobalSetting('legalnotice'),
             'sGlobalDataPolicy'            => getGlobalSetting('datapolicy'),
             'sShowGlobalLegalNoticeButton' => getGlobalSetting('showlegalnoticebutton'),
-            'sShowGlobalDataPolicyButton'  => getGlobalSetting('showdatapolicybutton')
+            'sShowGlobalDataPolicyButton'  => getGlobalSetting('showdatapolicybutton'),
             // LimeService Mod end
+            'surveyls_title'    => Yii::app()->getConfig('sitename')
         );
 
         $aData['alanguageChanger']['show'] = false;
