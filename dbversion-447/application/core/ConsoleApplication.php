@@ -59,13 +59,20 @@ class ConsoleApplication extends CConsoleApplication
             $versionConfig,
             $updaterVersionConfig
         );
-
+        // LimeService Mod Start
+        /*    
+        // LimeService Mod End
+        
         if (file_exists(__DIR__ . '/../config/security.php')) {
             $securityConfig = require(__DIR__ . '/../config/security.php');
             if (is_array($securityConfig)) {
                 $lsConfig = array_merge($lsConfig, $securityConfig);
             }
         }
+        // LimeService Mod Start
+        */    
+        // LimeService Mod End
+
         /* Custom config file */
         $configdir = $coreConfig['configdir'];
         if (file_exists($configdir .  '/security.php')) {
