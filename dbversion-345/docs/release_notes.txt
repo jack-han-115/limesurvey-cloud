@@ -34,6 +34,50 @@ Thank you to everyone who helped with this new release!
 
 CHANGE LOG
 ------------------------------------------------------
+Changes from 3.27.2 (build 210608) to 3.27.3 (build 210615) June 14, 2021
+-Fixed issue #17347: 'Class Twig_Environment not found' when uploading an image (#1912) (Gabriel Jenik)
+#Updated translation: Turkish by kayazeren
+#Updated translation: Polish by elissa
+#Updated translation: Polish (Informal) by elissa
+#Updated translation: Italian by lfanfoni
+#Updated translation: Italian (Informal) by lfanfoni
+#Updated translation: Dutch by Han
+#Updated translation: Dutch (Informal) by Han
+#Updated translation: Czech by jelen1
+#Updated translation: Czech (Informal) by jelen1
+#Updated translation: Catalan by qualitatuvic
+
+
+Changes from 3.27.1 (build 210531) to 3.27.2 (build 210608) June 7, 2021
+-Fixed issue: Database error when editing a quota and text is too long (Gabriel Jenik)
+-Fixed issue #17298: queXML PDF Export: 500: Internal Server Error (#1902) (Adam Zammit)
+-Fixed issue #17239: Unable to find template "./subviews/content/.twig" (with PHP8) (Gabriel Jenik)
+-Fixed issue #14897: Edit theme permissions: option 'All themes' not working (#1903) (Gabriel Jenik)
+-Fixed issue #14039: Captcha prevent panel integration. GET URL parameter not captured (#1896) (Gabriel Jenik)
+
+
+Changes from 3.27.0 (build 210525) to 3.27.1 (build 210531) May 31, 2021
+-Fixed issue #17306: Some update theme can break page in 3.26.4 (#1892) (Gabriel Jenik)
+
+
+Changes from 3.26.5 (build 210519) to 3.27.0 (build 210525) May 25, 2021
++New feature #17301: Allow whitelisting IP addresses in global settings (#1889) (Gabriel Jenik)
++New feature #17301: Allow whitelisting IP addresses in global settings (#1889) (Carsten Schmitz)
+-Fixed issue #17309: Date question always shows error when using AR language - can't proceed at survey (#1888) (Gabriel Jenik)
+-Fixed issue #17270: Print statistics take a lot of page (#1880) (Denis Chenu)
+#Updated translation: German by c_schmitz
+#Updated translation: German (Informal) by c_schmitz
+#Updated translation: German (Easy) by c_schmitz
+#Updated translation: Czech by jelen1
+#Updated translation: Czech (Informal) by jelen1
+
+
+Changes from 3.26.4 (build 210517) to 3.26.5 (build 210519) May 19, 2021
+-Fixed issue #17303: ZipArchive error when exporting theme and debug mode is active (Carsten Schmitz)
+-Fixed issue #17250: Unable to upload image with extension in uppercase in Theme option (#1883) (Gabriel Jenik)
+-Fixed issue #17301: Survey participants lock out issue (Gabriel Jenik)
+
+
 Changes from 3.26.3 (build 210511) to 3.26.4 (build 210517) May 17, 2021
 -Fixed issue #17291: Condition for multiple choice with comments question shows JS error (Olle Haerstedt)
 -Fixed issue #17236: PHP 8 not supported (Carsten Schmitz)
