@@ -57,8 +57,8 @@ $config['adminthemeiconsize'] = 32; // This settings describes the icon size for
 
 
 // If the user enters password incorrectly
-$config['maxLoginAttempt']    = 3; // Lock them out after 3 attempts
-$config['timeOutTime']        = 60 * 10; // Lock them out for 10 minutes.
+$config['maxLoginAttempt']    = 6; // Lock them out after 3 attempts
+$config['timeOutTime']        = 60 * 5; // Lock them out for 10 minutes.
 
 // Site Settings
 $config['printanswershonorsconditions'] = 1; // If set to 1, only relevant answers to questions can be printed by user. If set to 0, also questions not shown are printed
