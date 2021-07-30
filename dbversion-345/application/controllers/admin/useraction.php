@@ -108,7 +108,7 @@ class UserAction extends Survey_Common_Action
             Yii::app()->setFlashMessage(
                 sprintf(
                     gT("When using the Free package, the maximum number of survey administrators is 10. Please %supgrade your package%s to remove this limit."),
-                    '<a target="_blank" href="https://www.limesurvey.org/editions-and-prices/limesurvey-pro/editions-and-prices-professional">',
+                    '<a target="_blank" href="https://www.limesurvey.org/pricing">',
                     '</a>'
                 ),
                 'error'
