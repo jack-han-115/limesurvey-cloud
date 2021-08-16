@@ -2,7 +2,7 @@
 	"name" : "limesurvey/limesurvey",
 	"description" : "The most popular FOSS online survey tool on the web",
 	"homepage" : "https://www.limesurvey.org/",
-	"license" : "GPL-2.0-or-later",
+	"license" : "GPL 2.0",
 	"authors" : [{
 			"name" : "LimeSurvey Team",
 			"email" : "support@limesurvey.org",
@@ -14,8 +14,8 @@
 	"support" : {
 		"wiki" : "https://manual.limesurvey.org/LimeSurvey_Manual",
 		"source" : "https://github.com/LimeSurvey/LimeSurvey",
-		"issues" : "https://community.limesurvey.org/bug-tracker/",
-		"forum" : "https://forums.limesurvey.org/"
+		"issues" : "https://www.limesurvey.org/de/community-hilfe/bug-tracker",
+		"forum" : "https://www.limesurvey.org/de/community-hilfe/forum"
 	},
 	"autoload": {
 		"psr-4": {
@@ -24,30 +24,18 @@
 				"application/libraries/PluginManager/Storage"
 			],
 			"LimeSurvey\\Menu\\": "application/libraries/MenuObjects/",
-			"LimeSurvey\\Helpers\\": "application/helpers",
-            "Twig\\": "third_party/twig/twig/src"
+			"LimeSurvey\\Helpers\\": "application/helpers"
 		}
-	},
-	"config": {
-        "vendor-dir": "third_party",
-        "bin-dir": "third_party/bin",
-		"platform": {
-			"php": "5.6"
-		}
-    },
-	"require-dev": {
-		"facebook/webdriver": "^1.4",
-        "squizlabs/php_codesniffer": "2.*",
-        "phpunit/phpunit": "5.7.*"
 	},
 	"require": {
-		"twig/twig": "1.42.5",
-        "yiiext/twig-renderer":"dev-master"
+		"facebook/webdriver": "^1.4"
 	},
-    "scripts": {
-        "test": [
-            "./tests/bin/lint-tests",
-            "./tests/bin/lint-application"
-        ]
-    }
+    "config": {
+        "vendor-dir": "third_party",
+        "bin-dir": "third_party/bin"
+    },
+	"require-dev": {
+        "squizlabs/php_codesniffer": "2.*",
+        "phpunit/phpunit": "5.7.*"
+	}
 }
