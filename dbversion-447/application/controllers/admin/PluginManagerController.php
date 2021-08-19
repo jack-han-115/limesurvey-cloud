@@ -166,6 +166,11 @@ class PluginManagerController extends Survey_Common_Action
 
     public function deleteFiles($plugin)
     {
+        // LimeService Mod Start
+        Yii::app()->setFlashMessage(gT('No permission'), 'error');
+        $this->getController()->redirect($this->getPluginManagerUrl());
+        // LimeService Mod End
+
         $this->checkUpdatePermission();
 
         // Pre supposes the plugin is in the uploads folder. Other plugins are not deletable by button.
@@ -461,6 +466,12 @@ class PluginManagerController extends Survey_Common_Action
      */
     public function uninstallPlugin()
     {
+
+        // LimeService Mod Start
+        Yii::app()->setFlashMessage(gT('No permission'), 'error');
+        $this->getController()->redirect($this->getPluginManagerUrl());
+        // LimeService Mod End
+        
         // Check permissions.
         $this->checkUpdatePermission();
 
@@ -496,6 +507,10 @@ class PluginManagerController extends Survey_Common_Action
      */
     public function upload()
     {
+        // LimeService Mod Start
+        Yii::app()->setFlashMessage(gT('No permission'), 'error');
+        $this->getController()->redirect($this->getPluginManagerUrl());
+        // LimeService Mod End
         $this->checkUpdatePermission();
 
         // Redirect back if demo mode is set.
@@ -528,6 +543,11 @@ class PluginManagerController extends Survey_Common_Action
      */
     public function uploadConfirm()
     {
+
+        // LimeService Mod Start
+        Yii::app()->setFlashMessage(gT('No permission'), 'error');
+        $this->getController()->redirect($this->getPluginManagerUrl());
+        // LimeService Mod End
         $this->checkUpdatePermission();
 
         /** @var PluginInstaller */
@@ -575,6 +595,11 @@ class PluginManagerController extends Survey_Common_Action
      */
     public function installUploadedPlugin()
     {
+        // LimeService Mod Start
+        Yii::app()->setFlashMessage(gT('No permission'), 'error');
+        $this->getController()->redirect($this->getPluginManagerUrl());
+        // LimeService Mod End
+
         $this->checkUpdatePermission();
 
         /** @var LSHttpRequest */
@@ -619,6 +644,10 @@ class PluginManagerController extends Survey_Common_Action
      */
     public function abortUploadedPlugin()
     {
+        // LimeService Mod Start
+        Yii::app()->setFlashMessage(gT('No permission'), 'error');
+        $this->getController()->redirect($this->getPluginManagerUrl());
+        // LimeService Mod End
         $this->checkUpdatePermission();
 
         $installer = $this->getInstaller();

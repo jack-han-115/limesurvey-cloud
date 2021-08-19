@@ -11,6 +11,9 @@
     <div class='row'>
         <div class="col-md-6 text-left">
             <!-- Plugin Manager -->
+            <?php  //LimeService Mod start
+                    $fullpagebar['pluginManager']['buttons']['installPluginZipModal']['hasConfigDemoMode']=true; 
+                   //LimeService end ?>
             <?php if (isset($fullpagebar['pluginManager'])) : ?>
                 <!-- Install Plugin Zip -->
                 <?php if (

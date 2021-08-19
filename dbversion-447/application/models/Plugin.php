@@ -196,9 +196,11 @@ class Plugin extends LSActiveRecord
                 $output = $this->getDeactivateButton();
             }
 
+            /* LimeService Mod Start
             if ($this->active == 0) {
                 $output .= $this->getUninstallButton();
             }
+            LimeService Mod End */
         }
 
         return $output;
