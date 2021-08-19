@@ -296,6 +296,9 @@ class User extends LSActiveRecord
         return false;
     }
 
+    /**
+     * @todo document me
+     */
     public function checkPasswordStrength($password)
     {
         $settings = Yii::app()->getConfig("passwordValidationRules");
@@ -380,6 +383,9 @@ class User extends LSActiveRecord
         return $errorMsg;
     }
 
+    /**
+     * @todo document me
+     */
     public function getPasswordHelpText()
     {
         $settings =  Yii::app()->getConfig("passwordValidationRules");
@@ -511,6 +517,9 @@ class User extends LSActiveRecord
         return Yii::app()->db->createCommand($query2)->bindParam(":surveyid", $surveyid, PDO::PARAM_INT)->bindParam(":postugid", $postusergroupid, PDO::PARAM_INT)->query(); //Checked
     }
 
+    /**
+     * @todo document me
+     */
     public function getGroupList()
     {
         $collector = array_map(function ($oUserInGroup) {
@@ -561,7 +570,7 @@ class User extends LSActiveRecord
                 data-uid='" . $this->uid . "'
                 data-user='" . htmlspecialchars($oUser['full_name']) . "'
                 data-action='modifyuser'
-                class='btn btn-default btn-xs action_usercontrol_button'>
+                class='btn btn-default btn-sm green-border action_usercontrol_button'>
                     <span class='fa fa-pencil text-success'></span>
                 </button>";
         } else {
@@ -572,7 +581,7 @@ class User extends LSActiveRecord
                     && $this->parent_id == Yii::app()->session['loginID']
                 )
             ) {
-                $editUser = "<button data-toggle='tooltip' data-url='" . $editUrl . "' data-user='" . htmlspecialchars($oUser['full_name']) . "' data-uid='" . $this->uid . "' data-action='modifyuser' title='" . gT("Edit this user") . "' type='submit' class='btn btn-default btn-xs action_usercontrol_button'><span class='fa fa-pencil text-success'></span></button>";
+                $editUser = "<button data-toggle='tooltip' data-url='" . $editUrl . "' data-user='" . htmlspecialchars($oUser['full_name']) . "' data-uid='" . $this->uid . "' data-action='modifyuser' title='" . gT("Edit this user") . "' type='submit' class='btn btn-default btn-sm green-border action_usercontrol_button'><span class='fa fa-pencil text-success'></span></button>";
             }
 
             if (
@@ -615,8 +624,8 @@ class User extends LSActiveRecord
                         data-action='deluser'
                         data-onclick='triggerRunAction($(\"#delete_user_" . $this->uid . "\"))'
                         data-message='" . gT("Do you want to delete this user?") . "'
-                        class='btn btn-default btn-xs '>
-                            <span class='fa fa-trash  text-danger'></span>
+                        class='btn btn-default btn-sm red-border'>
+                            <span class='fa fa-trash'></span>
                         </button>
                     </span>";
             }
@@ -647,8 +656,8 @@ class User extends LSActiveRecord
         $editUrl = Yii::app()->getController()->createUrl('userManagement/addEditUser', ['userid' => $this->uid]);
         $setPermissionsUrl = Yii::app()->getController()->createUrl('userManagement/userPermissions', ['userid' => $this->uid]);
         $setRoleUrl = Yii::app()->getController()->createUrl('userManagement/addRole', ['userid' => $this->uid]);
-        $setTemplatePermissionsUrl = Yii::app()->getController()->createUrl('userManagement/userTemplatePermissions', ['userid' => $this->uid]);
         $changeOwnershipUrl = Yii::app()->getController()->createUrl('userManagement/takeOwnership');
+        $setTemplatePermissionsUrl = Yii::app()->getController()->createUrl('userManagement/userTemplatePermissions', ['userid' => $this->uid]);
         $deleteUrl = Yii::app()->getController()->createUrl('userManagement/deleteConfirm', ['userid' => $this->uid, 'user' => $this->full_name]);
         
 
@@ -657,35 +666,47 @@ class User extends LSActiveRecord
                 data-toggle='tooltip' 
                 title='" . gT("User details") . "'    
                 class='btn btn-sm btn-default UserManagement--action--openmodal UserManagement--action--userdetail' 
-                data-href='" . $detailUrl . "'><i class='fa fa-search'></i></button>";
+                data-href='" . $detailUrl . "'
+                >
+                <i class='fa fa-search'></i>
+                </button>";
 
         $editPermissionButton = ""
             . "<button 
                 data-toggle='tooltip' 
                 title='" . gT("Edit permissions") . "'  
                 class='btn btn-sm btn-default UserManagement--action--openmodal UserManagement--action--permissions' 
-                data-href='" . $setPermissionsUrl . "'><i class='fa fa-lock'></i></button>";
+                 style='margin-left: 5px;'
+                data-href='" . $setPermissionsUrl . "'
+                data-modalsize='modal-lg'
+                ><i class='fa fa-lock'></i></button>";
         $addRoleButton = ""
             . "<button 
                 data-toggle='tooltip' 
                 title='" . gT("User role") . "'
                 class='btn btn-sm btn-default UserManagement--action--openmodal UserManagement--action--addrole' 
-                data-href='" . $setRoleUrl . "'><i class='fa fa-users'></i></button>";
-        $editTemplatePermissionButton = ""
-            . "<button 
-                data-toggle='tooltip' 
-                title='" . gT("Template permissions") . "'
-                class='btn btn-sm btn-default UserManagement--action--openmodal UserManagement--action--templatepermissions' 
-                data-href='" . $setTemplatePermissionsUrl . "'><i class='fa fa-paint-brush'></i></button>";
+                style='margin-left: 5px;'
+                data-href='" . $setRoleUrl . "'
+                >
+                <i class='fa fa-users'></i>
+                </button>";
         $editUserButton = ""
             . "<button 
                 data-toggle='tooltip' 
                 title='" . gT("Edit user") . "'
-                class='btn btn-sm btn-default UserManagement--action--openmodal UserManagement--action--edituser' 
-                data-href='" . $editUrl . "'><i class='fa fa-edit'></i></button>";
+                class='btn btn-sm btn-default UserManagement--action--openmodal UserManagement--action--edituser green-border' 
+                style='margin-left: 5px;'
+                data-href='" . $editUrl . "'><i class='fa fa-pencil'></i></button>";
+        $editTemplatePermissionButton = ""
+            . "<button 
+        data-toggle='tooltip' 
+        title='" . gT("Template permissions") . "'
+        class='btn btn-sm btn-default UserManagement--action--openmodal UserManagement--action--templatepermissions' 
+        data-href='" . $setTemplatePermissionsUrl . "'><i class='fa fa-paint-brush'></i></button>";
         $takeOwnershipButton = ""
         . "<button 
-                id='UserManagement--takeown-" . $this->uid . "' 
+                id='UserManagement--takeown-" . $this->uid . "'
+                style='margin-left: 5px;' 
                 class='btn btn-sm btn-default' 
                 data-toggle='modal' 
                 data-target='#confirmation-modal' 
@@ -702,26 +723,11 @@ class User extends LSActiveRecord
         $deleteUserButton = ""
             . "<button 
                 id='UserManagement--delete-" . $this->uid . "' 
-                class='btn btn-sm btn-danger UserManagement--action--openmodal UserManagement--action--delete' 
+                class='btn btn-default btn-sm UserManagement--action--openmodal UserManagement--action--delete red-border'
+                style='margin-left: 5px;'
                 data-toggle='tooltip' 
                 title='" . gT("Delete User") . "' 
-                data-href='" . $deleteUrl . "'><i class='fa fa-trash text-danger'></i></button>";
-        /*$deleteUserButton = ""
-            ."<button
-                id='UserManagement--delete-".$this->uid."'
-                class='btn btn-sm btn-danger'
-                data-toggle='modal'
-                data-target='#confirmation-modal'
-                data-url='".$deleteUrl."'
-                data-userid='".$this->uid."'
-                data-user='".$this->full_name."'
-                data-action='deluser'
-                data-onclick='LS.UserManagement.triggerRunAction(\"#UserManagement--delete-".$this->uid."\")'
-                data-message='".gt('Do you want to delete this user?')."'>
-                    <span data-toggle='tooltip' title='".gT("Delete User")."'>
-                        <i class='fa fa-trash text-danger'></i>
-                    </span>
-              </button>";*/
+                data-href='" . $deleteUrl . "'><i class='fa fa-trash'></i></button>";
 
         // Superadmins can do everything, no need to do further filtering
         if (Permission::model()->hasGlobalPermission('superadmin', 'read')) {
@@ -777,14 +783,6 @@ class User extends LSActiveRecord
             && !Permission::isForcedSuperAdmin($this->uid)                      //Can't change forced Superadmins permissions
         ) {
             $buttonArray[] = $editPermissionButton;
-        }
-        
-        //Check if user can set template permissions
-        if (
-            Permission::model()->hasGlobalPermission('templates', 'read')       //Has global permission templates read
-            && !Permission::isForcedSuperAdmin($this->uid)                      //Is not a forced superadmin
-        ) {
-            $buttonArray[] = $editTemplatePermissionButton;
         }
 
         //Check if user can take ownership
@@ -865,7 +863,10 @@ class User extends LSActiveRecord
                 "type" => 'raw',
                 "header" => gT("Action"),
                 'filter' => false,
-                'htmlOptions' => ["style" => "white-space: pre;"]
+                'htmlOptions' => [
+                    // "style" => "white-space: pre;",
+                    "class" => "col-md-2 col-xs-1 text-center button-column"
+                ]
             ),
             array(
                 "name" => 'uid',

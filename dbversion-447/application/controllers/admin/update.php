@@ -39,7 +39,7 @@
 *  Some steps must be 'checked again' after the user fixed some errors (such as file permissions).
 *  Those steps are/can be diplayed by the plugin displayComfortStep.js. They are called from buttons like :
 *
-*  <a class='button' href='<?php Yii::app()->createUrl('admin/globalsettings', array('update'=>'methodToCall', 'neededVariable'=>$value));?>'>
+*  <a class='button' href='<?php App()->createUrl('admin/globalsettings', array('update'=>'methodToCall', 'neededVariable'=>$value));?>'>
 *    <span class='ui-button-text'>button text</span>
 *  </a>
 *
@@ -65,29 +65,33 @@ class update extends Survey_Common_Action
 {
 
     /**
-     * First function to be called, when comming to admin/update
+     * First function to be called, when coming to admin/update
      *
      */
     public function index()
     {
         if (!Permission::model()->hasGlobalPermission('superadmin')) {
-            Yii::app()->setFlashMessage(gT('You are not allowed to enter this page'), 'error');
-            $this->getController()->redirect(Yii::app()->getController()->createUrl("/admin"));
+            App()->setFlashMessage(gT('You are not allowed to enter this page'), 'error');
+            $this->getController()->redirect(App()->getController()->createUrl("/admin"));
         }
         // ================== LimeService Mod start
         Yii::app()->setFlashMessage(gT('LimeSurvey Cloud automatically provides updates - ComfortUpdate is not needed!'), 'error');
         $this->getController()->redirect(Yii::app()->getController()->createUrl("/admin"));
         // ================== LimeService Mod end
 
-        if (Yii::app()->getConfig('demoMode')) {
-            Yii::app()->setFlashMessage(gT('This function cannot be executed because demo mode is active.'), 'error');
-            $this->getController()->redirect(Yii::app()->getController()->createUrl("/admin"));
+        if (App()->getConfig('demoMode')) {
+            App()->setFlashMessage(gT('This function cannot be executed because demo mode is active.'), 'error');
+            $this->getController()->redirect(App()->getController()->createUrl("/admin"));
         }
         $buttons = 1;
         $updateModel = new UpdateForm();
         $serverAnswer = $updateModel->getUpdateInfo($buttons);
         $aData['serverAnswer'] = $serverAnswer;
+
+        // Green Bar (SurveyManagerBar Heading)
+        $aData['pageTitle'] = gT('ComfortUpdate');
         $aData['fullpagebar']['update'] = true;
+
         App()->getClientScript()->registerScriptFile(App()->getConfig('adminscripts') . 'comfortupdate/comfortupdate.js');
         App()->getClientScript()->registerScriptFile(App()->getConfig('adminscripts') . 'comfortupdate/buildComfortButtons.js');
         App()->getClientScript()->registerScriptFile(App()->getConfig('adminscripts') . 'comfortupdate/displayComfortStep.js');
@@ -135,18 +139,18 @@ class update extends Survey_Common_Action
         $aData['updateKey'] = $updateKey = SettingGlobal::model()->findByPk('update_key');
 
         if (Permission::model()->hasGlobalPermission('superadmin')) {
-            if (Yii::app()->request->getPost('keyid')) {
+            if (App()->request->getPost('keyid')) {
                 // We trim it, just in case user added a space...
-                $submittedUpdateKey = trim(Yii::app()->request->getPost('keyid'));
+                $submittedUpdateKey = trim(App()->request->getPost('keyid'));
 
                 $updateModel = new UpdateForm();
                 $check = $updateModel->checkUpdateKeyonServer($submittedUpdateKey);
                 if ($check->result) {
                     // If the key is validated by server, we update the local database with this key
                     $updateKey = $updateModel->setUpdateKey($submittedUpdateKey);
-                    Yii::app()->session['flashmessage'] = gT("Your key has been updated and validated! You can now use ComfortUpdate.");
+                    App()->session['flashmessage'] = gT("Your key has been updated and validated! You can now use ComfortUpdate.");
                     // then, we render the what returned the server (views and key infos or error )
-                    App()->getController()->redirect(Yii::app()->getController()->createUrl('admin/update/sa/managekey'));
+                    App()->getController()->redirect(App()->getController()->createUrl('admin/update/sa/managekey'));
                 } else {
                     switch ($check->error) {
                         case 'out_of_updates':
@@ -175,7 +179,7 @@ class update extends Survey_Common_Action
                     }
 
                     App()->setFlashMessage('<strong>' . gT($title) . '</strong> ' . gT($message), 'error');
-                    App()->getController()->redirect(Yii::app()->getController()->createUrl('admin/update/sa/managekey'));
+                    App()->getController()->redirect(App()->getController()->createUrl('admin/update/sa/managekey'));
                 }
             }
         }
@@ -191,7 +195,7 @@ class update extends Survey_Common_Action
         if (Permission::model()->hasGlobalPermission('superadmin')) {
             SettingGlobal::model()->deleteByPk('update_key');
             App()->setFlashMessage('Your update key has been removed');
-            App()->getController()->redirect(Yii::app()->getController()->createUrl('admin/update/sa/managekey'));
+            App()->getController()->redirect(App()->getController()->createUrl('admin/update/sa/managekey'));
         }
     }
 
@@ -321,7 +325,7 @@ class update extends Survey_Common_Action
             if (isset($_REQUEST['destinationBuild'])) {
                 $tobuild = $_REQUEST['destinationBuild'];
                 $access_token = $_REQUEST['access_token'];
-                $frombuild = Yii::app()->getConfig("buildnumber");
+                $frombuild = App()->getConfig("buildnumber");
 
                 $updateModel = new UpdateForm();
                 $changedFiles = $updateModel->getChangedFiles($tobuild);
@@ -355,12 +359,12 @@ class update extends Survey_Common_Action
         // ================== LimeService Mod end
         
         if (Permission::model()->hasGlobalPermission('superadmin')) {
-            if (Yii::app()->request->getPost('destinationBuild')) {
-                $destinationBuild = Yii::app()->request->getPost('destinationBuild');
+            if (App()->request->getPost('destinationBuild')) {
+                $destinationBuild = App()->request->getPost('destinationBuild');
                 $access_token     = $_REQUEST['access_token'];
 
-                if (Yii::app()->request->getPost('datasupdateinfo')) {
-                    $updateinfos = (array) json_decode(base64_decode(Yii::app()->request->getPost('datasupdateinfo')), true);
+                if (App()->request->getPost('datasupdateinfo')) {
+                    $updateinfos = (array) json_decode(base64_decode(App()->request->getPost('datasupdateinfo')), true);
 
                     $updateModel = new UpdateForm();
                     $backupInfos = $updateModel->backupFiles($updateinfos);
@@ -401,12 +405,12 @@ class update extends Survey_Common_Action
         // ================== LimeService Mod end
         
         if (Permission::model()->hasGlobalPermission('superadmin')) {
-            if (Yii::app()->request->getPost('destinationBuild')) {
-                $destinationBuild = Yii::app()->request->getPost('destinationBuild');
+            if (App()->request->getPost('destinationBuild')) {
+                $destinationBuild = App()->request->getPost('destinationBuild');
                 $access_token     = $_REQUEST['access_token'];
 
-                if (Yii::app()->request->getPost('datasupdateinfo')) {
-                    $updateinfos = json_decode(base64_decode(Yii::app()->request->getPost('datasupdateinfo')), true);
+                if (App()->request->getPost('datasupdateinfo')) {
+                    $updateinfos = json_decode(base64_decode(App()->request->getPost('datasupdateinfo')), true);
 
                     // this is the last step - Download the zip file, unpack it and replace files accordingly
                     $updateModel = new UpdateForm();
@@ -423,10 +427,10 @@ class update extends Survey_Common_Action
                                 $updateModel->removeTmpFile('update.zip');
                                 $updateModel->removeTmpFile('comfort_updater_cookie.txt');
 
-                                Yii::app()->session['update_result'] = null;
-                                Yii::app()->session['security_update'] = null;
+                                App()->session['update_result'] = null;
+                                App()->session['security_update'] = null;
                                 $today = new DateTime("now");
-                                Yii::app()->session['next_update_check'] = $today->add(new DateInterval('PT6H'));
+                                App()->session['next_update_check'] = $today->add(new DateInterval('PT6H'));
 
                                 // TODO : aData should contains information about each step
                                 return $this->controller->renderPartial('update/updater/steps/_final', array('destinationBuild' => $destinationBuild), false, false);
@@ -463,8 +467,8 @@ class update extends Survey_Common_Action
         // ================== LimeService Mod end
         
         if (Permission::model()->hasGlobalPermission('superadmin')) {
-            if (Yii::app()->request->getPost('destinationBuild')) {
-                $destinationBuild = Yii::app()->request->getPost('destinationBuild');
+            if (App()->request->getPost('destinationBuild')) {
+                $destinationBuild = App()->request->getPost('destinationBuild');
                 $updateModel = new UpdateForm();
 
                 $localChecks = $updateModel->getLocalChecksForUpdater();
@@ -480,8 +484,8 @@ class update extends Survey_Common_Action
                             SettingGlobal::setSetting('updateavailable', '0');
                             SettingGlobal::setSetting('updatebuild', '');
                             SettingGlobal::setSetting('updaterversions', '');
-                            Yii::app()->session['update_result'] = null;
-                            Yii::app()->session['next_update_check'] = null;
+                            App()->session['update_result'] = null;
+                            App()->session['next_update_check'] = null;
                             return $this->controller->renderPartial('update/updater/steps/_updater_updated', array('destinationBuild' => $destinationBuild), false, false);
                         } else {
                             $error = $unzip->error;
@@ -530,9 +534,9 @@ class update extends Survey_Common_Action
         // ================== LimeService Mod end
 
         if (Permission::model()->hasGlobalPermission('superadmin')) {
-            if (Yii::app()->request->getPost('keyid')) {
+            if (App()->request->getPost('keyid')) {
                 // We trim it, just in case user added a space...
-                $submittedUpdateKey = trim(Yii::app()->request->getPost('keyid'));
+                $submittedUpdateKey = trim(App()->request->getPost('keyid'));
 
                 $updateModel = new UpdateForm();
                 $check = $updateModel->checkUpdateKeyonServer($submittedUpdateKey);
@@ -563,7 +567,7 @@ class update extends Survey_Common_Action
         $this->getController()->redirect(Yii::app()->getController()->createUrl("/admin"));
         // ================== LimeService Mod end
         
-        Yii::app()->loadHelper("update/update");
+        App()->loadHelper("update/update");
         if (isset($continue) && $continue == "yes") {
             $aViewUrls['output'] = CheckForDBUpgrades($continue);
             $aData['display']['header'] = false;
@@ -588,11 +592,11 @@ class update extends Survey_Common_Action
         // ================== LimeService Mod end
         
         if (Permission::model()->hasGlobalPermission('superadmin')) {
-            if (!isset(Yii::app()->session['installlstep4b'])) {
+            if (!isset(App()->session['installlstep4b'])) {
                 die();
             }
-            $aData = Yii::app()->session['installlstep4b'];
-            unset(Yii::app()->session['installlstep4b']);
+            $aData = App()->session['installlstep4b'];
+            unset(App()->session['installlstep4b']);
             $this->_renderWrappedTemplate('update/updater/steps', '_old_step4b', $aData);
         }
     }
@@ -608,7 +612,7 @@ class update extends Survey_Common_Action
         $this->getController()->redirect(Yii::app()->getController()->createUrl("/admin"));
         // ================== LimeService Mod end
         
-        Yii::app()->session['notificationstate'] = $state;
+        App()->session['notificationstate'] = $state;
         return '1';
     }
     /**

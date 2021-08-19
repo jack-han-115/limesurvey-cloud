@@ -2,6 +2,9 @@
 
 use LimeSurvey\Models\Services\FilterImportedResources;
 
+/**
+ * Class SurveyAdministrationController
+ */
 class SurveyAdministrationController extends LSBaseController
 {
 
@@ -49,6 +52,12 @@ class SurveyAdministrationController extends LSBaseController
         ];
     }
 
+    /**
+     * SurveyAdministrationController constructor.
+     * @param $id
+     * @param null $module
+     * @throws CException
+     */
     public function __construct($id, $module = null)
     {
         Yii::app()->request->updateNavigationStack();
@@ -202,8 +211,22 @@ class SurveyAdministrationController extends LSBaseController
         }
         $aData['model'] = new Survey('search');
         $aData['groupModel'] = new SurveysGroups('search');
-        $aData['fullpagebar']['button']['newsurvey'] = true;
 
+        // Green Bar Page Title
+        $aData['pageTitle'] = gT('Survey list');
+
+        // Create Survey Button Url
+        $aData['fullpagebar']['listSurveys']['buttons']['createSurvey']['url'] = $this->createUrl("surveyAdministration/newSurvey");
+        $aData['fullpagebar']['listSurveys']['buttons']['createSurveyGroup']['url'] = $this->createUrl("admin/surveysgroups/sa/create");
+
+        // Create Survey Groups Button
+        $aData['fullpagebar']['listSurveys']['buttons']['createSurveyGroups'] = true;
+        
+        // Return Button
+        $aData['fullpagebar']['returnbutton']['url'] = 'admin/index';
+        $aData['fullpagebar']['returnbutton']['text'] = gT('Back');
+
+        $this->aData = $aData;
         $this->render('listSurveys_view', $aData);
     }
 
@@ -370,9 +393,6 @@ class SurveyAdministrationController extends LSBaseController
             'custom' => gT('Custom', 'unescaped'),
         );
 
-        //Prepare the edition panes
-    //    $aData['edittextdata'] = array_merge($aData, $this->getTextEditData($survey));
-
         $defaultLanguage = App()->getConfig('defaultlang');
 
         $testLanguages = getLanguageDataRestricted(true, 'short');
@@ -381,8 +401,6 @@ class SurveyAdministrationController extends LSBaseController
         $aData['edittextdata']['aSurveyGroupList'] = SurveysGroups::getSurveyGroupsList();
         $aData['edittextdata']['defaultLanguage'] =  getLanguageCodefromLanguage($defaultLanguage);
 
-        $aViewUrls[] = 'newSurvey_view';
-
         $arrayed_data = array();
         $arrayed_data['oSurvey'] = $survey;
         $arrayed_data['data'] = $aData;
@@ -390,7 +408,9 @@ class SurveyAdministrationController extends LSBaseController
         $arrayed_data['fullpagebar']['savebutton']['form'] = 'addnewsurvey';
         $arrayed_data['fullpagebar']['closebutton']['url'] = 'admin/index'; // Close button
 
-        $aData['title_bar']['title'] = gT('New survey');
+        // Green Bar Page Title
+        $aData['pageTitle'] = gT("Create, import, or copy survey");
+
         $aData['fullpagebar']['savebutton']['form'] = 'addnewsurvey';
         $aData['fullpagebar']['closebutton']['url'] = 'admin/index'; // Close button
 
@@ -451,7 +471,6 @@ class SurveyAdministrationController extends LSBaseController
 
             $simpleSurveyValues = new \LimeSurvey\Datavalueobjects\SimpleSurveyValues();
             $baseLanguage = App()->request->getPost('language');
-            $searchForValidLanguage = getLanguageCodefromLanguage($baseLanguage);
             if ($baseLanguage === null) {
                 $baseLanguage = 'en'; //shoulb be const somewhere ... or get chosen language from user
             }
@@ -484,22 +503,23 @@ class SurveyAdministrationController extends LSBaseController
             // This will force the generation of the entry for survey group
             TemplateConfiguration::checkAndcreateSurveyConfig($iNewSurveyid);
 
-            $createSample = App()->request->getPost('createsample');
-            $createSampleChecked = ($createSample === 'on');
+            $createSample = SettingsUser::getUserSettingValue('createsample');
+            if ($createSample === null || $createSample === 'default') {
+                $createSample = Yii::app()->getConfig('createsample');
+            }
 
             // Figure out destination
-            if ($createSampleChecked) {
+            if ($createSample) {
                 $iNewGroupID = $this->createSampleGroup($iNewSurveyid);
                 $iNewQuestionID = $this->createSampleQuestion($iNewSurveyid, $iNewGroupID);
 
                 Yii::app()->setFlashMessage(gT("Your new survey was created. 
                 We also created a first question group and an example question for you."), 'info');
-                $landOnSideMenuTab = 'structure';
                 $redirecturl = $this->getSurveyAndSidemenueDirectionURL(
                     $iNewSurveyid,
                     $iNewGroupID,
                     $iNewQuestionID,
-                    $landOnSideMenuTab
+                    'structure'
                 );
             } elseif (!$ownsPreviousSurveys) {
                 // SET create question and create question group as default view.
@@ -514,6 +534,7 @@ class SurveyAdministrationController extends LSBaseController
                 );
                 Yii::app()->setFlashMessage(gT("Your new survey was created."), 'info');
             }
+
             return Yii::app()->getController()->renderPartial(
                 '/admin/super/_renderJson',
                 array(
@@ -618,19 +639,19 @@ class SurveyAdministrationController extends LSBaseController
                 // Delete the temporary file
                 unlink($zipfilename);
 
-                if (is_null($aErrorFilesInfo) && is_null($aImportedFilesInfo)) {
+                if (empty($aErrorFilesInfo) && empty($aImportedFilesInfo)) {
                     Yii::app()->user->setFlash(
                         'error',
                         gT("This ZIP archive contains no valid Resources files. Import failed.")
                     );
-                    $this->redirect(array('surveyAdministration/view/surveyid/' . $iSurveyID));
+                    $this->redirect(array('surveyAdministration/rendersidemenulink/', 'surveyid' => $iSurveyID, 'subaction' => 'resources'));
                 }
             } else {
                 Yii::app()->setFlashMessage(
                     gT("An error occurred uploading your file. This may be caused by incorrect permissions for the application /tmp folder."),
                     'error'
                 );
-                $this->redirect(array('surveyAdministration/view/' . $iSurveyID));
+                $this->redirect(array('surveyAdministration/rendersidemenulink/', 'surveyid' => $iSurveyID, 'subaction' => 'resources'));
             }
             $aData = array(
                 'aErrorFilesInfo' => $aErrorFilesInfo,
@@ -640,10 +661,7 @@ class SurveyAdministrationController extends LSBaseController
             $aData['display']['menu_bars']['surveysummary'] = true;
 
             $this->aData = $aData;
-            $this->render('importSurveyResources_view', [
-                'aErrorFilesInfo' => $this->aData['aErrorFilesInfo'],
-                'aImportedFilesInfo' => $this->aData['aImportedFilesInfo'],
-            ]);
+            $this->render('importSurveyResources_view', $this->aData);
         }
     }
 
@@ -1501,7 +1519,7 @@ class SurveyAdministrationController extends LSBaseController
         $aData['surveyid'] = $iSurveyID;
         $aData['sid'] = $iSurveyID;
         $aData['title_bar']['title'] = $survey->currentLanguageSettings->surveyls_title . " (" . gT("ID") . ":" . $iSurveyID . ")";
-        $aData['surveybar']['closebutton']['url'] = 'surveyAdministration/view/surveyid/' . $iSurveyID; // Close button
+        $aData['topBar']['hide'] = true;
 
         // Fire event beforeSurveyDeactivate
         $beforeSurveyDeactivate = new PluginEvent('beforeSurveyDeactivate');
@@ -1625,7 +1643,6 @@ class SurveyAdministrationController extends LSBaseController
             }
 
             $aData['sidemenu']['state'] = false;
-            $aData['surveybar']['closebutton'] = false;
         }
 
         $this->aData = $aData;
@@ -1661,6 +1678,7 @@ class SurveyAdministrationController extends LSBaseController
         $aData['surveyid'] = $iSurveyID;
         $aData['sid'] = $iSurveyID;
         $aData['title_bar']['title'] = $survey->currentLanguageSettings->surveyls_title . " (" . gT("ID") . ":" . $iSurveyID . ")";
+        $aData['topBar']['hide'] = true;
         // Redirect if this is not possible
         if (!isset($aData['aSurveysettings']['active']) || $aData['aSurveysettings']['active'] == 'Y') {
             Yii::app()->setFlashMessage(gT("This survey is already active."), 'error');
@@ -1751,7 +1769,7 @@ class SurveyAdministrationController extends LSBaseController
             Yii::app()->user->setFlash('error', gT("Access denied"));
             $this->redirect(Yii::app()->request->urlReferrer);
         }
-        $aData = $aViewUrls = array();
+        $aData = [];
         $aData['surveyid'] = $iSurveyID;
         $aData['sid'] = $aData['surveyid'];
         $survey = Survey::model()->findByPk($iSurveyID);
@@ -1854,7 +1872,6 @@ class SurveyAdministrationController extends LSBaseController
     public function actionRendersidemenulink($surveyid, $subaction)
     {
         $iSurveyID = (int) $surveyid;
-        $aViewUrls = $aData = [];
         $menuaction = (string) $subaction;
         $iSurveyID = (int) $iSurveyID;
         $survey = Survey::model()->findByPk($iSurveyID);
@@ -1956,7 +1973,7 @@ class SurveyAdministrationController extends LSBaseController
         $aData['surveybar']['saveandclosebutton']['form'] = true;
         $aData['topBar']['closeUrl'] = $this->createUrl("surveyAdministration/view/", ['surveyid' => $iSurveyID]); // Close button
 
-        if ($subaction === 'resources') {
+        if ($subaction === 'resources' || $subaction === 'panelintegration') {
             $aData['topBar']['showSaveButton'] = false;
         } else {
             $aData['topBar']['showSaveButton'] = true;
@@ -2188,6 +2205,7 @@ class SurveyAdministrationController extends LSBaseController
                 $aData['aImportResults'] = $aImportResults;
                 $aData['action'] = $action;
                 if (isset($aImportResults['newsid'])) {
+                    // Set link pointing to survey administration overview. This link will be updated if the survey has groups
                     $aData['sLink'] = $this->createUrl('surveyAdministration/view/', ['iSurveyID' => $aImportResults['newsid']]);
                     $aData['sLinkApplyThemeOptions'] = 'surveyAdministration/applythemeoptions/surveyid/' . $aImportResults['newsid'];
                 }
@@ -2209,6 +2227,22 @@ class SurveyAdministrationController extends LSBaseController
                 LimeExpressionManager::FinishProcessingGroup();
             }
             LimeExpressionManager::FinishProcessingPage();
+
+            // Make the link point to the first group/question if available
+            if (!empty($aGrouplist)) {
+                $oFirstGroup = $aGrouplist[0];
+                $oFirstQuestion = Question::model()->findByAttributes(
+                    ['gid' => $oFirstGroup->gid],
+                    ['order' => 'question_order ASC']
+                );
+
+                $aData['sLink'] = $this->getSurveyAndSidemenueDirectionURL(
+                    $aImportResults['newsid'],
+                    $oFirstGroup->gid,
+                    !empty($oFirstQuestion) ? $oFirstQuestion->qid : null,
+                    'structure'
+                );
+            }
         }
 
         $this->aData = $aData;
@@ -2294,11 +2328,13 @@ class SurveyAdministrationController extends LSBaseController
         $aResults = array();
         $expires = App()->request->getPost('expires');
         $formatdata = getDateFormatData(Yii::app()->session['dateformat']);
+        Yii::import('application.libraries.Date_Time_Converter', true);
         if (trim($expires) == "") {
             $expires = null;
         } else {
-            $datetimeobj = DateTime::createFromFormat($formatdata['phpdate'] . ' H:i', $expires);
-            $expires = $datetimeobj->format("Y-m-d H:i:s");
+            //new Date_Time_Converter($expires, $formatdata['phpdate'].' H:i');
+            $datetimeobj = new Date_Time_Converter($expires, $formatdata['phpdate'] . ' H:i');
+            $expires = $datetimeobj->convert("Y-m-d H:i:s");
         }
 
         foreach ($aSIDs as $sid) {
@@ -2358,7 +2394,7 @@ class SurveyAdministrationController extends LSBaseController
      *
      * @return array
      */
-    private function tabResourceManagement($survey)
+    protected function tabResourceManagement($survey)
     {
         global $sCKEditorURL;
 
@@ -2539,7 +2575,7 @@ class SurveyAdministrationController extends LSBaseController
      * This method is called via call_user_func in self::rendersidemenulink()
      * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
      */
-    private function pluginTabSurvey($survey)
+    protected function pluginTabSurvey($survey)
     {
         $aData = array();
         $beforeSurveySettings = new PluginEvent('beforeSurveySettings');
@@ -2609,13 +2645,15 @@ class SurveyAdministrationController extends LSBaseController
      */
     public function getSurveyAndSidemenueDirectionURL($sid, $gid, $qid, $landOnSideMenuTab)
     {
-        $url = 'questionAdministration/view/';
+        $url = !empty($qid) ? 'questionAdministration/view/' : 'questionGroupsAdministration/view/';
         $params = [
             'surveyid' => $sid,
             'gid' => $gid,
-            'qid' => $qid,
-            'landOnSideMenuTab' => $landOnSideMenuTab
         ];
+        if (!empty($qid)) {
+            $params['qid'] = $qid;
+        }
+        $params['landOnSideMenuTab'] = $landOnSideMenuTab;
         return $this->createUrl($url, $params);
     }
 
@@ -2750,15 +2788,19 @@ class SurveyAdministrationController extends LSBaseController
 
         $dateformatdetails = getDateFormatData(Yii::app()->session['dateformat']);
         if (trim($oSurvey->startdate) != '') {
-            $datetimeobj = DateTime::createFromFormat('Y-m-d H:i:s', $oSurvey->startdate);
-            $aData['startdate'] = $datetimeobj->format($dateformatdetails['phpdate'] . ' H:i');
+            Yii::import('application.libraries.Date_Time_Converter');
+            $datetimeobj = new Date_Time_Converter($oSurvey->startdate, 'Y-m-d H:i:s');
+            $aData['startdate'] = $datetimeobj->convert($dateformatdetails['phpdate'] . ' H:i');
         } else {
             $aData['startdate'] = "-";
         }
 
         if (trim($oSurvey->expires) != '') {
-            $datetimeobj = DateTime::createFromFormat('Y-m-d H:i:s', $oSurvey->expires);
-            $aData['expdate'] = $datetimeobj->format($dateformatdetails['phpdate'] . ' H:i');
+            //$constructoritems = array($surveyinfo['expires'] , "Y-m-d H:i:s");
+            Yii::import('application.libraries.Date_Time_Converter');
+            $datetimeobj = new Date_Time_Converter($oSurvey->expires, 'Y-m-d H:i:s');
+            //$datetimeobj = new Date_Time_Converter($surveyinfo['expires'] , "Y-m-d H:i:s");
+            $aData['expdate'] = $datetimeobj->convert($dateformatdetails['phpdate'] . ' H:i');
         } else {
             $aData['expdate'] = "-";
         }
@@ -2931,7 +2973,7 @@ class SurveyAdministrationController extends LSBaseController
      *
      * @return array
      */
-    private function getTextEditData($survey)
+    protected function getTextEditData($survey)
     {
         Yii::app()->getClientScript()->registerScript(
             "TextEditDataGlobal",
@@ -2957,8 +2999,7 @@ class SurveyAdministrationController extends LSBaseController
         );
 
         App()->getClientScript()->registerPackage('ace');
-        $aData = $aTabTitles = $aTabContents = array();
-        return $aData;
+        return [];
     }
 
     /**
@@ -2970,7 +3011,7 @@ class SurveyAdministrationController extends LSBaseController
      *
      * @return array
      */
-    private function getDataSecurityEditData($survey)
+    protected function getDataSecurityEditData($survey)
     {
         Yii::app()->loadHelper("admin.htmleditor");
         $aData = $aTabTitles = $aTabContents = array();
@@ -3015,7 +3056,7 @@ class SurveyAdministrationController extends LSBaseController
      *
      * @return mixed
      */
-    private function generalTabEditSurvey($survey)
+    protected function generalTabEditSurvey($survey)
     {
         $aData['survey'] = $survey;
         return $aData;
@@ -3030,7 +3071,7 @@ class SurveyAdministrationController extends LSBaseController
      *
      * @return array
      */
-    private function tabPresentationNavigation($survey)
+    protected function tabPresentationNavigation($survey)
     {
         $aData = [];
         $aData['esrow'] = $survey;
@@ -3046,7 +3087,7 @@ class SurveyAdministrationController extends LSBaseController
      *
      * @return array
      */
-    private function tabPublicationAccess($survey)
+    protected function tabPublicationAccess($survey)
     {
         $aDateFormatDetails = getDateFormatData(Yii::app()->session['dateformat']);
         $aData = [];
@@ -3064,7 +3105,7 @@ class SurveyAdministrationController extends LSBaseController
      *
      * @return array
      */
-    private function tabNotificationDataManagement($survey)
+    protected function tabNotificationDataManagement($survey)
     {
         $aData = [];
         $aData['esrow'] = $survey;
@@ -3080,7 +3121,7 @@ class SurveyAdministrationController extends LSBaseController
      *
      * @return array
      */
-    private function tabTokens($survey)
+    protected function tabTokens($survey)
     {
         $aData = [];
         $aData['esrow'] = $survey;
@@ -3095,7 +3136,7 @@ class SurveyAdministrationController extends LSBaseController
      *
      * @return array
      */
-    private function tabPanelIntegration($survey, $sLang = null)
+    protected function tabPanelIntegration($survey, $sLang = null)
     {
         $aData = [];
         $oResult = Question::model()->with('subquestions')->findAll("t.sid={$survey->sid} AND (t.type = 'T'  OR t.type = 'Q'  OR  t.type = 'S') AND t.parent_qid = 0");

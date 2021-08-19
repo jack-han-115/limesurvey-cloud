@@ -374,6 +374,7 @@ function populateDatabase($oDB)
             'scale_id' =>  "integer NOT NULL default '0'",
             'same_default' =>  "integer NOT NULL default '0'",
             'relevance' =>  "text",
+            'question_theme_name' => "string(150) NULL",
             'modulename' =>  "string(255) NULL"
         ), $options);
         $oDB->createCommand()->createIndex('{{idx1_questions}}', '{{questions}}', 'sid', false);
@@ -637,7 +638,7 @@ function populateDatabase($oDB)
             // LimeService Mod end
             'publicgraphs' => "string(1) NOT NULL default 'N'",
             'listpublic' => "string(1) NOT NULL default 'N'",
-            'htmlemail' => "string(1) NOT NULL default 'N'",
+            'htmlemail' => "string(1) NOT NULL default 'Y'",
             'sendconfirmation' => "string(1) NOT NULL default 'Y'",
             'tokenanswerspersistence' => "string(1) NOT NULL default 'N'",
             'assessments' => "string(1) NOT NULL default 'N'",
@@ -725,7 +726,7 @@ function populateDatabase($oDB)
             'publicstatistics' => "string(1) NOT NULL DEFAULT 'N'",
             'publicgraphs' => "string(1) NOT NULL DEFAULT 'N'",
             'listpublic' => "string(1) NOT NULL DEFAULT 'N'",
-            'htmlemail' => "string(1) NOT NULL DEFAULT 'N'",
+            'htmlemail' => "string(1) NOT NULL DEFAULT 'Y'",
             'sendconfirmation' => "string(1) NOT NULL DEFAULT 'Y'",
             'tokenanswerspersistence' => "string(1) NOT NULL DEFAULT 'N'",
             'assessments' => "string(1) NOT NULL DEFAULT 'N'",
@@ -774,7 +775,7 @@ function populateDatabase($oDB)
             'publicstatistics' => 'N',
             'publicgraphs' => 'N',
             'listpublic' => 'N',
-            'htmlemail' => 'N',
+            'htmlemail' => 'Y',
             'sendconfirmation' => 'Y',
             'tokenanswerspersistence' => 'N',
             'assessments' => 'N',

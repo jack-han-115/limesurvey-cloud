@@ -1437,12 +1437,11 @@ function createFieldMap($survey, $style = 'short', $force_refresh = false, $ques
 
     // Main query
     $quotedGroups = Yii::app()->db->quoteTableName('{{groups}}');
-    $aquery = "SELECT g.*, q.*, gls.*, qls.*, qa.attribute, qa.value"
+    $aquery = "SELECT g.*, q.*, gls.*, qls.*"
     . " FROM $quotedGroups g"
     . ' JOIN {{questions}} q on q.gid=g.gid '
     . ' JOIN {{group_l10ns}} gls on gls.gid=g.gid '
     . ' JOIN {{question_l10ns}} qls on qls.qid=q.qid '
-    . " LEFT JOIN {{question_attributes}} qa ON qa.qid=q.qid AND qa.attribute='question_template' "
     . " WHERE qls.language='{$sLanguage}' and gls.language='{$sLanguage}' AND"
     . " g.sid={$surveyid} AND"
     . " q.parent_qid=0";
@@ -1472,8 +1471,8 @@ function createFieldMap($survey, $style = 'short', $force_refresh = false, $ques
         $usedinconditions = 'N';
 
         // Check if answertable has custom setting for current question
-        if (isset($arow['attribute']) && isset($arow['type']) && $arow['attribute'] == 'question_template') {
-            $answerColumnDefinition = QuestionTheme::getAnswerColumnDefinition($arow['value'], $arow['type']);
+        if (isset($arow['attribute']) && isset($arow['type']) && isset($arow['question_theme_name'])) {
+            $answerColumnDefinition = QuestionTheme::getAnswerColumnDefinition($arow['question_theme_name'], $arow['type']);
         }
 
         // Field identifier
@@ -2765,7 +2764,8 @@ function breakToNewline($data)
 * Provides a safe way to end the application
 *
 * @param mixed $sText
-* @returns boolean Fake return so Scrutinizes shuts up
+* @return void
+* @todo This should probably never be used, since it returns 0 from CLI and makes PHPUnit think all is fine :(
 */
 function safeDie($sText)
 {
@@ -2773,7 +2773,6 @@ function safeDie($sText)
     $textarray = explode('<br />', $sText);
     $textarray = array_map('htmlspecialchars', $textarray);
     die(implode('<br />', $textarray));
-    return false; // do not remove
 }
 
 /**
@@ -3762,7 +3761,7 @@ function fixLanguageConsistency($sid, $availlangs = '')
         }
         reset($langs);
     }
-    switchMSSQLIdentityInsert('quota_languagesettings', true);
+    switchMSSQLIdentityInsert('quota_languagesettings', false);
 
     return true;
 }

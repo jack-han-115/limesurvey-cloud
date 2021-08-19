@@ -344,8 +344,9 @@ class LSActiveRecord extends CActiveRecord
     /**
      * Decrypt single value
      * @param string $value String value which needs to be decrypted
+     * @return string the decrypted string
      */
-    public static function decryptSingle($value = '')
+    public static function decryptSingle($value = ''): string
     {
         // if $value is provided, it would decrypt
         if (!empty($value)) {
@@ -353,6 +354,26 @@ class LSActiveRecord extends CActiveRecord
             $sodium = Yii::app()->sodium;
             return $sodium->decrypt($value);
         }
+        return '';
+    }
+
+    /**
+     * Decrypt single value
+     * @param string $value String value which needs to be decrypted
+     * @return string the decrypted string
+     */
+    public static function decryptSingleOld($value = ''): string
+    {
+        static $sodium = null;
+        if (!isset($sodium)) {
+            // load sodium library
+            $sodium = Yii::app()->sodiumOld;
+        }
+        // if $value is provided, it would decrypt
+        if ($value) {
+            return $sodium->decrypt($value);
+        }
+        return '';
     }
 
 
@@ -414,10 +435,8 @@ class LSActiveRecord extends CActiveRecord
         // TODO: Use OOP polymorphism instead of switching on class names.
         if ($class === 'ParticipantAttribute') {
             $aParticipantAttributes = CHtml::listData(ParticipantAttributeName::model()->findAll(["select" => "attribute_id", "condition" => "encrypted = 'Y' and core_attribute <> 'Y'"]), 'attribute_id', '');
-            foreach ($aParticipantAttributes as $attribute => $value) {
-                if (array_key_exists($this->attribute_id, $aParticipantAttributes)) {
-                    $this->value = $sodium->$action($this->value);
-                }
+            if (array_key_exists($this->attribute_id, $aParticipantAttributes)) {
+                $this->value = $sodium->$action($this->value);
             }
         } else {
             $attributes = $this->encryptAttributeValues($this->attributes, true, false);

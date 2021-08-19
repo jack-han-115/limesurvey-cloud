@@ -47,6 +47,8 @@ class InstallerConfigForm extends CFormModel
     public $dbtype;
     /** @var string $dblocation */
     public $dblocation = 'localhost';
+    /** @var string $dbport */
+    public $dbport;
     /** @var  string $dbname */
     public $dbname;
 
@@ -112,6 +114,9 @@ class InstallerConfigForm extends CFormModel
 
     /** @var bool */
     public $isPhpGdPresent = false;
+
+    /** @var bool */
+    public $phpGdHasJpegSupport = false;
 
     /** @var bool */
     public $isPhpLdapPresent = false;
@@ -208,7 +213,9 @@ class InstallerConfigForm extends CFormModel
         $this->isSodiumPresent = function_exists('sodium_crypto_sign_open');
 
         if (function_exists('gd_info')) {
-            $this->isPhpGdPresent = array_key_exists('FreeType Support', gd_info());
+            $gdInfo = gd_info();
+            $this->phpGdHasJpegSupport = !empty($gdInfo['JPEG Support']);
+            $this->isPhpGdPresent = true;
         }
         $this->isPhpVersionOK = version_compare(PHP_VERSION, self::MINIMUM_PHP_VERSION, '>=');
     }
@@ -572,10 +579,11 @@ class InstallerConfigForm extends CFormModel
         if (strpos($this->dblocation, ':') !== false) {
             $pieces = explode(':', $this->dblocation, 2);
             if (isset($pieces[1]) && is_numeric($pieces[1])) {
-                return $pieces[1];
+                $this->dblocation = str_replace(":" . $pieces[1], "", $this->dblocation);
+                $this->dbport = $pieces[1];
             }
         }
-        return $this->getDbDefaultPort();
+        return $this->dbport ?? $this->getDbDefaultPort();
     }
 
     /**

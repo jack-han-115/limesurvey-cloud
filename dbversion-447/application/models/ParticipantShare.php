@@ -164,7 +164,14 @@ class ParticipantShare extends LSActiveRecord
                 )
             );
 
-            return "<a href='#' data-toggle='modal' data-target='#confirmation-modal' data-onclick='(function() { LS.CPDB.deleteSingleParticipantShare(\"" . $url . "\"); })'>"
+            return "<a href='#' 
+            data-toggle='modal' 
+            data-target='#confirmation-modal'
+            data-title='". gt('Unshare this participant')."'
+            data-btnclass='btn-danger'
+            data-btntext='". gt('Unshare') ."'
+            data-message='" . gT('Do you really want to unshare this participant?') . "' 
+            data-onclick='(function() { LS.CPDB.deleteSingleParticipantShare(\"" . $url . "\"); })'>"
                 . "<button class='btn btn-xs btn-default action_delete_shareParticipant'><i class='fa fa-trash text-danger'></i></button>"
                 . "</a>";
         } else {
@@ -233,7 +240,7 @@ class ParticipantShare extends LSActiveRecord
                 "name" => 'share_uid',
                 "value" => '$data->sharedBy',
                 "type" => 'raw',
-                "header" => gT("Shared by"),
+                "header" => gT("Shared with"),
                 "filter" => $this->getSharedByList($this->share_uid)
             ),
             array(
@@ -381,7 +388,14 @@ class ParticipantShare extends LSActiveRecord
             list($participantId, $uId) = explode("--", $row);
             Yii::app()->db
                 ->createCommand()
-                ->delete('{{participant_shares}}', "participant_id = '$participantId' AND share_uid = $uId");
+                ->delete(
+                    '{{participant_shares}}',
+                    sprintf(
+                        "participant_id = '%d' AND share_uid = %d",
+                        (int) $participantId,
+                        (int) $uId
+                    )
+                );
         }
     }
 
