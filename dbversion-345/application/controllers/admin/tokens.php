@@ -1523,14 +1523,14 @@ class tokens extends Survey_Common_Action
 
                             // LimeService Mod Start ==================
                             $iAdvertising = (int)Yii::app()->dbstats->createCommand('select advertising from limeservice_system.installations where user_id='.getInstallationID())->queryScalar();
-                            $bSpamLinks   = ( $iAdvertising )?$this->looksForSpamLinks($bHtml,$modmessage, $iSurveyId):false;
+                            $bSpamLinks   = ( $iAdvertising )?$this->looksForSpamLinks($bHtml,$modmessage, $iSurveyId, true):false;
                             $iEmailLocked = (int)Yii::app()->dbstats->createCommand('select email_lock from limeservice_system.installations where user_id='.getInstallationID())->queryScalar();
                             if ($iEmailLocked && Yii::app()->getConfig('emailmethod')!='smtp'){
                                 $success=false;
                                 $maildebug =  gT('You are currently banned from sending emails using the LimeSurvey email servers. Please configure your global settings to use your own SMTP server, instead. If you have any questions regarding this ban, please contact support@limesurvey.org.');
                             } elseif ($bSpamLinks) {
                                 $success=false;
-                                $maildebug =  gT('Your email contains external links. In the free version only links to your survey are allowed.');
+                                $maildebug =  gT('Your email contains external links or no links. In the free version only links to your survey are allowed.');
                             } else {
 	                            Yii::import('application.helpers.mailHelper');
 	                            mailHelper::setModeForNext(mailHelper::PREVIOUS_INSTANCE_MODE, ['smtpKeepAlive' => true]);
@@ -2938,7 +2938,7 @@ class tokens extends Survey_Common_Action
      * @return boolean    true if any spam link found, else false
      */
 
-    private function looksForSpamLinks($bHtml,$modmessage, $iSurveyId )
+    private function looksForSpamLinks($bHtml, $modmessage, $iSurveyId, $bAtLeastOneLinkRequired = false)
     {
         $aLinks     = array();
         $bSpamLinks = false;
@@ -2948,12 +2948,14 @@ class tokens extends Survey_Common_Action
 
         // Check if the link has the wanted infos
         foreach ($aLinks as $sLink){
-            if ( strpos ( $sLink ,  'token' )===false || strpos ( $sLink , (string)$iSurveyId )===false || strpos ( $sLink ,   $_SERVER['HTTP_HOST'] )===false   ){
+            if ( strpos ( $sLink, 'token') ===false || strpos ( $sLink , (string)$iSurveyId )===false || strpos ( $sLink ,   $_SERVER['HTTP_HOST'] )===false   ){
                 $bSpamLinks = true;
                 break;
             }
         }
-
+        if ($bAtLeastOneLinkRequired && empty($aLinks)) {
+            $bSpamLinks = true;
+        }
         return $bSpamLinks;
     }
 
