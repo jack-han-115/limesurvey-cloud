@@ -1523,17 +1523,20 @@ class tokens extends Survey_Common_Action
 
                             // LimeService Mod Start ==================
                             $iAdvertising = (int)Yii::app()->dbstats->createCommand('select advertising from limeservice_system.installations where user_id='.getInstallationID())->queryScalar();
-                            $bSpamLinks   = ( $iAdvertising )?$this->looksForSpamLinks($bHtml,$modmessage, $iSurveyId, true):false;
+                            $bSpamLinks   = $this->looksForSpamLinks($bHtml,$modmessage, $iSurveyId, true):false;
                             $iEmailLocked = (int)Yii::app()->dbstats->createCommand('select email_lock from limeservice_system.installations where user_id='.getInstallationID())->queryScalar();
                             if ($iEmailLocked && Yii::app()->getConfig('emailmethod')!='smtp'){
                                 $success=false;
                                 $maildebug =  gT('You are currently banned from sending emails using the LimeSurvey email servers. Please configure your global settings to use your own SMTP server, instead. If you have any questions regarding this ban, please contact support@limesurvey.org.');
-                            } elseif ($iAdvertising && isset($bSpamLinks['externallinks'])){
+                            } elseif ($iAdvertising && isset($bSpamLinks['externallink'])){
                                 $success=false;
                                 $maildebug =  gT('Your email contains external links. In the free version only links to your survey are allowed.');
-                            } elseif (isset($bSpamLinks['nolinks'])){
+                            } elseif (isset($bSpamLinks['nolink'])){
                                 $success=false;
-                                $maildebug =  gT('Your email contains no links to your survey.');
+                                $maildebug =  gT('Your email contains no link. It should contain at least a survey link.');
+                            } elseif (isset($bSpamLinks['nosurveylink'])){
+                                $success=false;
+                                $maildebug =  gT('Your email contains no survey link. It should contain at least a survey link.');
                             } else {
 	                            Yii::import('application.helpers.mailHelper');
 	                            mailHelper::setModeForNext(mailHelper::PREVIOUS_INSTANCE_MODE, ['smtpKeepAlive' => true]);
@@ -2938,7 +2941,7 @@ class tokens extends Survey_Common_Action
      * Checks for a given mail if it has spam links
      * @param $bHtml      boolean is the mail an HTML mail
      * @param $modmessage string  the message of the mail
-     * @return boolean    true if any spam link found, else false
+     * @return array   An array with the following keys: externallink, nolink, nosurveylink
      */
 
     private function looksForSpamLinks($bHtml, $modmessage, $iSurveyId)
