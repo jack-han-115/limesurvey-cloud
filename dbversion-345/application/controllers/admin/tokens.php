@@ -1528,9 +1528,12 @@ class tokens extends Survey_Common_Action
                             if ($iEmailLocked && Yii::app()->getConfig('emailmethod')!='smtp'){
                                 $success=false;
                                 $maildebug =  gT('You are currently banned from sending emails using the LimeSurvey email servers. Please configure your global settings to use your own SMTP server, instead. If you have any questions regarding this ban, please contact support@limesurvey.org.');
-                            } elseif ($bSpamLinks) {
+                            } elseif ($iAdvertising && isset($bSpamLinks['externallinks'])){
                                 $success=false;
-                                $maildebug =  gT('Your email contains external links or no links. In the free version only links to your survey are allowed.');
+                                $maildebug =  gT('Your email contains external links. In the free version only links to your survey are allowed.');
+                            } elseif (isset($bSpamLinks['nolinks'])){
+                                $success=false;
+                                $maildebug =  gT('Your email contains no links to your survey.');
                             } else {
 	                            Yii::import('application.helpers.mailHelper');
 	                            mailHelper::setModeForNext(mailHelper::PREVIOUS_INSTANCE_MODE, ['smtpKeepAlive' => true]);
@@ -2938,25 +2941,27 @@ class tokens extends Survey_Common_Action
      * @return boolean    true if any spam link found, else false
      */
 
-    private function looksForSpamLinks($bHtml, $modmessage, $iSurveyId, $bAtLeastOneLinkRequired = false)
+    private function looksForSpamLinks($bHtml, $modmessage, $iSurveyId)
     {
-        $aLinks     = array();
-        $bSpamLinks = false;
-
-
+        $return = array();
         $aLinks = ($bHtml)?$this->getLinksForHtml($modmessage):$this->getLinks($modmessage);
+        $bSurveyLink = false;
 
         // Check if the link has the wanted infos
         foreach ($aLinks as $sLink){
             if ( strpos ( $sLink, 'token') ===false || strpos ( $sLink , (string)$iSurveyId )===false || strpos ( $sLink ,   $_SERVER['HTTP_HOST'] )===false   ){
-                $bSpamLinks = true;
-                break;
+                $return['externallink'] = true;
+            } else {
+                $bSurveyLink = true;
             }
         }
-        if ($bAtLeastOneLinkRequired && empty($aLinks)) {
-            $bSpamLinks = true;
+        if (empty($aLinks)) {
+            $return['nolink'] = true;
         }
-        return $bSpamLinks;
+        if (!($bSurveyLink)) {
+            $return['nosurveylink'] = true;
+        }
+        return $return;
     }
 
     /**
