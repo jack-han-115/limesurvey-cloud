@@ -1523,7 +1523,7 @@ class tokens extends Survey_Common_Action
 
                             // LimeService Mod Start ==================
                             $iAdvertising = (int)Yii::app()->dbstats->createCommand('select advertising from limeservice_system.installations where user_id='.getInstallationID())->queryScalar();
-                            $bSpamLinks   = $this->looksForSpamLinks($bHtml,$modmessage, $iSurveyId, true):false;
+                            $bSpamLinks   = $this->looksForSpamLinks($bHtml,$modmessage, $iSurveyId);
                             $iEmailLocked = (int)Yii::app()->dbstats->createCommand('select email_lock from limeservice_system.installations where user_id='.getInstallationID())->queryScalar();
                             if ($iEmailLocked && Yii::app()->getConfig('emailmethod')!='smtp'){
                                 $success=false;
