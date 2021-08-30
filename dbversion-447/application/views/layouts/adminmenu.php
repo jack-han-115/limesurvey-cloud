@@ -90,6 +90,32 @@
                 </li>
             <?php endif;?>
 
+            <?php
+            //===============Begin LimeService Mod
+            $sDomain=$_SERVER['SERVER_NAME'];
+            $sSubdomain=substr($sDomain,0,strpos($sDomain,'.'));
+            $sDomain=substr($sDomain,strpos($sDomain,'.')+1);
+            $iUserId = (int) substr(Yii::app()->db->username, 6);
+            $sStorageUrl = $this->createUrl('/admin/globalsettings') . '#storage';
+
+            $data = Yii::app()->dbstats->createCommand("SELECT i.upload_storage_size, b.storage_used, b.responses_avail FROM limeservice_system.balances b JOIN limeservice_system.installations i ON b.user_id = i.user_id WHERE i.user_id = ". $iUserId)->queryRow();
+            if ($data) {
+                printf(
+                    "<li data-toggle='tooltip' data-placement='bottom' data-title='%s'><a href='https://www.limesurvey.org/pricing'><span class='fa fa-comments'></span>&nbsp;%d</a></li>",
+                    gT('Response balance'),
+                    $data['responses_avail']
+                );
+                printf(
+                    "<li data-toggle='tooltip' data-placement='bottom' data-title='%s'><a href='%s'><span class='fa fa-database'></span>&nbsp;%d / %d</a></li>",
+                    gT('Storage used / storage available (MB)'),
+                    $sStorageUrl,
+                    $data['storage_used'],
+                    $data['upload_storage_size']
+                );
+            }
+            //===============End LimeService Mod ?>
+
+
             <!-- Extra menus from plugins -->
             <?php // TODO: This views should be in same module as ExtraMenu and ExtraMenuItem classes (not plugin) ?>
             <?php foreach ($extraMenus as $menu): ?>
