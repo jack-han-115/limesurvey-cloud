@@ -42,16 +42,3 @@
         }
     ?>
 </table>
-
-<?php
-   /* =============== LimeService Mod start ============
-    if (Permission::model()->hasGlobalPermission('superadmin','read'))
-    {
-    ?>
-        <p><a href="<?php echo $this->createUrl('admin/globalsettings',array('sa'=>'showphpinfo')) ?>" target="blank" class="button"><?php eT("Show PHPInfo"); ?></a></p>
-    <?php
-    }
-    ?>
-    =============== LimeService Mod end ============ */
-
-
