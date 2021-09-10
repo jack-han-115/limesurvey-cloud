@@ -87,7 +87,7 @@
         ));?>
     </div>
 </div>
-
+<?php /* LimeService Mod Start
 <div class="form-group">
     <label class=" control-label"  for="force_ssl">
     <?php if (Yii::app()->getConfig("demoMode") == true) { ?>
@@ -111,7 +111,7 @@
     . '<br/> '
     . gT("If the link does not work and you turn on HTTPS, you will not be able to access and use your LimeSurvey application!"); ?></span>
 </div>
-
+LimeService Mod end */ ?>
 <div class="form-group">
     <label class="control-label" for='loginIpWhitelist'>
         <?php eT("IP whitelist for login:"); ?>
