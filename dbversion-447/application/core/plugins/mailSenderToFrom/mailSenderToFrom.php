@@ -36,7 +36,8 @@ class mailSenderToFrom extends PluginBase
     public function beforeEmail()
     {
         $emailsmtpuser = Yii::app()->getConfig('emailsmtpuser');
-        if (empty($emailsmtpuser)) {
+        if (empty($emailsmtpuser) || Yii::app()->getConfig('emailmethod')!='smtp')
+        ) {
             return;
         }
         $limeMailer = $this->getEvent()->get('mailer');
