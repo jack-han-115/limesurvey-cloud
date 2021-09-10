@@ -343,6 +343,7 @@ Full lock - none of participants are allowed to take survey, even if they alread
         </div>
 
         <!-- Allow unstable extension updates (only visible for super admin)-->
+        <?php /* LimeService Mod Start -----------------------------------
         <?php if(Permission::model()->hasGlobalPermission('superadmin','read')):?>
             <div class="row ls-space margin top-10">
                 <div class="form-group col-xs-12">
@@ -367,6 +368,7 @@ Full lock - none of participants are allowed to take survey, even if they alread
                 </div>
             </div>
         <?php endif; ?>
+        LimeService Mod end ----------------------------------- */ ?>
     </div>
 </div>
 

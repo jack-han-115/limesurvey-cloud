@@ -92,7 +92,7 @@
     <label class=" control-label"  for="force_ssl">
     <?php if (Yii::app()->getConfig("demoMode") == true) { ?>
     <span class="text-danger asterisk"></span>
-    <?php }; ?>    
+    <?php }; ?>
     <?php eT('Force HTTPS:');
     echo ((Yii::app()->getConfig("demoMode") == true) ? '*' : '');?></label>
     <div class="">
@@ -103,7 +103,7 @@
                 "on" => gT("On", 'unescaped'),
                 "off" => gT("Off", 'unescaped')
             )
-        ));?>        
+        ));?>
     </div>
 </div>
 <div class="form-group">

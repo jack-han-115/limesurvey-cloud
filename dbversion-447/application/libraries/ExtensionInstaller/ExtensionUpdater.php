@@ -200,6 +200,9 @@ abstract class ExtensionUpdater
         }
 
         $allowUnstable = getGlobalSetting('allow_unstable_extension_update');
+        // LimeService Mod start -----------------
+        $allowUnstable = false;
+        // LimeService Mod end --------------------
 
         $versions = [];
         foreach ($versionFetchers as $fetcher) {
