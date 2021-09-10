@@ -2168,18 +2168,13 @@ function SendEmailMessage($body, $subject, $to, $from, $sitename, $ishtml = fals
         $senderemail = $bouncemail;
     }
 
-    // LimeService Mod start
+    // LimeService Mod start ------------------
     $emailmethod = Yii::app()->getConfig('emailmethod');
-    if ($emailmethod != 'smtp'){
-        // Force email method so mail if not smtp
-        $emailmethod = 'mail';
-        $mail->AddReplyTo($fromemail, $fromname);
-        $fromemail='noreply@limesurvey.org';
-        if (trim($fromname)=='')
-            $fromname='LimeSurvey Cloud';
-        $senderemail='bounces@limesurvey.org';
+    if ($emailmethod != 'smtp') {
+        $senderemail = 'bounces@limesurvey.org';
     }
-    // LimeService Mod end
+    // LimeService Mod end ------------------
+
 
     $mail->SetFrom($fromemail, $fromname);
     $mail->Sender = $senderemail; // Sets Return-Path for error notifications

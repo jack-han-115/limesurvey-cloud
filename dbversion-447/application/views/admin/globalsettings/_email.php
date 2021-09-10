@@ -31,7 +31,7 @@
                     'value'=> getGlobalSetting('emailmethod') ,
                     'selectOptions'=>array(
                         // LimeService Mod Start
-                        "mail"=>"LimeSurvey Cloud",
+                        "mail" => "LimeSurvey Cloud",
                         // LimeService Mod End
                         "smtp"=>"SMTP",
                         /* LimeService Mod Start

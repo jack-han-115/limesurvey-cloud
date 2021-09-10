@@ -156,6 +156,13 @@ class LimeMailer extends \PHPMailer\PHPMailer\PHPMailer
         /* Don't check tls by default : allow own sign certificate */
         $this->SMTPAutoTLS = false;
 
+        // LimeService Mod Start --------------------
+        if ($emailmethod != 'smtp') {
+            // Force email method so mail if not smtp
+            $emailmethod = 'mail';
+        }
+        // LimeService Mod end ------------------------
+
         switch ($emailmethod) {
             case "qmail":
                 $this->IsQmail();
@@ -376,6 +383,19 @@ class LimeMailer extends \PHPMailer\PHPMailer\PHPMailer
         if (is_null($fromname)) {
             $fromname = $this->FromName;
         }
+        $emailmethod = Yii::app()->getConfig('emailmethod');
+
+        // LimeService Mod start ------------------
+        if ($emailmethod != 'smtp') {
+            // Force email method so mail if not smtp
+            $mail->AddReplyTo($fromemail, $fromname);
+            $fromemail = 'noreply@limesurvey.org';
+            if (trim($fromname) == '') {
+                $fromname = 'LimeSurvey Cloud';
+            }
+        }
+        // LimeService Mod end --------------------
+
         return parent::setFrom($fromemail, $fromname, $auto);
     }
 
