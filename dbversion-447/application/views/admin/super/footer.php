@@ -90,9 +90,9 @@ foreach ($systemInfos as $key => $systemInfo) {
                 <div class="h3 modal-title"><?php eT("System information"); ?></div>
             </div>
             <div class="modal-body">
-				// Limeservice mod start --------------------
-                <?php if (1==2 && Permission::model()->hasGlobalPermission('superadmin', 'read')) { ?>
-                // Limeservice mod end --------------------
+                <?php // Limeservice mod start -------------------- ?>
+                <?php if (1 == 2 && Permission::model()->hasGlobalPermission('superadmin', 'read')) { ?>
+                    <?php // Limeservice mod end -------------------- ?>
                     <h4><?php eT("Your system configuration:")?></h4>
                     <ul class="list-group">
                         <?php foreach ($systemInfos as $name => $systemInfo) { ?>
@@ -104,13 +104,12 @@ foreach ($systemInfos as $key => $systemInfo) {
                             </li>   
                         <?php } ?>
                     </ul>
-                <?php } else { 
+                <?php } else {
                 // Limeservice mod start --------------------
                     ?>
                     <h4><?=gT("We are sorry but this information is not available on LimeSurvey Cloud.")?></h4>
-                <?php 
+                    <?php
                 // Limeservice mod end --------------------
-                
                 } ?>
             </div>
         </div>
