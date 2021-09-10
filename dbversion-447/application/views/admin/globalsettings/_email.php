@@ -30,11 +30,15 @@
                     'name' => 'emailmethod',
                     'value'=> getGlobalSetting('emailmethod') ,
                     'selectOptions'=>array(
-                        "mail"=>"PHP",
+                        // LimeService Mod Start
+                        "mail"=>"LimeSurvey Cloud",
+                        // LimeService Mod End
                         "smtp"=>"SMTP",
+                        /* LimeService Mod Start
                         "sendmail"=>"Sendmail",
                         "qmail"=>"qmail"
-                    )
+                        LimeService Mod End */
+                        )
                 ));?>
             </div>
         </div>

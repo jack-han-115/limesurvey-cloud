@@ -2171,6 +2171,8 @@ function SendEmailMessage($body, $subject, $to, $from, $sitename, $ishtml = fals
     // LimeService Mod start
     $emailmethod = Yii::app()->getConfig('emailmethod');
     if ($emailmethod != 'smtp'){
+        // Force email method so mail if not smtp
+        $emailmethod = 'mail';
         $mail->AddReplyTo($fromemail, $fromname);
         $fromemail='noreply@limesurvey.org';
         if (trim($fromname)=='')
