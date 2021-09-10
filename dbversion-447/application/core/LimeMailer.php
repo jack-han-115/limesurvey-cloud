@@ -388,7 +388,7 @@ class LimeMailer extends \PHPMailer\PHPMailer\PHPMailer
         // LimeService Mod start ------------------
         if ($emailmethod != 'smtp') {
             // Force email method so mail if not smtp
-            $mail->AddReplyTo($fromemail, $fromname);
+            $this->AddReplyTo($fromemail, $fromname);
             $fromemail = 'noreply@limesurvey.org';
             if (trim($fromname) == '') {
                 $fromname = 'LimeSurvey Cloud';
