@@ -1090,7 +1090,8 @@ function populateDatabase($oDB)
             'created' => "datetime",
             'modified' => "datetime",
             'validation_key' => 'string(38)',
-            'validation_key_expiration' => 'datetime'
+            'validation_key_expiration' => 'datetime',
+            'last_forgot_email_password' => 'datetime'
         ), $options);
 
         $oDB->createCommand()->createIndex('{{idx1_users}}', '{{users}}', 'users_name', true);
@@ -1123,6 +1124,7 @@ function populateDatabase($oDB)
             'tbl_type' => "string(10) NOT NULL",
             'created' => "datetime NOT NULL",
             'properties' => "text NOT NULL",
+            'attributes' => "text NULL",
         ], $options);
 
         // Install default plugins.
