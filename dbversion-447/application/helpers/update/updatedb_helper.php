@@ -3208,48 +3208,6 @@ function db_upgrade_all($iOldDBVersion, $bSilent = false)
             $oDB->createCommand()->createIndex('{{answers_idx}}', '{{answers}}', ['qid', 'code', 'scale_id'], true);
             $oDB->createCommand()->createIndex('{{answers_idx2}}', '{{answers}}', 'sortorder', false);
 
-            /**
-             * Regenerate codes for problematic label sets
-             * Helper function (TODO: Put in separate class)
-             * Fails silently
-             *
-             * @param int $lid Label set id
-             * @return void
-             */
-            $regenerateCodes = function (int $lid) {
-                $oDB = Yii::app()->getDb();
-
-                $labelSet = $oDB->createCommand(
-                    sprintf("SELECT * FROM {{labelsets}} WHERE lid = %d", (int) $lid)
-                )->queryRow();
-                if (empty($labelSet)) {
-                    return;
-                }
-
-                foreach (explode(',', $labelSet['languages']) as $lang) {
-                    $labels = $oDB->createCommand(
-                        sprintf(
-                            "SELECT * FROM {{labels}} WHERE lid = %d AND language = %s",
-                            (int) $lid,
-                            $oDB->quoteValue($lang)
-                        )
-                    )->queryAll();
-                    if (empty($labels)) {
-                        continue;
-                    }
-                    foreach ($labels as $key => $label) {
-                        $oDB->createCommand(
-                            sprintf(
-                                "UPDATE {{labels}} SET code = %s WHERE id = %d",
-                                // Use simply nr as label code
-                                $oDB->quoteValue((string) $key + 1),
-                                $label['id']
-                            )
-                        )->execute();
-                    }
-                }
-            };
-
             // Apply integrity fix before starting label set update.
             // List of label set ids which contain code duplicates.
             $lids = $oDB->createCommand(
@@ -3259,7 +3217,7 @@ function db_upgrade_all($iOldDBVersion, $bSilent = false)
                 HAVING COUNT(DISTINCT({{labels}}.code)) < COUNT({{labels}}.id)"
             )->queryAll();
             foreach ($lids as $lid) {
-                $regenerateCodes($lid['lid']);
+                regenerateLabelCodes400($lid['lid']);
             }
 
             // Labels table
@@ -4956,6 +4914,7 @@ function db_upgrade_all($iOldDBVersion, $bSilent = false)
             $oDB->createCommand()->update('{{settings_global}}', array('stg_value' => 470), "stg_name='DBVersion'");
             $oTransaction->commit();
         }
+
         if ($iOldDBVersion < 471) {
             $oTransaction = $oDB->beginTransaction();
 
@@ -4980,6 +4939,7 @@ function db_upgrade_all($iOldDBVersion, $bSilent = false)
             $oDB->createCommand()->update('{{settings_global}}', array('stg_value' => 471), "stg_name='DBVersion'");
             $oTransaction->commit();
         }
+
         if ($iOldDBVersion < 472) {
             $oTransaction = $oDB->beginTransaction();
 
@@ -4989,20 +4949,16 @@ function db_upgrade_all($iOldDBVersion, $bSilent = false)
             $oTransaction->commit();
         }
 
+        /**
+         * Loop through all plugins in core folder and make sure they have the correct plugin type.
+         *
+         * @todo What if a plugin is both in user and core?
+         * @todo Add integrity test when plugin manager is opened.
+         */
         if ($iOldDBVersion < 473) {
-            $aDefaultSurveyMenuEntries = LsDefaultDataSets::getSurveyMenuEntryData();
-            foreach ($aDefaultSurveyMenuEntries as $aSurveymenuentry) {
-                if ($aSurveymenuentry['name'] == 'listQuestionGroups') {
-                    if (SurveymenuEntries::model()->findByAttributes(['name' => $aSurveymenuentry['name']]) == null) {
-                        $oDB->createCommand()->insert('{{surveymenu_entries}}', $aSurveymenuentry);
-                        SurveymenuEntries::reorderMenu(2);
-                    }
-                    break;
-                }
-            }
+            $oTransaction = $oDB->beginTransaction();
 
-            // LimeService Mod Start
-                        $dir = new DirectoryIterator(APPPATH . DIRECTORY_SEPARATOR . 'core' . DIRECTORY_SEPARATOR . 'plugins');
+            $dir = new DirectoryIterator(APPPATH . DIRECTORY_SEPARATOR . 'core' . DIRECTORY_SEPARATOR . 'plugins');
             foreach ($dir as $fileinfo) {
                 if (!$fileinfo->isDot()) {
                     $plugin = Plugin::model()->findByAttributes(
@@ -5019,12 +4975,44 @@ function db_upgrade_all($iOldDBVersion, $bSilent = false)
                     }
                 }
             }
-            //LimeService Mod End
-            
+
             $oDB->createCommand()->update('{{settings_global}}', array('stg_value' => 473), "stg_name='DBVersion'");
             $oTransaction->commit();
         }
 
+        if ($iOldDBVersion < 474) {
+            $oTransaction = $oDB->beginTransaction();
+            $aDefaultSurveyMenuEntries = LsDefaultDataSets::getSurveyMenuEntryData();
+            foreach ($aDefaultSurveyMenuEntries as $aSurveymenuentry) {
+                if ($aSurveymenuentry['name'] == 'listQuestionGroups') {
+                    if (SurveymenuEntries::model()->findByAttributes(['name' => $aSurveymenuentry['name']]) == null) {
+                        $oDB->createCommand()->insert('{{surveymenu_entries}}', $aSurveymenuentry);
+                        SurveymenuEntries::reorderMenu(2);
+                    }
+                    break;
+                }
+            }
+            $oDB->createCommand()->update('{{settings_global}}', array('stg_value' => 474), "stg_name='DBVersion'");
+            $oTransaction->commit();
+        }
+
+        if ($iOldDBVersion < 475) {
+            $oTransaction = $oDB->beginTransaction();
+            // Apply integrity fix before adding unique constraint.
+            // List of label set ids which contain code duplicates.
+            $lids = $oDB->createCommand(
+                "SELECT lime_labels.lid AS lid
+                FROM lime_labels
+                GROUP BY lime_labels.lid
+                HAVING COUNT(DISTINCT(lime_labels.code)) < COUNT(lime_labels.id)"
+            )->queryAll();
+            foreach ($lids as $lid) {
+                regenerateLabelCodes400($lid['lid']);
+            }
+            $oDB->createCommand()->createIndex('{{idx5_labels}}', '{{labels}}', ['lid','code'], true);
+            $oDB->createCommand()->update('{{settings_global}}', array('stg_value' => 475), "stg_name='DBVersion'");
+            $oTransaction->commit();
+        }
     } catch (Exception $e) {
         Yii::app()->setConfig('Updating', false);
         $oTransaction->rollback();
@@ -8110,5 +8098,48 @@ function runAddPrimaryKeyonAnswersTable400(&$oDB)
         }
         $oDB->createCommand()->dropindex('answer_idx_10', 'answertemp');
         $oDB->createCommand()->dropTable('answertemp');
+    }
+}
+
+/**
+ * Regenerate codes for problematic label sets
+ * Helper function (TODO: Put in separate class)
+ * Fails silently
+ *
+ * @param int $lid Label set id
+ * @return void
+ */
+function regenerateLabelCodes400(int $lid)
+{
+    $oDB = Yii::app()->getDb();
+
+    $labelSet = $oDB->createCommand(
+        sprintf("SELECT * FROM {{labelsets}} WHERE lid = %d", (int) $lid)
+    )->queryRow();
+    if (empty($labelSet)) {
+        return;
+    }
+
+    foreach (explode(',', $labelSet['languages']) as $lang) {
+        $labels = $oDB->createCommand(
+            sprintf(
+                "SELECT * FROM {{labels}} WHERE lid = %d AND language = %s",
+                (int) $lid,
+                $oDB->quoteValue($lang)
+            )
+        )->queryAll();
+        if (empty($labels)) {
+            continue;
+        }
+        foreach ($labels as $key => $label) {
+            $oDB->createCommand(
+                sprintf(
+                    "UPDATE {{labels}} SET code = %s WHERE id = %d",
+                    // Use simply nr as label code
+                    $oDB->quoteValue((string) $key + 1),
+                    $label['id']
+                )
+            )->execute();
+        }
     }
 }
