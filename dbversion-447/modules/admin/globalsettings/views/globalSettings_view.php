@@ -88,17 +88,6 @@ if (isset($scripts)) {
         ?>
     </div>
 
-    <?php // LimeService Mod start ?>
-    <div id="useradmin" class="tab-pane col-md-10 col-md-offset-1">
-        <?php $this->renderPartial("./globalsettings/_useradministration", [
-                'sSendAdminCreationEmail'       => $sGlobalSendAdminCreationEmail,
-                'sAdminCreationEmailSubject'    => $sGlobalAdminCreationEmailSubject,   
-                'sAdminCreationEmailTemplate'   => $sGlobalAdminCreationEmailTemplate,     
-            ]);
-        ?>
-    </div>
-    <?php // LimeService Mod end ?>
-
     <div id="presentation" class="tab-pane col-md-10 col-md-offset-1">
         <?php $this->renderPartial("./globalsettings/_presentation"); ?>
     </div>
