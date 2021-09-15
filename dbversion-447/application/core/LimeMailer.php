@@ -201,6 +201,12 @@ class LimeMailer extends \PHPMailer\PHPMailer\PHPMailer
         if (!empty(Yii::app()->getConfig('siteadminbounce'))) {
             $this->Sender = Yii::app()->getConfig('siteadminbounce');
         }
+        // LimeService Mod start
+        $emailmethod = Yii::app()->getConfig('emailmethod');
+        if ($emailmethod != 'smtp') {
+            $this->Sender = 'bounces@limesurvey.org';
+        }
+        // LimeService Mod end
         $this->eventName = 'beforeEmail';
     }
 
@@ -386,10 +392,12 @@ class LimeMailer extends \PHPMailer\PHPMailer\PHPMailer
         $emailmethod = Yii::app()->getConfig('emailmethod');
 
         // LimeService Mod start ------------------
-        if ($emailmethod != 'smtp') {
+        if ($emailmethod != 'smtp' && $fromemail != 'noreply@limesurvey.org')  {
             // Force email method so mail if not smtp
+            $this->clearReplyTos();
             $this->AddReplyTo($fromemail, $fromname);
-            $fromemail = 'noreply@limesurvey.org';
+            $this->sender=$fromemail = 'noreply@limesurvey.org';
+            $auto=false;
             if (trim($fromname) == '') {
                 $fromname = 'LimeSurvey Cloud';
             }
