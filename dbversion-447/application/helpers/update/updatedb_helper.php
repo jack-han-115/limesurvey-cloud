@@ -3965,7 +3965,8 @@ function db_upgrade_all($iOldDBVersion, $bSilent = false)
 
         if ($iOldDBVersion < 430) { //REFACTORING surveyadmin to surveyAdministrationController ...
             $oTransaction = $oDB->beginTransaction();
-            $oDB->createCommand()->insert(
+            // LImeService Mod start
+            $oDB->createCommand()->update(
                 "{{plugins}}",
                 [
                     'name' => 'ComfortUpdateChecker',
@@ -3974,8 +3975,10 @@ function db_upgrade_all($iOldDBVersion, $bSilent = false)
                     'version' => '1.0.0',
                     'load_error' => 0,
                     'load_error_message' => null
-                ]
+                ],
+                "name = 'ComfortUpdateChecker'",
             );
+            // LImeService Mod end
             $oDB->createCommand()->update('{{settings_global}}', array('stg_value' => 430), "stg_name='DBVersion'");
             $oTransaction->commit();
         }
@@ -4573,17 +4576,18 @@ function db_upgrade_all($iOldDBVersion, $bSilent = false)
                     ]
                 );
             }
-            $oDB->createCommand()->insert(
+            // LimeService Mod start
+            $oDB->createCommand()->update(
                 "{{plugins}}",
                 [
-                    'name' => 'TwoFactorAdminLogin',
                     'plugin_type' => 'core',
-                    'active' => 0,
                     'version' => '1.2.5',
                     'load_error' => 0,
                     'load_error_message' => null
-                ]
+                ],
+                "name = 'TwoFactorAdminLogin'" 
             );
+            // LimeService Mod end
             $oDB->createCommand()->update('{{settings_global}}', array('stg_value' => 442), "stg_name='DBVersion'");
             $oTransaction->commit();
         }
