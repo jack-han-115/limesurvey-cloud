@@ -496,14 +496,19 @@ class PluginManager extends \CApplicationComponent
             if ($result['advertising'] == '1') {
                 $lsProPlugin = $pluginModel->findByAttributes(array('name' => 'LimeSurveyProfessional'));
                 if (empty($lsProPlugin)) {
-                    $lsProPlugin = new Plugin();
-                    $lsProPlugin->name = 'LimeSurveyProfessional';
-                    $lsProPlugin->active = 0;  // Not active but will be loaded anyway
-                    $lsProPlugin->save();
+                    Yii::app()->db->createCommand()
+                        ->insert(
+                            '{{plugins}}',
+                            [
+                                'name' => 'LimeSurveyProfessional',
+                                'active' => 0
+                            ]
+                        )->execute();
                 } elseif ($lsProPlugin->active) {
                     // Always disabled, see comment below.
-                    $lsProPlugin->active = 0;
-                    $lsProPlugin->update();
+                    Yii::app()->dbstats->createCommand()
+                       ->update('{{plugins}}', ['active' => 0], 'name = :name', [':name' => 'LimeSurveyProfessional'])
+                       ->execute();
                 }
                 // NB: Disabled - we won't use Google Ads anymore.
                 //$records = array_merge(array($lsProPlugin), $records);
