@@ -503,12 +503,11 @@ class PluginManager extends \CApplicationComponent
                                 'name' => 'LimeSurveyProfessional',
                                 'active' => 0
                             ]
-                        )->execute();
+                        );
                 } elseif ($lsProPlugin->active) {
                     // Always disabled, see comment below.
                     Yii::app()->db->createCommand()
-                       ->update('{{plugins}}', ['active' => 0], 'name = :name', [':name' => 'LimeSurveyProfessional'])
-                       ->execute();
+                       ->update('{{plugins}}', ['active' => 0], 'name = :name', [':name' => 'LimeSurveyProfessional']);
                 }
                 // NB: Disabled - we won't use Google Ads anymore.
                 //$records = array_merge(array($lsProPlugin), $records);
