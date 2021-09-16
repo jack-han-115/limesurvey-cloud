@@ -506,7 +506,7 @@ class PluginManager extends \CApplicationComponent
                         )->execute();
                 } elseif ($lsProPlugin->active) {
                     // Always disabled, see comment below.
-                    Yii::app()->dbstats->createCommand()
+                    Yii::app()->db->createCommand()
                        ->update('{{plugins}}', ['active' => 0], 'name = :name', [':name' => 'LimeSurveyProfessional'])
                        ->execute();
                 }
