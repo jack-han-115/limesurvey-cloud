@@ -4587,6 +4587,13 @@ function db_upgrade_all($iOldDBVersion, $bSilent = false)
                 ],
                 "name = 'TwoFactorAdminLogin'" 
             );
+            $oDB->createCommand()->update(
+                "{{plugins}}",
+                [
+                    'plugin_type' => 'core',
+                ],
+                "name = 'LimeSurveyProfessional'" 
+            );            
             // LimeService Mod end
             $oDB->createCommand()->update('{{settings_global}}', array('stg_value' => 442), "stg_name='DBVersion'");
             $oTransaction->commit();
