@@ -1756,6 +1756,7 @@ class LsDefaultDataSets
             $addRow('customToken', 0, '1.0.1'),
             $addRow('mailSenderToFrom'),
             $addRow('TwoFactorAdminLogin', 0, '1.2.5'),
+            $addRow('LimeSurveyProfessional', 1, '1.0.1')
         ];
     }
 
