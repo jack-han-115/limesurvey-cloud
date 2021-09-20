@@ -181,6 +181,7 @@ class update extends Survey_Common_Action
         Yii::app()->setFlashMessage(gT('LimeSurvey Cloud automatically provides updates - ComfortUpdate is not needed!'), 'error');
         $this->getController()->redirect(Yii::app()->getController()->createUrl("/admin"));
         // ================== LimeService Mod end
+        $this->requirePostRequest();
         
         if (Permission::model()->hasGlobalPermission('superadmin')) {
             SettingGlobal::model()->deleteByPk('update_key');
