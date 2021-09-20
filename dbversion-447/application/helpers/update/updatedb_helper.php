@@ -4596,6 +4596,10 @@ function db_upgrade_all($iOldDBVersion, $bSilent = false)
                 ],
                 "name = 'LimeSurveyProfessional'" 
             );            
+            $oDB->createCommand()->delete(
+                "{{plugins}}",
+                "name = 'Authwebserver'" 
+            );            
             // LimeService Mod end
             $oDB->createCommand()->update('{{settings_global}}', array('stg_value' => 442), "stg_name='DBVersion'");
             $oTransaction->commit();
