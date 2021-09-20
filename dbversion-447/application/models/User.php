@@ -867,7 +867,7 @@ class User extends LSActiveRecord
                 'filter' => false,
                 'htmlOptions' => [
                     // "style" => "white-space: pre;",
-                    "class" => "col-md-2 col-xs-1 text-center button-column"
+                    "class" => "text-center button-column"
                 ]
             ),
             array(

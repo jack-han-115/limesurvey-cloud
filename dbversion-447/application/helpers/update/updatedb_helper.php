@@ -4972,14 +4972,20 @@ function db_upgrade_all($iOldDBVersion, $bSilent = false)
             $dir = new DirectoryIterator(APPPATH . DIRECTORY_SEPARATOR . 'core' . DIRECTORY_SEPARATOR . 'plugins');
             foreach ($dir as $fileinfo) {
                 if (!$fileinfo->isDot()) {
-                    $plugin = Plugin::model()->findByAttributes(
-                        ['name' => $fileinfo->getFilename()]
-                    );
+                    $plugin = $oDB->createCommand()
+                        ->select('*')
+                        ->from('{{plugins}}')
+                        ->where("name = :name", [':name' => $fileinfo->getFilename()])
+                        ->queryRow();
 
                     if (!empty($plugin)) {
-                        if ($plugin->plugin_type !== 'core') {
-                            $plugin->plugin_type = 'core';
-                            $plugin->save();
+                        if ($plugin['plugin_type'] !== 'core') {
+                            $oDB->createCommand()->update(
+                                '{{plugins}}',
+                                ['plugin_type' => 'core'],
+                                'name = :name',
+                                [':name' => $plugin->name]
+                            );
                         }
                     } else {
                         // Plugin in folder but not in database?
@@ -4990,7 +4996,7 @@ function db_upgrade_all($iOldDBVersion, $bSilent = false)
             $oDB->createCommand()->update('{{settings_global}}', array('stg_value' => 473), "stg_name='DBVersion'");
             $oTransaction->commit();
         }
-
+        // 474 was left out for technical reasons
         if ($iOldDBVersion < 475) {
             $oTransaction = $oDB->beginTransaction();
             // Apply integrity fix before adding unique constraint.
