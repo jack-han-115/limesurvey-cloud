@@ -3837,7 +3837,9 @@ function db_upgrade_all($iOldDBVersion, $bSilent = false)
             $insertPlugin('Authdb');
             $insertPlugin('ComfortUpdateChecker');
             $insertPlugin('AuditLog');
+            /* LimeService Mod start
             $insertPlugin('Authwebserver');
+              LimeService Mod end */
             $insertPlugin('ExportR', 1);
             $insertPlugin('ExportSTATAxml', 1);
             $insertPlugin('oldUrlCompat');

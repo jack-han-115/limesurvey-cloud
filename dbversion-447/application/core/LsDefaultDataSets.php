@@ -1745,7 +1745,9 @@ class LsDefaultDataSets
             // Inactive plugins below.
             $addRow('AuthLDAP'),
             $addRow('AuditLog'),
+            /*  LimeService Mod start
             $addRow('Authwebserver'),
+            LimeService Mod end */
             $addRow('ExportR', 1),
             $addRow('ExportSTATAxml', 1),
             $addRow('ExportSPSSsav', 1),
