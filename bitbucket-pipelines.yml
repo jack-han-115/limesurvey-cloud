@@ -15,3 +15,6 @@ pipelines:
           - cd dbversion-345
             # NB: Negating the result with ! doesn't work without quotes.
           - '! find application/ -type f -name "*.php" -exec php -l {} \;  | grep -v "No syntax errors"'
+          - cd ../dbversion-447
+            # NB: Negating the result with ! doesn't work without quotes.
+          - '! find application/ -type f -name "*.php" -exec php -l {} \;  | grep -v "No syntax errors"'
