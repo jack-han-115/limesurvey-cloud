@@ -259,18 +259,15 @@ class tokens extends Survey_Common_Action
      */
     public function deleteToken()
     {
+        $this->requirePostRequest();
+
         $aTokenId = Yii::app()->getRequest()->getParam('sItem');
         $iSid = (int) Yii::app()->getRequest()->getParam('sid');
         if (!Permission::model()->hasSurveyPermission($iSid, 'tokens', 'delete')) {
             throw new CHttpException(403, gT("You do not have permission to access this page."));
         }
-        if (!Yii::app()->getRequest()->isPostRequest) {
-            TokenDynamic::model($iSid)->deleteToken((int)$aTokenId); //in this case it's no an array ...
-            App()->setFlashMessage(gT('Participant has been deleted.'), 'success');
-            $this->getController()->redirect(array("admin/tokens", "sa" => "browse", "surveyid" => $iSid));
-        }
         TokenDynamic::model($iSid)->deleteRecords(array($aTokenId));
-        return true;
+        $this->getController()->redirect(array("admin/tokens", "sa" => "browse", "surveyid" => $iSid));
     }
 
     /**
@@ -1661,6 +1658,7 @@ class tokens extends Survey_Common_Action
 
             // White Close Button
             $aData['showWhiteCloseButton'] = true;
+            $aData['closeUrl'] = Yii::app()->createUrl('admin/tokens/sa/index/surveyid/' . $iSurveyId);
             
             $aData['topBar']['name'] = 'tokensTopbar_view';
             $aData['topBar']['rightSideView'] = 'tokensTopbarRight_view';
@@ -2255,6 +2253,7 @@ class tokens extends Survey_Common_Action
         $aData['thischaracterset'] = $thischaracterset;
 
         $aData['showCloseButton'] = true;
+        $aData['closeUrl'] = Yii::app()->createUrl('admin/tokens/sa/index/surveyid/' . $iSurveyId);
         $aData['topBar']['name'] = 'tokensTopbar_view';
         $aData['topBar']['rightSideView'] = 'tokensTopbarRight_view';
 
@@ -2530,6 +2529,7 @@ class tokens extends Survey_Common_Action
         $aData['showSaveAndCloseButton'] = true;
         // White Close Button
         $aData['showWhiteCloseButton'] = true;
+        $aData['closeUrl'] = Yii::app()->createUrl('admin/tokens/sa/index/surveyid/' . $iSurveyId);
 
         $aData['topBar']['name'] = 'tokensTopbar_view';
         $aData['topBar']['rightSideView'] = 'tokensTopbarRight_view';

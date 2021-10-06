@@ -578,7 +578,7 @@ class GlobalSettings extends Survey_Common_Action
                 'form' => 'survey-settings-form',
             ],
             'white_closebutton' => [
-                'url' => 'admin/index',
+                'url' => $this->getController()->createUrl('admin/index'),
             ],
         ];
 

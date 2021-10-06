@@ -5014,7 +5014,7 @@ function db_upgrade_all($iOldDBVersion, $bSilent = false)
                 HAVING COUNT(DISTINCT({{labels}}.code)) < COUNT({{labels}}.id)"
             )->queryAll();
             foreach ($lids as $lid) {
-                regenerateLabelCodes400($lid['lid']);
+                regenerateLabelCodes400($lid['lid'], $hasLanguageColumn = false);
             }
             $oDB->createCommand()->createIndex('{{idx5_labels}}', '{{labels}}', ['lid','code'], true);
             $oDB->createCommand()->update('{{settings_global}}', array('stg_value' => 475), "stg_name='DBVersion'");
@@ -5293,7 +5293,7 @@ function decryptArchivedTables450($oDB)
         // recrypt tokens
         if ($archivedTableSettings['tbl_type'] === 'token') {
             // skip if the encryption status is unknown
-            if (isset($archivedTableSettingsProperties) && $archivedTableSettingsProperties[0] !== 'unknown') {
+            if (!empty($archivedTableSettingsProperties) && $archivedTableSettingsProperties[0] !== 'unknown') {
                 $tokenencryptionoptions = $archivedTableSettingsProperties;
 
                 // default attributes
@@ -5302,7 +5302,7 @@ function decryptArchivedTables450($oDB)
                 }
             }
             // skip if the encryption status is unknown
-            if (isset($archivedTableSettingsAttributes) && $archivedTableSettingsAttributes[0] !== 'unknown') {
+            if (!empty($archivedTableSettingsAttributes) && $archivedTableSettingsAttributes[0] !== 'unknown') {
                 // find custom attribute column names
                 $table = tableExists("{{{$archivedTableSettings['tbl_name']}}}");
                 if (!$table) {
@@ -5342,7 +5342,7 @@ function decryptArchivedTables450($oDB)
         }
 
         // recrypt responses // skip if the encryption status is unknown
-        if ($archivedTableSettings['tbl_type'] === 'response' && isset($archivedTableSettingsProperties) && $archivedTableSettingsProperties[0] !== 'unknown') {
+        if ($archivedTableSettings['tbl_type'] === 'response' && !empty($archivedTableSettingsProperties) && $archivedTableSettingsProperties[0] !== 'unknown') {
             $responsesCount = $oDB->createCommand()
                 ->select('count(*)')
                 ->from("{{{$archivedTableSettings['tbl_name']}}}")
@@ -8114,9 +8114,10 @@ function runAddPrimaryKeyonAnswersTable400(&$oDB)
  * Fails silently
  *
  * @param int $lid Label set id
+ * @param bool $hasLanguageColumn Should be true before dbversion 400 is finished, false after
  * @return void
  */
-function regenerateLabelCodes400(int $lid)
+function regenerateLabelCodes400(int $lid, $hasLanguageColumn = true)
 {
     $oDB = Yii::app()->getDb();
 
@@ -8124,17 +8125,29 @@ function regenerateLabelCodes400(int $lid)
         sprintf("SELECT * FROM {{labelsets}} WHERE lid = %d", (int) $lid)
     )->queryRow();
     if (empty($labelSet)) {
+        // No belonging label set, remove orphan labels.
+        // @see https://bugs.limesurvey.org/view.php?id=17608
+        $oDB->createCommand(
+            sprintf(
+                'DELETE FROM {{labels}} WHERE lid = %d',
+                (int) $lid
+            )
+        )->execute();
         return;
     }
 
     foreach (explode(',', $labelSet['languages']) as $lang) {
-        $labels = $oDB->createCommand(
-            sprintf(
+        if ($hasLanguageColumn) {
+            $query = sprintf(
                 "SELECT * FROM {{labels}} WHERE lid = %d AND language = %s",
                 (int) $lid,
                 $oDB->quoteValue($lang)
-            )
-        )->queryAll();
+            );
+        } else {
+            // When this function is used in update 475, the language column is already moved.
+            $query = sprintf("SELECT * FROM {{labels}} WHERE lid = %d", (int) $lid);
+        }
+        $labels = $oDB->createCommand($query)->queryAll();
         if (empty($labels)) {
             continue;
         }
@@ -8142,8 +8155,7 @@ function regenerateLabelCodes400(int $lid)
             $oDB->createCommand(
                 sprintf(
                     "UPDATE {{labels}} SET code = %s WHERE id = %d",
-                    // Use simply nr as label code
-                    $oDB->quoteValue((string) $key + 1),
+                    $oDB->quoteValue("L" . (string) $key + 1),
                     $label['id']
                 )
             )->execute();

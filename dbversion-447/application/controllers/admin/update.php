@@ -192,6 +192,8 @@ class update extends Survey_Common_Action
         $this->getController()->redirect(Yii::app()->getController()->createUrl("/admin"));
         // ================== LimeService Mod end
         
+        $this->requirePostRequest();
+
         if (Permission::model()->hasGlobalPermission('superadmin')) {
             SettingGlobal::model()->deleteByPk('update_key');
             App()->setFlashMessage('Your update key has been removed');
