@@ -2200,7 +2200,13 @@ function tokensExport($iSurveyID)
         $oRecordSet->andWhere("lt.language=".App()->db->quoteValue($sTokenLanguage));
     }
     $oRecordSet->order("lt.tid");
+    // LimeService Mode start ----------------------------
+    // This query seems to fail sometimes with big tokens tables - increasing sort_buffer_size temporarily (for this session) does fix this
+    Yii::app()->db->createCommand('SET sort_buffer_size = 1024 * 1024 * 1;')->execute();
+    // LimeService Mode ende -------------------------------
+
     $bresult = $oRecordSet->query();
+
     //HEADERS should be after the above query else timeout errors in case there are lots of tokens!
     header("Content-Disposition: attachment; filename=tokens_".$iSurveyID.".csv");
     header("Content-type: text/comma-separated-values; charset=UTF-8");
