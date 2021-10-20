@@ -2307,6 +2307,11 @@ function tokensExport($iSurveyID)
         $oRecordSet->andWhere("lt.language=" . App()->db->quoteValue($sTokenLanguage));
     }
     $oRecordSet->order("lt.tid");
+    // LimeService Mode start ----------------------------
+    // This query seems to fail sometimes with big tokens tables - increasing sort_buffer_size temporarily (for this session) does fix this
+    Yii::app()->db->createCommand('SET sort_buffer_size = 1024 * 1024 * 1;')->execute();
+    // LimeService Mode ende -------------------------------
+
     $bresult = $oRecordSet->query();
     // fetching all records into array, values need to be decrypted
     $bresultAll = $bresult->readAll();
