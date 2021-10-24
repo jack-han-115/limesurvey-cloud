@@ -4,6 +4,7 @@
  * @var $sitename
  * @var $activesurveyscount
  * @var $dataForConfigMenu
+ * @var $dataForHelpMenu
  */
 ?>
 
@@ -74,7 +75,11 @@
             </li>
 
             <!-- Help menu -->
-            <?php $this->renderPartial( "/admin/super/_help_menu", []); ?>
+            <?php
+                // LimeService mod start
+                $this->renderPartial( "/admin/super/_help_menu", isset($dataForHelpMenu) ? $dataForHelpMenu : []);
+                // LimeService mod end
+            ?>
             
             <!-- Configuration menu -->
             <?php $this->renderPartial( "/admin/super/_configuration_menu", $dataForConfigMenu ); ?>
