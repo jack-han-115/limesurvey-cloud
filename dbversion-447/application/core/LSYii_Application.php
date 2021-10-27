@@ -307,7 +307,7 @@ class LSYii_Application extends CWebApplication
         $uploaddir=str_replace('instances','installations',dirname(dirname(dirname(dirname(__FILE__))))).'/'.$_SERVER['SERVER_NAME'].'/userdata/upload';
         if (file_exists($uploaddir.'/locale447/'.$sLanguage.'/'.$sLanguage.'.mo'))
         {
-            $this->messages->basePath=$uploaddir.'/locale345';
+            $this->messages->basePath=$uploaddir.'/locale447';
         }
         else
         {
