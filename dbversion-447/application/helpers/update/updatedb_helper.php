@@ -1467,13 +1467,14 @@ function db_upgrade_all($iOldDBVersion, $bSilent = false)
             );
 
             foreach ($aUsers as $oUser) {
-                if (!Permission::model()->hasGlobalPermission('auth_db', 'read', $oUser->uid)) {
-                    $oPermission = new Permission();
-                    foreach ($aPerm as $k => $v) {
-                        $oPermission->$k = $v;
-                    }
-                    $oPermission->uid = $oUser->uid;
-                    $oPermission->save();
+                $permissionExists = $oDB->createCommand()->select('id')->from("{{permissions}}")->where(
+                    "(permission='auth_db' OR permission='superadmin') and read_p=1 and entity='global' and uid=:uid",
+                    [':uid' => $oUser->uid]
+                )->queryScalar();
+                if ($permissionExists == false) {
+                    $newPermission = $aPerm;
+                    $newPermission['uid'] = $oUser->uid;
+                    $oDB->createCommand()->insert("{{permissions}}", $newPermission);
                 }
             }
             $oDB->createCommand()->update('{{settings_global}}', array('stg_value' => 180), "stg_name='DBVersion'");
@@ -3590,7 +3591,7 @@ function db_upgrade_all($iOldDBVersion, $bSilent = false)
                         '{{surveys}}',
                         [
                             'bounceaccountpass' => LSActiveRecord::encryptSingle(
-                                $aSurvey->bounceaccountpass
+                                $aSurvey['bounceaccountpass']
                             )
                         ],
                         "sid=" . $aSurvey['sid']
@@ -5951,7 +5952,8 @@ function upgradeArchivedTableSettings446()
     $DBPrefix = Yii::app()->db->tablePrefix;
     $datestamp = time();
     $DBDate = date('Y-m-d H:i:s', $datestamp);
-    $userID = Yii::app()->user->getId();
+    // TODO: Inject user model instead. Polling for user will create a session, which breaks on command-line.
+    $userID = php_sapi_name() === 'cli' ? null : Yii::app()->user->getId();
     $forcedSuperadmin = Yii::app()->getConfig('forcedsuperadmin');
     $adminUserId = 1;
 
