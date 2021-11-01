@@ -21,6 +21,13 @@
 * @package configuration
 */
 
+// LimeService mod start
+// The following lines need to be added/replaced to make updatedb console command work.
+// Assuming argv[0] is file, argv[1] command, argv[2] FQDN
+//$argv = $_SERVER['argv'];
+//$config['configdir']                = str_replace('instances','installations',dirname(dirname(dirname(dirname(__FILE__))))).'/'.$_SERVER['SERVER_NAME'].'/userdata';
+//$config['uploaddir']                = $config['configdir'].DIRECTORY_SEPARATOR."upload";
+// LimeService mod end
 
 $config = array();
 
