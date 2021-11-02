@@ -33,8 +33,8 @@ class update extends Survey_Common_Action
         if (Permission::model()->hasGlobalPermission('superadmin')){
 
 
-        $iDestinationVersion=345;
-        $sUpgradeVersion='LimeSurvey 3';
+        $iDestinationVersion=447;
+        $sUpgradeVersion='LimeSurvey 5';
 
         // Check if already scheduled for upgrade
         $sDomain           = $_SERVER['SERVER_NAME'];

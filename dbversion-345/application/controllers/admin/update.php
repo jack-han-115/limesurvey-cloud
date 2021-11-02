@@ -81,8 +81,36 @@ class update extends Survey_Common_Action
         App()->getClientScript()->registerScriptFile(App()->getConfig('adminscripts').'comfortupdate/buildComfortButtons.js');
         App()->getClientScript()->registerScriptFile(App()->getConfig('adminscripts').'comfortupdate/displayComfortStep.js');
 
+        // ============ LimeService Mod start =======================================================
+        $iDestinationVersion=447;
+        $sDomain           = $_SERVER['SERVER_NAME'];
+        $sSubDomain        = substr($sDomain,0,strpos($sDomain,'.'));
+        $sRootDomain       = substr($sDomain,strpos($sDomain,'.')+1);
+        $iUpgradeDBVersion = Yii::app()->dbstats->createCommand("select upgradedbversion from pageviews where subdomain='$sSubDomain' and rootdomain='$sRootDomain'")->queryScalar();
+        if ($iUpgradeDBVersion==$iDestinationVersion){
+            $aData['scheduleupgrade']       = true;
+        }
+        // ================== LimeService Mod end
+    $this->_renderWrappedTemplate('update', '_updateContainer', $aData);
+    }
+
+    // ============ LimeService Mod start =======================================================
+    public function scheduleupgrade()
+    {
+        if (Permission::model()->hasGlobalPermission('superadmin') && App()->getRequest()->isPostRequest){
+            $iDestinationVersion=447;
+            $sUpgradeVersion='LimeSurvey 5';
+
+            // Check if already scheduled for upgrade
+            $sDomain           = $_SERVER['SERVER_NAME'];
+            $sSubDomain        = substr($sDomain,0,strpos($sDomain,'.'));
+            $sRootDomain       = substr($sDomain,strpos($sDomain,'.')+1);
+            Yii::app()->dbstats->createCommand("Update pageviews set upgradedbversion=$iDestinationVersion where subdomain='$sSubDomain' and rootdomain='$sRootDomain'")->execute();
+            $aData['scheduleupgrade']       = true;
+        }
         $this->_renderWrappedTemplate('update', '_updateContainer', $aData);
     }
+    // ================== LimeService Mod end
 
     public function managekey()
     {
