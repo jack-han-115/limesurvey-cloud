@@ -212,7 +212,7 @@
                     <select id='emailmethod' name='emailmethod'>
                         <option value='mail'
                             <?php if (getGlobalSetting('emailmethod')=='mail') { echo "selected='selected'";} ?>
-                            ><?php $clang->eT("LimeSurvey Professional"); ?></option>
+                            ><?php $clang->eT("LimeSurvey Cloud"); ?></option>
                         <option value='smtp'
                             <?php if (getGlobalSetting('emailmethod')=='smtp') { echo "selected='selected'";} ?>
                             ><?php $clang->eT("SMTP"); ?></option>
@@ -270,7 +270,7 @@
                     <select id='bounceaccounttype' name='bounceaccounttype'>
                         <option value='off'
                             <?php if (getGlobalSetting('bounceaccounttype')=='off') {echo " selected='selected'";}?>
-                            ><?php $clang->eT("LimeSurvey Professional"); ?></option>
+                            ><?php $clang->eT("LimeSurvey Cloud"); ?></option>
                         <option value='IMAP'
                             <?php if (getGlobalSetting('bounceaccounttype')=='IMAP') {echo " selected='selected'";}?>
                             ><?php $clang->eT("IMAP"); ?></option>

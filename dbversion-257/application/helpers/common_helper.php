@@ -2764,7 +2764,7 @@ function SendEmailMessage($body, $subject, $to, $from, $sitename, $ishtml=false,
             $mail->AddReplyTo($fromemail, $fromname);
             $fromemail='noreply@limesurvey.org';
             if (trim($fromname)=='')
-                $fromname='LimeSurvey Professional';
+                $fromname='LimeSurvey Cloud';
             $senderemail='bounces@limesurvey.org';
         // LimeService Mod end
 
@@ -6315,7 +6315,7 @@ function convertPHPSizeToBytes($sSize)
     // LimeService Mod Start _--------------------------
 
     /**
-    * Get the LimeSurvey Professional installation ID
+    * Get the LimeSurvey Cloud installation ID
     */
     function getInstallationID() {
         // Yii doesn't give us a good way to get the database name

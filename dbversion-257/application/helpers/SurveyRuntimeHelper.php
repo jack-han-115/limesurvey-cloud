@@ -936,7 +936,7 @@ class SurveyRuntimeHelper {
                 if ($sAds=='1')
                 {
                     echo '<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-                        <!-- LimeSurvey Professional -->
+                        <!-- LimeSurvey Cloud -->
                         <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-8685097035430927" data-ad-slot="1489732692" data-ad-format="auto"></ins>
                         <script>
                         (adsbygoogle = window.adsbygoogle || []).push({});

@@ -4056,7 +4056,7 @@ function SendEmailMessage($body, $subject, $to, $from, $sitename, $ishtml=false,
             $mail->AddReplyTo($fromemail, $fromname);
             $fromemail='noreply@limesurvey.org';
             if (trim($fromname)=='')
-                $fromname='LimeSurvey Professional';
+                $fromname='LimeSurvey Cloud';
             $senderemail='bounces@limesurvey.org';        
         // LimeService Mod end
             
@@ -4083,7 +4083,7 @@ function SendEmailMessage($body, $subject, $to, $from, $sitename, $ishtml=false,
             $mail->AddCustomHeader($val);
         }
     }
-    $mail->AddCustomHeader("X-Surveymailer: $sitename Emailer ( LimeSurvey Professional http://www.limesurvey.org )");
+    $mail->AddCustomHeader("X-Surveymailer: $sitename Emailer ( LimeSurvey Cloud http://www.limesurvey.org )");
     if (get_magic_quotes_gpc() != "0")	{$body = stripcslashes($body);}
     if ($ishtml)
     {
@@ -7604,7 +7604,7 @@ function array_diff_assoc_recursive($array1, $array2) {
         // LimeService Mod Start _--------------------------
 
     /**
-    * Get the LimeSurvey Professional installation ID
+    * Get the LimeSurvey Cloud installation ID
     */
     function getInstallationID() {
         // Yii doesn't give us a good way to get the database name

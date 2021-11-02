@@ -14,7 +14,7 @@ App()->getClientScript()->registerScriptFile(Yii::app()->getConfig('adminscripts
                             {
                                 echo " selected='selected'";
                             }
-                        ?>><?php $clang->eT("LimeSurvey Professional"); ?></option>
+                        ?>><?php $clang->eT("LimeSurvey Cloud"); ?></option>
                     <option value='L'<?php
                             if ($settings['bounceprocessing'] == 'L')
                             {
