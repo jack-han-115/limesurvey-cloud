@@ -48,14 +48,16 @@
                     <?php eT("Reset to default boxes");?>
                 </a>
             <?php endif;?>
-
+            <?php // LimeService Mod start 
+            /*
             <?php if(isset($fullpagebar['update'])):?>
                 <a href="<?php echo $this->createUrl('admin/update/sa/managekey/');?>" class="btn btn-default">
                     <span class="fa fa-key text-success"></span>
                     <?php eT("Manage your key");?>
                 </a>
             <?php endif;?>
-
+            */
+            // LimeService Mod End ?>
             <!-- Return -->
             <?php if(isset($fullpagebar['returnbutton']['url'])):?>
                 <a class="btn btn-default" href="<?php echo $this->createUrl($fullpagebar['returnbutton']['url']); ?>" role="button">

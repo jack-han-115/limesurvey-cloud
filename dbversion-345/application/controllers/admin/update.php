@@ -72,10 +72,6 @@ class update extends Survey_Common_Action
      */
     public function index()
     {
-        // ================== LimeService Mod start
-        Yii::app()->setFlashMessage(gT('LimeSurvey Cloud automatically provides updates - ComfortUpdate is not needed!'), 'error');
-        $this->getController()->redirect(Yii::app()->getController()->createUrl("/admin"));
-        // ================== LimeService Mod end
         $buttons = 1;
         $updateModel = new UpdateForm();
         $serverAnswer = $updateModel->getUpdateInfo($buttons);
