@@ -57,6 +57,15 @@
     <div class="collapse navbar-collapse js-navbar-collapse pull-right">
         <ul class="nav navbar-nav navbar-right">
 
+            <?php // ============ Update LimeService Begin ======================================================= ?>
+            <?php if (Permission::model()->hasGlobalPermission('superadmin')): ?>
+                <li class="dropdown-split-left">
+                    <marquee style="margin-top: 1em; max-width: 500px"><a href="<?php echo Yii::app()->createUrl("admin/update"); ?>"><strong class="text-warning"><?php eT("New update available:");?> </strong> <?php eT('Update now to Version 5.x.');?></a></marquee>
+                </li>
+            <?php endif; ?>
+            <?php // ============ Update LimeService End======================================================= / ?>
+
+
             <!-- Tutorial menu -->
             <?php $this->renderPartial( "/admin/super/_tutorial_menu", []); ?>
             
