@@ -3,33 +3,31 @@
         <div class='menubar-title-left'>
             <strong><?php $clang->eT("Administration");?></strong>
             <?php
-                if(Yii::app()->session['loginID'])
-                { ?>
+            if (Yii::app()->session['loginID']) { ?>
                 --  <?php $clang->eT("Logged in as:");?><strong>
                     <a href="<?php echo $this->createUrl("/admin/user/sa/personalsettings"); ?>">
-                        <?php echo Yii::app()->session['user'];?> <img src='<?php echo $sImageURL;?>profile_edit.png' alt='<?php $clang->eT("Edit your personal preferences");?>' /></a>
+                    <?php echo Yii::app()->session['user'];?> <img src='<?php echo $sImageURL;?>profile_edit.png' alt='<?php $clang->eT("Edit your personal preferences");?>' /></a>
                 </strong>
-                <?php } ?>
+            <?php } ?>
         </div>
         <?php
-            if($showupdate)
-            { ?>
-            <div class='menubar-title-right'><a href='<?php echo $this->createUrl("admin/globalsettings");?>'><?php echo sprintf($clang->ngT('Update available: %s','Updates available: %s',count($aUpdateVersions)),$sUpdateText);?></a></div>
-            <?php } ?>
+        if ($showupdate) { ?>
+            <div class='menubar-title-right'><a href='<?php echo $this->createUrl("admin/globalsettings");?>'><?php echo sprintf($clang->ngT('Update available: %s', 'Updates available: %s', count($aUpdateVersions)), $sUpdateText);?></a></div>
+        <?php } ?>
         <?php
 
     //===============Begin LimeService Mod
-    $sDomain=$_SERVER['SERVER_NAME'];
-    $sSubdomain=substr($sDomain,0,strpos($sDomain,'.'));
-    $sDomain=substr($sDomain,strpos($sDomain,'.')+1);
+        $sDomain = $_SERVER['SERVER_NAME'];
+        $sSubdomain = substr($sDomain, 0, strpos($sDomain, '.'));
+        $sDomain = substr($sDomain, strpos($sDomain, '.') + 1);
 
-    $iResponses = Yii::app()->dbstats->createCommand("select responses_avail from limeservice_system.balances where user_id=".substr(Yii::app()->db->username,6))->queryScalar();
-    echo "<div class='menubar-title-right'><small>".sprintf($clang->gT('Your response balance: %s'),$iResponses)."</small> <a href='https://www.limesurvey.org/pricing'>".'(Buy more)'.'</a>
-          <small>- New update (2.50+) available: </small><a href="'.$this->createUrl("admin/globalsettings").'">'.$clang->gT('Update now and get 20 free responses!').'</a>
+        $iResponses = Yii::app()->dbstats->createCommand("select responses_avail from limeservice_system.balances where user_id=" . substr(Yii::app()->db->username, 6))->queryScalar();
+        echo "<div class='menubar-title-right'><small>" . sprintf($clang->gT('Your response balance: %s'), $iResponses) . "</small> <a href='https://www.limesurvey.org/pricing'>" . '(Buy more)' . '</a>
+          <small>- New update (<b>5.x</b>) available: </small><a href="' . $this->createUrl("admin/globalsettings") . '">' . $clang->gT('Note: This version will not be supported anymore, soon!') . '</a>
     </div>';
     //===============End LimeService Mod
 
-    ?>
+        ?>
     </div>
     <div class='menubar-main'>
         <div class='menubar-left'>
@@ -42,64 +40,54 @@
             <a href="<?php echo $this->createUrl("admin/user/sa/index"); ?>">
                 <img src='<?php echo $sImageURL;?>security.png' alt='<?php $clang->eT("Manage survey administrators");?>' width='<?php echo $iconsize;?>' height='<?php echo $iconsize;?>'/></a>
             <?php
-                if(Yii::app()->session['USER_RIGHT_CREATE_USER'])
-                {?>
+            if (Yii::app()->session['USER_RIGHT_CREATE_USER']) {?>
                 <a href="<?php echo $this->createUrl("admin/usergroups/sa/index"); ?>">
                 <img src='<?php echo $sImageURL;?>usergroup.png' alt='<?php $clang->eT("Create/edit user groups");?>' width='<?php echo $iconsize;?>' height='<?php echo $iconsize;?>'/></a>
-            <?php
-                }
-                if(Yii::app()->session['USER_RIGHT_CONFIGURATOR'] == 1)
-                { ?>
+                <?php
+            }
+            if (Yii::app()->session['USER_RIGHT_CONFIGURATOR'] == 1) { ?>
                 <a href="<?php echo $this->createUrl("admin/globalsettings"); ?>">
                     <img src='<?php echo $sImageURL;?>global.png' alt='<?php $clang->eT("Global settings");?>' width='<?php echo $iconsize;?>' height='<?php echo $iconsize;?>'/></a>
                 <img src='<?php echo $sImageURL;?>separator.gif' class='separator' alt='' />
-                <?php }
-                if(Yii::app()->session['USER_RIGHT_CONFIGURATOR'] == 1)
-                { ?>
+            <?php }
+            if (Yii::app()->session['USER_RIGHT_CONFIGURATOR'] == 1) { ?>
                 <a href="<?php echo $this->createUrl("admin/checkintegrity"); ?>">
                     <img src='<?php echo $sImageURL;?>checkdb.png' alt='<?php $clang->eT("Check Data Integrity");?>' width='<?php echo $iconsize;?>' height='<?php echo $iconsize;?>'/></a>
                 <?php
-                }
-                if(Yii::app()->session['USER_RIGHT_SUPERADMIN'] == 1)
-                {
-
-                    if (in_array(Yii::app()->db->getDriverName(), array('mysql', 'mysqli')) || Yii::app()->getConfig('demoMode') == true)
-                    {
-
+            }
+            if (Yii::app()->session['USER_RIGHT_SUPERADMIN'] == 1) {
+                if (in_array(Yii::app()->db->getDriverName(), array('mysql', 'mysqli')) || Yii::app()->getConfig('demoMode') == true) {
                     ?>
 
                     <a href="<?php echo $this->createUrl("admin/dumpdb"); ?>" >
                         <img src='<?php echo $sImageURL;?>backup.png' alt='<?php $clang->eT("Backup Entire Database");?>' width='<?php echo $iconsize;?>' height='<?php echo $iconsize;?>'/>
                     </a>
 
-                    <?php } else { ?>
+                <?php } else { ?>
                     <img src='<?php echo $sImageURL; ?>backup_disabled.png' alt='<?php $clang->eT("The database export is only available for MySQL databases. For other database types please use the according backup mechanism to create a database dump."); ?>' />
-                    <?php } ?>
+                <?php } ?>
 
                 <img src='<?php echo $sImageURL; ?>separator.gif' class='separator' alt='' />
 
                 <?php
-                }
-                if(Yii::app()->session['USER_RIGHT_MANAGE_LABEL'] == 1)
-                {
+            }
+            if (Yii::app()->session['USER_RIGHT_MANAGE_LABEL'] == 1) {
                 ?>
 
                 <a href="<?php echo $this->createUrl("admin/labels/sa/view"); ?>" >
                     <img src='<?php echo $sImageURL;?>labels.png'  alt='<?php $clang->eT("Edit label sets");?>' width='<?php echo $iconsize;?>' height='<?php echo $iconsize;?>'/></a>
                 <img src='<?php echo $sImageURL;?>separator.gif' class='separator' alt='' />
-                <?php }
-                if(Yii::app()->session['USER_RIGHT_MANAGE_TEMPLATE'] == 1)
-                { ?>
+            <?php }
+            if (Yii::app()->session['USER_RIGHT_MANAGE_TEMPLATE'] == 1) { ?>
                 <a href="<?php echo $this->createUrl("admin/templates/sa/view"); ?>">
                     <img src='<?php echo $sImageURL;?>templates.png' alt='<?php $clang->eT("Template Editor");?>' width='<?php echo $iconsize;?>' height='<?php echo $iconsize;?>'/></a>
-                <?php } ?>
+            <?php } ?>
             <img src='<?php echo $sImageURL;?>separator.gif' class='separator' alt='' />
             <?php
-                if(Yii::app()->session['USER_RIGHT_PARTICIPANT_PANEL'] == 1)
-                { 	 ?>
+            if (Yii::app()->session['USER_RIGHT_PARTICIPANT_PANEL'] == 1) {    ?>
                 <a href="<?php echo $this->createUrl("admin/participants/sa/index"); ?>" >
                     <img src='<?php echo $sImageURL;?>cpdb.png' alt='<?php $clang->eT("Central participant database/panel");?>' width='<?php echo $iconsize;?>' height='<?php echo $iconsize;?>'/></a>
-                <?php } ?>
+            <?php } ?>
         </div>
         <div class='menubar-right'>
             <label for='surveylist'><?php $clang->eT("Surveys:");?></label>
@@ -111,12 +99,10 @@
             </a>
 
             <?php
-                if(Yii::app()->session['USER_RIGHT_CREATE_SURVEY'] == 1)
-                { ?>
-
+            if (Yii::app()->session['USER_RIGHT_CREATE_SURVEY'] == 1) { ?>
                 <a href="<?php echo $this->createUrl("admin/survey/sa/newsurvey"); ?>">
                     <img src='<?php echo $sImageURL;?>add.png' alt='<?php $clang->eT("Create, import, or copy a survey");?>' /></a>
-                <?php } ?>
+            <?php } ?>
 
 
             <img id='separator2' src='<?php echo $sImageURL;?>separator.gif' class='separator' alt='' />
