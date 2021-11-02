@@ -564,7 +564,7 @@
             ?>
             <div style="width:600px;text-align: left;padding-top:50px; margin:0 auto;">
                 <span style="font-weight: bold; font-size: 14pt;">Upgrade to <?php echo $sUpgradeVersion; ?> is now scheduled!</span><br /><br />
-                <b>Your LimeSurvey Professional installation was scheduled for upgrade.</b> Upgrade cycles run every full hour. The current server time is <?php echo date('g:i a');?>.<br>
+                <b>Your LimeSurvey Cloud installation was scheduled for upgrade.</b> Upgrade cycles run every full hour. The current server time is <?php echo date('g:i a');?>.<br>
                 This action cannot be undone. When the update process has finished you will receive an email.<p /></div>
             <?php
         }
@@ -573,7 +573,7 @@
             <div style="width:600px;text-align: left !important;padding-top:50px; margin:0 auto;">
             <br><br>
                 <h4><strong>New version available!<br>Upgrade now to version 5.x and get 25 free responses!</strong></h4>
-                <p style='text-align:left'>Click here to find out what's new....</p>
+                <p style='text-align:left'><a target='_blank' href='https://www.limesurvey.org/blog/763-what-s-new-in-limesurvey'>Read our article about the changes in this release</a> to find out what's new....</p>
                 <p style='text-align:left'>There is a new LimeSurvey version (<?php echo $sUpgradeVersion; ?>) available with many new features! Check out our <a href="https://www.limesurvey.org/blog">latest </a><a href="https://www.limesurvey.org/blog">blog</a> articles for more info. Before you press the button "Upgrade" please read the following text.</p>
                 <p style='text-align:left'><strong>Is my data safe when upgrading?</strong></p>
                 <p style='text-align:left'>Yes, your data is safe. During the upgrade process, there will be a short downtime of two minutes.</p>
@@ -599,7 +599,7 @@
     { ?>
         <div style="width:600px;text-align: left;padding-top:50px; margin:0 auto;">
             <span style="font-weight: bold; font-size: 14pt;">Upgrade to <?php echo $sUpgradeVersion; ?> is in progress!</span><br /><br />
-            Your LimeSurvey Professional installation is already scheduled for upgrade. Upgrade cycles run on every full hour and can take up to 15 minutes - please be patient. The current server time is '<?php echo date('g:i T');?>.
+            Your LimeSurvey Cloud installation is already scheduled for upgrade. Upgrade cycles run on every full hour and can take up to 15 minutes - please be patient. The current server time is '<?php echo date('g:i T');?>.
             This action cannot be undone. <br /><b>Please be patient. When the upgrade has finished you will receive an automatic email.</b><p /></div>
         <?php
     }
