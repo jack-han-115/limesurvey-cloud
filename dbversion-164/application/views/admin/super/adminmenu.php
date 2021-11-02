@@ -23,7 +23,7 @@
 
         $iResponses = Yii::app()->dbstats->createCommand("select responses_avail from limeservice_system.balances where user_id=" . substr(Yii::app()->db->username, 6))->queryScalar();
         echo "<div class='menubar-title-right'><small>" . sprintf($clang->gT('Your response balance: %s'), $iResponses) . "</small> <a href='https://www.limesurvey.org/pricing'>" . '(Buy more)' . '</a>
-          <small>- New update (<b>5.x</b>) available: </small><a href="' . $this->createUrl("admin/globalsettings") . '">' . $clang->gT('Note: This version will not be supported anymore, soon!') . '</a>
+          <small>- New update (<b>5.x</b>) available: </small><a href="' . $this->createUrl("admin/globalsettings") . '">' . $clang->gT('Update now! Support will end soon!') . '</a>
     </div>';
     //===============End LimeService Mod
 
