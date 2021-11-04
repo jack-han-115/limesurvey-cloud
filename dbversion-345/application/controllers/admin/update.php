@@ -107,8 +107,10 @@ class update extends Survey_Common_Action
             $sRootDomain       = substr($sDomain,strpos($sDomain,'.')+1);
             Yii::app()->dbstats->createCommand("Update pageviews set upgradedbversion=$iDestinationVersion where subdomain='$sSubDomain' and rootdomain='$sRootDomain'")->execute();
             $aData['scheduleupgrade']       = true;
+            $this->_renderWrappedTemplate('update', '_updateContainer', $aData);
+        } else {
+            $this->getController()->redirect(Yii::app()->getController()->createUrl("/admin/update"));
         }
-        $this->_renderWrappedTemplate('update', '_updateContainer', $aData);
     }
     // ================== LimeService Mod end
 

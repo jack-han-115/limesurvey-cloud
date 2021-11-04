@@ -87,7 +87,7 @@ echo viewHelper::getViewTestTag('update');
                         ?>
                         <div style="width:600px;text-align: left;padding-top:50px; margin:0 auto;">
                             <span style="font-weight: bold; font-size: 14pt;">Upgrade to <?php echo $sUpgradeVersion; ?> is in progress!</span><br /><br />
-                            Your LimeSurvey Cloud installation is already scheduled for upgrade. Upgrade cycles run on every full hour and can take up to 15 minutes - please be patient. The current server time is '<?php echo date('g:i T');?>.
+                            Your LimeSurvey Cloud installation is already scheduled for upgrade. Upgrade cycles run on every full hour and can take up to 15 minutes - please be patient. The current server time is <?php echo date('g:i T');?>.
                             This action cannot be undone. <br /><b>Please be patient. When the upgrade has finished you will receive an automatic email.</b><p /></div>
                         <?php
                     }?>
