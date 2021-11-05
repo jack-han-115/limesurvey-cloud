@@ -483,7 +483,7 @@ class Survey_Common_Action extends CAction
 
             // LimeService Mod Start
             $user_id = (int) getInstallationId();
-            $query = 'SELECT locked_storage FROM limeservice_system.installations WHERE user_id = ' . $user_id;
+            $query = 'SELECT locked_storage, subscription_alias FROM limeservice_system.installations WHERE user_id = ' . $user_id;
             $result = Yii::app()->dbstats->createCommand($query)->queryRow();
             if ($result && $result['locked_storage']) {
                 Yii::app()->user->setFlash(
@@ -497,6 +497,11 @@ class Survey_Common_Action extends CAction
                     )
                 );
             }
+
+            $aData['dataForHelpMenu'] = [
+                "issuperadmin" => $aData["issuperadmin"],
+                "currentPlan" => $result["subscription_alias"]
+            ];
             // LimeService Mod End
 
 
