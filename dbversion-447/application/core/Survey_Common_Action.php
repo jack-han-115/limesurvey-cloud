@@ -498,7 +498,10 @@ class Survey_Common_Action extends CAction
                 );
             }
 
-            $aData["currentPlan"] = $result["subscription_alias"];
+            $aData['dataForHelpMenu'] = [
+                "issuperadmin" => $aData["issuperadmin"],
+                "currentPlan" => $result["subscription_alias"]
+            ];
             // LimeService Mod End
 
 
