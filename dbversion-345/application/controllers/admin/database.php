@@ -971,7 +971,7 @@ class database extends Survey_Common_Action
                 }
                 // LimeService Mod end
                 if ($sURL !== null) {
-                    $data['surveyls_url'] = htmlspecialchars($sURL);
+                    $data['surveyls_url'] = $sURL;
                 }
                 if ($sURLDescription !== null) {
                     $data['surveyls_urldescription'] = htmlspecialchars($sURLDescription);
