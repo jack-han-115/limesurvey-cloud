@@ -70,6 +70,7 @@ echo viewHelper::getViewTestTag('update');
                             <p style='text-align:left'>Please note that the browser requirement for LimeSurvey administration has changed. For survey participants we currently support IE11&nbsp;and all newer comparable browsers like Firefox, Chrome, Opera, etc.. For the new administration interface you will need to use a recent version of any popular browser, like Firefox, Chrome, Opera, Edge, etc.</p>
                             <p style='text-align:left'><strong>Can I upgrade while having active surveys?</strong></p>
                             <p style='text-align:left'>While it is possible, we do not recommend upgrading while running active surveys. Upgrading while running active surveys may cause issues with customized templates.</p>
+                            <p style='text-align:left'>If you requested from our support to have any custom plugin(s) installed in the past, then such plugin(s) will be deactivated on upgrade. For an upgrade path on these plugins please contact the author of the plugin, first.</p>
                             <p style='text-align:left'><strong>What happens after the upgrade is done?</strong></p>
                             <p style='text-align:left'>After the upgrade is complete, you will receive a notification email. Upon receipt of the email, please log in and check your surveys and templates.</p>
                             <p style='text-align:left'>As a bonus for upgrading, <strong>we will credit your account with 25 survey responses</strong>!</p>
