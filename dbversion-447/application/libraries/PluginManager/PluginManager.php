@@ -492,6 +492,8 @@ class PluginManager extends \CApplicationComponent
             // ========================  Begin LimeService Mod
             // LimeSurveyProfessional plugin contains cookie warning, necessary for
             // Google AdSense. It should always be loaded for package "Free".
+            // NB: This import is needed in case a custom module depends on a plugin.
+            Yii::import('application.helpers.common_helper', true);
             $result = Yii::app()->dbstats->createCommand(
                 'SELECT advertising FROM limeservice_system.installations WHERE user_id = ' . getInstallationID())
                 ->queryRow();
