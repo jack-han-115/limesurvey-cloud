@@ -4219,7 +4219,7 @@ function db_upgrade_all($iOldDBVersion, $bSilent = false)
         /* Add public boolean to surveygroup : view forl all in list */
         if ($iOldDBVersion < 435) {
             $oTransaction = $oDB->beginTransaction();
-            // Check if default survey groups exists - at some point it was possible to delete it 
+            // Check if default survey groups exists - at some point it was possible to delete it
             $defaultSurveyGroupExists = $oDB->createCommand()
             ->select('gsid')
             ->from("{{surveys_groups}}")
@@ -5017,7 +5017,6 @@ function db_upgrade_all($iOldDBVersion, $bSilent = false)
          */
         if ($iOldDBVersion < 473) {
             $oTransaction = $oDB->beginTransaction();
-
             $dir = new DirectoryIterator(APPPATH . DIRECTORY_SEPARATOR . 'core' . DIRECTORY_SEPARATOR . 'plugins');
             foreach ($dir as $fileinfo) {
                 if (!$fileinfo->isDot()) {
@@ -5063,6 +5062,7 @@ function db_upgrade_all($iOldDBVersion, $bSilent = false)
             $oDB->createCommand()->update('{{settings_global}}', array('stg_value' => 475), "stg_name='DBVersion'");
             $oTransaction->commit();
         }
+
         /**
          * Sanitize theme option paths
          */
@@ -5085,6 +5085,21 @@ function db_upgrade_all($iOldDBVersion, $bSilent = false)
 
             $oDB->createCommand()->update('{{settings_global}}', array('stg_value' => 476), "stg_name='DBVersion'");
             $oTransaction->commit();
+        }
+
+        if ($iOldDBVersion < 477) {
+            $oTransaction = $oDB->beginTransaction();
+
+            // refactored controller ResponsesController (surveymenu_entry link changes to new controller rout)
+            $oDB->createCommand()->update(
+                '{{surveymenu_entries}}',
+                [
+                    'menu_link' => 'responses/browse',
+                    'data'      => '{"render": {"isActive": true, "link": {"data": {"surveyId": ["survey", "sid"]}}}}'
+                ],
+                "name='responses'"
+            );
+            $oDB->createCommand()->update('{{settings_global}}', ['stg_value' => 477], "stg_name='DBVersion'");
         }
     } catch (Exception $e) {
         Yii::app()->setConfig('Updating', false);
@@ -5269,7 +5284,7 @@ function decryptParticipantTables450($oDB)
             foreach ($tokens as $token) {
                 $recryptedToken = [];
                 foreach ($columnEncryptions as $column => $value) {
-                    if ($columnEncryptions[$column]['encrypted'] === 'Y') {
+                    if ($columnEncryptions[$column]['encrypted'] === 'Y' && isset($token[$column])) {
                         $decryptedTokenColumn = LSActiveRecord::decryptSingleOld($token[$column]);
                         $recryptedToken[$column] = LSActiveRecord::encryptSingle($decryptedTokenColumn);
                     }
@@ -5585,7 +5600,7 @@ function createFieldMap450($survey): array
                 }
             }
             switch ($arow['type']) {
-                case Question::QT_L_LIST_DROPDOWN:  //RADIO LIST
+                case Question::QT_L_LIST:  //RADIO LIST
                 case Question::QT_EXCLAMATION_LIST_DROPDOWN:  //DROPDOWN LIST
                     if ($arow['other'] === 'Y') {
                         $fieldname = "{$arow['sid']}X{$arow['gid']}X{$arow['qid']}other";
@@ -8213,7 +8228,7 @@ function regenerateLabelCodes400(int $lid, $hasLanguageColumn = true)
         return;
     }
 
-    foreach (explode(',', $labelSet['languages']) as $lang) {
+    foreach (explode(' ', $labelSet['languages']) as $lang) {
         if ($hasLanguageColumn) {
             $query = sprintf(
                 "SELECT * FROM {{labels}} WHERE lid = %d AND language = %s",

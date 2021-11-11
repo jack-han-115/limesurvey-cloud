@@ -1007,7 +1007,7 @@ function getExtendedAnswer($iSurveyID, $sFieldCode, $sValue, $sLanguage)
                     }
                 }
                 break;
-            case Question::QT_L_LIST_DROPDOWN:
+            case Question::QT_L_LIST:
             case Question::QT_EXCLAMATION_LIST_DROPDOWN:
             case Question::QT_O_LIST_WITH_COMMENT:
             case Question::QT_I_LANGUAGE:
@@ -1395,7 +1395,7 @@ function createFieldMap($survey, $style = 'short', $force_refresh = false, $ques
     App()->setLanguage($sLanguage);
     // Collect all default values once so don't need separate query for each question with defaults
     // First collect language specific defaults
-    
+
     $defaultsQuery = "SELECT a.qid, a.sqid, a.scale_id, a.specialtype, al10.defaultvalue"
     . " FROM {{defaultvalues}} as a "
     . " LEFT JOIN  {{defaultvalue_l10ns}} as al10 ON a.dvid = al10.dvid "
@@ -1509,7 +1509,7 @@ function createFieldMap($survey, $style = 'short', $force_refresh = false, $ques
                 }
             }
             switch ($arow['type']) {
-                case Question::QT_L_LIST_DROPDOWN:  //RADIO LIST
+                case Question::QT_L_LIST:  //RADIO LIST
                 case Question::QT_EXCLAMATION_LIST_DROPDOWN:  //DROPDOWN LIST
                     if ($arow['other'] == "Y") {
                         $fieldname = "{$arow['sid']}X{$arow['gid']}X{$arow['qid']}other";
@@ -1751,7 +1751,7 @@ function createFieldMap($survey, $style = 'short', $force_refresh = false, $ques
             if (isset($answerColumnDefinition)) {
                 $fieldmap[$fieldname]['answertabledefinition'] = $answerColumnDefinition;
             }
-            
+
             if ($style == "full") {
                 $fieldmap[$fieldname]['title'] = $arow['title'];
                 $fieldmap[$fieldname]['question'] = "filecount - " . $arow['question'];
@@ -1783,7 +1783,7 @@ function createFieldMap($survey, $style = 'short', $force_refresh = false, $ques
                 if (isset($answerColumnDefinition)) {
                     $fieldmap[$fieldname]['answertabledefinition'] = $answerColumnDefinition;
                 }
-                
+
                 if ($style == "full") {
                     $fieldmap[$fieldname]['title'] = $arow['title'];
                     $fieldmap[$fieldname]['question'] = $arow['question'];
@@ -1835,7 +1835,7 @@ function createFieldMap($survey, $style = 'short', $force_refresh = false, $ques
                 if (isset($answerColumnDefinition)) {
                     $fieldmap[$fieldname]['answertabledefinition'] = $answerColumnDefinition;
                 }
-                
+
                 if ($style == "full") {
                     $fieldmap[$fieldname]['title'] = $arow['title'];
                     $fieldmap[$fieldname]['question'] = $arow['question'];
@@ -1858,7 +1858,7 @@ function createFieldMap($survey, $style = 'short', $force_refresh = false, $ques
                     if (isset($answerColumnDefinition)) {
                         $fieldmap[$fieldname]['answertabledefinition'] = $answerColumnDefinition;
                     }
-                    
+
                     if ($style == "full") {
                         $fieldmap[$fieldname]['title'] = $arow['title'];
                         $fieldmap[$fieldname]['question'] = $arow['question'];
@@ -2155,7 +2155,7 @@ function SendEmailMessage($body, $subject, $to, $from, $sitename, $ishtml = fals
 
     $mail =  new LimeMailer();
     $mail->emailType = 'deprecated';
-    
+
     $fromname = '';
     $fromemail = $from;
     if (strpos($from, '<')) {
@@ -3336,7 +3336,7 @@ function includeKeypad()
 function translateInsertansTags($newsid, $oldsid, $fieldnames)
 {
     uksort($fieldnames, function ($a, $b) {
-        return strlen($b)-strlen($a);
+        return strlen($b) - strlen($a);
     });
 
     Yii::app()->loadHelper('database');
@@ -3749,7 +3749,7 @@ function fixLanguageConsistency($sid, $availlangs = '')
         }
         reset($langs);
     }
-    
+
     /* Remove invalid question : can break survey */
     switchMSSQLIdentityInsert('assessments', true);
     Survey::model()->findByPk($sid)->fixInvalidQuestions();
@@ -5007,14 +5007,13 @@ function isZipBomb($zip_filename)
     $totalSize = 0;
     $zip = new ZipArchive();
     if ($zip->open($zip_filename) === true) {
-        
         for ($i = 0; $i < $zip->numFiles; $i++) {
             $fileStats = $zip->statIndex($i);
             $totalSize += $fileStats['size'];
         }
-           
+
         $zip->close();
-    }        
+    }
     return ( $totalSize >  Yii::app()->getConfig('maximum_unzipped_size'));
 }
 
@@ -5029,7 +5028,7 @@ function get_zip_originalsize($filename)
 
     if (class_exists('ZipArchive')) {
         $size = 0;
-        $zip = new ZipArchive;
+        $zip = new ZipArchive();
         $zip->open($filename);
 
         for ($i = 0; $i < $zip->numFiles; $i++) {

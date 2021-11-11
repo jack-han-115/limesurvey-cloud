@@ -208,7 +208,7 @@
 
                     <!-- User groups -->
                     <li class="dropdown-item">
-                        <a href="<?php echo $this->createUrl("admin/roles/"); ?>">
+                        <a href="<?php echo $this->createUrl("userRole/index"); ?>">
                             <?php eT("User roles");?>
                         </a>
                     </li>
