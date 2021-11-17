@@ -832,5 +832,7 @@ $config['passwordValidationRules'] = array(
     'symbol' => 0,
 );
 
+$config['linkToPricingPage'] ='https://www.limesurvey.org/pricing';
+
 return $config;
 //settings deleted

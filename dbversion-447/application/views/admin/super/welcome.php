@@ -72,6 +72,57 @@ echo viewHelper::getViewTestTag('index');
 
     <?php endif;?>
 
+    <!-- Message for x (responses/storage) reached -->
+    <?php
+        $limeserviceSystem = new \LimeSurvey\Models\Services\LimeserviceSystem(Yii::app()->dbstats, (int)getInstallationID());
+        $messages = [];
+
+        try { //better to check (in worst case sql-exception will block user completely out ...)
+            if ($limeserviceSystem->showResponseNotificationForUser())
+            {
+                //modal notification responses
+                if (Permission::model()->hasGlobalPermission('superadmin', 'read'))
+                {
+                    $messages[] = sprintf(
+                        gT('The responses on your survey site are below the configured responses reminder limit of %s. Please upgrade or renew your plan to increase your responses.'),
+                        $limeserviceSystem->getReminderLimitResponses()
+                    );
+                }else{//all other users
+                    $messages[] = sprintf(
+                        gT('The responses on your survey site are below the configured responses reminder limit of %s. Please upgrade or renew your plan to increase your responses.'),
+                        $limeserviceSystem->getReminderLimitResponses()
+                    );
+                }
+            }
+
+            $reminderLimitStorage = $limeserviceSystem->getReminderLimitStorage();
+            if ($limeserviceSystem->calcRestStoragePercent() < $reminderLimitStorage)
+            {
+                if (Permission::model()->hasGlobalPermission('superadmin', 'read')){
+                    $messages[] = sprintf(
+                        gT('The storage usage on your survey site is above the configured storage reminder limit of %s. Please upgrade or renew your plan to increase your storage'),
+                        $reminderLimitStorage
+                    );
+                }else{ //all other users
+                    $messages[] = sprintf(
+                        gT('The storage usage on your survey site is above the configured storage reminder limit of %s. Please upgrade or renew your plan to increase your storage'),
+                        $reminderLimitStorage
+                    );
+                }
+            }
+
+            if (count($messages) > 0) {
+                Yii::app()->getController()->renderPartial('/admin/super/_reminder_modal', [
+                    'titel' => gt('System notification'),
+                    'messages' => $messages,
+                ]);
+            }
+        }catch (Exception $e){
+            Yii::log($e->getMessage(), 'error', 'exception.CDbException');
+        }
+
+    ?>
+
     <?php 
         //Check for IE and show a warning box
         if (preg_match('~MSIE|Internet Explorer~i', $_SERVER['HTTP_USER_AGENT']) || (strpos($_SERVER['HTTP_USER_AGENT'], 'Trident/7.0') !== false && strpos($_SERVER['HTTP_USER_AGENT'], 'rv:11.0') !== false)) {
