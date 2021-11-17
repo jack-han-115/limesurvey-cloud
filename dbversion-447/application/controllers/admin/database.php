@@ -594,6 +594,9 @@ class database extends Survey_Common_Action
                     $endtext = Yii::app()->request->getPost('endtext_' . $langname, null);
                     $datasec = Yii::app()->request->getPost('datasec_' . $langname, null);
                     $datasecerror = Yii::app()->request->getPost('datasecerror_' . $langname, null);
+                    // LimeService Mod Start
+                    $legalnotice = Yii::app()->request->getPost('legalnotice_'.$langname, null);
+                    // LimeService Mod end
                     $dataseclabel = Yii::app()->request->getPost('dataseclabel_' . $langname, null);
                     $dateformat = Yii::app()->request->getPost('dateformat_' . $langname, null);
                     $numberformat = Yii::app()->request->getPost('numberformat_' . $langname, null);
@@ -643,6 +646,13 @@ class database extends Survey_Common_Action
                     if ($numberformat !== null) {
                         $data['surveyls_numberformat'] = $numberformat;
                     }
+                    // LimeService Mod Start
+                    if ($legalnotice !== null) {
+                        // Fix bug with FCKEditor saving strange BR types
+                        $legalnotice = $this->oFixCKeditor->fixCKeditor($legalnotice);
+                        $data['surveyls_legal_notice'] = $legalnotice;
+                    }
+                    // LimeService Mod end                    
 
                     if (count($data) > 0) {
                         $oSurveyLanguageSetting = SurveyLanguageSetting::model()->findByPk(array('surveyls_survey_id' => $iSurveyID, 'surveyls_language' => $langname));
