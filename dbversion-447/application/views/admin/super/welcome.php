@@ -76,6 +76,7 @@ echo viewHelper::getViewTestTag('index');
     <?php
         $limeserviceSystem = new \LimeSurvey\Models\Services\LimeserviceSystem(Yii::app()->dbstats, (int)getInstallationID());
         $messages = [];
+        $title = '';
 
         try { //better to check (in worst case sql-exception will block user completely out ...)
             if ($limeserviceSystem->showResponseNotificationForUser())
@@ -89,10 +90,11 @@ echo viewHelper::getViewTestTag('index');
                     );
                 }else{//all other users
                     $messages[] = sprintf(
-                        gT('The responses on your survey site are below the configured responses reminder limit of %s. Please upgrade or renew your plan to increase your responses.'),
+                        gT('The responses on your survey site is below the configured responses reminder limit of %s. Please contact your Survey Site Administrator to upgrade or renew your plan to increase your responses.'),
                         $limeserviceSystem->getReminderLimitResponses()
                     );
                 }
+                $title = gt('You are almost out of responses');
             }
 
             $reminderLimitStorage = $limeserviceSystem->getReminderLimitStorage();
@@ -105,15 +107,22 @@ echo viewHelper::getViewTestTag('index');
                     );
                 }else{ //all other users
                     $messages[] = sprintf(
-                        gT('The storage usage on your survey site is above the configured storage reminder limit of %s. Please upgrade or renew your plan to increase your storage'),
+                        gT('The storage usage on your survey site is above the configured storage reminder limit of %s. Please contact your Survey Site Administration to upgrade or renew your plan to increase your storage.'),
                         $reminderLimitStorage
                     );
                 }
+                if($title !== ''){
+                    $title .= ' / ' . gt('You are almost out of storage');
+                }else{
+                    $title = gt('You are almost out of storage');
+                }
+
+
             }
 
             if (count($messages) > 0) {
                 Yii::app()->getController()->renderPartial('/admin/super/_reminder_modal', [
-                    'titel' => gt('System notification'),
+                    'titel' => $title,
                     'messages' => $messages,
                 ]);
             }

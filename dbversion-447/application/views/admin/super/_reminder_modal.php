@@ -40,10 +40,15 @@
                     <a class="btn btn-primary" href="<?php
                     echo Yii::app()->getConfig("linkToPricingPage") ?>" target="_blank">
                         <?php
-                        et('Upgrade plan') ?>
+                        et('Upgrade/Renew plan') ?>
                     </a>
                 <?php
-                } ?>
+                }else{ ?>
+                    <a class="btn btn-primary" href="mailto:<?php echo getGlobalSetting('siteadminemail')?>" >
+                        <?php
+                        et('Contact Survey Site Admin') ?>
+                </a>
+               <?php } ?>
             </div>
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
