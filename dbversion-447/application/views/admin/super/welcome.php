@@ -75,60 +75,70 @@ echo viewHelper::getViewTestTag('index');
     <!-- Message for x (responses/storage) reached -->
     <?php
         $limeserviceSystem = new \LimeSurvey\Models\Services\LimeserviceSystem(Yii::app()->dbstats, (int)getInstallationID());
-        $messages = [];
+        $message = '';
         $title = '';
+    try { //better to check (in worst case sql-exception will block user completely out ...)
+        $hasResponseNotification = $limeserviceSystem->showResponseNotificationForUser();
+        $reminderLimitStorage = $limeserviceSystem->getReminderLimitStorage();
+        // If no storage is left, this notification will not be shown!
+        $hasStorageNotification = $limeserviceSystem->calcRestStoragePercent() > 0 && $limeserviceSystem->calcRestStoragePercent() < $reminderLimitStorage;
 
-        try { //better to check (in worst case sql-exception will block user completely out ...)
-            if ($limeserviceSystem->showResponseNotificationForUser())
-            {
-                //modal notification responses
-                if (Permission::model()->hasGlobalPermission('superadmin', 'read'))
-                {
-                    $messages[] = sprintf(
-                        gT('The responses on your survey site are below the configured responses reminder limit of %s. Please upgrade or renew your plan to increase your responses.'),
-                        $limeserviceSystem->getReminderLimitResponses()
+        if ($hasResponseNotification && $hasStorageNotification) {
+            $message = sprintf(
+                gT('The responses on your survey site are below the configured responses reminder limit of %s.'),
+                $limeserviceSystem->getReminderLimitResponses()
+            );
+            $message .= '<br>' . sprintf(
+                    gT(
+                        'Also, the storage usage on your survey site is above the configured storage reminder limit of %s.'
+                    ),
+                    $reminderLimitStorage . '%'
+                );
+            if (Permission::model()->hasGlobalPermission('superadmin', 'read')) {
+                $message .= '<br><br>' . gT('Please upgrade or renew your plan to increase your storage & responses.');
+            } else {//all other users
+                $message .= '<br><br>' . gT(
+                        'Please contact your Survey Site Administrator to upgrade or renew your plan to increase your storage & responses.'
                     );
-                }else{//all other users
-                    $messages[] = sprintf(
-                        gT('The responses on your survey site is below the configured responses reminder limit of %s. Please contact your Survey Site Administrator to upgrade or renew your plan to increase your responses.'),
-                        $limeserviceSystem->getReminderLimitResponses()
-                    );
-                }
-                $title = gt('You are almost out of responses');
             }
-
-            $reminderLimitStorage = $limeserviceSystem->getReminderLimitStorage();
-            if ($limeserviceSystem->calcRestStoragePercent() < $reminderLimitStorage)
-            {
-                if (Permission::model()->hasGlobalPermission('superadmin', 'read')){
-                    $messages[] = sprintf(
-                        gT('The storage usage on your survey site is above the configured storage reminder limit of %s. Please upgrade or renew your plan to increase your storage'),
-                        $reminderLimitStorage
+            $title = gt('You are almost out of storage & responses');
+        } elseif ($hasResponseNotification) {
+            $message = sprintf(
+                gT('The responses on your survey site are below the configured responses reminder limit of %s.'),
+                $limeserviceSystem->getReminderLimitResponses()
+            );
+            if (Permission::model()->hasGlobalPermission('superadmin', 'read')) {
+                $message .= '<br><br>' . gT('Please upgrade or renew your plan to increase your responses.');
+            } else {//all other users
+                $message .= '<br><br>' . gT(
+                        'Please contact your Survey Site Administrator to upgrade or renew your plan to increase your responses.'
                     );
-                }else{ //all other users
-                    $messages[] = sprintf(
-                        gT('The storage usage on your survey site is above the configured storage reminder limit of %s. Please contact your Survey Site Administration to upgrade or renew your plan to increase your storage.'),
-                        $reminderLimitStorage
+            }
+            $title = gt('You are almost out of responses');
+        } elseif ($hasStorageNotification) {
+            $message = sprintf(
+                gT('The storage usage on your survey site is above the configured storage reminder limit of %s.'),
+                $reminderLimitStorage . '%'
+            );
+            if (Permission::model()->hasGlobalPermission('superadmin', 'read')) {
+                $message .= '<br><br>' . gT('Please upgrade or renew your plan to increase your storage.');
+            } else {//all other users
+                $message .= '<br><br>' . gT(
+                        'Please contact your Survey Site Administrator to upgrade or renew your plan to increase your storage.'
                     );
-                }
-                if($title !== ''){
-                    $title .= ' / ' . gt('You are almost out of storage');
-                }else{
-                    $title = gt('You are almost out of storage');
-                }
-
-
             }
-
-            if (count($messages) > 0) {
-                Yii::app()->getController()->renderPartial('/admin/super/_reminder_modal', [
-                    'titel' => $title,
-                    'messages' => $messages,
-                ]);
-            }
-        }catch (Exception $e){
-            Yii::log($e->getMessage(), 'error', 'exception.CDbException');
+            $title = gt('You are almost out of storage');
         }
+
+        if ($message != '') {
+            Yii::app()->getController()->renderPartial('/admin/super/_reminder_modal', [
+                'titel' => $title,
+                'message' => $message,
+            ]);
+        }
+    } catch (Exception $e) {
+        Yii::log($e->getMessage(), 'error', 'exception.CDbException');
+    }
 
     ?>
 

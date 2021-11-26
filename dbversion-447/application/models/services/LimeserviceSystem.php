@@ -50,15 +50,16 @@ class LimeserviceSystem
      *    with
      *    "responses_avail" (responses still available for him)
      *    he has.
+     *    (If responses_available is 0 the notification will not be shown)
      *
      * @return bool  true, if user should be informed, and false otherwise.
      */
     public function showResponseNotificationForUser()
     {
         $reminderLimitResponses = $this->getReminderLimitResponses();
-        $responsesAvailble = $this->getResponsesAvailable();
+        $responsesAvailable = $this->getResponsesAvailable();
 
-        return ($responsesAvailble < $reminderLimitResponses);
+        return $responsesAvailable > 0 && ($responsesAvailable < $reminderLimitResponses);
     }
 
     /**

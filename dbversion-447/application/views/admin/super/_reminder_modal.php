@@ -1,7 +1,7 @@
 <?php
 /**
  * @var string $titel
- * @var array $messages
+ * @var string $message
  */
 
 ?>
@@ -24,11 +24,7 @@
             <div class="modal-body">
                 <div class="container-fluid">
                     <div class="row">
-                        <?php
-                        foreach ($messages as $message) {
-                            echo '<p>' . $message . '</p>';
-                        }
-                        ?>
+                        <?php echo '<p>' . $message . '</p>'; ?>
                     </div>
                 </div>
             </div>
