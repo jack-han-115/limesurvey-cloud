@@ -205,7 +205,14 @@ $internalConfig = array(
                 'profile' => array(
                     'class' => 'CProfileLogRoute'
                 ),
-
+                /*
+                'dberror2' => array(
+                    'class'      => 'CDbLogRoute',
+                    'levels'     => 'info, error, warning', 
+                    'categories' => '',
+                    'logTableName' => 'client_log',
+                    'connectionID' => 'dbstats'
+                    ),*/
                 // Log file saved in /tmp/runtime/plugin.log
                 'plugin' => array(
                     'class' => 'CFileLogRoute',
