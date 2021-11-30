@@ -120,7 +120,8 @@ class export extends Survey_Common_Action
 
     public function exportresults()
     {
-        $iSurveyID = sanitize_int(Yii::app()->request->getParam('surveyid'));
+        $iSurveyID = sanitize_int(Yii::app()->request->getParam('surveyid')) ??
+            sanitize_int(Yii::app()->request->getParam('surveyId'));
         $survey = Survey::model()->findByPk($iSurveyID);
 
 
@@ -152,7 +153,7 @@ class export extends Survey_Common_Action
 
         if (!$survey->isActive) {
             Yii::app()->session['flashmessage'] = gT('This survey is not active - no responses are available.');
-            $this->getController()->redirect($this->getController()->createUrl("/admin/survey/sa/view/surveyid/{$iSurveyID}"));
+            $this->getController()->redirect($this->getController()->createUrl("surveyAdministration/view/surveyid/{$iSurveyID}"));
         }
 
 
@@ -493,35 +494,35 @@ class export extends Survey_Common_Action
 
             /* Python code to locate the PATH of current syntax */
             if ($spssver == 3) {
-            echo "\n";			
-	    echo "begin program.\n";
-	    echo "import spss,SpssClient,os\n";
-	    echo "SpssClient.StartClient()\n";
-	    echo "PATH = os.path.dirname(SpssClient.GetDesignatedSyntaxDoc().GetDocumentPath())\n";
-	    echo "SpssClient.StopClient()\n";
-	    echo "spss.Submit('''FILE HANDLE PATHdatfile /NAME='{0}'.'''.format(PATH))\n";
-	    echo "end program.\n";
-	    echo "\n";	
-	    }
+                echo "\n";
+                echo "begin program.\n";
+                echo "import spss,SpssClient,os\n";
+                echo "SpssClient.StartClient()\n";
+                echo "PATH = os.path.dirname(SpssClient.GetDesignatedSyntaxDoc().GetDocumentPath())\n";
+                echo "SpssClient.StopClient()\n";
+                echo "spss.Submit('''FILE HANDLE PATHdatfile /NAME='{0}'.'''.format(PATH))\n";
+                echo "end program.\n";
+                echo "\n";
+            }
 
             echo "GET DATA\n"
-            ." /TYPE=TXT\n";
+            . " /TYPE=TXT\n";
 
-	    /* Use PATH of syntax for the location of the DATA file (only possible with Python extension) */
-	    if ($spssver == 3) {
-	    echo " /FILE='PATHdatfile/survey_".$iSurveyID."_SPSS_data_file.dat'\n";
-	    /* or use the regular line where the location must completed by hand for SPSS versions without Python */
-	    } else {
-	    echo " /FILE='survey_".$iSurveyID."_SPSS_data_file.dat'\n";
-	    }
-	    
-	    echo " /DELCASE=LINE\n"
-            ." /DELIMITERS=\",\"\n"
-            ." /QUALIFIER=\"'\"\n"
-            ." /ARRANGEMENT=DELIMITED\n"
-            ." /FIRSTCASE=1\n"
-            ." /IMPORTCASE=ALL\n"
-            ." /VARIABLES=";
+        /* Use PATH of syntax for the location of the DATA file (only possible with Python extension) */
+            if ($spssver == 3) {
+                echo " /FILE='PATHdatfile/survey_" . $iSurveyID . "_SPSS_data_file.dat'\n";
+            /* or use the regular line where the location must completed by hand for SPSS versions without Python */
+            } else {
+                echo " /FILE='survey_" . $iSurveyID . "_SPSS_data_file.dat'\n";
+            }
+
+            echo " /DELCASE=LINE\n"
+            . " /DELIMITERS=\",\"\n"
+            . " /QUALIFIER=\"'\"\n"
+            . " /ARRANGEMENT=DELIMITED\n"
+            . " /FIRSTCASE=1\n"
+            . " /IMPORTCASE=ALL\n"
+            . " /VARIABLES=";
 
             foreach ($fields as $field) {
                 if ($field['SPSStype'] == 'DATETIME23.2') {
@@ -664,7 +665,7 @@ class export extends Survey_Common_Action
             $aData['subaction'] = gT('Export a VV survey file');
 
             $aData['sidemenu']['state'] = false;
-            
+
             $aData['topBar']['name'] = 'baseTopbar_view';
             $aData['topBar']['showExportButton'] = true;
             $aData['topBar']['showCloseButton'] = true;

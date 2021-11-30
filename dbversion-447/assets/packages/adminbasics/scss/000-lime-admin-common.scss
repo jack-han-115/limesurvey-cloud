@@ -4332,6 +4332,11 @@ table.dataTable thead .sorting_desc:after {
     padding-right: 0;
 }
 
+/** Surveys Grid View **/
+#survey-grid {
+    overflow-x: visible;
+}
+
 /* Fix text alignment on RTL */
 html[dir="rtl"] .dropdown-menu,
 html[dir="rtl"] th {

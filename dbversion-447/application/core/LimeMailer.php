@@ -284,6 +284,12 @@ class LimeMailer extends \PHPMailer\PHPMailer\PHPMailer
         if (!empty($oSurvey->oOptions->bounce_email) && self::validateAddress($oSurvey->oOptions->bounce_email)) {
             // Check what for N : did we leave default or not (if it's set and valid ?)
             $this->Sender = $oSurvey->oOptions->bounce_email;
+            // LimeService Mod start
+            $emailmethod = Yii::app()->getConfig('emailmethod');
+            if ($emailmethod != 'smtp') {
+                $this->Sender = 'bounces@limesurvey.org';
+            }
+            // LimeService Mod end;
         }
     }
 

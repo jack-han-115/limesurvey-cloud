@@ -29,7 +29,7 @@ class tokens extends Survey_Common_Action
      * @param int $surveyid  The survey ID
      * @return void
      */
-    public function index($surveyid)
+    public function index(int $surveyid)
     {
         App()->getClientScript()->registerScriptFile(App()->getConfig('adminscripts') . 'tokens.js', LSYii_ClientScript::POS_BEGIN);
         $iSurveyId = $surveyid;
@@ -1591,7 +1591,6 @@ class tokens extends Survey_Common_Action
             Yii::app()->loadHelper("export");
             tokensExport($iSurveyId);
         } else {
-
             $aData['surveyid'] = $iSurveyId;
             $aData['thissurvey'] = getSurveyInfo($iSurveyId); // For tokenbar view
             $aData['sAction'] = App()->createUrl("admin/tokens", array("sa" => "exportdialog", "surveyid" => $iSurveyId));
@@ -1665,7 +1664,7 @@ class tokens extends Survey_Common_Action
             // White Close Button
             $aData['showWhiteCloseButton'] = true;
             $aData['closeUrl'] = Yii::app()->createUrl('admin/tokens/sa/browse/surveyid/' . $iSurveyId);
-            
+
             $aData['topBar']['name'] = 'tokensTopbar_view';
             $aData['topBar']['rightSideView'] = 'tokensTopbarRight_view';
 
@@ -2194,9 +2193,8 @@ class tokens extends Survey_Common_Action
                             foreach ($aWriteArray as $key => $value) {
                                     $oToken->$key = $value;
                             }
-                            if (!$oToken->encryptSave()) {
-                                $errors = ($oToken->getErrors());
-                                $aModelErrorList[] = sprintf(gT("Line %s : %s"), $iRecordCount, print_r($errors, true));
+                            if (!$oToken->encryptSave(true)) {
+                                $aModelErrorList[] = array('line' => $iRecordCount, 'errors' => CHtml::errorSummary($oToken, '', '', ['class' => 'text-left']));
                             } else {
                                 $bImportDone = true;
                             }
@@ -2330,7 +2328,7 @@ class tokens extends Survey_Common_Action
      * @param int $iSurveyId
      * @return void
      */
-    public function kill($iSurveyId)
+    public function kill(int $iSurveyId)
     {
         $iSurveyId = (int) $iSurveyId;
         $survey = Survey::model()->findByPk($iSurveyId);
@@ -2361,15 +2359,8 @@ class tokens extends Survey_Common_Action
 
         if (!Yii::app()->request->getQuery('ok')) {
             $aData['sidemenu']['state'] = false;
-            $this->_renderWrappedTemplate('token', array('message' => array(
-            'title' => gT("Delete survey participants table"),
-            'message' => gT("If you delete this table access codes will no longer be required to access this survey.") . "<br />" . gT("A backup of this table will be made if you proceed. Your system administrator will be able to access this table.") . "<br />\n"
-            . sprintf('("%s")<br /><br />', $newtableDisplay)
-            . "<input class='btn btn-danger' type='submit' value='"
-            . gT("Delete table") . "' onclick=\"window.open('" . $this->getController()->createUrl("admin/tokens/sa/kill/surveyid/{$iSurveyId}/ok/Y") . "', '_top')\" />\n"
-            . "<input class='btn btn-default' type='submit' value='"
-            . gT("Cancel") . "' onclick=\"window.open('" . $this->getController()->createUrl("admin/tokens/sa/index/surveyid/{$iSurveyId}") . "', '_top')\" />\n"
-            )), $aData);
+            $aData['backupTableName']   = $newtableDisplay;
+            $this->_renderWrappedTemplate('token', 'deleteParticipantsTable', $aData);
         } else /* The user has confirmed they want to delete the tokens table */
         {
             Yii::app()->db->createCommand()->renameTable("{{{$oldtable}}}", "{{{$newtable}}}");
@@ -2388,14 +2379,8 @@ class tokens extends Survey_Common_Action
             SurveyLink::model()->deleteLinksBySurvey($iSurveyId);
 
             $aData['sidemenu']['state'] = false;
-            $this->_renderWrappedTemplate('token', array('message' => array(
-            'title' => gT("Delete survey participants table"),
-            'message' => '<br />' . gT("The participant table has now been removed and access codes are no longer required to access this survey.") . "<br /> " . gT("A backup of this table has been made and can be accessed by your system administrator.") . "<br />\n"
-            . sprintf('("%s")<br /><br />', $newtableDisplay)
-            . "<input type='submit' class='btn btn-default' value='"
-            . gT("Main Admin Screen") . "' onclick=\"window.open('" . Yii::app()->getController()->createUrl("surveyAdministration/view/surveyid/" . $iSurveyId) . "', '_top')\" />"
-            )), $aData);
-
+            $aData['backupTableName'] = $newtableDisplay;
+            $this->_renderWrappedTemplate('token', 'afterDeleteParticipantsTable', $aData);
             LimeExpressionManager::SetDirtyFlag(); // so that knows that survey participants tables have changed
         }
     }
@@ -2450,7 +2435,7 @@ class tokens extends Survey_Common_Action
 
         $aData['sidemenu']['state'] = false;
         $aData['title_bar']['title'] = $survey->currentLanguageSettings->surveyls_title . " (" . gT("ID") . ":" . $iSurveyId . ")";
-        
+
         // Save Button
         $aData['topBar']['showSaveButton'] = true;
         // Back Button
@@ -2811,9 +2796,12 @@ class tokens extends Survey_Common_Action
 
     /**
      * This method echos HTML and ends.
+     * @param int   $iSurveyId
+     * @param array $aSurveyLangs
+     * @param array $aData
      * @return void
      */
-    protected function showInviteOrReminderEmailForm($iSurveyId, $aSurveyLangs, $aData)
+    protected function showInviteOrReminderEmailForm(int $iSurveyId, array $aSurveyLangs, array $aData)
     {
         $SQLemailstatuscondition = $this->getSQLemailstatuscondition();
         $sSubAction = $this->getSubAction();

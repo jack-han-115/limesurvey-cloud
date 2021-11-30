@@ -169,7 +169,7 @@ class Survey extends LSActiveRecord implements PermissionInterface
     public $oOptionLabels;
     // used for twig files, same content as $oOptions, but in array format
     public $aOptions = array();
-    
+
     public $showInherited = 1;
 
     public $searched_value;
@@ -225,7 +225,7 @@ class Survey extends LSActiveRecord implements PermissionInterface
                 }
             }
         }
-        
+
         $this->attachEventHandler("onAfterFind", array($this, 'afterFindSurvey'));
     }
 
@@ -729,7 +729,7 @@ class Survey extends LSActiveRecord implements PermissionInterface
         $mappings = [];
         foreach ($this->getTokenAttributes() as $name => $attribute) {
             if ($attribute['cpdbmap'] != '') {
-                if (ParticipantAttributeName::model()->findByPk($attribute['cpdbmap'])){
+                if (ParticipantAttributeName::model()->findByPk($attribute['cpdbmap'])) {
                     $mappings[$attribute['cpdbmap']] = $name;
                 }
             }
@@ -875,7 +875,7 @@ class Survey extends LSActiveRecord implements PermissionInterface
                 throw new CException("Unable to get a template name from group for survey {$this->sid}");
             }
         }
-        
+
         return $sTemplateName;
     }
 
@@ -2066,7 +2066,7 @@ class Survey extends LSActiveRecord implements PermissionInterface
 
         return $dataSecurityNoticeLabel;
     }
-    
+
     /**
      * @param string $type Question->type
      * @param bool $includeSubquestions
