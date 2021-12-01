@@ -111,7 +111,7 @@
                     $data['responses_avail']
                 );
                 printf(
-                    "<li data-toggle='tooltip' data-placement='bottom' data-title='%s'><a href='%s'><span class='fa fa-database'></span>&nbsp;%d / %d</a></li>",
+                    "<li data-toggle='tooltip' data-placement='bottom' data-title='%s'><a href='%s'><span class='fa fa-database'></span>&nbsp;%.2g\n / %.2g\n</a></li>",
                     gT('Storage used / storage available (MB)'),
                     $sStorageUrl,
                     $data['storage_used'],

@@ -101,7 +101,7 @@ class LimeserviceSystem
     /**
      * Calculate remaining storage in percent
      *
-     * @return int
+     * @return float
      */
     public function calcRestStoragePercent()
     {
@@ -111,7 +111,7 @@ class LimeserviceSystem
         $remainingUploadStorage = $uploadStorageSize - $usedStorage;
 
         //calc in percent
-        return (int)(($remainingUploadStorage / $uploadStorageSize) * 100);
+        return ($remainingUploadStorage / $uploadStorageSize) * 100;
     }
 
 
@@ -134,13 +134,13 @@ class LimeserviceSystem
     /**
      * Gets the used storage from database.
      *
-     * @return int
+     * @return float
      */
     public function getStorageUsed()
     {
         $sql = "select storage_used from limeservice_system.balances where user_id=" . $this->userInstallationId;
 
-        $usedStorage = (int)\Yii::app()->dbstats->createCommand($sql)->queryScalar();
+        $usedStorage = \Yii::app()->dbstats->createCommand($sql)->queryScalar();
 
         return $usedStorage;
     }
