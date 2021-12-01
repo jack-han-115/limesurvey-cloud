@@ -90,7 +90,7 @@ echo viewHelper::getViewTestTag('index');
             );
             $message .= '<br>' . sprintf(
                     gT(
-                        'Also, the storage usage on your survey site is above the configured storage reminder limit of %s.'
+                        'Also, the storage on your survey site is below the configured storage reminder limit of %s.'
                     ),
                     $reminderLimitStorage . '%'
                 );
@@ -117,7 +117,7 @@ echo viewHelper::getViewTestTag('index');
             $title = gt('You are almost out of responses');
         } elseif ($hasStorageNotification) {
             $message = sprintf(
-                gT('The storage usage on your survey site is above the configured storage reminder limit of %s.'),
+                gT('The storage on your survey site is below the configured storage reminder limit of %s.'),
                 $reminderLimitStorage . '%'
             );
             if (Permission::model()->hasGlobalPermission('superadmin', 'read')) {
