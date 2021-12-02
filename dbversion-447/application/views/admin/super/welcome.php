@@ -127,14 +127,27 @@ echo viewHelper::getViewTestTag('index');
                         'Please contact your Survey Site Administrator to upgrade or renew your plan to increase your storage.'
                     );
             }
-            $title = gt('You are almost out of storage');
+            $title = gT('You are almost out of storage');
         }
 
         if ($message != '') {
-            Yii::app()->getController()->renderPartial('/admin/super/_reminder_modal', [
-                'titel' => $title,
-                'message' => $message,
-            ]);
+            if (Permission::model()->hasGlobalPermission('superadmin', 'read')) {
+                $button = '<a class="btn btn-primary" href="' . Yii::app()->getConfig(
+                        "linkToPricingPage"
+                    ) . '" target="_blank">' .
+                    gT('Upgrade or renew plan') . '</a>';
+            } else {
+                $button = '<a class="btn btn-primary" href="mailto:' . getGlobalSetting('siteadminemail') . '">' .
+                    gT('Contact Survey Site Admin') . '</a>';
+            }
+
+            $not = new UniqueNotification(array(
+                'user_id' => App()->user->id,
+                'importance' => Notification::HIGH_IMPORTANCE,
+                'title' => $title,
+                'message' => $message . '<br><br><p class="text-center">' . $button . '</p>'
+            ));
+            $not->save();
         }
     } catch (Exception $e) {
         Yii::log($e->getMessage(), 'error', 'exception.CDbException');
