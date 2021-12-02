@@ -110,11 +110,12 @@
                     gT('Response balance'),
                     $data['responses_avail']
                 );
-                $storageString = sprintf("%.2g\n / %.2g\n",
+                $storageString = sprintf("%.1f / %.1f",
                     $data['storage_used'],
                     $data['upload_storage_size']);
                 $aLangData = getLanguageData();
                 $radix = getRadixPointData($aLangData[Yii::app()->session['adminlang']]['radixpoint']);
+                $storageString = str_replace('.0', '', $storageString);
                 $storageString = str_replace('.', $radix['separator'], $storageString);
 
                 printf(
