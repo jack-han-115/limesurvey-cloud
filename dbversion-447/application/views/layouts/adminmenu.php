@@ -110,12 +110,17 @@
                     gT('Response balance'),
                     $data['responses_avail']
                 );
-                printf(
-                    "<li data-toggle='tooltip' data-placement='bottom' data-title='%s'><a href='%s'><span class='fa fa-database'></span>&nbsp;%.2g\n / %.2g\n</a></li>",
-                    gT('Storage used / storage available (MB)'),
-                    $sStorageUrl,
+                $storageString = sprintf("%.2g\n / %.2g\n",
                     $data['storage_used'],
-                    $data['upload_storage_size']
+                    $data['upload_storage_size']);
+                $aLangData = getLanguageData();
+                $radix = getRadixPointData($aLangData[Yii::app()->session['adminlang']]['radixpoint']);
+                $storageString = str_replace('.', $radix['separator'], $storageString);
+
+                printf(
+                    "<li data-toggle='tooltip' data-placement='bottom' data-title='%s'><a href='%s'><span class='fa fa-database'></span>&nbsp;$storageString</a></li>",
+                    gT('Storage used / storage available (MB)'),
+                    $sStorageUrl
                 );
             }
             //===============End LimeService Mod ?>
