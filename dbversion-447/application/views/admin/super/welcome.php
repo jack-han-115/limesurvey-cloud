@@ -72,6 +72,89 @@ echo viewHelper::getViewTestTag('index');
 
     <?php endif;?>
 
+    <!-- Message for x (responses/storage) reached -->
+    <?php
+        $limeserviceSystem = new \LimeSurvey\Models\Services\LimeserviceSystem(Yii::app()->dbstats, (int)getInstallationID());
+        $message = '';
+        $title = '';
+    try { //better to check (in worst case sql-exception will block user completely out ...)
+        $hasResponseNotification = $limeserviceSystem->showResponseNotificationForUser();
+        $reminderLimitStorage = $limeserviceSystem->getReminderLimitStorage();
+        // If no storage is left, this notification will not be shown!
+        $hasStorageNotification = $limeserviceSystem->calcRestStoragePercent() > 0 && $limeserviceSystem->calcRestStoragePercent() < $reminderLimitStorage;
+
+        if ($hasResponseNotification && $hasStorageNotification) {
+            $message = sprintf(
+                gT('The responses on your survey site are below the configured responses reminder limit of %s.'),
+                $limeserviceSystem->getReminderLimitResponses()
+            );
+            $message .= '<br>' . sprintf(
+                    gT(
+                        'Also, the storage on your survey site is below the configured storage reminder limit of %s.'
+                    ),
+                    $reminderLimitStorage . '%'
+                );
+            if (Permission::model()->hasGlobalPermission('superadmin', 'read')) {
+                $message .= '<br><br>' . gT('Please upgrade or renew your plan to increase your storage & responses.');
+            } else {//all other users
+                $message .= '<br><br>' . gT(
+                        'Please contact your Survey Site Administrator to upgrade or renew your plan to increase your storage & responses.'
+                    );
+            }
+            $title = gt('You are almost out of storage & responses');
+        } elseif ($hasResponseNotification) {
+            $message = sprintf(
+                gT('The responses on your survey site are below the configured responses reminder limit of %s.'),
+                $limeserviceSystem->getReminderLimitResponses()
+            );
+            if (Permission::model()->hasGlobalPermission('superadmin', 'read')) {
+                $message .= '<br><br>' . gT('Please upgrade or renew your plan to increase your responses.');
+            } else {//all other users
+                $message .= '<br><br>' . gT(
+                        'Please contact your Survey Site Administrator to upgrade or renew your plan to increase your responses.'
+                    );
+            }
+            $title = gt('You are almost out of responses');
+        } elseif ($hasStorageNotification) {
+            $message = sprintf(
+                gT('The storage on your survey site is below the configured storage reminder limit of %s.'),
+                $reminderLimitStorage . '%'
+            );
+            if (Permission::model()->hasGlobalPermission('superadmin', 'read')) {
+                $message .= '<br><br>' . gT('Please upgrade or renew your plan to increase your storage.');
+            } else {//all other users
+                $message .= '<br><br>' . gT(
+                        'Please contact your Survey Site Administrator to upgrade or renew your plan to increase your storage.'
+                    );
+            }
+            $title = gT('You are almost out of storage');
+        }
+
+        if ($message != '') {
+            if (Permission::model()->hasGlobalPermission('superadmin', 'read')) {
+                $button = '<a class="btn btn-primary" href="' . Yii::app()->getConfig(
+                        "linkToPricingPage"
+                    ) . '" target="_blank">' .
+                    gT('Upgrade or renew plan') . '</a>';
+            } else {
+                $button = '<a class="btn btn-primary" href="mailto:' . getGlobalSetting('siteadminemail') . '">' .
+                    gT('Contact Survey Site Admin') . '</a>';
+            }
+
+            $not = new UniqueNotification(array(
+                'user_id' => App()->user->id,
+                'importance' => Notification::HIGH_IMPORTANCE,
+                'title' => $title,
+                'message' => $message . '<br><br><p class="text-center">' . $button . '</p>'
+            ));
+            $not->save();
+        }
+    } catch (Exception $e) {
+        Yii::log($e->getMessage(), 'error', 'exception.CDbException');
+    }
+
+    ?>
+
     <?php 
         //Check for IE and show a warning box
         if (preg_match('~MSIE|Internet Explorer~i', $_SERVER['HTTP_USER_AGENT']) || (strpos($_SERVER['HTTP_USER_AGENT'], 'Trident/7.0') !== false && strpos($_SERVER['HTTP_USER_AGENT'], 'rv:11.0') !== false)) {
