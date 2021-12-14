@@ -386,15 +386,6 @@ class LimesurveyApi
     }
 
     /**
-     * Returns if user is superadmin and has read permission.
-     *
-     * @return bool true if he has both, false otherwise
-     */
-    public function hasPermissionSuperAdminRead(){
-        return \Permission::model()->hasGlobalPermission('superadmin', 'read');
-    }
-
-    /**
      * Retrieves Participant data
      * @param int $iParticipantID The Participant ID
      * @return ?\Participant Returns null if the user does not exist anymore for some reason (should not really happen)
