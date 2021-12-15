@@ -159,15 +159,21 @@ class AdminController extends LSYii_Controller
 
          // ========================  Begin LimeService Mod
         $iInstallationId = (int) getInstallationID();
-        $iResponses = (int)Yii::app()->dbstats->createCommand("select responses_avail from limeservice_system.balances where user_id=".getInstallationID())->queryScalar();
+
+        //todo: all these db calls should go into LimeserviceSytems.php (some of theme are already there)
+        $iResponses = (int)Yii::app()->dbstats->createCommand("select responses_avail from limeservice_system.balances where user_id=".$iInstallationId)->queryScalar();
         $iHardLocked=(int)Yii::app()->dbstats->createCommand('select hard_lock from limeservice_system.installations where user_id='.$iInstallationId)->queryScalar();
-        $iLocked=(int)Yii::app()->dbstats->createCommand('select locked from limeservice_system.installations where user_id='.getInstallationID())->queryScalar();
-        $sPlan=Yii::app()->dbstats->createCommand('select subscription_alias from limeservice_system.installations where user_id='.getInstallationID())->queryScalar();    
+        $iLocked=(int)Yii::app()->dbstats->createCommand('select locked from limeservice_system.installations where user_id='.$iInstallationId)->queryScalar();
+        $sPlan=Yii::app()->dbstats->createCommand('select subscription_alias from limeservice_system.installations where user_id='.$iInstallationId)->queryScalar();
+
+        //todo: (1) this will be changed by using a modal (which can not be clicked away)
         if ($iHardLocked)
         {
             header("Expires: Sat, 26 Jul 1997 05:00:00 GMT");
             die("Dear survey administrator - the LimeSurvey administration is currently not available because it has been locked. Please contact support@limesurvey.org for details.");
         }
+
+        //todo: (2) this will be changed by using a modal (which can not be clicked away)
         if (($sPlan=='' || $sPlan=='free') && ($iLocked==1 || $iResponses<0))
         {
             header("Expires: Sat, 26 Jul 1997 05:00:00 GMT");
@@ -176,6 +182,7 @@ class AdminController extends LSYii_Controller
                 Please login with your username at <a href='https://www.limesurvey.org'>LimeSurvey.org</a> and subscribe to one of our LimeSurvey Cloud Plans!");
         }
 
+        //todo: (3) this has to be in a separate class and called in Plugin
         $sDomain=$_SERVER['SERVER_NAME'];
         $sSubdomain=substr($sDomain,0,strpos($sDomain,'.'));
         $sDomain=substr($sDomain,strpos($sDomain,'.')+1);
@@ -185,6 +192,7 @@ class AdminController extends LSYii_Controller
         {
             Yii::app()->dbstats->createCommand("insert into pageviews (pageviews_admin, pageviews_client, subdomain, rootdomain, lastaccess, created, modified ) values (1,0,'{$sSubdomain}','{$sDomain}','".date('Y-m-d H:i:s')."', now(), now())")->execute();
         }
+
         // ========================  End LimeService Mod
 
         // Check if the DB is up to date
