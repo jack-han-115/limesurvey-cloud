@@ -31,5 +31,5 @@ pipelines:
           - cd ../dbversion-447
           - curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
           - composer update
-          - DBENGINE=MyISAM php application/commands/console.php install admin password TravisLS no@email.com verbose
+          - DBENGINE=MyISAM php application/commands/console.php install admin password TravisLS no@email.com verbose .
           - composer test
