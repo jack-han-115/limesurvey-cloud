@@ -20,6 +20,8 @@ pipelines:
     - step:
         caches:
           - composer
+        services:
+          - mysql
         script:
           - mysql -h 127.0.0.1 -u root -ppassword -e "SHOW DATABASES"
           - apt-get update && apt-get install -y unzip libzip-dev libsodium-dev
