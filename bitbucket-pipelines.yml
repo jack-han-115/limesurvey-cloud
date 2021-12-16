@@ -13,7 +13,7 @@ definitions:
         MYSQL_DATABASE: lsusr_12345
         MYSQL_ROOT_PASSWORD: root
         MYSQL_USER: 'lsusr_12345'
-        MYSQL_PASSWORD: 'test_user_password'
+        MYSQL_PASSWORD: 'password'
 
 pipelines:
   default:
@@ -24,12 +24,12 @@ pipelines:
           - apt-get update && apt-get install -y unzip libzip-dev libsodium-dev
           - pecl install xdebug && echo "zend_extension=$(find /usr/local/lib/php/extensions/ -name xdebug.so)" > /usr/local/etc/php/conf.d/xdebug.ini
           - docker-php-ext-install -j$(nproc) bcmath zip sodium
+          - cp pipeline-config-447.php dbversion-447/application/config/config.php
           - cd dbversion-345
             # NB: Negating the result with ! doesn't work without quotes.
           - '! find application/ -type f -name "*.php" -exec php -l {} \;  | grep -v "No syntax errors"'
           - cd ../dbversion-447
           - curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
           - composer update
-            # - composer test
-            # NB: Negating the result with ! doesn't work without quotes.
-          - '! find application/ -type f -name "*.php" -exec php -l {} \;  | grep -v "No syntax errors"'
+          - DBENGINE=MyISAM php application/commands/console.php install admin password TravisLS no@email.com verbose
+          - composer test
