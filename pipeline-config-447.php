@@ -22,8 +22,9 @@
 |
 */
 return array(
-    'basePath' => dirname(dirname(__FILE__)).DIRECTORY_SEPARATOR.'limesurvey'.DIRECTORY_SEPARATOR.'application',
-    'runtimePath' => dirname(dirname(__FILE__)).DIRECTORY_SEPARATOR.'userdata'.DIRECTORY_SEPARATOR.'tmp'.DIRECTORY_SEPARATOR.'runtime',
+    // TODO: Do we need these?
+    //'basePath' => dirname(dirname(__FILE__)).DIRECTORY_SEPARATOR.'limesurvey'.DIRECTORY_SEPARATOR.'application',
+    //'runtimePath' => dirname(dirname(__FILE__)).DIRECTORY_SEPARATOR.'userdata'.DIRECTORY_SEPARATOR.'tmp'.DIRECTORY_SEPARATOR.'runtime',
 	'name' => 'LimeSurvey',
 	'defaultController' => 'survey',
 	
@@ -62,7 +63,8 @@ return array(
 		
 		'urlManager' => array(
 			'urlFormat' => 'path',
-            'rules' => require(dirname(dirname(__FILE__)).DIRECTORY_SEPARATOR.'limesurvey'.DIRECTORY_SEPARATOR.'application'.DIRECTORY_SEPARATOR.'config'.DIRECTORY_SEPARATOR.'routes.php'),
+            // We don't need rules to run Psalm on code-base
+            //'rules' => require(dirname(dirname(__FILE__)).DIRECTORY_SEPARATOR.'limesurvey'.DIRECTORY_SEPARATOR.'application'.DIRECTORY_SEPARATOR.'config'.DIRECTORY_SEPARATOR.'routes.php'),
 			'showScriptName' => true,
 		),
 	
