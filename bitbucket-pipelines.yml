@@ -5,6 +5,14 @@
 # You can specify a custom docker image from Docker Hub as your build environment.
 image: php:7.2
 
+definitions:
+  services:
+    mysql:
+      image: mysql:5.7
+      variables:
+        MYSQL_DATABASE: lsusr_12345
+        MYSQL_ROOT_PASSWORD: root
+
 pipelines:
   default:
     - step:
