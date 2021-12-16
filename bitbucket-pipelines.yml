@@ -33,6 +33,8 @@ pipelines:
             # - '! find application/ -type f -name "*.php" -exec php -l {} \;  | grep -v "No syntax errors"'
           - cd ../dbversion-447
           - curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+          - chmod +x tests/bin/lint-tests
+          - chmod +x tests/bin/lint-application
           - composer update
           - DBENGINE=MyISAM php application/commands/console.php installfromconfig ../pipeline-config-447.php .
           - composer test
