@@ -10,8 +10,6 @@ definitions:
     mysql:
       image: mysql:5.7
       variables:
-        MYSQL_DATABASE: lsusr_12345
-        MYSQL_ROOT_PASSWORD: root
         MYSQL_USER: 'lsusr_12345'
         MYSQL_PASSWORD: 'password'
 
