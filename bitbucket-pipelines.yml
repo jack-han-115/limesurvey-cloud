@@ -27,7 +27,7 @@ pipelines:
           - cp pipeline-config-447.php dbversion-447/application/config/config.php
           - cd dbversion-345
             # NB: Negating the result with ! doesn't work without quotes.
-          - '! find application/ -type f -name "*.php" -exec php -l {} \;  | grep -v "No syntax errors"'
+            # - '! find application/ -type f -name "*.php" -exec php -l {} \;  | grep -v "No syntax errors"'
           - cd ../dbversion-447
           - curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
           - composer update
