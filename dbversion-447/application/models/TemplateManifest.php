@@ -175,9 +175,9 @@ class TemplateManifest extends TemplateConfiguration
             $aScreens['pdf']             = gT('PDF', 'unescaped');
             $aScreens['navigation']      = gT('Navigation', 'unescaped');
             $aScreens['misc']            = gT('Miscellaneous files', 'unescaped');
-	        # LimeService Modification Start #
-	        $aScreens['maintenance']     = gT('Maintenance', 'unescaped');
-	        # LimeService Modification End #
+            # LimeService Modification Start #
+            $aScreens['maintenance']     = gT('Maintenance', 'unescaped');
+            # LimeService Modification End #
         }
 
         return $aScreens;

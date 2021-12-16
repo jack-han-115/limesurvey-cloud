@@ -10,7 +10,6 @@ namespace LimeSurvey\Models\Services;
  */
 class LimeserviceSystem
 {
-
     /**
      * This is the default value for reminderlimitresponses
      */
@@ -175,5 +174,4 @@ class LimeserviceSystem
 
         return (int)$this->dbConnection->createCommand($sql)->queryScalar();
     }
-
 }

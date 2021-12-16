@@ -2915,10 +2915,10 @@ function db_upgrade_all($iOldDBVersion, $bSilent = false)
         // LimeService Mod start
         if ($iOldDBVersion < 360) {
             $oTransaction = $oDB->beginTransaction();
-			addColumn('{{surveys_languagesettings}}','surveyls_legal_notice',"text");
+            addColumn('{{surveys_languagesettings}}', 'surveyls_legal_notice', "text");
             addColumn('{{surveys}}', 'showdatapolicybutton', 'integer DEFAULT 0');
             addColumn('{{surveys}}', 'showlegalnoticebutton', 'integer DEFAULT 0');
-            $oDB->createCommand()->update('{{settings_global}}', ['stg_value'=>360], "stg_name='DBVersion'");
+            $oDB->createCommand()->update('{{settings_global}}', ['stg_value' => 360], "stg_name='DBVersion'");
             $oTransaction->commit();
         }
         // LimeService Mod end
@@ -2935,7 +2935,7 @@ function db_upgrade_all($iOldDBVersion, $bSilent = false)
                 ],
                 'name=\'participants\''
             );
-            $oDB->createCommand()->update('{{settings_global}}', ['stg_value'=>361], "stg_name='DBVersion'");
+            $oDB->createCommand()->update('{{settings_global}}', ['stg_value' => 361], "stg_name='DBVersion'");
             $oTransaction->commit();
         }
 
@@ -2943,7 +2943,6 @@ function db_upgrade_all($iOldDBVersion, $bSilent = false)
          * Implemented default value for user administration global settings
          */
         if ($iOldDBVersion < 362) {
-
             $oTransaction = $oDB->beginTransaction();
             $defaultSetting = LsDefaultDataSets::getDefaultUserAdministrationSettings();
 
@@ -2965,8 +2964,8 @@ function db_upgrade_all($iOldDBVersion, $bSilent = false)
             $oDB->createCommand()->update('{{settings_global}}', ['stg_value' => 362], "stg_name='DBVersion'");
 
             $oTransaction->commit();
-        }        
-        
+        }
+
         /*
         * DBVersion 361 & 362 were intentionally left out to sync with Cloud Hosting
         */
@@ -3966,7 +3965,7 @@ function db_upgrade_all($iOldDBVersion, $bSilent = false)
             $oTransaction->commit();
         }
 
-        if ($iOldDBVersion < 430) { 
+        if ($iOldDBVersion < 430) {
             $oTransaction = $oDB->beginTransaction();
             // LimeService Mod start
             $oDB->createCommand()->update(
@@ -4622,26 +4621,26 @@ function db_upgrade_all($iOldDBVersion, $bSilent = false)
                     'load_error' => 0,
                     'load_error_message' => null
                 ],
-                "name = 'TwoFactorAdminLogin'" 
+                "name = 'TwoFactorAdminLogin'"
             );
             $oDB->createCommand()->update(
                 "{{plugins}}",
                 [
                     'plugin_type' => 'core',
                 ],
-                "name = 'LimeSurveyProfessional'" 
-            );            
+                "name = 'LimeSurveyProfessional'"
+            );
             $oDB->createCommand()->delete(
                 "{{plugins}}",
-                "name = 'Authwebserver'" 
-            );            
+                "name = 'Authwebserver'"
+            );
             $oDB->createCommand()->update(
                 "{{plugins}}",
                 [
                     'active' => 0,
                 ],
-                "plugin_type <> 'core'" 
-            );            
+                "plugin_type <> 'core'"
+            );
 
             // LimeService Mod end
             $oDB->createCommand()->update('{{settings_global}}', array('stg_value' => 442), "stg_name='DBVersion'");
@@ -7464,10 +7463,15 @@ function upgradeSurveys156()
 function upgradeTokens148()
 {
     $aTables = dbGetTablesLike("tokens%");
-    foreach ( $aTables as $sTable )
-    {
-        try { addColumn($sTable, 'participant_id', "string(50)");} catch(Exception $e){};
-        try { addColumn($sTable, 'blacklisted', "string(17)");} catch(Exception $e){};
+    foreach ($aTables as $sTable) {
+        try {
+            addColumn($sTable, 'participant_id', "string(50)");
+        } catch (Exception $e) {
+        };
+        try {
+            addColumn($sTable, 'blacklisted', "string(17)");
+        } catch (Exception $e) {
+        };
     }
 }
 
