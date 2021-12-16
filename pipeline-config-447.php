@@ -37,7 +37,7 @@ return array(
 	
 	'components' => array(
 		'db' => array(
-			'connectionString' => 'mysql:host=localhost;port=3306;dbname=lsusr_12345;',
+			'connectionString' => 'mysql:host=127.0.0.1;port=3306;dbname=lsusr_12345;',
 			'emulatePrepare' => true,
 			'username' => 'lsusr_12345',
 			'password' => 'password',
@@ -45,7 +45,7 @@ return array(
 			'tablePrefix' => '',
 		),
         'dbstats' => array(
-            'connectionString' => 'mysql:host=localhost;dbname=limeservice_statistics',
+            'connectionString' => 'mysql:host=127.0.0.1;dbname=limeservice_statistics',
             'username' => 'statistics',
             'password' => 'password',
             'charset' => 'utf8',
