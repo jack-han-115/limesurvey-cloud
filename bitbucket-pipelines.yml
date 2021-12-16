@@ -23,10 +23,10 @@ pipelines:
         services:
           - mysql
         script:
+          - apt-get update && apt-get install -y unzip libzip-dev libsodium-dev mysql-client
           - mysql -h 127.0.0.1 -u root -ppassword -e "SHOW DATABASES"
-          - apt-get update && apt-get install -y unzip libzip-dev libsodium-dev
           - pecl install xdebug && echo "zend_extension=$(find /usr/local/lib/php/extensions/ -name xdebug.so)" > /usr/local/etc/php/conf.d/xdebug.ini
-          - docker-php-ext-install -j$(nproc) bcmath zip sodium
+          - docker-php-ext-install -j$(nproc) bcmath zip sodium mysqli pdo pdo_mysql
           - cp pipeline-config-447.php dbversion-447/application/config/config.php
           - cd dbversion-345
             # NB: Negating the result with ! doesn't work without quotes.
