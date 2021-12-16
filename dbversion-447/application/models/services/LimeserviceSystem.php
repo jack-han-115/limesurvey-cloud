@@ -98,6 +98,28 @@ class LimeserviceSystem
     }
 
     /**
+     * Returns the value for 'hard_lock' from table installations
+     *
+     * @return int
+     */
+    public function getHardLock(){
+        $sql = "select hard_lock from limeservice_system.installations where user_id=" . $this->userInstallationId;
+
+        return (int)\Yii::app()->dbstats->createCommand($sql)->queryScalar();
+    }
+
+    /**
+     * Returns the value for 'locked' from table installations
+     *
+     * @return int
+     */
+    public function getLocked(){
+        $sql = "select locked from limeservice_system.installations where user_id=" . $this->userInstallationId;
+
+        return (int)\Yii::app()->dbstats->createCommand($sql)->queryScalar();
+    }
+
+    /**
      * Calculate remaining storage in percent
      *
      * @return float

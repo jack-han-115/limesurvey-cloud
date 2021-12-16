@@ -159,14 +159,13 @@ class AdminController extends LSYii_Controller
 
          // ========================  Begin LimeService Mod
         $iInstallationId = (int) getInstallationID();
-
-        //todo: all these db calls should go into LimeserviceSytems.php (some of theme are already there)
-        $iResponses = (int)Yii::app()->dbstats->createCommand("select responses_avail from limeservice_system.balances where user_id=".$iInstallationId)->queryScalar();
-        $iHardLocked=(int)Yii::app()->dbstats->createCommand('select hard_lock from limeservice_system.installations where user_id='.$iInstallationId)->queryScalar();
-        $iLocked=(int)Yii::app()->dbstats->createCommand('select locked from limeservice_system.installations where user_id='.$iInstallationId)->queryScalar();
-        $sPlan=Yii::app()->dbstats->createCommand('select subscription_alias from limeservice_system.installations where user_id='.$iInstallationId)->queryScalar();
+        $limeserviceSystem = new \LimeSurvey\Models\Services\LimeserviceSystem(
+            \Yii::app()->dbstats,
+            $iInstallationId
+        );
 
         //todo: (1) this will be changed by using a modal (which can not be clicked away)
+        $iHardLocked = $limeserviceSystem->getHardLock();
         if ($iHardLocked)
         {
             header("Expires: Sat, 26 Jul 1997 05:00:00 GMT");
@@ -174,6 +173,9 @@ class AdminController extends LSYii_Controller
         }
 
         //todo: (2) this will be changed by using a modal (which can not be clicked away)
+        $iResponses = $limeserviceSystem->getResponsesAvailable();
+        $iLocked = $limeserviceSystem->getLocked();
+        $sPlan = $limeserviceSystem->getUsersPlan();
         if (($sPlan=='' || $sPlan=='free') && ($iLocked==1 || $iResponses<0))
         {
             header("Expires: Sat, 26 Jul 1997 05:00:00 GMT");
