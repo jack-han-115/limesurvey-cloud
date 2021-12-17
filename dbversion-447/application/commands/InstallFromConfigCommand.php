@@ -169,14 +169,13 @@ class InstallFromConfigCommand extends CConsoleCommand
         $this->connection->setAttributes($dbConnectArray);
         $this->connection->init();
         
-        print_r($dbConnectArray);
-        //try {
+        try {
             $this->output('Opening connection...');
             $this->connection->active = true;
-        //} catch (Exception $e) {
-            //print_r($dbConnectArray);
-            //throw new CException("Invalid access data. Check your config.php db access data");
-        //}
+        } catch (Exception $e) {
+            print_r($dbConnectArray);
+            throw new CException("Invalid access data. Check your config.php db access data");
+        }
 
         $sDatabaseName = $this->getDBConnectionStringProperty('dbname', $connectionString);
         try {
