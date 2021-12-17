@@ -29,6 +29,7 @@ pipelines:
           - pecl install xdebug && echo "zend_extension=$(find /usr/local/lib/php/extensions/ -name xdebug.so)" > /usr/local/etc/php/conf.d/xdebug.ini
           - docker-php-ext-install -j$(nproc) bcmath zip sodium mysqli pdo pdo_mysql
           - cp pipeline-config-447.php dbversion-447/application/config/config.php
+          - cp pipeline-config-447.php userdata/config.php  # test
           - cd dbversion-345
             # NB: Negating the result with ! doesn't work without quotes.
             # - '! find application/ -type f -name "*.php" -exec php -l {} \;  | grep -v "No syntax errors"'
