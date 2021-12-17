@@ -54,7 +54,7 @@ CREATE TABLE `limeservice_system`.`balances` (
   `created` datetime DEFAULT NULL,
   `storage_used` float DEFAULT '0',
   PRIMARY KEY (`user_id`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 INSERT INTO limeservice_system.installations(user_id, modified, created) VALUES (12345, NOW(), NOW());
 
