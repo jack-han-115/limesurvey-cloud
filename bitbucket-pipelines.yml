@@ -37,4 +37,5 @@ pipelines:
           - chmod +x tests/bin/lint-application
           - composer update
           - DBENGINE=MyISAM php application/commands/console.php installfromconfig ../pipeline-config-447.php .
+          - mysql -h 127.0.0.1 -u root -ppassword -e "SHOW DATABASES"
           - composer test
