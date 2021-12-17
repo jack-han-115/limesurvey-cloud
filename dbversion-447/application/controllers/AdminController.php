@@ -189,10 +189,14 @@ class AdminController extends LSYii_Controller
         $sSubdomain=substr($sDomain,0,strpos($sDomain,'.'));
         $sDomain=substr($sDomain,strpos($sDomain,'.')+1);
 
-        $iAffectedRows = Yii::app()->dbstats->createCommand("Update pageviews set modified=now(), pageviews_admin=pageviews_admin+1 where subdomain='{$sSubdomain}' and rootdomain='{$sDomain}'")->execute();
+        $limeserviceStatistics = new \LimeSurvey\Models\Services\LimeserviceStatistics(
+            \Yii::app()->dbstats,
+            $iInstallationId
+        );
+        $iAffectedRows = $limeserviceStatistics->updatePageViewsAdmin($sSubdomain, $sDomain);
         if ($iAffectedRows==0)
-        {
-            Yii::app()->dbstats->createCommand("insert into pageviews (pageviews_admin, pageviews_client, subdomain, rootdomain, lastaccess, created, modified ) values (1,0,'{$sSubdomain}','{$sDomain}','".date('Y-m-d H:i:s')."', now(), now())")->execute();
+        {   //this happens on first login
+            $limeserviceStatistics->insertPageViews($sSubdomain, $sDomain);
         }
 
         // ========================  End LimeService Mod
