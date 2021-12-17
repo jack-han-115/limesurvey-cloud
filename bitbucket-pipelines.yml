@@ -27,7 +27,7 @@ pipelines:
           - mysql -h 127.0.0.1 -u root -ppassword -e "SHOW DATABASES"
           - mysql -h 127.0.0.1 -u root -ppassword -e "SHOW VARIABLES LIKE '%sock%'"
           - mysql -h 127.0.0.1 -u root -ppassword -e "CREATE USER 'statistics'@'127.0.0.1' IDENTIFIED BY 'password'"
-          - mysql -h 127.0.0.1 -u root -ppassword -e "GRANT ALL PRIVILEGES ON *.* TO 'statistics'@'localhost'"
+          - mysql -h 127.0.0.1 -u root -ppassword -e "GRANT ALL PRIVILEGES ON *.* TO 'statistics'@'127.0.0.1'"
           - pecl install xdebug && echo "zend_extension=$(find /usr/local/lib/php/extensions/ -name xdebug.so)" > /usr/local/etc/php/conf.d/xdebug.ini
           - docker-php-ext-install -j$(nproc) bcmath zip sodium mysqli pdo pdo_mysql
           - cp pipeline-config-447.php dbversion-447/application/config/config.php
