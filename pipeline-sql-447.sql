@@ -1,11 +1,7 @@
 -- Setup for Bitbucket pipeline
 
-CREATE DATABASE limeservice_statistics;
-CREATE DATABASE limeservice_system;
-CREATE USER 'statistics'@'127.0.0.1' IDENTIFIED BY 'password';
-GRANT ALL PRIVILEGES ON *.* TO 'statistics'@'127.0.0.1';
 
-CREATE TABLE `limeservice_system`.`installations` (
+CREATE TABLE `installations` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `user_id` int(11) DEFAULT NULL,
   `domainname_id` int(11) NOT NULL DEFAULT '0',
@@ -43,7 +39,7 @@ CREATE TABLE `limeservice_system`.`installations` (
   UNIQUE KEY `Index_2` (`domainname_id`,`subdomain`)
 ) ENGINE=InnoDB AUTO_INCREMENT=21913 DEFAULT CHARSET=utf8;
 
-CREATE TABLE `limeservice_system`.`balances` (
+CREATE TABLE `balances` (
   `user_id` int(11) NOT NULL,
   `responses_avail` float NOT NULL DEFAULT '0',
   `responses_used` float NOT NULL DEFAULT '0',
@@ -56,7 +52,7 @@ CREATE TABLE `limeservice_system`.`balances` (
   PRIMARY KEY (`user_id`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-INSERT INTO limeservice_system.installations(user_id, modified, created) VALUES (12345, NOW(), NOW());
+INSERT INTO installations(user_id, modified, created) VALUES (12345, NOW(), NOW());
 
 INSERT INTO balances(user_id) VALUES (12345);
 
