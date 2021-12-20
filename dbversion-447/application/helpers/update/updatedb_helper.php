@@ -5101,6 +5101,24 @@ function db_upgrade_all($iOldDBVersion, $bSilent = false)
             $oDB->createCommand()->update('{{settings_global}}', ['stg_value' => 477], "stg_name='DBVersion'");
             $oTransaction->commit();
         }
+        if ($iOldDBVersion < 478) {
+            $oTransaction = $oDB->beginTransaction();
+
+            // ========================  Begin LimeService Mod
+            $oDB->createCommand()->update(
+                '{{plugins}}',
+                [
+                    'active' => 1,
+                    'version' => '1.0.2'
+                ],
+                "name='LimeSurveyProfessional'"
+            );
+            // ========================  End LimeService Mod
+
+            $oDB->createCommand()->update('{{settings_global}}', ['stg_value' => 478], "stg_name='DBVersion'");
+            $oTransaction->commit();
+        }
+
     } catch (Exception $e) {
         Yii::app()->setConfig('Updating', false);
         $oTransaction->rollback();

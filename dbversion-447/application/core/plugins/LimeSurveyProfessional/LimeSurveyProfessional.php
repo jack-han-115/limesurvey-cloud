@@ -4,6 +4,10 @@
  * The LimeSurveyProfessional plugin for "free" LimeService systems
  * Source for the cookie consent popup: https://cookieconsent.insites.com/documentation/javascript-api/
  * Requires Bootstrap for modal popup.
+ *
+ * This plugin should at some point include all necessary different implementation for cloud edition.
+ *
+ *
  */
 class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
 {
@@ -13,50 +17,34 @@ class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
 
     protected $settings = array();
 
+    /** @var \LimeSurvey\Models\Services\LimeserviceSystem */
+    public $limeserviceSystem;
+
+    /** @var boolean */
+    public $isSuperAdminReadUser;
+
     /**
      * @return void
      */
     public function init()
     {
-        $this->subscribe('beforeCloseHtml');
-        $this->subscribe('beforeDeactivate');
-
-        /* Settings not available in LimeService version
-        $this->settings = array(
-            'protectionPolicyOption' => array(
-                'type'    => 'select',
-                'label'   => gT('Protection policy option'),
-                'options' => array(
-                    'default' => gT('Default information'),
-                    'text'    => gT('Text box'),
-                    'link'    => gT('Link')
-                ),
-                'help'    => 'All options will show information in a modal popup.',
-                'default' => 'opt1',
-            ),
-            'protectionPolicyText' => array(
-                'type'    => 'text',
-                'label'   => gT('Protection policy text'),
-                'default' => '',
-                'help'    => gT('Paste your protection policy here.')
-            ),
-            'protectionPolicyLink' => array(
-                'type'    => 'string',
-                'label'   => gT('Protection policy link'),
-                'default' => '',
-                'help'    => 'Link to your protection policy information.'
-            ),
-        );
-        */
+        \Yii::setPathOfAlias(get_class($this), dirname(__FILE__));
+        $this->subscribe('beforeDeactivate'); // user should not be able to deactivate this one ...
+        $this->subscribe('beforeControllerAction');
     }
 
     /**
      * If this is a LimeService installation with free subscription, don't allow to disable it
+     *
      * @return void
      */
     public function beforeDeactivate()
     {
-        // Check if this is a LimeService installation
+        $this->getEvent()->set('success', false);
+
+        // Optionally set a custom error message.
+        $this->getEvent()->set('message', gT('Core plugin can not be disabled.'));
+        /*
         $isLimeServiceInstallation = function_exists('getInstallationID') && isset(Yii::app()->dbstats);
         if ($isLimeServiceInstallation) {
             // Get subsription plan
@@ -70,79 +58,30 @@ class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
                 $event = $this->getEvent();
                 $event->set('success', false);
             }
-        }
+        }*/
     }
 
     /**
-     * @todo Use $this->gT() instead of gT() (LS 3.0.0)
-     * @todo Download cookieconsent?
-     * @todo Remove plugin.
-     * @return void
+     * 1. if admin welcome-page is called, the limitReminderNotification function will be called
+     * @TODO other subtasks of this epic can be handled here also
+     * @TODO eg. the blocked modal for unpaid invoices can be shown and user has no chance to manually redirect anywhere
      */
-    public function beforeCloseHtml()
+    public function beforeControllerAction()
     {
-        // OBS OBS OBS: Disabled.
-        return;
-
-        $settings = $this->getPluginSettings(true);
-
-        // Get survey language
-        $event = $this->getEvent();
-        $surveyId = $event->get('surveyId');
-        if ($surveyId && isset($_SESSION['survey_' . $surveyId])) {
-            $lang = $_SESSION['survey_' . $surveyId]['s_lang'];
-        } else {
-            $lang = App()->language;
-        }
-
-        $message = gT('This website uses cookies. By continuing this survey you approve the data protection policy of the service provider.');
-        $gotit   = gT('OK');
-        $moreinfo = gT('View policy');
-
-        Yii::app()->clientScript->registerScript('cint-common-js', <<<EOT
-            window.addEventListener("load", function() {
-            window.cookieconsent.initialise({
-                "content": {
-                    "message": "$message",
-                    "dismiss": "$gotit",
-                    "link":    "$moreinfo",
-                    "href":    ""
-                },
-                "layout": "my-layout",
-                "layouts": {
-                    "my-layout": "{{messageandlink}}{{dismiss}}"
-                },
-                "elements": {
-                    "messageandlink": "<span id='cookieconsent:desc' class='cc-message'>{{message}}&nbsp;<a aria-label='learn more about cookies' tabindex='0' class='cc-link' href='{{href}}' onclick='$(\"#plugin-adsense-modal\").modal(); return false;'>{{link}}</a></span>",
-                    "dismiss": "<a aria-label='dismiss cookie message' tabindex='0' class='cc-btn cc-dismiss'>{{dismiss}}</a>"
-                },
-                "palette": {
-                    "popup": {
-                        "background": "#000"
-                    },
-                    "button": {
-                        "background": "#f1d600"
-                    }
-                },
-                "theme": "classic",
-                "position": "top",
-                onPopupOpen: function() {
-                }
-            })
-          });
-EOT
-        , CClientScript::POS_END);
-
-        $data = array(
-            'settings' => $settings,
-            'lang'     => $lang
+        $this->limeserviceSystem = new \LimeSurvey\Models\Services\LimeserviceSystem(
+            \Yii::app()->dbstats,
+            (int)getInstallationID()
         );
+        $this->isSuperAdminReadUser = \Permission::model()->hasGlobalPermission('superadmin', 'read');
 
-        $assetsUrl = Yii::app()->assetManager->publish(dirname(__FILE__));
-        App()->clientScript->registerCssFile($assetsUrl . '/css/cookieconsent.min.css');
-        App()->clientScript->registerScriptFile($assetsUrl . '/js/cookieconsent.min.js', CClientScript::POS_END);
+        $controller = $this->getEvent()->get('controller');
+        $action = $this->getEvent()->get('action');
 
-        Yii::setPathOfAlias('lspro', dirname(__FILE__));
-        $event->set('html', Yii::app()->controller->renderPartial('lspro.views.modal', $data, true));
+        if ($controller === 'admin' && $action === 'index') {
+            $limitReminderNotification = new \LimeSurveyProfessional\notifications\LimitReminderNotification($this);
+            $limitReminderNotification->createNotification();
+        }
     }
+
+
 }
