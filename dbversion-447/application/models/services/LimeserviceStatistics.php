@@ -11,7 +11,6 @@ use SPSS\Exception;
  */
 class LimeserviceStatistics
 {
-
     /**
      * The connection to the database.
      *
@@ -47,12 +46,13 @@ class LimeserviceStatistics
      * @param $domain
      * @return int|null number of effected rows or null in case of exception
      */
-    public function updatePageViewsAdmin($subdomain, $domain){
+    public function updatePageViewsAdmin($subdomain, $domain)
+    {
         $sql = "Update pageviews set modified=now(), pageviews_admin=pageviews_admin+1 where subdomain='{$subdomain}' and rootdomain='{$domain}'";
 
         try {
             $affectedRows = $this->dbConnection->createCommand($sql)->execute();
-        }catch(\CException $e){
+        } catch (\CException $e) {
             //todo: maybe log it for us, if anything went wrong here?
             return null;
         }
@@ -73,13 +73,14 @@ class LimeserviceStatistics
      * @param $domain
      * @return int|null  nubmer of rows inserted (should only be one), or null in case of exception
      */
-    public function insertPageViews($subdomain, $domain){
+    public function insertPageViews($subdomain, $domain)
+    {
         $sql = "insert into pageviews (pageviews_admin, pageviews_client, subdomain, rootdomain, lastaccess, created, modified ) 
         values (1,0,'{$subdomain}','{$domain}',now(), now(), now())";
 
         try {
             $affectedRows = $this->dbConnection->createCommand($sql)->execute();
-        }catch(\CException $e){
+        } catch (\CException $e) {
             //todo: maybe log it for us, if anything went wrong here?
             return null;
         }
