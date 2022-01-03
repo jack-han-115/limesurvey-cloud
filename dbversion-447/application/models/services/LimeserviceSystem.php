@@ -102,7 +102,8 @@ class LimeserviceSystem
      *
      * @return int
      */
-    public function getHardLock(){
+    public function getHardLock()
+    {
         $sql = "select hard_lock from limeservice_system.installations where user_id=" . $this->userInstallationId;
 
         return (int)\Yii::app()->dbstats->createCommand($sql)->queryScalar();
@@ -113,7 +114,8 @@ class LimeserviceSystem
      *
      * @return int
      */
-    public function getLocked(){
+    public function getLocked()
+    {
         $sql = "select locked from limeservice_system.installations where user_id=" . $this->userInstallationId;
 
         return (int)\Yii::app()->dbstats->createCommand($sql)->queryScalar();
