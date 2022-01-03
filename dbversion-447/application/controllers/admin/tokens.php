@@ -1315,7 +1315,7 @@ class tokens extends Survey_Common_Action
             return $sDbName;
         }
 
-        // LimeService Mod End --------------------------    
+        // LimeService Mod End --------------------------
         $iSurveyId = (int) $iSurveyId;
         $aData = array();
         $survey = Survey::model()->findByPk($iSurveyId);
@@ -1368,10 +1368,9 @@ class tokens extends Survey_Common_Action
 
         $iMaxEmails = Yii::app()->getConfig('maxemails');
         // LImeService Mod Start =========================================
-        $iAdvertising=(int)Yii::app()->dbstats->createCommand('select advertising from limeservice_system.installations where user_id='.getInstallationID())->queryScalar();
-        if ($iAdvertising)
-        {
-            $iMaxEmails=10;
+        $iAdvertising = (int)Yii::app()->dbstats->createCommand('select advertising from limeservice_system.installations where user_id=' . getInstallationID())->queryScalar();
+        if ($iAdvertising) {
+            $iMaxEmails = 10;
         }
         // LImeService Mod End =========================================
 
@@ -1404,7 +1403,7 @@ class tokens extends Survey_Common_Action
 
             $tokenoutput = "";
             // Start LimeService Mod =========================
-            $sCustomerID=substr(_getDbName(),6);
+            $sCustomerID = substr(_getDbName(), 6);
             // End LimeService Mod =========================
             $bInvalidDate = false;
             $bSendError = false;
@@ -1436,24 +1435,23 @@ class tokens extends Survey_Common_Action
                         $tokenoutput .= $emrow['tid'] . " " . htmlspecialchars(ReplaceFields(gT("Email to {FIRSTNAME} {LASTNAME} ({EMAIL}) skipped: Access code is not valid anymore.", 'unescaped'), $fieldsarray)) . "<br />";
                         $bInvalidDate = true;
                     } else {
-
                         // LimeService Mod Start ==================
-                        $iAdvertising = (int)Yii::app()->dbstats->createCommand('select advertising from limeservice_system.installations where user_id='.getInstallationID())->queryScalar();
-                        $bSpamLinks   = ( $iAdvertising )?$this->looksForSpamLinks($bHtml,$modmessage, $iSurveyId):false;
-                        $iEmailLocked = (int)Yii::app()->dbstats->createCommand('select email_lock from limeservice_system.installations where user_id='.getInstallationID())->queryScalar();
-                        if ($iEmailLocked && Yii::app()->getConfig('emailmethod')!='smtp'){
-                            $success=false;
+                        $iAdvertising = (int)Yii::app()->dbstats->createCommand('select advertising from limeservice_system.installations where user_id=' . getInstallationID())->queryScalar();
+                        $bSpamLinks   = ( $iAdvertising ) ? $this->looksForSpamLinks($bHtml, $modmessage, $iSurveyId) : false;
+                        $iEmailLocked = (int)Yii::app()->dbstats->createCommand('select email_lock from limeservice_system.installations where user_id=' . getInstallationID())->queryScalar();
+                        if ($iEmailLocked && Yii::app()->getConfig('emailmethod') != 'smtp') {
+                            $success = false;
                             $maildebug =  gT('You are currently banned from sending emails using the LimeSurvey email servers. Please configure your global settings to use your own SMTP server, instead. If you have any questions regarding this ban, please contact support@limesurvey.org.');
                         } elseif ($bSpamLinks) {
-                            $success=false;
-                            $maildebug =  gT('Your email contains external links. In the free version only links to your survey are allowed.');
+                            $success = false;
+                            $maildebug =  gT('Your email contains external links or no link at all. You invitation must at least contain a link to your survey. In the free version only links to your survey are allowed.');
                         } else {
                             Yii::import('application.helpers.mailHelper');
                             mailHelper::setModeForNext(mailHelper::PREVIOUS_INSTANCE_MODE, ['smtpKeepAlive' => true]);
-                    		$success = $mail->sendMessage();
+                            $success = $mail->sendMessage();
                         }
                         // LimeService Mod End =======================
-                
+
                         $stringInfo = CHtml::encode("{$emrow['tid']}: {$emrow['firstname']} {$emrow['lastname']} ({$emrow['email']}).");
                         if ($success) {
                             // Load token to set as sent, no need to check existence ? we just send the email
@@ -2947,7 +2945,7 @@ class tokens extends Survey_Common_Action
         return $aResult;
     }
 
-    
+
    // LimeService Mod Star
 
 
@@ -2959,23 +2957,25 @@ class tokens extends Survey_Common_Action
      * @return boolean    true if any spam link found, else false
      */
 
-    private function looksForSpamLinks($bHtml,$modmessage, $iSurveyId )
+    private function looksForSpamLinks($bHtml, $modmessage, $iSurveyId)
     {
         $aLinks     = array();
-        $bSpamLinks = false;
+        $spamLinks = false;
+        $noValidLink = true;
 
 
-        $aLinks = ($bHtml)?$this->getLinksForHtml($modmessage):$this->getLinks($modmessage);
+        $aLinks = ($bHtml) ? $this->getLinksForHtml($modmessage) : $this->getLinks($modmessage);
 
         // Check if the link has the wanted infos
-        foreach ($aLinks as $sLink){
-            if ( strpos ( $sLink ,  'token' )===false || strpos ( $sLink , (string)$iSurveyId )===false || strpos ( $sLink ,   $_SERVER['HTTP_HOST'] )===false   ){
-                $bSpamLinks = true;
+        foreach ($aLinks as $sLink) {
+            if (strpos($sLink, 'token') === false || strpos($sLink, (string)$iSurveyId) === false || strpos($sLink, $_SERVER['HTTP_HOST']) === false) {
+                $spamLinks = true;
                 break;
             }
+            $noValidLink = false;
         }
 
-        return $bSpamLinks;
+        return $spamLinks && $noValidLink;
     }
 
     /**
@@ -3001,7 +3001,7 @@ class tokens extends Survey_Common_Action
         // A link tag (<a href="">) can contain a link without http or https
         // So we just add them to the array of links to check
         $oLinkTags = $doc->getElementsByTagName('a');
-        foreach ($oLinkTags as $oLink){
+        foreach ($oLinkTags as $oLink) {
             $aLinks[] = $oLink->getAttribute('href');
         }
 
@@ -3023,8 +3023,8 @@ class tokens extends Survey_Common_Action
         preg_match_all($url_pattern, $chunk, $matches);
 
         // The pattern catch too many things so this will clean the results
-        foreach($matches[0] as $match){
-            if (substr($match, 0, 4)=='http' || substr($match, 0, 3)=='www'){
+        foreach ($matches[0] as $match) {
+            if (substr($match, 0, 4) == 'http' || substr($match, 0, 3) == 'www') {
                 $aLinks[] = $match;
             }
         }
@@ -3032,5 +3032,4 @@ class tokens extends Survey_Common_Action
     }
 
     // LimeService Mod End
-    
 }
