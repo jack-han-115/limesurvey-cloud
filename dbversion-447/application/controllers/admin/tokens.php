@@ -2975,7 +2975,7 @@ class tokens extends Survey_Common_Action
             $noValidLink = false;
         }
 
-        return $spamLinks && $noValidLink;
+        return $spamLinks || $noValidLink;
     }
 
     /**
