@@ -159,15 +159,23 @@ class AdminController extends LSYii_Controller
 
          // ========================  Begin LimeService Mod
         $iInstallationId = (int) getInstallationID();
-        $iResponses = (int)Yii::app()->dbstats->createCommand("select responses_avail from limeservice_system.balances where user_id=".getInstallationID())->queryScalar();
-        $iHardLocked=(int)Yii::app()->dbstats->createCommand('select hard_lock from limeservice_system.installations where user_id='.$iInstallationId)->queryScalar();
-        $iLocked=(int)Yii::app()->dbstats->createCommand('select locked from limeservice_system.installations where user_id='.getInstallationID())->queryScalar();
-        $sPlan=Yii::app()->dbstats->createCommand('select subscription_alias from limeservice_system.installations where user_id='.getInstallationID())->queryScalar();    
+        $limeserviceSystem = new \LimeSurvey\Models\Services\LimeserviceSystem(
+            \Yii::app()->dbstats,
+            $iInstallationId
+        );
+
+        //todo: (1) this will be changed by using a modal (which can not be clicked away)
+        $iHardLocked = $limeserviceSystem->getHardLock();
         if ($iHardLocked)
         {
             header("Expires: Sat, 26 Jul 1997 05:00:00 GMT");
             die("Dear survey administrator - the LimeSurvey administration is currently not available because it has been locked. Please contact support@limesurvey.org for details.");
         }
+
+        //todo: (2) this will be changed by using a modal (which can not be clicked away)
+        $iResponses = $limeserviceSystem->getResponsesAvailable();
+        $iLocked = $limeserviceSystem->getLocked();
+        $sPlan = $limeserviceSystem->getUsersPlan();
         if (($sPlan=='' || $sPlan=='free') && ($iLocked==1 || $iResponses<0))
         {
             header("Expires: Sat, 26 Jul 1997 05:00:00 GMT");
@@ -176,15 +184,21 @@ class AdminController extends LSYii_Controller
                 Please login with your username at <a href='https://www.limesurvey.org'>LimeSurvey.org</a> and subscribe to one of our LimeSurvey Cloud Plans!");
         }
 
+        //todo: (3) this has to be in a separate class and called in Plugin
         $sDomain=$_SERVER['SERVER_NAME'];
         $sSubdomain=substr($sDomain,0,strpos($sDomain,'.'));
         $sDomain=substr($sDomain,strpos($sDomain,'.')+1);
 
-        $iAffectedRows = Yii::app()->dbstats->createCommand("Update pageviews set modified=now(), pageviews_admin=pageviews_admin+1 where subdomain='{$sSubdomain}' and rootdomain='{$sDomain}'")->execute();
+        $limeserviceStatistics = new \LimeSurvey\Models\Services\LimeserviceStatistics(
+            \Yii::app()->dbstats,
+            $iInstallationId
+        );
+        $iAffectedRows = $limeserviceStatistics->updatePageViewsAdmin($sSubdomain, $sDomain);
         if ($iAffectedRows==0)
-        {
-            Yii::app()->dbstats->createCommand("insert into pageviews (pageviews_admin, pageviews_client, subdomain, rootdomain, lastaccess, created, modified ) values (1,0,'{$sSubdomain}','{$sDomain}','".date('Y-m-d H:i:s')."', now(), now())")->execute();
+        {   //this happens on first login
+            $limeserviceStatistics->insertPageViews($sSubdomain, $sDomain);
         }
+
         // ========================  End LimeService Mod
 
         // Check if the DB is up to date

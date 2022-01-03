@@ -492,35 +492,6 @@ class PluginManager extends \CApplicationComponent
                 $records = $pluginModel->findAllByAttributes(array('active' => 1));
             }
 
-            // ========================  Begin LimeService Mod
-            // LimeSurveyProfessional plugin contains cookie warning, necessary for
-            // Google AdSense. It should always be loaded for package "Free".
-            // NB: This import is needed in case a custom module depends on a plugin.
-            Yii::import('application.helpers.common_helper', true);
-            $result = Yii::app()->dbstats->createCommand(
-                'SELECT advertising FROM limeservice_system.installations WHERE user_id = ' . getInstallationID())
-                ->queryRow();
-            if ($result['advertising'] == '1') {
-                $lsProPlugin = $pluginModel->findByAttributes(array('name' => 'LimeSurveyProfessional'));
-                if (empty($lsProPlugin)) {
-                    Yii::app()->db->createCommand()
-                        ->insert(
-                            '{{plugins}}',
-                            [
-                                'name' => 'LimeSurveyProfessional',
-                                'active' => 0
-                            ]
-                        );
-                } elseif ($lsProPlugin->active) {
-                    // Always disabled, see comment below.
-                    Yii::app()->db->createCommand()
-                       ->update('{{plugins}}', ['active' => 0], 'name = :name', [':name' => 'LimeSurveyProfessional']);
-                }
-                // NB: Disabled - we won't use Google Ads anymore.
-                //$records = array_merge(array($lsProPlugin), $records);
-            }
-            // ========================  End LimeService Mod
-
             foreach ($records as $record) {
                 if (
                     !isset($record->load_error)
