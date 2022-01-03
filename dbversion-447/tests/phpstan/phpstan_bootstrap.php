@@ -24,6 +24,9 @@ define('YII_DEBUG', true);
 require_once __DIR__ . '/../../third_party/autoload.php';
 require_once BASEPATH . 'yii' . EXT;
 require_once APPPATH . 'core/LSYii_Application' . EXT;
+// LimeService Mod Start
+$argv = [1 => '.'];  // Needed to find correct userdata/ folder
+// LimeService Mod End
 $config = require_once(APPPATH . 'config/internal' . EXT);
 
 
