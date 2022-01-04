@@ -1,5 +1,7 @@
 <?php
 
+use LimeSurveyProfessional\notifications\LimitReminderNotification;
+
 /**
  * The LimeSurveyProfessional plugin for "free" LimeService systems
  * Source for the cookie consent popup: https://cookieconsent.insites.com/documentation/javascript-api/
@@ -22,6 +24,13 @@ class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
 
     /** @var boolean */
     public $isSuperAdminReadUser;
+
+    /** @var boolean */
+    public $isPayingUser;
+
+    /** @var bool */
+    public $outOfResponses;
+
 
     /**
      * @return void
@@ -62,26 +71,106 @@ class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
     }
 
     /**
-     * 1. if admin welcome-page is called, the limitReminderNotification function will be called
-     * @TODO other subtasks of this epic can be handled here also
-     * @TODO eg. the blocked modal for unpaid invoices can be shown and user has no chance to manually redirect anywhere
+     * Only one modal will be displayed, so the createNotification calls need to be sorted ascending by importance
+     * 1. if admin welcome-page is called, the limitReminderNotification functionality will be called
+     * 2. blocking notifications (unclosable modal)
+     *
      */
     public function beforeControllerAction()
+    {
+        $controller = $this->getEvent()->get('controller');
+        $action = $this->getEvent()->get('action');
+        if ($this->isBackendAccess()) {
+            $this->setSubscriptionData();
+
+            if ($controller === 'admin' && $action === 'index') {
+                $limitReminderNotification = new LimitReminderNotification($this);
+                $limitReminderNotification->createNotification();
+            }
+
+            $this->createBlockingNotifications();
+        }
+    }
+
+    /**
+     * Returns the email address of the site admin either as plain address or as simple html mailto link
+     * - is needed by several subclasses
+     * @param bool $asHtmlLink
+     * @return string
+     */
+    public function getSiteAdminEmail(bool $asHtmlLink = false)
+    {
+        $email = getGlobalSetting('siteadminemail');
+        if ($asHtmlLink) {
+            $email = '<a href="mailto:' . $email . '">' . $email . '</a>';
+        }
+
+        return $email;
+    }
+
+    /**
+     * If user is a logged-in user we can assume, that backend is accessed right now.
+     * @return bool
+     */
+    public function isBackendAccess()
+    {
+        return !Yii::app()->user->isGuest;
+    }
+
+    /**
+     * Redirects to welcome-page if any other url is opened except welcome-page and logout
+     */
+    public function forceRedirectToWelcomePage()
+    {
+        $controller = $this->getEvent()->get('controller');
+        $action = $this->getEvent()->get('action');
+        $subAction = $this->getEvent()->get('subaction');
+        if (!($controller == 'admin' && $action == 'index') && $subAction != 'logout') {
+            \Yii::app()->controller->redirect(App()->getController()->createUrl('admin/index'));
+        }
+    }
+
+    /**
+     * Sets class variables for subscription related data which is used in several subclasses
+     * @throws CException
+     */
+    private function setSubscriptionData()
     {
         $this->limeserviceSystem = new \LimeSurvey\Models\Services\LimeserviceSystem(
             \Yii::app()->dbstats,
             (int)getInstallationID()
         );
         $this->isSuperAdminReadUser = \Permission::model()->hasGlobalPermission('superadmin', 'read');
-
-        $controller = $this->getEvent()->get('controller');
-        $action = $this->getEvent()->get('action');
-
-        if ($controller === 'admin' && $action === 'index') {
-            $limitReminderNotification = new \LimeSurveyProfessional\notifications\LimitReminderNotification($this);
-            $limitReminderNotification->createNotification();
-        }
+        $this->isPayingUser = $this->limeserviceSystem->getUsersPlan() !== 'free';
+        $this->outOfResponses = $this->limeserviceSystem->getResponsesAvailable() <= 0;
     }
 
+    /**
+     * All notification types which use unclosable modal sorted by importance
+     * (most important first)
+     * When a blocking modal is successfully created, it will be shown and the leftover classes won't be processed
+     */
+    private function createBlockingNotifications()
+    {
+        $blockingNotification = false;
+        $blockingNotifications = [
+            ['class' => 'LimeSurveyProfessional\notifications\OutOfResponsesPaid', 'condition' => $this->isPayingUser],
+        ];
+
+        foreach ($blockingNotifications as $notification) {
+            if ($notification['condition']) {
+                $className = $notification['class'];
+                $blockingNotificationClass = new $className($this);
+                $blockingNotification = $blockingNotificationClass->createNotification();
+                if ($blockingNotification) {
+                    break;
+                }
+            }
+        }
+
+        if ($blockingNotification) {
+            $this->forceRedirectToWelcomePage();
+        }
+    }
 
 }
