@@ -1438,15 +1438,14 @@ class tokens extends Survey_Common_Action
                     } else {
 
                         // LimeService Mod Start ==================
-                        $iAdvertising = (int)Yii::app()->dbstats->createCommand('select advertising from limeservice_system.installations where user_id='.getInstallationID())->queryScalar();
-                        $bSpamLinks   = ( $iAdvertising )?$this->looksForSpamLinks($bHtml,$modmessage, $iSurveyId):false;
+                        $bSpamLinks   = $this->looksForSpamLinks($bHtml, $mail->rawBody, $iSurveyId);
                         $iEmailLocked = (int)Yii::app()->dbstats->createCommand('select email_lock from limeservice_system.installations where user_id='.getInstallationID())->queryScalar();
                         if ($iEmailLocked && Yii::app()->getConfig('emailmethod')!='smtp'){
                             $success=false;
-                            $maildebug =  gT('You are currently banned from sending emails using the LimeSurvey email servers. Please configure your global settings to use your own SMTP server, instead. If you have any questions regarding this ban, please contact support@limesurvey.org.');
+                            $validationError =  gT('You are currently banned from sending emails using the LimeSurvey email servers. Please configure your global settings to use your own SMTP server, instead. If you have any questions regarding this ban, please contact support@limesurvey.org.');
                         } elseif ($bSpamLinks) {
                             $success=false;
-                            $maildebug =  gT('Your email contains external links. In the free version only links to your survey are allowed.');
+                            $validationError =  gT('Your email contains external links or no survey link at all. In the free version only links to your survey are allowed.');
                         } else {
                             Yii::import('application.helpers.mailHelper');
                             mailHelper::setModeForNext(mailHelper::PREVIOUS_INSTANCE_MODE, ['smtpKeepAlive' => true]);
@@ -1493,8 +1492,7 @@ class tokens extends Survey_Common_Action
                             }
                             $tokenoutput .= $tokenSaveError;
                         } else {
-                            $maildebug = $mail->getDebug('html');
-                            $tokenoutput .= $stringInfo . CHtml::tag("span", array('class' => "text-warning"), sprintf(gT("Error message: %s"), $mail->getError())) . "<br>\n";
+                            $tokenoutput .= $stringInfo .' '. CHtml::tag("span", array('class' => "text-warning"), sprintf(gT("Error message: %s"), ($validationError?$validationError:$mail->getError()))) . "<br>\n";
                             if (Yii::app()->getConfig("emailsmtpdebug") > 0) {
                                 $tokenoutput .= $mail->getDebug('html');
                             }
@@ -2948,7 +2946,7 @@ class tokens extends Survey_Common_Action
     }
 
     
-   // LimeService Mod Star
+   // LimeService Mod Start
 
 
 
@@ -2962,20 +2960,20 @@ class tokens extends Survey_Common_Action
     private function looksForSpamLinks($bHtml,$modmessage, $iSurveyId )
     {
         $aLinks     = array();
-        $bSpamLinks = false;
-
+        $hasSpamLink = false;
+        $noStandardSurveyLink = (strpos ( $modmessage , '{SURVEYURL}' ) === false) &&  (strpos ( $modmessage , '@@SURVEYURL@@' ) === false);
 
         $aLinks = ($bHtml)?$this->getLinksForHtml($modmessage):$this->getLinks($modmessage);
-
         // Check if the link has the wanted infos
         foreach ($aLinks as $sLink){
             if ( strpos ( $sLink ,  'token' )===false || strpos ( $sLink , (string)$iSurveyId )===false || strpos ( $sLink ,   $_SERVER['HTTP_HOST'] )===false   ){
-                $bSpamLinks = true;
+                $hasSpamLink = true;
                 break;
-            }
+            } else {
+                $noStandardSurveyLink = false;
+            }        
         }
-
-        return $bSpamLinks;
+        return $hasSpamLink || $noStandardSurveyLink;
     }
 
     /**
