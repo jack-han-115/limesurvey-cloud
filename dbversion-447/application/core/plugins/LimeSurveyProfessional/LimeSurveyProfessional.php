@@ -81,7 +81,7 @@ class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
         $controller = $this->getEvent()->get('controller');
         $action = $this->getEvent()->get('action');
         if ($this->isBackendAccess()) {
-            $this->setSubscriptionData();
+            $this->initPluginData();
 
             if ($controller === 'admin' && $action === 'index') {
                 $limitReminderNotification = new LimitReminderNotification($this);
@@ -131,10 +131,10 @@ class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
     }
 
     /**
-     * Sets class variables for subscription related data which is used in several subclasses
+     * Sets class variables for subscription, installation and admin related data which is used in several subclasses
      * @throws CException
      */
-    private function setSubscriptionData()
+    private function initPluginData()
     {
         $this->limeserviceSystem = new \LimeSurvey\Models\Services\LimeserviceSystem(
             \Yii::app()->dbstats,
