@@ -1438,14 +1438,19 @@ class tokens extends Survey_Common_Action
                     } else {
 
                         // LimeService Mod Start ==================
-                        $bSpamLinks   = $this->looksForSpamLinks($bHtml, $mail->rawBody, $iSurveyId);
+                        $iAdvertising=(int)Yii::app()->dbstats->createCommand('select advertising from limeservice_system.installations where user_id='.getInstallationID())->queryScalar();
+                        $bSpamLinks   = $this->externalLinkExists($bHtml, $mail->rawBody, $iSurveyId) && ($iAdvertising>0);
+                        $bnoSurveyLink = !$this->surveyLinkExists($bHtml, $mail->rawBody, $iSurveyId);
                         $iEmailLocked = (int)Yii::app()->dbstats->createCommand('select email_lock from limeservice_system.installations where user_id='.getInstallationID())->queryScalar();
                         if ($iEmailLocked && Yii::app()->getConfig('emailmethod')!='smtp'){
                             $success=false;
                             $validationError =  gT('You are currently banned from sending emails using the LimeSurvey email servers. Please configure your global settings to use your own SMTP server, instead. If you have any questions regarding this ban, please contact support@limesurvey.org.');
                         } elseif ($bSpamLinks) {
                             $success=false;
-                            $validationError =  gT('Your email contains external links or no survey link at all. In the free version only links to your survey are allowed.');
+                            $validationError =  gT('In the free version only links to your survey are allowed.');
+                        } elseif ($bnoSurveyLink) {
+                            $success=false;
+                            $validationError =  gT('Your email must contain an invitation linke to the survey.');
                         } else {
                             Yii::import('application.helpers.mailHelper');
                             mailHelper::setModeForNext(mailHelper::PREVIOUS_INSTANCE_MODE, ['smtpKeepAlive' => true]);
@@ -2957,24 +2962,48 @@ class tokens extends Survey_Common_Action
      * @return boolean    true if any spam link found, else false
      */
 
-    private function looksForSpamLinks($bHtml,$modmessage, $iSurveyId )
+    private function externalLinkExists($bHtml,$modmessage, $iSurveyId )
     {
         $aLinks     = array();
         $hasSpamLink = false;
-        $noStandardSurveyLink = (strpos ( $modmessage , '{SURVEYURL}' ) === false) &&  (strpos ( $modmessage , '@@SURVEYURL@@' ) === false);
-
         $aLinks = ($bHtml)?$this->getLinksForHtml($modmessage):$this->getLinks($modmessage);
         // Check if the link has the wanted infos
         foreach ($aLinks as $sLink){
             if ( strpos ( $sLink ,  'token' )===false || strpos ( $sLink , (string)$iSurveyId )===false || strpos ( $sLink ,   $_SERVER['HTTP_HOST'] )===false   ){
                 $hasSpamLink = true;
                 break;
-            } else {
-                $noStandardSurveyLink = false;
+            }      
+        }
+        return $hasSpamLink;
+    }
+
+
+    /**
+     * Checks if a given mail text includes a proper participant link to the survey
+     * @param $bHtml      boolean is the mail an HTML mail
+     * @param $modmessage string  the message of the mail
+     * @return boolean    true if any valid link is found, else false
+     */
+
+    private function surveyLinkExists($bHtml,$modmessage, $iSurveyId )
+    {
+        $aLinks     = array();
+        $hasSpamLink = false;
+        $StandardSurveyLinkExists = (strpos ( $modmessage , '{SURVEYURL}' ) !== false) || (strpos ( $modmessage , '@@SURVEYURL@@' ) !== false);
+        $aLinks = ($bHtml)?$this->getLinksForHtml($modmessage):$this->getLinks($modmessage);
+        // Check if the link has the wanted infos
+        foreach ($aLinks as $sLink){
+            if ( strpos ( $sLink ,  'token' )!==false & strpos ( $sLink , (string)$iSurveyId )!==false || strpos ( $sLink ,   $_SERVER['HTTP_HOST'] )!==false   ){
+                $StandardSurveyLinkExists = true;
+                break;
             }        
         }
-        return $hasSpamLink || $noStandardSurveyLink;
+        return $StandardSurveyLinkExists;
     }
+
+
+
+
 
     /**
      * In HTML mode, the message of the mail must be filterer.
