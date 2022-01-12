@@ -83,12 +83,12 @@ class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
         if ($this->isBackendAccess()) {
             $this->initPluginData();
 
-            if ($controller === 'admin' && $action === 'index') {
-                $limitReminderNotification = new LimitReminderNotification($this);
-                $limitReminderNotification->createNotification();
+            if (!$this->createBlockingNotifications()) {
+                if ($controller === 'admin' && $action === 'index') {
+                    $limitReminderNotification = new LimitReminderNotification($this);
+                    $limitReminderNotification->createNotification();
+                }
             }
-
-            $this->createBlockingNotifications();
         }
     }
 
@@ -140,37 +140,43 @@ class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
             \Yii::app()->dbstats,
             (int)getInstallationID()
         );
+        $plan = $this->limeserviceSystem->getUsersPlan();
         $this->isSuperAdminReadUser = \Permission::model()->hasGlobalPermission('superadmin', 'read');
-        $this->isPayingUser = $this->limeserviceSystem->getUsersPlan() !== 'free';
+        $this->isPayingUser = $plan !== 'free' && $plan != '';
         $this->outOfResponses = $this->limeserviceSystem->getResponsesAvailable() <= 0;
     }
 
     /**
      * All notification types which use unclosable modal sorted by importance
      * (most important first)
-     * When a blocking modal is successfully created, it will be shown and the leftover classes won't be processed
+     * When a blocking modal is successfully created, it will be shown and the leftover classes won't be processe
+     *
+     * Attention: Every class inside array $blockingNotifications needs to have the function createNotification()
+     * createNotification() needs to return a boolean!
+     *
+     * @return boolean
      */
     private function createBlockingNotifications()
     {
         $blockingNotification = false;
         $blockingNotifications = [
-            ['class' => 'LimeSurveyProfessional\notifications\OutOfResponsesPaid', 'condition' => $this->isPayingUser],
+            ['class' => 'LimeSurveyProfessional\notifications\OutOfResponses'],
         ];
 
         foreach ($blockingNotifications as $notification) {
-            if ($notification['condition']) {
-                $className = $notification['class'];
-                $blockingNotificationClass = new $className($this);
-                $blockingNotification = $blockingNotificationClass->createNotification();
-                if ($blockingNotification) {
-                    break;
-                }
+            $className = $notification['class'];
+            $blockingNotificationClass = new $className($this);
+            $blockingNotification = $blockingNotificationClass->createNotification();
+            if ($blockingNotification) {
+                break;
             }
         }
 
         if ($blockingNotification) {
             $this->forceRedirectToWelcomePage();
         }
+
+        return $blockingNotification;
     }
 
 }

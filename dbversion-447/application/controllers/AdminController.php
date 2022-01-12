@@ -172,18 +172,6 @@ class AdminController extends LSYii_Controller
             die("Dear survey administrator - the LimeSurvey administration is currently not available because it has been locked. Please contact support@limesurvey.org for details.");
         }
 
-        //todo: (2) this will be changed by using a modal (which can not be clicked away)
-        $iResponses = $limeserviceSystem->getResponsesAvailable();
-        $iLocked = $limeserviceSystem->getLocked();
-        $sPlan = $limeserviceSystem->getUsersPlan();
-        if (($sPlan=='' || $sPlan=='free') && ($iLocked==1 || $iResponses<0))
-        {
-            header("Expires: Sat, 26 Jul 1997 05:00:00 GMT");
-            die("
-                Dear survey administrator - the administration is currently not available since you used up more than your available Survey Responses.<br />
-                Please login with your username at <a href='https://www.limesurvey.org'>LimeSurvey.org</a> and subscribe to one of our LimeSurvey Cloud Plans!");
-        }
-
         //todo: (3) this has to be in a separate class and called in Plugin
         $sDomain=$_SERVER['SERVER_NAME'];
         $sSubdomain=substr($sDomain,0,strpos($sDomain,'.'));
