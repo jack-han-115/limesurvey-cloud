@@ -491,7 +491,25 @@ class PluginManager extends \CApplicationComponent
             } else {
                 $records = $pluginModel->findAllByAttributes(array('active' => 1));
             }
-
+            // ========================  Begin LimeService Mod
+            // LimeSurveyProfessional plugin needs to be active all the time
+            $lsProPlugin = $pluginModel->findByAttributes(array('name' => 'LimeSurveyProfessional'));
+            if (empty($lsProPlugin)) {
+                Yii::app()->db->createCommand()
+                    ->insert(
+                        '{{plugins}}',
+                        [
+                            'name' => 'LimeSurveyProfessional',
+                            'active' => 1,
+                            'version' => '1.0.2',
+                            'plugin_type' => 'core'
+                        ]
+                    );
+            } elseif (!$lsProPlugin->active) {
+                Yii::app()->db->createCommand()
+                    ->update('{{plugins}}', ['active' => 1], 'name = :name', [':name' => 'LimeSurveyProfessional']);
+            }
+            // ========================  End LimeService Mod
             foreach ($records as $record) {
                 if (
                     !isset($record->load_error)
