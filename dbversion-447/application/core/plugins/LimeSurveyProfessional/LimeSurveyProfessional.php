@@ -16,6 +16,7 @@ class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
     protected $storage = 'DbStorage';
     static protected $description = 'LimeSurvey Cloud extras';
     static protected $name = 'LimeSurveyProfessional';
+    static $violationCount = 0;
 
     protected $settings = array();
 
@@ -40,6 +41,7 @@ class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
         \Yii::setPathOfAlias(get_class($this), dirname(__FILE__));
         $this->subscribe('beforeDeactivate'); // user should not be able to deactivate this one ...
         $this->subscribe('beforeControllerAction');
+        $this->subscribe('beforeTokenEmail');
     }
 
     /**
@@ -179,4 +181,12 @@ class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
         return $blockingNotification;
     }
 
+    /**
+     *  Before a tokenEmail is sent, it will run through a blacklist filter
+     */
+    public function beforeTokenEmail()
+    {
+        $blacklistFilter = new \LimeSurveyProfessional\email\EmailFilter($this->getEvent(), $this);
+        $blacklistFilter->filter();
+    }
 }

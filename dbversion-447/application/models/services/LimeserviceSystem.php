@@ -198,4 +198,31 @@ class LimeserviceSystem
 
         return (int)$this->dbConnection->createCommand($sql)->queryScalar();
     }
+
+    /**
+     * @return int
+     * @throws \CException
+     */
+    public function getEmailLock()
+    {
+        $sql = 'select email_lock 
+                from limeservice_system.installations 
+                where user_id=' . getInstallationID();
+
+        return (int)$this->dbConnection->createCommand($sql)->queryScalar();
+    }
+
+    /**
+     * @param int $value
+     * @return int
+     * @throws \CDbException
+     */
+    public function setEmailLock(int $value = 1)
+    {
+        $sql = "UPDATE limeservice_system.installations
+                SET email_lock = $value  
+                WHERE user_id=" . getInstallationID();
+
+        return $this->dbConnection->createCommand($sql)->execute();
+    }
 }

@@ -1442,7 +1442,7 @@ class tokens extends Survey_Common_Action
                         $bSpamLinks   = $this->externalLinkExists($bHtml, $mail->rawBody, $iSurveyId) && ($iAdvertising>0);
                         $bnoSurveyLink = !$this->surveyLinkExists($bHtml, $mail->rawBody, $iSurveyId);
                         $iEmailLocked = (int)Yii::app()->dbstats->createCommand('select email_lock from limeservice_system.installations where user_id='.getInstallationID())->queryScalar();
-                        if ($iEmailLocked && Yii::app()->getConfig('emailmethod')!='smtp'){
+                        if ($iEmailLocked == 1 && Yii::app()->getConfig('emailmethod')!='smtp'){
                             $success=false;
                             $validationError =  gT('You are currently banned from sending emails using the LimeSurvey email servers. Please configure your global settings to use your own SMTP server, instead. If you have any questions regarding this ban, please contact support@limesurvey.org.');
                         } elseif ($bSpamLinks) {
