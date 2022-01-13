@@ -5,7 +5,7 @@ $violationThreshold = 3;
 
 /** @var  array List of blacklisted words/sentences */
 $blacklistEntries = [
-    'ThisIsABlacklistedItem',
+    'Your package is waiting to be returned',
     'ThisIsABlacklistedItemAsWell',
     'να χρησιμοποιήσετε την κάρτα',
 ];
