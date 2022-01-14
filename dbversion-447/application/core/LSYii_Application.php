@@ -360,9 +360,13 @@ class LSYii_Application extends CWebApplication
         $event->set('controller', $controller->getId());
         $event->set('action', $action->getId());
         $event->set('subaction', Yii::app()->request->getParam('sa'));
-        if ($action != 'databaseupdate') {
+        // LimeService Mod  start
+        if ($action->id != 'databaseupdate') {
+        // LimeService Mod  end
             App()->getPluginManager()->dispatchEvent($event);
+        // LimeService Mod  start
         }
+        // LimeService Mod  end
         return $event->get("run", parent::beforeControllerAction($controller, $action));
     }
 
