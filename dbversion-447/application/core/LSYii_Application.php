@@ -360,7 +360,9 @@ class LSYii_Application extends CWebApplication
         $event->set('controller', $controller->getId());
         $event->set('action', $action->getId());
         $event->set('subaction', Yii::app()->request->getParam('sa'));
-        App()->getPluginManager()->dispatchEvent($event);
+        if ($action != 'databaseupdate') {
+            App()->getPluginManager()->dispatchEvent($event);
+        }
         return $event->get("run", parent::beforeControllerAction($controller, $action));
     }
 
