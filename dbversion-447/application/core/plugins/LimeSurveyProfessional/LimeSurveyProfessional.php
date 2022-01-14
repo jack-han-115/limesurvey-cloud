@@ -182,11 +182,15 @@ class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
     }
 
     /**
-     *  Before a tokenEmail is sent, it will run through a blacklist filter
+     *  Before a tokenEmail of types remind or invite are sent, it will run through a blacklist filter
      */
     public function beforeTokenEmail()
     {
-        $blacklistFilter = new \LimeSurveyProfessional\email\EmailFilter($this->getEvent(), $this);
-        $blacklistFilter->filter();
+        $type = $this->getEvent()->get('type', '');
+        if ($type == 'invite' || $type == 'remind') {
+            $this->initPluginData();
+            $blacklistFilter = new \LimeSurveyProfessional\email\EmailFilter($this->getEvent(), $this);
+            $blacklistFilter->filter();
+        }
     }
 }
