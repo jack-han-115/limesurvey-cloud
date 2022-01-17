@@ -7,6 +7,7 @@ $violationThreshold = 3;
 $blacklistEntries = [
     'is waiting to be returned',
     'address is incorrect',
+    'Express shipment',
     'επιστροφή',
     'αναστολή',
     'να χρησιμοποιήσετε την κάρτα',
