@@ -145,7 +145,7 @@ class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
         $plan = $this->limeserviceSystem->getUsersPlan();
         $this->isSuperAdminReadUser = \Permission::model()->hasGlobalPermission('superadmin', 'read');
         $this->isPayingUser = $plan !== 'free' && $plan != '';
-        $this->outOfResponses = $this->limeserviceSystem->getResponsesAvailable() <= 0;
+        $this->outOfResponses = $this->limeserviceSystem->getResponsesAvailable() < 0;
     }
 
     /**
