@@ -8,6 +8,7 @@ $blacklistEntries = [
     'is waiting to be returned',
     'address is incorrect',
     'Claim Now',
+    'gift card',
     'Express shipment',
     'επιστροφή',
     'αναστολή',
