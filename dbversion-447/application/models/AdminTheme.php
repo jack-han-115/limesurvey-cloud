@@ -84,7 +84,10 @@ class AdminTheme extends CFormModel
             $sAdminThemeName   = 'Sea_Green';
             $sTemplateDir      = $sStandardTemplateRootDir;
             $sTemplateUrl      = Yii::app()->getConfig('styleurl') . DIRECTORY_SEPARATOR . $sAdminThemeName;
-            SettingGlobal::setSetting('admintheme', 'Sea_Green');
+            // LimeService Mod start
+            $actquery = "update {{settings_global}} set stg_value='Sea_Green' where stg_name='admintheme'";
+            Yii::app()->db->createCommand($actquery)->execute();
+            // LimeService Mod end
         }
 
         // Now that we are sure we have an existing template, we can set the variables of the AdminTheme
