@@ -122,21 +122,19 @@ class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
     /**
      * Redirects to welcome-page if any other url is opened except welcome-page and logout
      *
+     * @param LSYii_Controller $controller
      * @throws Exception if there's no event
-     * @return void
+     * @return boolean
      */
-    public function forceRedirectToWelcomePage()
+    public function forceRedirectToWelcomePage($event = null)
     {
-        $event = $this->getEvent();
         if (is_null($event)) {
-            throw new Exception('Found no event');
+            return false;
         }
         $controller = $event->get('controller');
-        $action = $event->get('action');
-        $subAction = $event->get('subaction');
-        if (!($controller == 'admin' && $action == 'index') && $subAction != 'logout') {
-            \Yii::app()->controller->redirect(App()->getController()->createUrl('admin/index'));
-        }
+        $action     = $event->get('action');
+        $subAction  = $event->get('subaction');
+        return !($controller == 'admin' && $action == 'index') && $subAction != 'logout';
     }
 
     /**
@@ -181,8 +179,10 @@ class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
             }
         }
 
-        if ($blockingNotification) {
-            $this->forceRedirectToWelcomePage();
+        $event = $this->getEvent();
+        if ($blockingNotification && $this->forceRedirectToWelcomePage($event)) {
+            $controller = Yii::app()->getController();
+            $controller->redirect($controller->createUrl('admin/index'));
         }
 
         return $blockingNotification;
