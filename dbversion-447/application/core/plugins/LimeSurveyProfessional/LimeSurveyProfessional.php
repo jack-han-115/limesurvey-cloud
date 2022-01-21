@@ -121,12 +121,19 @@ class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
 
     /**
      * Redirects to welcome-page if any other url is opened except welcome-page and logout
+     *
+     * @throws Exception if there's no event
+     * @return void
      */
     public function forceRedirectToWelcomePage()
     {
-        $controller = $this->getEvent()->get('controller');
-        $action = $this->getEvent()->get('action');
-        $subAction = $this->getEvent()->get('subaction');
+        $event = $this->getEvent();
+        if (is_null($event)) {
+            throw new Exception('Found no event');
+        }
+        $controller = $event->get('controller');
+        $action = $event->get('action');
+        $subAction = $event->get('subaction');
         if (!($controller == 'admin' && $action == 'index') && $subAction != 'logout') {
             \Yii::app()->controller->redirect(App()->getController()->createUrl('admin/index'));
         }
