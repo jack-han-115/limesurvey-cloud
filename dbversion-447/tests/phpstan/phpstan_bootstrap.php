@@ -51,6 +51,13 @@ Yii::import('application.libraries.PluginManager.PluginManager', true);
 Yii::import('application.libraries.MenuObjects.*', true);
 Yii::import('application.helpers.update.update_helper', true);
 Yii::app()->loadLibrary('admin.pclzip');
+require_once __DIR__ . '/../LimeSurveyWebDriver.php';
+require_once __DIR__ . '/../TestHelper.php';
+require_once __DIR__ . '/../TestBaseClass.php';
+require_once __DIR__ . '/../TestBaseClassWeb.php';
+require_once __DIR__ . '/../TestBaseClassView.php';
+require_once __DIR__ . '/../DummyController.php';
+require_once __DIR__ . '/../unit/helpers/remotecontrol/BaseTest.php';
 
 /** @var PluginManager */
 $pluginManager = Yii::app()->getComponent('pluginManager');
