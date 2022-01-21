@@ -12,6 +12,11 @@ if (!file_exists(__DIR__ . '/../enabletests')) {
     exit(9);
 }
 
+// LimeService Mod Start
+// Needed to make PHPUnit run
+$argv = [1 => '.'];
+// LimeService Mod End
+
 /*
  *---------------------------------------------------------------
  * SYSTEM FOLDER NAME
