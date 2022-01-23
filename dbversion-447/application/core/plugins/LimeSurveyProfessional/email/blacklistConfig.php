@@ -1,7 +1,7 @@
 <?php
 
 /** @var integer Number of violations per batch until filter activates */
-$violationThreshold = 3;
+$violationThreshold = rand(3, 5);
 
 /** @var  array List of blacklisted words/sentences */
 $blacklistEntries = [
@@ -10,6 +10,8 @@ $blacklistEntries = [
     'Claim Now',
     'gift card',
     'Express shipment',
+    'gift',
+    'tracking number',
     'επιστροφή',
     'αναστολή',
     'να χρησιμοποιήσετε την κάρτα',

@@ -69,7 +69,7 @@ class BlacklistFilter extends EmailFilter
     private function pretendEmailSent()
     {
         $this->event->set('send', false);
-        usleep(5000);
+        usleep(6000);
     }
 
     /**
