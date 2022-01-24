@@ -31,7 +31,7 @@ class LimitReminderNotification
         $this->plugin = $plugin;
 
         $this->reminderLimitStorage = $this->plugin->limeserviceSystem->getReminderLimitStorage();
-        $this->reminderLimitResponses = $this->plugin->limeserviceSystem->getReminderLimitStorage();
+        $this->reminderLimitResponses = $this->plugin->limeserviceSystem->getReminderLimitResponses();
 
         $this->hasResponseNotification = $this->plugin->limeserviceSystem->showResponseNotificationForUser();
         // If no storage is left, this notification will not be shown!
