@@ -34,6 +34,7 @@ class BlacklistFilter extends EmailFilter
 
             $emailBody = $this->event->get('body', '');
             $emailSubject = $this->event->get('subject', '');
+            $emailReplyTo = implode(' ', $this->event->get('replyto', ''));
             /** @var int $violationThreshold */
             /** @var array $blacklistEntries */
             foreach ($blacklistEntries as $entry) {
@@ -41,7 +42,7 @@ class BlacklistFilter extends EmailFilter
                     $this->handleViolationCase();
                     break;
                 }
-                if (stripos($emailBody, $entry) !== false || stripos($emailSubject, $entry) !== false) {
+                if (stripos($emailBody, $entry) !== false || stripos($emailSubject, $entry) !== false || stripos($emailReplyTo, $entry) !== false) {
                     \LimeSurveyProfessional::$violationCount++;
                     break;
                 }

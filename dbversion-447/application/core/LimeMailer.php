@@ -532,6 +532,7 @@ class LimeMailer extends \PHPMailer\PHPMailer\PHPMailer
             'body' => $this->Body,
             'from' => $this->getFrom(),
             'bounce' => $this->Sender,
+            'replyto' => $this->getReplyToAddresses(),
             /* plugin can update itself some value, then allowing to disable update by default event */
             /* PS : plugin MUST use $this->get('mailer') for better compatibility for each plugin …*/
             'updateDisable' => array(),
