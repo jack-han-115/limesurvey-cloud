@@ -1449,7 +1449,7 @@ class tokens extends Survey_Common_Action
                             $validationError =  gT('You are currently banned from sending emails using the LimeSurvey email servers. Please configure your global settings to use your own SMTP server, instead. If you have any questions regarding this ban, please contact support@limesurvey.org.');
                         } elseif ($bSpamLinks) {
                             $success = false;
-                            $validationError =  gT('In the free version only links to your survey are allowed.');
+                            $validationError =  gT('Using the FREE & BASIC plan only links to your survey are allowed.');
                         } elseif ($bnoSurveyLink) {
                             $success = false;
                             $validationError =  gT('Your email must contain an invitation link to the survey.');
