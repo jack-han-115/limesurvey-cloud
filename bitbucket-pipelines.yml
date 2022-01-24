@@ -47,4 +47,4 @@ pipelines:
           - composer test
           - touch enabletests
           - XDEBUG_MODE=coverage php third_party/bin/phpunit tests/limeservice/LimeSurveyProfessionalTest.php
-          - php tests/check_coverage.php cov.xml 4
+          - php tests/bin/check_coverage.php cov.xml 4
