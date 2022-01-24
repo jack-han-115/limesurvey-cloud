@@ -15,12 +15,12 @@ class PasswordRequirement extends \LimeSurvey\PluginManager\PluginBase
         'needsNumber' => array(
             'label' => 'Require at least one digit',
             'type' => 'checkbox',
-            'default' => false,
+            'default' => true,
         ),
         'needsUppercase' => array(
             'label' => 'Require at least one uppercase character',
             'type' => 'checkbox',
-            'default' => false,
+            'default' => true,
         ),
         'needsNonAlphanumeric' => array(
             'label' => 'Require at least one special character',
@@ -30,7 +30,7 @@ class PasswordRequirement extends \LimeSurvey\PluginManager\PluginBase
         'minimumSize' => array(
             'label' => 'Minimum password length',
             'type' => 'int',
-            'default' => '8',
+            'default' => 12,
         ),
     ];
     /**
@@ -77,13 +77,13 @@ class PasswordRequirement extends \LimeSurvey\PluginManager\PluginBase
         $oEvent = $this->getEvent();
         $targetSize = $oEvent->get('targetSize', 8);
 
-        $targetSize = $targetSize < $this->get('minimumSize', null, null, 8) ? $this->get('minimumSize', null, null, 8) : $targetSize;
-        $uppercase = $this->get('needsUppercase', null, null, false);
-        $numeric = $this->get('needsNumber', null, null, false);
+        $targetSize = $targetSize < $this->get('minimumSize', null, null, 12) ? $this->get('minimumSize', null, null, 12) : $targetSize;
+        $uppercase = $this->get('needsUppercase', null, null, true);
+        $numeric = $this->get('needsNumber', null, null, true);
         $nonAlpha = $this->get('needsNonAlphanumeric', null, null, false);
 
         $randomPassword = $this->getRandomString($targetSize, $uppercase, $numeric, $nonAlpha);
-        
+
         $oEvent->set('password', $randomPassword);
         return;
     }
@@ -96,36 +96,13 @@ class PasswordRequirement extends \LimeSurvey\PluginManager\PluginBase
     public function getPluginSettings($getValues = true)
     {
         $settings = parent::getPluginSettings();
-        $settings = [
-            'needsNumber' => array(
-                'label' => gT('Require at least one digit'),
-                'type' => 'checkbox',
-                'default' => false,
-            ),
-            'needsUppercase' => array(
-                'label' => gT('Require at least one uppercase letter'),
-                'type' => 'checkbox',
-                'default' => false,
-            ),
-            'needsNonAlphanumeric' => array(
-                'label' => gT('Require at least one special character'),
-                'type' => 'checkbox',
-                'default' => false,
-            ),
-            'minimumSize' => array(
-                'label' => gT('Minimum password length'),
-                'type' => 'int',
-                'default' => '8',
-                'value' => 8
-            ),
-        ];
         return $settings;
     }
 
     private function getRandomString($length = 8, $uppercase = false, $numeric = false, $nonAlpha = false)
     {
         $chars = "abcdefghijklmnopqrstuvwxyz";
-        
+
         if ($uppercase) {
             $chars .=  'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
         }
