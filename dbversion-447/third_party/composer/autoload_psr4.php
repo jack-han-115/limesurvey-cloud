@@ -18,4 +18,5 @@ return array(
     'LimeSurvey\\Helpers\\' => array($baseDir . '/application/helpers'),
     'LimeSurvey\\ExtensionInstaller\\' => array($baseDir . '/application/libraries/ExtensionInstaller'),
     'LimeSurvey\\Datavalueobjects\\' => array($baseDir . '/application/datavalueobjects'),
+    'LimeSurveyProfessional\\' => array($baseDir . '/application/core/plugins/LimeSurveyProfessional'),
 );
