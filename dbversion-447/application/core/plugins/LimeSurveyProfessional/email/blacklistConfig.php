@@ -11,6 +11,8 @@ $blacklistEntries = [
     'gift card',
     'Express shipment',
     'gift',
+    'shipping',
+    'smtpfox',
     'tracking number',
     'επιστροφή',
     'αναστολή',
