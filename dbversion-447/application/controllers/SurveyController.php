@@ -56,10 +56,7 @@ class SurveyController extends LSYii_Controller
         $sid = returnGlobal('sid');
         if ($aInstallation['hard_lock']>0 || $aInstallation['locked']>0 || $iResponses<0 || ($aInstallation['locked_storage']>0 && hasFileUploadQuestion($sid)))
         {
-            header("Expires: Sat, 26 Jul 1997 05:00:00 GMT");
-            die("
-                We are sorry but this survey is currently not available - please come back later.
-                <!-- jquery -->");
+            $this->surveyIsHardlocked();
         }
         // LimeService Mod end ===========================================
 
@@ -107,6 +104,22 @@ class SurveyController extends LSYii_Controller
         // ========================  End LimeService Mod              
     }
 
+    /**
+     * Renders the survey is hardlocked view.
+     * If a participant tries to access the survey,
+     * when the survey is hardlocked.
+     * 
+     * @return void
+     */
+    private function surveyIsHardlocked()
+    {
+        $this->renderPartial('/admin/hardlock/hardlockParticipants', [], false);
+        die();
+        //header("Expires: Sat, 26 Jul 1997 05:00:00 GMT");
+          //  die("
+                //We are sorry but this survey is currently not available - please come back later.
+                //<!-- jquery -->");
+    }
     /**
      * Load and set session vars
      *
