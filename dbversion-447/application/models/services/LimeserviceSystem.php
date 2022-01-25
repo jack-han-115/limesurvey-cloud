@@ -225,13 +225,13 @@ class LimeserviceSystem
 
         return $this->dbConnection->createCommand($sql)->execute();
     }
-    
+
     /**
      * @param int $value
      * @return int
      * @throws \CDbException
      */
-    public function increaseSentCount(int $value = 1 )
+    public function increaseSentCount(int $value = 1)
     {
         $sql = "UPDATE limeservice_system.mail_ratings
                 SET sent = sent + {$value}
@@ -239,5 +239,4 @@ class LimeserviceSystem
 
         return $this->dbConnection->createCommand($sql)->execute();
     }
-
 }
