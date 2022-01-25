@@ -160,16 +160,6 @@ $internalConfig = array(
         'log' => array(
             'class' => 'CLogRouter',
             'routes' => array(
-                'dberror' => array(
-                    'class'      => 'CEmailLogRoute',
-                    'levels'     => 'error', 
-                    'categories' => 'exception.CDbException',
-                    'emails'     => 'alerts@limesurvey.org',
-                    'sentFrom'   => 'noreply@limesurvey.org',
-                    'subject'    => 'Database exception in LimeSurvey Cloud application',
-                    'filter'     => 'CLogFilter',
-                    'utf8'       => true
-                   ),
                 'vardump' => array(
                     'class' => 'CWebLogRoute',
                     'categories' => 'vardump', // tracevar function
