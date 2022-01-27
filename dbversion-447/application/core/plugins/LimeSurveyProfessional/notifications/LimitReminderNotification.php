@@ -176,10 +176,10 @@ class LimitReminderNotification
             $button = '<a class="btn btn-primary" href="' . \Yii::app()->getConfig(
                     "linkToPricingPage"
                 ) . '" target="_blank">' .
-                $this->plugin->gT('Upgrade or renew plan') . '</a>';
+                '<span class="fa fa-external-link"></span>&nbsp;' . $this->plugin->gT('Upgrade or renew plan') . '</a>';
         } else {
             $button = '<a class="btn btn-primary" href="mailto:' . getGlobalSetting('siteadminemail') . '">' .
-                $this->plugin->gT('Contact Survey Site Admin') . '</a>';
+                '<span class="fa fa-envelope"></span>&nbsp;' . $this->plugin->gT('Contact Survey Site Admin') . '</a>';
         }
 
         return '<br><br><p class="text-center">' . $button . '</p>';

@@ -58,7 +58,7 @@ class LimeserviceSystem
         $reminderLimitResponses = $this->getReminderLimitResponses();
         $responsesAvailable = $this->getResponsesAvailable();
 
-        return $responsesAvailable > 0 && ($responsesAvailable < $reminderLimitResponses);
+        return $responsesAvailable >= 0 && ($responsesAvailable < $reminderLimitResponses);
     }
 
     /**

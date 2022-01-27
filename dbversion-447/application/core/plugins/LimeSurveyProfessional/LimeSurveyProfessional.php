@@ -1,6 +1,7 @@
 <?php
 
 use LimeSurveyProfessional\notifications\LimitReminderNotification;
+use LimeSurveyProfessional\notifications\OutOfResponsesPaid;
 
 /**
  * The LimeSurveyProfessional plugin for "free" LimeService systems
@@ -73,10 +74,11 @@ class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
     }
 
     /**
-     * Only one modal will be displayed, so the createNotification calls need to be sorted ascending by importance
-     * 1. if admin welcome-page is called, the limitReminderNotification functionality will be called
-     * 2. blocking notifications (unclosable modal)
-     *
+     * If user is on backend-level
+     * 1. blocking notifications (unclosable modal) may be created
+     * if not:
+     * 2. if admin welcome-page is called, the
+     *    limitReminderNotification and outOfresponsesPaid functionalities will be called
      */
     public function beforeControllerAction()
     {
@@ -89,6 +91,9 @@ class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
                 if ($controller === 'admin' && $action === 'index') {
                     $limitReminderNotification = new LimitReminderNotification($this);
                     $limitReminderNotification->createNotification();
+
+                    $outOfResponsesPaid = new OutOfResponsesPaid($this);
+                    $outOfResponsesPaid->createNotification();
                 }
             }
         }
@@ -167,7 +172,7 @@ class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
     {
         $blockingNotification = false;
         $blockingNotifications = [
-            ['class' => 'LimeSurveyProfessional\notifications\OutOfResponses'],
+            ['class' => 'LimeSurveyProfessional\notifications\OutOfResponsesFree'],
         ];
 
         foreach ($blockingNotifications as $notification) {

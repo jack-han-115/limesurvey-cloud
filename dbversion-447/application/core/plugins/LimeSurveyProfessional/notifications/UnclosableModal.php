@@ -4,7 +4,7 @@ namespace LimeSurveyProfessional\notifications;
 
 class UnclosableModal
 {
-    /** @var \LimeSurvey\PluginManager\PluginBase */
+    /** @var \LimeSurveyProfessional */
     public $plugin;
 
     /** @var string the title for the modal header */
