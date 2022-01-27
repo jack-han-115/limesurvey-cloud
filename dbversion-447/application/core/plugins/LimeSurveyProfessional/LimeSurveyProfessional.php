@@ -33,6 +33,8 @@ class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
     /** @var bool */
     public $outOfResponses;
 
+    /** @var boolean */
+    public $isHardLocked;
 
     /**
      * @return void
@@ -100,22 +102,6 @@ class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
     }
 
     /**
-     * Returns the email address of the site admin either as plain address or as simple html mailto link
-     * - is needed by several subclasses
-     * @param bool $asHtmlLink
-     * @return string
-     */
-    public function getSiteAdminEmail(bool $asHtmlLink = false)
-    {
-        $email = getGlobalSetting('siteadminemail');
-        if ($asHtmlLink) {
-            $email = '<a href="mailto:' . $email . '">' . $email . '</a>';
-        }
-
-        return $email;
-    }
-
-    /**
      * If user is a logged-in user we can assume, that backend is accessed right now.
      * @return bool
      */
@@ -128,8 +114,8 @@ class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
      * Redirects to welcome-page if any other url is opened except welcome-page and logout
      *
      * @param LSYii_Controller $controller
-     * @throws Exception if there's no event
      * @return boolean
+     * @throws Exception if there's no event
      */
     public function forceRedirectToWelcomePage($event = null)
     {
@@ -137,8 +123,8 @@ class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
             return false;
         }
         $controller = $event->get('controller');
-        $action     = $event->get('action');
-        $subAction  = $event->get('subaction');
+        $action = $event->get('action');
+        $subAction = $event->get('subaction');
         return !($controller == 'admin' && $action == 'index') && $subAction != 'logout';
     }
 
@@ -152,6 +138,7 @@ class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
             \Yii::app()->dbstats,
             (int)getInstallationID()
         );
+        $this->isHardLocked = $this->limeserviceSystem->getHardLock() === 1;
         $plan = $this->limeserviceSystem->getUsersPlan();
         $this->isSuperAdminReadUser = \Permission::model()->hasGlobalPermission('superadmin', 'read');
         $this->isPayingUser = $plan !== 'free' && $plan != '';
@@ -172,6 +159,7 @@ class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
     {
         $blockingNotification = false;
         $blockingNotifications = [
+            ['class' => 'LimeSurveyProfessional\notifications\HardLockModal'],
             ['class' => 'LimeSurveyProfessional\notifications\OutOfResponsesFree'],
         ];
 

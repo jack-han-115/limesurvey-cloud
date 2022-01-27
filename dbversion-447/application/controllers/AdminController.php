@@ -164,14 +164,6 @@ class AdminController extends LSYii_Controller
             $iInstallationId
         );
 
-        //todo: (1) this will be changed by using a modal (which can not be clicked away)
-        $iHardLocked = $limeserviceSystem->getHardLock();
-        if ($iHardLocked)
-        {
-            header("Expires: Sat, 26 Jul 1997 05:00:00 GMT");
-            die("Dear survey administrator - the LimeSurvey administration is currently not available because it has been locked. Please contact support@limesurvey.org for details.");
-        }
-
         //todo: (3) this has to be in a separate class and called in Plugin
         $sDomain=$_SERVER['SERVER_NAME'];
         $sSubdomain=substr($sDomain,0,strpos($sDomain,'.'));

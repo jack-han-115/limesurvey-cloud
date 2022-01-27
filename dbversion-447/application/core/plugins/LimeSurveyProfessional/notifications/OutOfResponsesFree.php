@@ -2,10 +2,10 @@
 
 namespace LimeSurveyProfessional\notifications;
 
+use LimeSurveyProfessional\LinksAndContactHmtlHelper;
+
 class OutOfResponsesFree extends UnclosableModal
 {
-
-
     /**
      * Constructor for OutOfResponsesFree
      *
@@ -32,7 +32,7 @@ class OutOfResponsesFree extends UnclosableModal
             $notificationCreated = true;
             $this->title = $this->plugin->gT('Maximum Number of Responses Reached');
             $this->getMessage();
-            $this->getButton();
+            $this->getButton(new LinksAndContactHmtlHelper());
             $this->showModal();
         }
 
@@ -62,17 +62,18 @@ class OutOfResponsesFree extends UnclosableModal
     /**
      * Generates and sets the button html
      *
+     * @param LinksAndContactHmtlHelper $links
      */
-    private function getButton()
+    private function getButton(LinksAndContactHmtlHelper $links)
     {
         if ($this->plugin->isSuperAdminReadUser) {
             $buttonText = $this->plugin->gT('Upgrade / Purchase responses');
-
-            $this->buttons[] = '<a class="btn btn-primary" href="https://account.limesurvey.org/" target="_blank">' .
-                '<span class="fa fa-external-link"></span>&nbsp;' . $buttonText . '</a>';
+            $this->buttons[] = $links->toHtmlLinkButton('https://account.limesurvey.org/', $buttonText);
         } else {
-            $this->buttons[] = '<a class="btn btn-primary" href="mailto:' . $this->plugin->getSiteAdminEmail() . '">' .
-                '<span class="fa fa-envelope"></span>&nbsp;' . $this->plugin->gT('Contact Survey Site Admin') . '</a>';
+            $this->buttons[] = $links->toHtmlMailLinkButton(
+                $links->getSiteAdminEmail(),
+                $this->plugin->gT('Contact Survey Site Admin')
+            );
         }
     }
 }

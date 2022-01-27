@@ -2,6 +2,8 @@
 
 namespace LimeSurveyProfessional\notifications;
 
+use LimeSurveyProfessional\LinksAndContactHmtlHelper;
+
 class OutOfResponsesPaid
 {
     /** @var \LimeSurveyProfessional */
@@ -41,7 +43,8 @@ class OutOfResponsesPaid
      */
     private function getMessage()
     {
-        return $this->getMainString() . $this->getButton();
+        $links = new LinksAndContactHmtlHelper();
+        return $this->getMainString() . $this->getButton($links);
     }
 
     /**
@@ -69,17 +72,20 @@ class OutOfResponsesPaid
 
     /**
      * Returns the button html for the notification
+     * @param LinksAndContactHmtlHelper $links
+     *
      * @return string
      */
-    private function getButton()
+    private function getButton(LinksAndContactHmtlHelper $links)
     {
         if ($this->plugin->isSuperAdminReadUser) {
             $buttonText = $this->plugin->gT('Renew plan / Purchase responses');
-            $button = '<a class="btn btn-primary" href="https://account.limesurvey.org/" target="_blank">' .
-                '<span class="fa fa-external-link"></span>&nbsp;' . $buttonText . '</a>';
+            $button = $links->toHtmlLinkButton('https://account.limesurvey.org/', $buttonText);
         } else {
-            $button = '<a class="btn btn-primary" href="mailto:' . $this->plugin->getSiteAdminEmail() . '">' .
-                '<span class="fa fa-envelope"></span>&nbsp;' . $this->plugin->gT('Contact Survey Site Admin') . '</a>';
+            $button = $links->toHtmlMailLinkButton(
+                $links->getSiteAdminEmail(),
+                $this->plugin->gT('Contact Survey Site Admin')
+            );
         }
 
         return '<br><br><p class="text-center">' . $button . '</p>';

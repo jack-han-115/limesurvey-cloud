@@ -2,6 +2,8 @@
 
 namespace LimeSurveyProfessional\notifications;
 
+use LimeSurveyProfessional\LinksAndContactHmtlHelper;
+
 class LimitReminderNotification
 {
     /** @var boolean */
@@ -37,7 +39,6 @@ class LimitReminderNotification
         // If no storage is left, this notification will not be shown!
         $this->hasStorageNotification = $this->plugin->limeserviceSystem->calcRestStoragePercent() > 0
             && $this->plugin->limeserviceSystem->calcRestStoragePercent() < $this->reminderLimitStorage;
-
     }
 
     /**
@@ -82,7 +83,9 @@ class LimitReminderNotification
      */
     private function getMessage()
     {
-        return $this->getMainString() . $this->getContactString() . $this->getButton();
+        $links = new LinksAndContactHmtlHelper();
+
+        return $this->getMainString() . $this->getContactString() . $this->getButton($links);
     }
 
     /**
@@ -167,19 +170,23 @@ class LimitReminderNotification
 
     /**
      * Generates and returns the button html
-     *
+     * @param LinksAndContactHmtlHelper $links
      * @return string
      */
-    public function getButton()
+    private function getButton(LinksAndContactHmtlHelper $links)
     {
         if ($this->plugin->isSuperAdminReadUser) {
-            $button = '<a class="btn btn-primary" href="' . \Yii::app()->getConfig(
+            $button = $links->toHtmlLinkButton(
+                \Yii::app()->getConfig(
                     "linkToPricingPage"
-                ) . '" target="_blank">' .
-                '<span class="fa fa-external-link"></span>&nbsp;' . $this->plugin->gT('Upgrade or renew plan') . '</a>';
+                ),
+                $this->plugin->gT('Upgrade or renew plan')
+            );
         } else {
-            $button = '<a class="btn btn-primary" href="mailto:' . getGlobalSetting('siteadminemail') . '">' .
-                '<span class="fa fa-envelope"></span>&nbsp;' . $this->plugin->gT('Contact Survey Site Admin') . '</a>';
+            $button = $links->toHtmlMailLinkButton(
+                $links->getSiteAdminEmail(),
+                $this->plugin->gT('Contact Survey Site Admin')
+            );
         }
 
         return '<br><br><p class="text-center">' . $button . '</p>';

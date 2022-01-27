@@ -47,4 +47,29 @@ class LimeSurveyProfessionalTest extends TestBaseClass
         $event->set('subaction', 'logout');
         $this->assertFalse($lsp->forceRedirectToWelcomePage($event));
     }
+
+    public function testTransactionHistoryLinkDe()
+    {
+        $linksClass = new LimeSurveyProfessional\LinksAndContactHmtlHelper();
+        $historyLinkDe = $linksClass->getTransactionHistoryLink('de');
+        $this->assertTrue(strpos($historyLinkDe, 'de/') !== false);
+    }
+
+    public function testTransactionHistoryLinkBr()
+    {
+        $linksClass = new LimeSurveyProfessional\LinksAndContactHmtlHelper();
+        $historyLinkBr = $linksClass->getTransactionHistoryLink('pt-BR');
+        $this->assertTrue(strpos($historyLinkBr, 'pt/') !== false);
+    }
+
+    public function testEmailButtonLink()
+    {
+        $linksClass = new LimeSurveyProfessional\LinksAndContactHmtlHelper();
+        $emailButton = $linksClass->toHtmlLinkButton('test@limesurvey.org', 'Test-Title');
+        $this->assertTrue(
+            strpos($emailButton, 'test@limesurvey.org') !== false
+            && strpos($emailButton, 'btn-') !== false
+            && strpos($emailButton, 'Test-Title') !== false
+        );
+    }
 }
