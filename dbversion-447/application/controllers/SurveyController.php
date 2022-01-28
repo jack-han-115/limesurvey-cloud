@@ -115,10 +115,6 @@ class SurveyController extends LSYii_Controller
     {
         $this->renderPartial('/admin/hardlock/hardlockParticipants', [], false);
         die();
-        //header("Expires: Sat, 26 Jul 1997 05:00:00 GMT");
-          //  die("
-                //We are sorry but this survey is currently not available - please come back later.
-                //<!-- jquery -->");
     }
     /**
      * Load and set session vars
