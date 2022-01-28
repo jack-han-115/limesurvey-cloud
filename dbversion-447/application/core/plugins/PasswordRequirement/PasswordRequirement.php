@@ -83,7 +83,7 @@ class PasswordRequirement extends \LimeSurvey\PluginManager\PluginBase
         $nonAlpha = $this->get('needsNonAlphanumeric', null, null, false);
 
         $randomPassword = $this->getRandomString($targetSize, $uppercase, $numeric, $nonAlpha);
-
+        
         $oEvent->set('password', $randomPassword);
         return;
     }
@@ -102,7 +102,7 @@ class PasswordRequirement extends \LimeSurvey\PluginManager\PluginBase
     private function getRandomString($length = 8, $uppercase = false, $numeric = false, $nonAlpha = false)
     {
         $chars = "abcdefghijklmnopqrstuvwxyz";
-
+        
         if ($uppercase) {
             $chars .=  'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
         }
