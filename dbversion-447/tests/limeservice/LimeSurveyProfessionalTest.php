@@ -109,8 +109,8 @@ class LimeSurveyProfessionalTest extends TestBaseClass
         $numberOfEmails = 6;
         $locked = false;
 
-        for($i = 0; $i < $numberOfEmails; $i++) {
-            if(!$locked) {
+        for ($i = 0; $i < $numberOfEmails; $i++) {
+            if (!$locked) {
                 $blacklist = new LimeSurveyProfessional\email\BlacklistFilter($event, $lsp);
                 $emailMethod = 'mail';
                 $folder = getcwd() . '/application/core/plugins/LimeSurveyProfessional';
