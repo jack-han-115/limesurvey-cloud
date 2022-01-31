@@ -26,7 +26,7 @@ class EmailFilter
     {
         $this->event = $event;
         $this->plugin = $plugin;
-        $this->emailLock = $this->plugin->limeserviceSystem->getEmailLock();
+        $this->emailLock = $this->plugin->emailLock;
     }
 
     /**
@@ -36,6 +36,6 @@ class EmailFilter
     public function filter()
     {
         $blacklistFilter = new BlacklistFilter($this->event, $this->plugin);
-        $blacklistFilter->detectSpam();
+        $blacklistFilter->filterBlacklist();
     }
 }

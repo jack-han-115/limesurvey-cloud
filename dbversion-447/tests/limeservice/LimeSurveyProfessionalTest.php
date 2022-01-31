@@ -72,4 +72,52 @@ class LimeSurveyProfessionalTest extends TestBaseClass
             && strpos($emailButton, 'Test-Title') !== false
         );
     }
+
+    public function testBlacklistFilterNoSpam()
+    {
+        $pm = new PluginManager();
+        $id = 'dummyid';
+        $lsp = new LimeSurveyProfessional($pm, $id);
+        $lsp->init();
+        $lsp->emailLock = 0;
+        $event = new PluginEvent('eventname');
+        $event->set('body', '');
+        $event->set('subject', '');
+        $event->set('replyto', ['test@limesurvey.org']);
+
+        $blacklist = new LimeSurveyProfessional\email\BlacklistFilter($event, $lsp);
+        $emailMethod = 'mail';
+        $folder = getcwd() . '/application/core/plugins/LimeSurveyProfessional';
+
+        $this->assertFalse($blacklist->detectSpam($emailMethod, $folder));
+    }
+
+    public function testBlacklistFilterSpam()
+    {
+        $pm = new PluginManager();
+        $id = 'dummyid';
+        $lsp = new LimeSurveyProfessional($pm, $id);
+        $lsp->init();
+        $lsp->emailLock = 0;
+        $event = new PluginEvent('eventname');
+        $event->set('body', 'Tax return');
+        $event->set('subject', '');
+        $event->set('replyto', ['test@limesurvey.org']);
+
+        // as of now a random number of 3 to 5 emails containing blacklisted words
+        // need to be sent before filter hits. so we try it 6 times
+        $numberOfEmails = 6;
+        $locked = false;
+
+        for($i = 0; $i < $numberOfEmails; $i++) {
+            if(!$locked) {
+                $blacklist = new LimeSurveyProfessional\email\BlacklistFilter($event, $lsp);
+                $emailMethod = 'mail';
+                $folder = getcwd() . '/application/core/plugins/LimeSurveyProfessional';
+                $locked = $blacklist->detectSpam($emailMethod, $folder);
+            }
+        }
+
+        $this->assertTrue($locked);
+    }
 }

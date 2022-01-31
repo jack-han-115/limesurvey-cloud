@@ -36,6 +36,9 @@ class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
     /** @var boolean */
     public $isHardLocked;
 
+    /** @var int */
+    public $emailLock;
+
     /**
      * @return void
      */
@@ -143,6 +146,7 @@ class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
         $this->isSuperAdminReadUser = \Permission::model()->hasGlobalPermission('superadmin', 'read');
         $this->isPayingUser = $plan !== 'free' && $plan != '';
         $this->outOfResponses = $this->limeserviceSystem->getResponsesAvailable() < 0;
+        $this->emailLock = $this->limeserviceSystem->getEmailLock();
     }
 
     /**
