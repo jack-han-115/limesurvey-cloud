@@ -50,15 +50,12 @@
                 <div class="panel-body">
                     <p>We are sorry but this survey is currently not available - please come back later.</p>
                 </div>
-                <div class="panel-footer">
-                    <a class="btn btn-success" href="#">Go back</a>
-                </div>
             </div>
         </div>
         <!-- Footer Bar -->
         <div class="fixed-hardlock-footer">
             <div class="hidden-xs">
-                <img src="./assets/images/__LimeSurvey_logo.png" class="align-image-for-footer" alt="LimeSurvey logo with font" />
+                <img src="./assets/images/__Limesurvey_logo.png" class="align-image-for-footer" alt="LimeSurvey logo with font" />
             </div>
         </div>
     </body>
