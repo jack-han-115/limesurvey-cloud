@@ -11,7 +11,7 @@
 
 // Logout Button will always be added
 $buttons[] = '<a class="btn btn-default" href="' . $this->createUrl("admin/authentication/sa/logout") . '">' .
-    $plugin->gT("Logout") .
+        '<span class="fa fa-sign-out"></span>&nbsp;' . $plugin->gT("Logout") .
     '</a>';
 ?>
 
@@ -31,7 +31,7 @@ $buttons[] = '<a class="btn btn-default" href="' . $this->createUrl("admin/authe
                 </p>
             </div>
             <div class="modal-footer">
-                <p class="text-center">
+                <p class="text-right">
                     <?php foreach ($buttons as $button): ?>
                         <?= $button ?>
                     <?php endforeach; ?>

@@ -21,15 +21,31 @@ class BlacklistFilter extends EmailFilter
     }
 
     /**
-     * Checks if email body contains blacklisted words/sentences.
-     * If so, static $violationCount will be raised.
-     * If $violationCount reaches set $violationThreshold of blacklistConfig
-     * function handleViolationCase() will be called.
+     * Calls the detectSpam function and takes further action if that returns true.
+     * This function exists, so we can test the detectSpam function.
      */
-    public function detectSpam()
+    public function filterBlacklist()
     {
-        if (\Yii::app()->getConfig('emailmethod') != 'smtp') {
-            $folder = \Yii::getPathOfAlias('LimeSurveyProfessional');
+        $emailMethod = \Yii::app()->getConfig('emailmethod');
+        $folder = \Yii::getPathOfAlias('LimeSurveyProfessional');
+        if ($this->detectSpam($emailMethod, $folder)) {
+            $this->handleViolationCase();
+        }
+    }
+
+    /**
+     * Checks if email body, subject or replyto contain blacklisted words/sentences.
+     * If so, static $violationCount will be raised, and search will be ended.
+     * If $violationCount reaches set $violationThreshold of blacklistConfig
+     * return will be "true".
+     * @param string $emailMethod
+     * @param string $folder
+     * @return bool
+     */
+    public function detectSpam(string $emailMethod, string $folder)
+    {
+        $spamDetected = false;
+        if ($emailMethod != 'smtp') {
             include($folder . '/email/blacklistConfig.php');
 
             $emailBody = $this->event->get('body', '');
@@ -39,7 +55,7 @@ class BlacklistFilter extends EmailFilter
             /** @var array $blacklistEntries */
             foreach ($blacklistEntries as $entry) {
                 if ($this->emailLock == 2 || \LimeSurveyProfessional::$violationCount >= $violationThreshold) {
-                    $this->handleViolationCase();
+                    $spamDetected = true;
                     break;
                 }
                 if (stripos($emailBody, $entry) !== false || stripos($emailSubject, $entry) !== false || stripos($emailReplyTo, $entry) !== false) {
@@ -48,6 +64,8 @@ class BlacklistFilter extends EmailFilter
                 }
             }
         }
+
+        return $spamDetected;
     }
 
     /**

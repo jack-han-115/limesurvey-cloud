@@ -40,11 +40,9 @@ echo viewHelper::getViewTestTag('update');
                     $sUpgradeVersion='5.x';
 
                     // Check if already scheduled for upgrade
-                    $sDomain           = $_SERVER['SERVER_NAME'];
-                    $sSubDomain        = substr($sDomain,0,strpos($sDomain,'.'));
-                    $sRootDomain       = substr($sDomain,strpos($sDomain,'.')+1);
-                    $iUpgradeDBVersion = Yii::app()->dbstats->createCommand("select upgradedbversion from pageviews where subdomain='$sSubDomain' and rootdomain='$sRootDomain'")->queryScalar();
-
+                    $iInstallationId = (int) getInstallationID();
+                    $iUpgradeDBVersion = Yii::app()->dbstats->createCommand("select dbversion from limeservice_system.plan_actions where client_command='upgrade' and user_id=" . $iInstallationId)->queryScalar();
+            
                     if (intval($iUpgradeDBVersion)<$iDestinationVersion){
 
                         if (isset($scheduleupgrade) && $scheduleupgrade){

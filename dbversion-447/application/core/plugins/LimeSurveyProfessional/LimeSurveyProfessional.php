@@ -1,6 +1,7 @@
 <?php
 
 use LimeSurveyProfessional\notifications\LimitReminderNotification;
+use LimeSurveyProfessional\notifications\OutOfResponsesPaid;
 
 /**
  * The LimeSurveyProfessional plugin for "free" LimeService systems
@@ -32,6 +33,11 @@ class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
     /** @var bool */
     public $outOfResponses;
 
+    /** @var boolean */
+    public $isHardLocked;
+
+    /** @var int */
+    public $emailLock;
 
     /**
      * @return void
@@ -73,10 +79,11 @@ class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
     }
 
     /**
-     * Only one modal will be displayed, so the createNotification calls need to be sorted ascending by importance
-     * 1. if admin welcome-page is called, the limitReminderNotification functionality will be called
-     * 2. blocking notifications (unclosable modal)
-     *
+     * If user is on backend-level
+     * 1. blocking notifications (unclosable modal) may be created
+     * if not:
+     * 2. if admin welcome-page is called, the
+     *    limitReminderNotification and outOfresponsesPaid functionalities will be called
      */
     public function beforeControllerAction()
     {
@@ -89,25 +96,12 @@ class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
                 if ($controller === 'admin' && $action === 'index') {
                     $limitReminderNotification = new LimitReminderNotification($this);
                     $limitReminderNotification->createNotification();
+
+                    $outOfResponsesPaid = new OutOfResponsesPaid($this);
+                    $outOfResponsesPaid->createNotification();
                 }
             }
         }
-    }
-
-    /**
-     * Returns the email address of the site admin either as plain address or as simple html mailto link
-     * - is needed by several subclasses
-     * @param bool $asHtmlLink
-     * @return string
-     */
-    public function getSiteAdminEmail(bool $asHtmlLink = false)
-    {
-        $email = getGlobalSetting('siteadminemail');
-        if ($asHtmlLink) {
-            $email = '<a href="mailto:' . $email . '">' . $email . '</a>';
-        }
-
-        return $email;
     }
 
     /**
@@ -123,8 +117,8 @@ class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
      * Redirects to welcome-page if any other url is opened except welcome-page and logout
      *
      * @param LSYii_Controller $controller
-     * @throws Exception if there's no event
      * @return boolean
+     * @throws Exception if there's no event
      */
     public function forceRedirectToWelcomePage($event = null)
     {
@@ -132,8 +126,8 @@ class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
             return false;
         }
         $controller = $event->get('controller');
-        $action     = $event->get('action');
-        $subAction  = $event->get('subaction');
+        $action = $event->get('action');
+        $subAction = $event->get('subaction');
         return !($controller == 'admin' && $action == 'index') && $subAction != 'logout';
     }
 
@@ -147,10 +141,12 @@ class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
             \Yii::app()->dbstats,
             (int)getInstallationID()
         );
+        $this->isHardLocked = $this->limeserviceSystem->getHardLock() === 1;
         $plan = $this->limeserviceSystem->getUsersPlan();
         $this->isSuperAdminReadUser = \Permission::model()->hasGlobalPermission('superadmin', 'read');
         $this->isPayingUser = $plan !== 'free' && $plan != '';
         $this->outOfResponses = $this->limeserviceSystem->getResponsesAvailable() < 0;
+        $this->emailLock = $this->limeserviceSystem->getEmailLock();
     }
 
     /**
@@ -167,7 +163,8 @@ class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
     {
         $blockingNotification = false;
         $blockingNotifications = [
-            ['class' => 'LimeSurveyProfessional\notifications\OutOfResponses'],
+            ['class' => 'LimeSurveyProfessional\notifications\HardLockModal'],
+            ['class' => 'LimeSurveyProfessional\notifications\OutOfResponsesFree'],
         ];
 
         foreach ($blockingNotifications as $notification) {

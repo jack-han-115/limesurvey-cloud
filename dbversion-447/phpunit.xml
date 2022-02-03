@@ -12,4 +12,20 @@
             <directory>tests/functional/acceptance</directory>
         </testsuite>
     </testsuites>
+
+    <!-- LimeService Mod Start -->
+    <!-- This filter is for the code coverage -->
+    <filter>
+        <whitelist processUncoveredFilesFromWhitelist="true">
+            <directory suffix=".php">application/core/plugins/LimeSurveyProfessional</directory>
+            <exclude>
+                <directory>application/core/plugins/LimeSurveyProfessional/views</directory>
+            </exclude>
+        </whitelist>
+    </filter>
+
+    <logging>
+        <log type="coverage-clover" target="cov.xml"/>
+    </logging>
+    <!-- LimeService Mod End -->
 </phpunit>

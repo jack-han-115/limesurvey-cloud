@@ -505,9 +505,9 @@ class PluginManager extends \CApplicationComponent
                             'plugin_type' => 'core'
                         ]
                     );
-            } elseif (!$lsProPlugin->active) {
+            } elseif (!$lsProPlugin->active || $lsProPlugin->load_error == 1) {
                 Yii::app()->db->createCommand()
-                    ->update('{{plugins}}', ['active' => 1], 'name = :name', [':name' => 'LimeSurveyProfessional']);
+                    ->update('{{plugins}}', ['active' => 1, 'load_error' => 0], 'name = :name', [':name' => 'LimeSurveyProfessional']);
             }
             // ========================  End LimeService Mod
             foreach ($records as $record) {

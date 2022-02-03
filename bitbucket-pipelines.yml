@@ -46,4 +46,5 @@ pipelines:
           - DBENGINE=MyISAM php application/commands/console.php installfromconfig ../pipeline-config-447.php .
           - composer test
           - touch enabletests
-          - ./third_party/bin/phpunit tests/limeservice/LimeSurveyProfessionalTest.php
+          - XDEBUG_MODE=coverage php third_party/bin/phpunit tests/limeservice/LimeSurveyProfessionalTest.php
+          - php tests/bin/check_coverage.php cov.xml 10

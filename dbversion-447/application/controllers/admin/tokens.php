@@ -1449,7 +1449,7 @@ class tokens extends Survey_Common_Action
                             $validationError =  gT('You are currently banned from sending emails using the LimeSurvey email servers. Please configure your global settings to use your own SMTP server, instead. If you have any questions regarding this ban, please contact support@limesurvey.org.');
                         } elseif ($bSpamLinks) {
                             $success = false;
-                            $validationError =  gT('In the free version only links to your survey are allowed.');
+                            $validationError =  gT('Using the FREE & BASIC plan only links to your survey are allowed.');
                         } elseif ($bnoSurveyLink) {
                             $success = false;
                             $validationError =  gT('Your email must contain an invitation link to the survey.');
@@ -2520,9 +2520,9 @@ class tokens extends Survey_Common_Action
         $aData['sidemenu']["token_menu"] = true;
 
         // Save Button
-        $aData['showSaveButton'] = true;
+        $aData['showSaveButton'] = false;
         // Save and Close Button
-        $aData['showSaveAndCloseButton'] = true;
+        $aData['showGreenSaveAndCloseButton'] = true;
         // White Close Button
         $aData['showWhiteCloseButton'] = true;
         $aData['closeUrl'] = Yii::app()->createUrl('admin/tokens/sa/browse/surveyid/' . $iSurveyId);
@@ -2971,6 +2971,10 @@ class tokens extends Survey_Common_Action
         $aLinks = ($bHtml) ? $this->getLinksForHtml($modmessage) : $this->getLinks($modmessage);
         // Check if the link has the wanted infos
         foreach ($aLinks as $sLink) {
+            // E-Mail Links are allowed
+            if (strpos($sLink, 'mailto:') === 0) {
+                continue;
+            }
             if (strpos($sLink, 'token') === false || strpos($sLink, (string)$iSurveyId) === false || strpos($sLink, $_SERVER['HTTP_HOST']) === false) {
                 $hasSpamLink = true;
                 break;

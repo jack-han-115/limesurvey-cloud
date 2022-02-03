@@ -15,6 +15,8 @@ class LimeserviceSystem
      */
     const DEFAULT_REMINDER_LIMIT_RESPONSES = 10;
 
+    const PLAN_FREE = 'free';
+
     /**
      * The connection to the database.
      *
@@ -58,7 +60,7 @@ class LimeserviceSystem
         $reminderLimitResponses = $this->getReminderLimitResponses();
         $responsesAvailable = $this->getResponsesAvailable();
 
-        return $responsesAvailable > 0 && ($responsesAvailable < $reminderLimitResponses);
+        return $responsesAvailable >= 0 && ($responsesAvailable < $reminderLimitResponses);
     }
 
     /**
@@ -224,5 +226,49 @@ class LimeserviceSystem
                 WHERE user_id=" . getInstallationID();
 
         return $this->dbConnection->createCommand($sql)->execute();
+    }
+
+    /**
+     * @param int $value
+     * @return int
+     * @throws \CDbException
+     */
+    public function increaseSentCount(int $value = 1)
+    {
+        $sql = "UPDATE limeservice_system.mail_ratings
+                SET sent = sent + {$value}
+                WHERE installation_id=" . getInstallationID();
+
+        return $this->dbConnection->createCommand($sql)->execute();
+    }
+
+    /**
+     * Returns subscription_created value from table installations
+     *
+     * @return \CDbDataReader|false|mixed|string
+     * @throws \CException
+     */
+    public function getSubscriptionCreated()
+    {
+        $sql = 'select subscription_created 
+            from limeservice_system.installations 
+            where user_id=' . $this->userInstallationId;
+
+        return $this->dbConnection->createCommand($sql)->queryScalar();
+    }
+
+    /**
+     *
+     *
+     * @return \CDbDataReader|false|mixed|string
+     * @throws \CException
+     */
+    public function getSubscriptionPaid()
+    {
+        $sql = 'select subscription_paid 
+            from limeservice_system.installations 
+            where user_id=' . $this->userInstallationId;
+
+        return $this->dbConnection->createCommand($sql)->queryScalar();
     }
 }
