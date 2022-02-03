@@ -2971,6 +2971,10 @@ class tokens extends Survey_Common_Action
         $aLinks = ($bHtml) ? $this->getLinksForHtml($modmessage) : $this->getLinks($modmessage);
         // Check if the link has the wanted infos
         foreach ($aLinks as $sLink) {
+            // E-Mail Links are allowed
+            if (strpos($sLink, 'mailto:') === 0) {
+                continue;
+            }
             if (strpos($sLink, 'token') === false || strpos($sLink, (string)$iSurveyId) === false || strpos($sLink, $_SERVER['HTTP_HOST']) === false) {
                 $hasSpamLink = true;
                 break;
