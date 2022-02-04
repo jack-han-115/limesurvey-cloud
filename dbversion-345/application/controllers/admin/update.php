@@ -102,7 +102,7 @@ class update extends Survey_Common_Action
 
             // Check if already scheduled for upgrade
             $iInstallationId = (int) getInstallationID();
-            $iUpgradeDBVersion = (int) Yii::app()->dbstats->createCommand("select dbversion from limeservice_system.plan_actions where client_command='upgrade' and user_id=" . $iInstallationId)->queryScalar();
+            $iUpgradeDBVersion = Yii::app()->dbstats->createCommand("select dbversion from limeservice_system.plan_actions where client_command='upgrade' and user_id=" . $iInstallationId)->queryScalar();
             if ($iUpgradeDBVersion === false) {
                 Yii::app()->dbstats->createCommand("INSERT INTO limeservice_system.plan_actions (user_id, dbversion, client_command) VALUES ({$iInstallationId}, {$iDestinationVersion}, 'upgrade')")->execute();
             }
