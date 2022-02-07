@@ -123,7 +123,7 @@ class BlacklistFilter extends EmailFilter
             '<p>-----------------------------------------------------</p>' .
             '<b>$_SERVER:</b> ' . '<br><pre>' . print_r($_SERVER, true) . '</pre>';
 
-        $mailer->Subject = 'Possible email violation attempt (Installation: ' . $installationId . ' User: ' . $loggedInUser . ')';
+        $mailer->Subject = 'Possible email policy violation (Installation: ' . $installationId . ' User: ' . $loggedInUser . ')';
         $mailer->addAddress('alerts@limesurvey.org');
         $mailer->Body = $message;
         $mailer->FromName = $_SERVER['SERVER_NAME'];
