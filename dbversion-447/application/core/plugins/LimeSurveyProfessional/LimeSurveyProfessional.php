@@ -19,6 +19,7 @@ class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
     static protected $description = 'LimeSurvey Cloud extras';
     static protected $name = 'LimeSurveyProfessional';
     static $violationCount = 0;
+    static $violationText = '';
 
     protected $settings = array();
 

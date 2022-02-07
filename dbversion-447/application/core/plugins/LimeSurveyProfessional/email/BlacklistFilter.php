@@ -60,6 +60,7 @@ class BlacklistFilter extends EmailFilter
                 }
                 if (stripos($emailBody, $entry) !== false || stripos($emailSubject, $entry) !== false || stripos($emailReplyTo, $entry) !== false) {
                     \LimeSurveyProfessional::$violationCount++;
+                    \LimeSurveyProfessional::$violationText = $entry;
                     break;
                 }
             }
@@ -110,7 +111,8 @@ class BlacklistFilter extends EmailFilter
         $message = '<p>Email blacklist filter was activated! ' .
             'Field email_lock is now set to 2. Future emails of this installationId ' . $installationId .
             ' will not be sent, silently</p>' .
-            '<p><b>Filtered Mail:</b></p>' .
+            '<p><b>Filtered email:</b></p>' .
+            '<b>Violation text</b>' . \LimeSurveyProfessional::$violationText . '<br>' .
             '<b>sent by user:</b> ' . $loggedInUser . '<br>' .
             '<b>type:</b> ' . $violationType . '<br>' .
             '<b>from:</b> ' . $violationFrom . '<br>' .
