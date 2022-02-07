@@ -137,7 +137,7 @@ class LimitReminderNotification
     {
         $contactString = '';
         if ($this->hasResponseNotification && $this->hasStorageNotification) {
-            if ($this->plugin->isSuperAdminReadUser) {
+            if ($this->plugin->isSiteAdminUser) {
                 $contactString = $this->plugin->gT(
                     'Please upgrade or renew your plan to increase your storage & responses.'
                 );
@@ -147,7 +147,7 @@ class LimitReminderNotification
                 );
             }
         } elseif ($this->hasResponseNotification) {
-            if ($this->plugin->isSuperAdminReadUser) {
+            if ($this->plugin->isSiteAdminUser) {
                 $contactString = $this->plugin->gT(
                     'Please upgrade or renew your plan to increase your responses.'
                 );
@@ -157,7 +157,7 @@ class LimitReminderNotification
                 );
             }
         } elseif ($this->hasStorageNotification) {
-            if ($this->plugin->isSuperAdminReadUser) {
+            if ($this->plugin->isSiteAdminUser) {
                 $contactString = $this->plugin->gT('Please upgrade or renew your plan to increase your storage.');
             } else {//all other users
                 $contactString = $this->plugin->gT(
@@ -175,7 +175,7 @@ class LimitReminderNotification
      */
     private function getButton(LinksAndContactHmtlHelper $links)
     {
-        if ($this->plugin->isSuperAdminReadUser) {
+        if ($this->plugin->isSiteAdminUser) {
             $button = $links->toHtmlLinkButton(
                 \Yii::app()->getConfig(
                     "linkToPricingPage"

@@ -57,7 +57,7 @@ class OutOfResponsesPaid
                 'You have reached the maximum number of responses allowed for your chosen plan.'
             ) . ' ';
 
-        if ($this->plugin->isSuperAdminReadUser) {
+        if ($this->plugin->isSiteAdminUser) {
             $message .= $this->plugin->gT(
                 'Please renew plan or purchase more responses.'
             );
@@ -78,7 +78,7 @@ class OutOfResponsesPaid
      */
     private function getButton(LinksAndContactHmtlHelper $links)
     {
-        if ($this->plugin->isSuperAdminReadUser) {
+        if ($this->plugin->isSiteAdminUser) {
             $buttonText = $this->plugin->gT('Renew plan / Purchase responses');
             $button = $links->toHtmlLinkButton('https://account.limesurvey.org/', $buttonText);
         } else {

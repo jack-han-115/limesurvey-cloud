@@ -48,7 +48,7 @@ class HardLockModal extends UnclosableModal
      */
     private function initMessage(LinksAndContactHmtlHelper $links)
     {
-        if ($this->plugin->isSuperAdminReadUser) {
+        if ($this->plugin->isSiteAdminUser) {
             $this->message = sprintf(
                 $this->plugin->gT(
                     'Your account has been locked due to an unpaid invoice or suspected abuse.  To unlock your account, please view and pay the invoice from the %s tab of your LimeSurvey account homepage. If you are still locked after paying your invoice, please contact customer support.'
@@ -75,7 +75,7 @@ class HardLockModal extends UnclosableModal
      */
     private function initButtons(LinksAndContactHmtlHelper $links)
     {
-        if ($this->plugin->isSuperAdminReadUser) {
+        if ($this->plugin->isSiteAdminUser) {
             $this->buttons[] = $links->toHtmlLinkButton(
                 $links->getTransactionHistoryLink(\Yii::app()->session['adminlang']),
                 $this->plugin->gT('Pay invoice')

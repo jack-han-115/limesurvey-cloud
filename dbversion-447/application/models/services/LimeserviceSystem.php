@@ -68,6 +68,7 @@ class LimeserviceSystem
      * account.limesurvey.org (the default value, if not set by user is 10)
      *
      * @return null|int|mixed
+     * @throws \CException
      */
     public function getReminderLimitResponses()
     {
@@ -75,7 +76,7 @@ class LimeserviceSystem
                 from limeservice_system.installations 
                 where user_id=' . $this->userInstallationId;
 
-        $reminderLimitResponses = \Yii::app()->dbstats->createCommand($sql)->queryScalar();
+        $reminderLimitResponses = $this->dbConnection->createCommand($sql)->queryScalar();
 
         if ($reminderLimitResponses === null || $reminderLimitResponses === 0) {
             $reminderLimitResponses = self::DEFAULT_REMINDER_LIMIT_RESPONSES;
@@ -89,12 +90,13 @@ class LimeserviceSystem
      * If the value in database is null, then 0 is returned (fallback scenario)
      *
      * @return int
+     * @throws \CException
      */
     public function getResponsesAvailable()
     {
         $sql = "select responses_avail from limeservice_system.balances where user_id=" . $this->userInstallationId;
 
-        $responses = (int)\Yii::app()->dbstats->createCommand($sql)->queryScalar();
+        $responses = (int)$this->dbConnection->createCommand($sql)->queryScalar();
 
         return $responses;
     }
@@ -103,30 +105,33 @@ class LimeserviceSystem
      * Returns the value for 'hard_lock' from table installations
      *
      * @return int
+     * @throws \CException
      */
     public function getHardLock()
     {
         $sql = "select hard_lock from limeservice_system.installations where user_id=" . $this->userInstallationId;
 
-        return (int)\Yii::app()->dbstats->createCommand($sql)->queryScalar();
+        return (int)$this->dbConnection->createCommand($sql)->queryScalar();
     }
 
     /**
      * Returns the value for 'locked' from table installations
      *
      * @return int
+     * @throws \CException
      */
     public function getLocked()
     {
         $sql = "select locked from limeservice_system.installations where user_id=" . $this->userInstallationId;
 
-        return (int)\Yii::app()->dbstats->createCommand($sql)->queryScalar();
+        return (int)$this->dbConnection->createCommand($sql)->queryScalar();
     }
 
     /**
      * Calculate remaining storage in percent
      *
      * @return float
+     * @throws \CException
      */
     public function calcRestStoragePercent()
     {
@@ -144,6 +149,7 @@ class LimeserviceSystem
      * Gets the upload_storage_size from table installations.
      *
      * @return int
+     * @throws \CException
      */
     public function getUploadStorageSize()
     {
@@ -151,7 +157,7 @@ class LimeserviceSystem
                 from limeservice_system.installations 
                 where user_id=' . $this->userInstallationId;
 
-        $uploadStorage = (int)\Yii::app()->dbstats->createCommand($sql)->queryScalar();
+        $uploadStorage = (int)$this->dbConnection->createCommand($sql)->queryScalar();
 
         return $uploadStorage;
     }
@@ -160,12 +166,13 @@ class LimeserviceSystem
      * Gets the used storage from database.
      *
      * @return float
+     * @throws \CException
      */
     public function getStorageUsed()
     {
         $sql = "select storage_used from limeservice_system.balances where user_id=" . $this->userInstallationId;
 
-        $usedStorage = \Yii::app()->dbstats->createCommand($sql)->queryScalar();
+        $usedStorage = $this->dbConnection->createCommand($sql)->queryScalar();
 
         return $usedStorage;
     }
@@ -174,6 +181,7 @@ class LimeserviceSystem
      * Gets the user plan from table installations. This value is a string e.g. 'free'.
      *
      * @return mixed
+     * @throws \CException
      */
     public function getUsersPlan()
     {
@@ -191,6 +199,7 @@ class LimeserviceSystem
      * Gets reminderlimitstorage value from table installations.
      *
      * @return int
+     * @throws \CException
      */
     public function getReminderLimitStorage()
     {
@@ -268,6 +277,21 @@ class LimeserviceSystem
         $sql = 'select subscription_paid 
             from limeservice_system.installations 
             where user_id=' . $this->userInstallationId;
+
+        return $this->dbConnection->createCommand($sql)->queryScalar();
+    }
+
+    /**
+     * Returns subscription_period value from table installations
+     *
+     * @return \CDbDataReader|false|mixed|string
+     * @throws \CException
+     */
+    public function getSubscriptionPeriod()
+    {
+        $sql = 'select subscription_period 
+                from limeservice_system.installations 
+                where user_id=' . $this->userInstallationId;
 
         return $this->dbConnection->createCommand($sql)->queryScalar();
     }

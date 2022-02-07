@@ -27,8 +27,8 @@ class OutOfResponsesFree extends UnclosableModal
     public function createNotification()
     {
         $notificationCreated = false;
-        $locked = $this->plugin->limeserviceSystem->getLocked() == 1;
-        if (!$this->plugin->isPayingUser && ($this->plugin->outOfResponses || $locked)) {
+
+        if (!$this->plugin->isPayingUser && ($this->plugin->outOfResponses || $this->plugin->locked)) {
             $notificationCreated = true;
             $this->title = $this->plugin->gT('Maximum Number of Responses Reached');
             $this->getMessage();
@@ -48,7 +48,7 @@ class OutOfResponsesFree extends UnclosableModal
                 'You have reached the maximum number of responses allowed for your chosen plan.'
             ) . ' ';
 
-        if ($this->plugin->isSuperAdminReadUser) {
+        if ($this->plugin->isSiteAdminUser) {
             $this->message .= $this->plugin->gT(
                 'Please upgrade your plan or purchase more responses.'
             );
@@ -66,7 +66,7 @@ class OutOfResponsesFree extends UnclosableModal
      */
     private function getButton(LinksAndContactHmtlHelper $links)
     {
-        if ($this->plugin->isSuperAdminReadUser) {
+        if ($this->plugin->isSiteAdminUser) {
             $buttonText = $this->plugin->gT('Upgrade / Purchase responses');
             $this->buttons[] = $links->toHtmlLinkButton('https://account.limesurvey.org/', $buttonText);
         } else {

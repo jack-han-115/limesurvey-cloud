@@ -73,6 +73,21 @@ class LimeSurveyProfessionalTest extends TestBaseClass
         );
     }
 
+    public function testHasNoBlockingNotification()
+    {
+        $pm = new PluginManager();
+        $id = 'dummyid';
+        $lsp = new LimeSurveyProfessional($pm, $id);
+        $lsp->init();
+        $lsp->isHardLocked = false;
+        $lsp->isPayingUser = false;
+        $lsp->outOfResponses = false;
+        $event = new PluginEvent('eventname');
+        $event->set('subaction', 'logout');
+
+        $this->assertFalse($lsp->createBlockingNotifications($event));
+    }
+
     public function testBlacklistFilterNoSpam()
     {
         $pm = new PluginManager();
@@ -119,5 +134,21 @@ class LimeSurveyProfessionalTest extends TestBaseClass
         }
 
         $this->assertTrue($locked);
+    }
+
+    public function testIsInGracePeriod()
+    {
+        $pm = new PluginManager();
+        $id = 'dummyid';
+        $lsp = new LimeSurveyProfessional($pm, $id);
+        $lsp->dateSubscriptionCreated = '2020-10-29 00:00:00';
+        $lsp->dateSubscriptionPaid = '2021-12-31 00:00:00';
+        $lsp->paymentPeriod = 'M';
+
+        $lsp->init();
+        $fakeTodayDate = new \DateTime('2022-01-28 00:00:00');
+        $gracePeriodClass = new LimeSurveyProfessional\notifications\GracePeriodNotification($lsp);
+
+        $this->assertTrue($gracePeriodClass->isInGracePeriod($fakeTodayDate));
     }
 }

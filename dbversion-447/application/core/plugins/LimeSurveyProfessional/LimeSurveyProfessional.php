@@ -2,6 +2,7 @@
 
 use LimeSurveyProfessional\notifications\LimitReminderNotification;
 use LimeSurveyProfessional\notifications\OutOfResponsesPaid;
+use LimeSurveyProfessional\notifications\GracePeriodNotification;
 
 /**
  * The LimeSurveyProfessional plugin for "free" LimeService systems
@@ -25,7 +26,7 @@ class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
     public $limeserviceSystem;
 
     /** @var boolean */
-    public $isSuperAdminReadUser;
+    public $isSiteAdminUser;
 
     /** @var boolean */
     public $isPayingUser;
@@ -36,8 +37,20 @@ class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
     /** @var boolean */
     public $isHardLocked;
 
+    /** @var boolean */
+    public $locked;
+
     /** @var int */
     public $emailLock;
+
+    /** @var string|null */
+    public $dateSubscriptionPaid;
+
+    /** @var string|null */
+    public $dateSubscriptionCreated;
+
+    /** @var string|null */
+    public $paymentPeriod;
 
     /**
      * @return void
@@ -92,13 +105,19 @@ class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
         if ($this->isBackendAccess()) {
             $this->initPluginData();
 
-            if (!$this->createBlockingNotifications()) {
+            if (!$this->createBlockingNotifications($this->getEvent())) {
                 if ($controller === 'admin' && $action === 'index') {
                     $limitReminderNotification = new LimitReminderNotification($this);
                     $limitReminderNotification->createNotification();
 
                     $outOfResponsesPaid = new OutOfResponsesPaid($this);
                     $outOfResponsesPaid->createNotification();
+
+                    //only usefull for paying users
+                    if ($this->isPayingUser) {
+                        $gracePeriodNotification = new GracePeriodNotification($this);
+                        $gracePeriodNotification->createNotification();
+                    }
                 }
             }
         }
@@ -116,7 +135,7 @@ class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
     /**
      * Redirects to welcome-page if any other url is opened except welcome-page and logout
      *
-     * @param LSYii_Controller $controller
+     * @param \LimeSurvey\PluginManager\PluginEvent $event
      * @return boolean
      * @throws Exception if there's no event
      */
@@ -143,10 +162,14 @@ class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
         );
         $this->isHardLocked = $this->limeserviceSystem->getHardLock() === 1;
         $plan = $this->limeserviceSystem->getUsersPlan();
-        $this->isSuperAdminReadUser = \Permission::model()->hasGlobalPermission('superadmin', 'read');
+        $this->isSiteAdminUser = App()->user->id == 1;
         $this->isPayingUser = $plan !== 'free' && $plan != '';
         $this->outOfResponses = $this->limeserviceSystem->getResponsesAvailable() < 0;
+        $this->locked = $this->limeserviceSystem->getLocked() == 1;
         $this->emailLock = $this->limeserviceSystem->getEmailLock();
+        $this->dateSubscriptionPaid = $this->limeserviceSystem->getSubscriptionPaid();
+        $this->dateSubscriptionCreated = $this->limeserviceSystem->getSubscriptionCreated();
+        $this->paymentPeriod = $this->limeserviceSystem->getSubscriptionPeriod();
     }
 
     /**
@@ -156,10 +179,11 @@ class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
      *
      * Attention: Every class inside array $blockingNotifications needs to have the function createNotification()
      * createNotification() needs to return a boolean!
+     * @param \LimeSurvey\PluginManager\PluginEvent $event
      *
      * @return boolean
      */
-    private function createBlockingNotifications()
+    public function createBlockingNotifications($event)
     {
         $blockingNotification = false;
         $blockingNotifications = [
@@ -176,7 +200,7 @@ class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
             }
         }
 
-        $event = $this->getEvent();
+
         if ($blockingNotification && $this->forceRedirectToWelcomePage($event)) {
             $controller = Yii::app()->getController();
             $controller->redirect($controller->createUrl('admin/index'));
