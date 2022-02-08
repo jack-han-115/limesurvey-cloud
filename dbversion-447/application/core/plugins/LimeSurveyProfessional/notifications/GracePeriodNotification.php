@@ -63,7 +63,7 @@ class GracePeriodNotification
         $subscriptionPaid = new \DateTime($this->plugin->dateSubscriptionPaid);
         $latestBillingDate = $this->getLastPaymentDueDate($subscriptionCreated, $now);
 
-        if ($subscriptionPaidIsSet && $latestBillingDate < $subscriptionPaid) {
+        if ($subscriptionPaidIsSet && $latestBillingDate <= $subscriptionPaid) {
 //          subscription is paid: all good
             return false;
         }
