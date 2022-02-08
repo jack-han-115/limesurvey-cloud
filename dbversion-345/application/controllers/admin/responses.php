@@ -636,11 +636,11 @@ class responses extends Survey_Common_Action
             if (isset($aQuestionFiles[$iIndex])) {
                 $aFile = $aQuestionFiles[$iIndex];
                 // Real path check from here: https://stackoverflow.com/questions/4205141/preventing-directory-traversal-in-php-but-allowing-paths
-                $sDir = Yii::app()->getConfig('uploaddir') . "/surveys/" . $iSurveyId . "/files/";
+                $sDir = realpath(Yii::app()->getConfig('uploaddir') . "/surveys/" . $iSurveyId . "/files/").'/';
                 $sFileRealName = $sDir . $aFile['filename'];
                 $sRealUserPath = realpath($sFileRealName);
                 if ($sRealUserPath === false || strpos($sRealUserPath, $sDir) !== 0) {
-                    throw new CHttpException(403, "Disable for security reasons.");
+                    throw new CHttpException(403, "Disabled for security reasons.");
                 } else {
                     $mimeType = CFileHelper::getMimeType($sFileRealName, null, false);
                     if (is_null($mimeType)) {
