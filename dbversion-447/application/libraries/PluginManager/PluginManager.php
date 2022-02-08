@@ -696,7 +696,10 @@ class PluginManager extends \CApplicationComponent
             'PasswordRequirement',
             'statFunctions',
             'TwoFactorAdminLogin',
-            'UpdateCheck'
+            'UpdateCheck',
+            // LimeService Mod Start
+            'LimeSurveyProfessional'
+            // LimeService Mod End
         ];
     }
 }
