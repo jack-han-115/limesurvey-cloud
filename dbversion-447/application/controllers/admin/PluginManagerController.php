@@ -85,6 +85,7 @@ class PluginManagerController extends Survey_Common_Action
             'scanFiles' => [
                 'url' => $scanFilesUrl,
             ],
+            'showUpload' => !Yii::app()->getConfig('demoMode') && !Yii::app()->getConfig('disablePluginUpload'),
         ];
 
         $this->_renderWrappedTemplate('pluginmanager', 'index', $aData);
@@ -525,10 +526,8 @@ class PluginManagerController extends Survey_Common_Action
      */
     public function upload()
     {
-        // LimeService Mod Start
-        Yii::app()->setFlashMessage(gT('No permission'), 'error');
-        $this->getController()->redirect($this->getPluginManagerUrl());
-        // LimeService Mod End
+        $this->checkUploadEnabled();
+
         $this->checkUpdatePermission();
 
         // Redirect back if demo mode is set.
@@ -561,11 +560,8 @@ class PluginManagerController extends Survey_Common_Action
      */
     public function uploadConfirm()
     {
+        $this->checkUploadEnabled();
 
-        // LimeService Mod Start
-        Yii::app()->setFlashMessage(gT('No permission'), 'error');
-        $this->getController()->redirect($this->getPluginManagerUrl());
-        // LimeService Mod End
         $this->checkUpdatePermission();
 
         /** @var PluginInstaller */
@@ -579,6 +575,11 @@ class PluginManagerController extends Survey_Common_Action
             if (empty($config)) {
                 $installer->abort();
                 $this->errorAndRedirect(gT('Could not read plugin configuration file.'));
+            }
+
+            if (!$installer->isWhitelisted()) {
+                $installer->abort();
+                $this->errorAndRedirect(gT('The plugin is not in the plugin whitelist.'));
             }
 
             if (!$config->isCompatible()) {
@@ -613,10 +614,7 @@ class PluginManagerController extends Survey_Common_Action
      */
     public function installUploadedPlugin()
     {
-        // LimeService Mod Start
-        Yii::app()->setFlashMessage(gT('No permission'), 'error');
-        $this->getController()->redirect($this->getPluginManagerUrl());
-        // LimeService Mod End
+        $this->checkUploadEnabled();
 
         $this->checkUpdatePermission();
 
@@ -774,6 +772,18 @@ class PluginManagerController extends Survey_Common_Action
     {
         if (!Permission::model()->hasGlobalPermission('settings', 'update')) {
             Yii::app()->setFlashMessage(gT('No permission'), 'error');
+            $this->getController()->redirect($this->getPluginManagerUrl());
+        }
+    }
+
+    /**
+     * Blocks action if plugin upload is disabled.
+     * @return void
+     */
+    protected function checkUploadEnabled()
+    {
+        if (Yii::app()->getConfig('disablePluginUpload')) {
+            Yii::app()->setFlashMessage(gT('Plugin upload is disabled'), 'error');
             $this->getController()->redirect($this->getPluginManagerUrl());
         }
     }

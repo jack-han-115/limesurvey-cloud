@@ -817,6 +817,9 @@ $config['pluginCoreList'] = [
 
 $config['pluginWhitelist'] = [];
 
+// When this setting is true, the "Plugin Upload" feature is disabled.
+$config['disablePluginUpload'] = true;
+
 /* replaced in generated application/config/security.php if exist */
 $config['encryptionkeypair'] = '';
 $config['encryptionpublickey'] = '';
