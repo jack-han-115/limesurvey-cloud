@@ -74,7 +74,9 @@ class GracePeriodNotification
     }
 
     /**
-     * Returns the last payment due date on the basis of the subscription_created date
+     * Returns the last payment due date on the basis of the subscription_created date.
+     * There are 60 minutes subtracted because sometimes subscription_paid was few seconds too early.
+     *
      * @param \DateTime $subscriptionCreated
      * @param \DateTime $now For testing purposes this a function parameter for the current date
      *
@@ -95,6 +97,8 @@ class GracePeriodNotification
                 $lastDueDate->add(new \DateInterval('P' . $numberOfYears . 'Y'));
             }
         }
+        // 60 minutes graceperiod because sometimes subscription_paid comes in seconds earlier than subscription_created
+        $lastDueDate->sub(new \DateInterval('PT60M'));
 
         return $lastDueDate;
     }
