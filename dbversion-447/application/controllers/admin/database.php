@@ -744,6 +744,12 @@ class database extends Survey_Common_Action
             //if (getGlobalSetting('shownoanswer') == 2){  // Don't do exact comparison because the value could be from global settings table (string) or from config (integer)
                 $oSurvey->shownoanswer = $this->_filterEmptyFields($oSurvey, 'shownoanswer');
             //}
+
+            // LimeService Mod Start
+            $oSurvey->showdatapolicybutton = $this->_filterEmptyFields($oSurvey, 'showdatapolicybutton');
+            $oSurvey->showlegalnoticebutton = $this->_filterEmptyFields($oSurvey, 'showlegalnoticebutton');
+            // LimeService Mod end
+
             $oSurvey->showwelcome = $this->_filterEmptyFields($oSurvey, 'showwelcome');
             $oSurvey->showsurveypolicynotice = $this->_filterEmptyFields($oSurvey, 'showsurveypolicynotice');
             $oSurvey->allowprev = $this->_filterEmptyFields($oSurvey, 'allowprev');
