@@ -38,13 +38,15 @@ class UnclosableModal
             'plugin' => $this->plugin,
             'title' => $this->title,
             'message' => $this->message,
-            'buttons' => $this->buttons
+            'buttons' => $this->buttons,
+            'modalId' => 'unclosable-notification-modal',
+            'unclosable' => true
         ];
 
         // Generate modal html
         $modal = json_encode(
             \Yii::app()->controller->renderPartial(
-                'LimeSurveyProfessional.views.notifications.unclosableModal',
+                'LimeSurveyProfessional.views.notifications.modal',
                 $data,
                 true
             ),
@@ -58,7 +60,7 @@ class UnclosableModal
         App()->clientScript->registerScript(
             'unclosableModalJsHtml',
             <<<EOT
-                function getModalHtml() {
+                function getUnclosableModalHtml() {
                     
                     return $modal;
                 }

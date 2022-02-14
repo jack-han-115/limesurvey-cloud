@@ -21,6 +21,49 @@ class LinksAndContactHmtlHelper
     }
 
     /**
+     * Returns plain link of contact corporate site
+     *
+     * @param String $adminLang
+     * @return string
+     */
+    public function getContactCorporateLink(string $adminLang)
+    {
+        $enLink = 'https://www.limesurvey.org/support/contact-corporate';
+        // @TODO this array will need to be in a separate config file at some point
+        $languages = [
+            'de' => 'https://www.limesurvey.org/de/hilfe/kontakt-corporate',
+            'es' => 'https://www.limesurvey.org/es/ayuda/contact-corporate-es',
+            'fr' => 'https://www.limesurvey.org/fr/aide/contact-corporate-fr',
+            'pt' => 'https://www.limesurvey.org/pt/ajuda/contact-corporate-pt',
+            'pt-BR' => 'https://www.limesurvey.org/pt/ajuda/contact-corporate-pt'
+        ];
+
+        return array_key_exists($adminLang, $languages) ? $languages[$adminLang] : $enLink;
+    }
+
+    /**
+     * Returns plain link of pricing site
+     *
+     * @param String $adminLang
+     * @return string
+     */
+    public function getPricingPageLink(string $adminLang)
+    {
+        $enPricingSubDir = 'pricing';
+        // @TODO this array will need to be in a separate config file at some point
+        $languages = [
+            'de' => 'de/preise',
+            'es' => 'es/precios',
+            'fr' => 'fr/prix',
+            'pt' => 'pt/precos',
+            'pt-BR' => 'pt/precos'
+        ];
+        $pricingSubDir = array_key_exists($adminLang, $languages) ? $languages[$adminLang] . '/' : $enPricingSubDir;
+
+        return 'https://www.limesurvey.org/' . $pricingSubDir;
+    }
+
+    /**
      * Returns the email address of the site admin
      *
      * @return string

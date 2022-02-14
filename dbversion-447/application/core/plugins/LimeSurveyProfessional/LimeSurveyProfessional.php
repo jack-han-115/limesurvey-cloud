@@ -65,6 +65,7 @@ class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
         $this->subscribe('beforeDeactivate'); // user should not be able to deactivate this one ...
         $this->subscribe('beforeControllerAction');
         $this->subscribe('beforeTokenEmail');
+        $this->subscribe('beforeAdminMenuRender');
     }
 
     /**
@@ -117,11 +118,12 @@ class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
                     $outOfResponsesPaid = new OutOfResponsesPaid($this);
                     $outOfResponsesPaid->createNotification();
 
+                    // Deactivated because of insufficient data on cloud side
                     //only usefull for paying users
-                    if ($this->isPayingUser) {
-                        $gracePeriodNotification = new GracePeriodNotification($this);
-                        $gracePeriodNotification->createNotification();
-                    }
+//                    if ($this->isPayingUser) {
+//                        $gracePeriodNotification = new GracePeriodNotification($this);
+//                        $gracePeriodNotification->createNotification();
+//                    }
                 }
             }
         }
@@ -224,5 +226,17 @@ class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
             $blacklistFilter = new \LimeSurveyProfessional\email\EmailFilter($this->getEvent(), $this);
             $blacklistFilter->filter();
         }
+    }
+
+    /**
+     * Append new menu item to the admin topbar
+     *
+     * @return void
+     */
+    public function beforeAdminMenuRender()
+    {
+        $this->initPluginData();
+        $upgradeButton = new \LimeSurveyProfessional\upgradeButton\UpgradeButton();
+        $upgradeButton->displayUpgradeButton($this);
     }
 }
