@@ -1,0 +1,51 @@
+# LimeSurvey Profesionnal LANGUAGE FILE.
+# Copyright (C) 2022 LimeSurvey
+# This file is distributed under the same license as the LimeSurvey package.
+msgid ""
+msgstr ""
+"Project-Id-Version: LimeSurvey Professional language file\n"
+"Report-Msgid-Bugs-To: http://translate.limesurvey.org/\n"
+"POT-Creation-Date: 2022-02-14 10:21:20+00:00\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"PO-Revision-Date: 2022-02-14 19:03+0100\n"
+"Language-Team: LimeSurvey Team <c_schmitz@users.sourceforge.net>\n"
+"X-Poedit-KeywordsList: gT;ngT:1,2;eT;neT:1,2\n"
+"X-Poedit-SourceCharset: utf-8\n"
+"X-Poedit-Basepath: ../../..\n"
+"X-Generator: Poedit 2.3\n"
+"Last-Translator: \n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Language: es\n"
+"X-Poedit-SearchPath-0: .\n"
+
+msgid ""
+"You have an unpaid invoice. To avoid being locked out our your account, "
+"please view and pay the invoice from the %s tab of your LimeSurvey account "
+"homepage"
+msgstr ""
+"Tienes una factura sin pagar. Para evitar el bloqueo de su cuenta, por "
+"favor, vea y pague la factura desde la pestaña %s de la página principal de "
+"su cuenta de LimeSurvey"
+
+msgid ""
+"There is an unpaid invoice on this account. Please contact your survey site "
+"admin, %s, to have the invoice paid to avoid being locked out of your "
+"account."
+msgstr ""
+"Hay una factura impagada en esta cuenta. Ponte en contacto con el "
+"administrador de tu sitio de encuestas, %s, para que te paguen la factura y "
+"evitar que te bloqueen la cuenta."
+
+msgid "Transaction History"
+msgstr "Historial de transacciones"
+
+msgid "Pay invoice"
+msgstr "Pagar factura"
+
+msgid "Contact Survey Site Admin"
+msgstr "Contactar con el administrador del sitio de encuestas"
+
+msgid "Unpaid invoice"
+msgstr "Factura impagada"
