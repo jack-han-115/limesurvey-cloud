@@ -26,6 +26,9 @@ class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
     /** @var \LimeSurvey\Models\Services\LimeserviceSystem */
     public $limeserviceSystem;
 
+    /** @var \LimeSurveyProfessional\DataTransferObject */
+    public $dto;
+
     /** @var boolean */
     public $isSiteAdminUser;
 
