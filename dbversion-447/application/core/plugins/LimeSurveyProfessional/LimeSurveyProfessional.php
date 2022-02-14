@@ -114,11 +114,12 @@ class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
                     $outOfResponsesPaid = new OutOfResponsesPaid($this);
                     $outOfResponsesPaid->createNotification();
 
+                    // Deactivated because of insufficient data on cloud side
                     //only usefull for paying users
-                    if ($this->isPayingUser) {
-                        $gracePeriodNotification = new GracePeriodNotification($this);
-                        $gracePeriodNotification->createNotification();
-                    }
+//                    if ($this->isPayingUser) {
+//                        $gracePeriodNotification = new GracePeriodNotification($this);
+//                        $gracePeriodNotification->createNotification();
+//                    }
                 }
             }
         }
