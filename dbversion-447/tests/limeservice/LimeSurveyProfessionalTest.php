@@ -151,4 +151,16 @@ class LimeSurveyProfessionalTest extends TestBaseClass
 
         $this->assertTrue($gracePeriodClass->isInGracePeriod($fakeTodayDate));
     }
+
+    public function testNoUpgradeButtonForPaidUsers()
+    {
+        $pm = new PluginManager();
+        $id = 'dummyid';
+        $lsp = new LimeSurveyProfessional($pm, $id);
+        $lsp->isPayingUser = true;
+        $lsp->init();
+        $upgradeButtonClass = new LimeSurveyProfessional\upgradeButton\UpgradeButton();
+
+        $this->assertFalse($upgradeButtonClass->displayUpgradeButton($lsp));
+    }
 }
