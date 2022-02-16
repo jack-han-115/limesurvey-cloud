@@ -30,7 +30,7 @@ class HardLockModal extends UnclosableModal
         if ($this->plugin->isHardLocked) {
             $links = new LinksAndContactHmtlHelper();
             $notificationCreated = true;
-            $this->title = $this->plugin->gT('Account Locked');
+            $this->title = $this->plugin->gT('Account locked');
             $this->initMessage($links);
             $this->initButtons($links);
 
@@ -51,17 +51,17 @@ class HardLockModal extends UnclosableModal
         if ($this->plugin->isSiteAdminUser) {
             $this->message = sprintf(
                 $this->plugin->gT(
-                    'Your account has been locked due to an unpaid invoice or suspected abuse.  To unlock your account, please view and pay the invoice from the %s tab of your LimeSurvey account homepage. If you are still locked after paying your invoice, please contact customer support.'
+                    'Your survey site has been locked due to an unpaid invoice or suspected abuse. To unlock your account, please view and pay the invoice from the %s tab of your LimeSurvey account homepage. If you do not have an unpaid invoice, please contact our customer support.'
                 ),
                 $links->toHtmlLink(
                     $links->getTransactionHistoryLink(\Yii::app()->session['adminlang']),
-                    $this->plugin->gT('Transaction History')
+                    $this->plugin->gT('transaction history')
                 )
             );
         } else {
             $this->message = sprintf(
                 $this->plugin->gT(
-                    'Your account has been locked due to an unpaid invoice or suspected abuse. Please contact your survey site admin, %s, to unlock the account.'
+                    'Your survey site has been locked due to an unpaid invoice or suspected abuse. Please contact your survey site admin, %s, to unlock the survey site.'
                 ),
                 $links->toHtmlMailLink($links->getSiteAdminEmail())
             );
@@ -87,7 +87,7 @@ class HardLockModal extends UnclosableModal
         } else {
             $this->buttons[] = $links->toHtmlMailLinkButton(
                 $links->getSiteAdminEmail(),
-                $this->plugin->gT('Contact site admin')
+                $this->plugin->gT('Contact Survey Site Adminstrator')
             );
         }
     }

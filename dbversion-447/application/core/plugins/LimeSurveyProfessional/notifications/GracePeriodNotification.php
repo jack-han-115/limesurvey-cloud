@@ -314,17 +314,17 @@ class GracePeriodNotification
         if ($this->plugin->isSiteAdminUser) {
             $message = sprintf(
                 $this->plugin->gT(
-                    'You have an unpaid invoice. To avoid being locked out our your account, please view and pay the invoice from the %s tab of your LimeSurvey account homepage'
+                    'You have an unpaid invoice. To avoid being locked out of your survey site, please view and pay the invoice from the %s tab of your LimeSurvey account homepage'
                 ),
                 $links->toHtmlLink(
                     $links->getTransactionHistoryLink(\Yii::app()->session['adminlang']),
-                    $this->plugin->gT('Transaction History')
+                    $this->plugin->gT('transaction history')
                 )
             );
         } else {
             $message = sprintf(
                 $this->plugin->gT(
-                    'There is an unpaid invoice on this account. Please contact your survey site admin, %s, to have the invoice paid to avoid being locked out of your account.'
+                    'There is an unpaid invoice for this account. Please contact your survey site admin, %s, to have the invoice paid to avoid being locked out of your survey site.'
                 ),
                 $links->toHtmlMailLink($links->getSiteAdminEmail())
             );
@@ -348,7 +348,7 @@ class GracePeriodNotification
         } else {
             $button = $links->toHtmlMailLinkButton(
                 $links->getSiteAdminEmail(),
-                $this->plugin->gT('Contact Survey Site Admin')
+                $this->plugin->gT('Contact Survey Site Adminstrator')
             );
         }
 

@@ -3,7 +3,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title"><?php eT('Protection policy'); ?></h4>
+        <h4 class="modal-title"><?php eT('Data protection policy'); ?></h4>
       </div>
       <div class="modal-body">
         <iframe src='https://www.limesurvey.org/index.php?option=com_content&view=article&id=1978&tmpl=component&lang=<?php echo $lang; ?>' style='height: 50%; width: 100%; border: none;'></iframe>

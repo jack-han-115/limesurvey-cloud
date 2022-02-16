@@ -185,7 +185,7 @@ class LimitReminderNotification
         } else {
             $button = $links->toHtmlMailLinkButton(
                 $links->getSiteAdminEmail(),
-                $this->plugin->gT('Contact Survey Site Admin')
+                $this->plugin->gT('Contact Survey Site Adminstrator')
             );
         }
 

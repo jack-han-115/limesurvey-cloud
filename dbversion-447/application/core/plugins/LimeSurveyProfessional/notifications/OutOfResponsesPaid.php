@@ -30,7 +30,7 @@ class OutOfResponsesPaid
             $not = new \UniqueNotification(array(
                 'user_id' => App()->user->id,
                 'importance' => \Notification::HIGH_IMPORTANCE,
-                'title' => $this->plugin->gT('Maximum Number of Responses Reached'),
+                'title' => $this->plugin->gT('Maximum number of responses reached'),
                 'message' => $this->getMessage()
             ));
             $not->save();
@@ -54,16 +54,16 @@ class OutOfResponsesPaid
     private function getMainString()
     {
         $message = $this->plugin->gT(
-                'You have reached the maximum number of responses allowed for your chosen plan.'
-            ) . ' ';
+            'You have reached the maximum number of responses allowed for your chosen plan.'
+        ) . ' ';
 
         if ($this->plugin->isSiteAdminUser) {
             $message .= $this->plugin->gT(
-                'Please renew plan or purchase more responses.'
+                'Please renew your current plan or upgrade to a higher plan.'
             );
         } else {
             $message .= $this->plugin->gT(
-                'Please contact your Survey Site Administrator to renew plan or purchase more responses.'
+                'Please contact your Survey Site Administrator to upgrade or renew your plan to increase your responses.'
             );
         }
 
@@ -84,11 +84,10 @@ class OutOfResponsesPaid
         } else {
             $button = $links->toHtmlMailLinkButton(
                 $links->getSiteAdminEmail(),
-                $this->plugin->gT('Contact Survey Site Admin')
+                $this->plugin->gT('Contact Survey Site Adminstrator')
             );
         }
 
         return '<br><br><p class="text-center">' . $button . '</p>';
     }
-
 }

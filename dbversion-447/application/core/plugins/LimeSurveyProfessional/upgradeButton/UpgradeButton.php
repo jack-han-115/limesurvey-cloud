@@ -60,7 +60,7 @@ class UpgradeButton
         $links = new \LimeSurveyProfessional\LinksAndContactHmtlHelper();
         $data = [
             'plugin' => $plugin,
-            'title' => $plugin->gT('Upgrade Notification'),
+            'title' => $plugin->gT('Upgrade notification'),
             'message' => sprintf(
                 $plugin->gT(
                     'You do not have any permission to upgrade to a higher plan, please contact your site admin %s'
@@ -70,7 +70,7 @@ class UpgradeButton
             'buttons' => [
                 $links->toHtmlMailLinkButton(
                     $links->getSiteAdminEmail(),
-                    $plugin->gT('Contact Survey Site Admin')
+                    $plugin->gT('Contact Survey Site Adminstrator')
                 )
             ],
             'modalId' => 'upgrade-notification',
