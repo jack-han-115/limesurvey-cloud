@@ -73,19 +73,41 @@ class LimeSurveyProfessionalTest extends TestBaseClass
         );
     }
 
+    /**
+     * @return LimeSurveyProfessional\DataTransferObject
+     */
+    private function getBasicDto()
+    {
+        $dto = new LimeSurveyProfessional\DataTransferObject();
+        $dto->isHardLocked = false;
+        $dto->plan = 'free';
+        $dto->isSiteAdminUser = true;
+        $dto->isPayingUser = false;
+        $dto->outOfResponses = false;
+        $dto->locked = false;
+        $dto->emailLock = 0;
+        $dto->dateSubscriptionCreated = '2020-10-29 00:00:00';
+        $dto->dateSubscriptionPaid = '2021-12-31 00:00:00';
+        $dto->paymentPeriod = 'M';
+        $dto->reminderLimitStorage = 10;
+        $dto->reminderLimitResponses = 10;
+        $dto->hasResponseNotification = false;
+        $dto->hasStorageNotification = false;
+
+        return $dto;
+    }
+
     public function testHasNoBlockingNotification()
     {
         $pm = new PluginManager();
         $id = 'dummyid';
         $lsp = new LimeSurveyProfessional($pm, $id);
         $lsp->init();
-        $lsp->isHardLocked = false;
-        $lsp->isPayingUser = false;
-        $lsp->outOfResponses = false;
+        $dto = $this->getBasicDto();
         $event = new PluginEvent('eventname');
         $event->set('subaction', 'logout');
 
-        $this->assertFalse($lsp->createBlockingNotifications($event));
+        $this->assertFalse($lsp->createBlockingNotifications($event, $dto));
     }
 
     public function testBlacklistFilterNoSpam()
@@ -94,17 +116,17 @@ class LimeSurveyProfessionalTest extends TestBaseClass
         $id = 'dummyid';
         $lsp = new LimeSurveyProfessional($pm, $id);
         $lsp->init();
-        $lsp->emailLock = 0;
+        $dto = $this->getBasicDto();
         $event = new PluginEvent('eventname');
         $event->set('body', '');
         $event->set('subject', '');
         $event->set('replyto', ['test@limesurvey.org']);
 
-        $blacklist = new LimeSurveyProfessional\email\BlacklistFilter($event, $lsp);
+        $blacklist = new LimeSurveyProfessional\email\BlacklistFilter($event);
         $emailMethod = 'mail';
         $folder = getcwd() . '/application/core/plugins/LimeSurveyProfessional';
 
-        $this->assertFalse($blacklist->detectSpam($emailMethod, $folder));
+        $this->assertFalse($blacklist->detectSpam($emailMethod, $folder, $dto->emailLock));
     }
 
     public function testBlacklistFilterSpam()
@@ -113,7 +135,7 @@ class LimeSurveyProfessionalTest extends TestBaseClass
         $id = 'dummyid';
         $lsp = new LimeSurveyProfessional($pm, $id);
         $lsp->init();
-        $lsp->emailLock = 0;
+        $dto = $this->getBasicDto();
         $event = new PluginEvent('eventname');
         $event->set('body', 'Tax return');
         $event->set('subject', '');
@@ -126,10 +148,10 @@ class LimeSurveyProfessionalTest extends TestBaseClass
 
         for ($i = 0; $i < $numberOfEmails; $i++) {
             if (!$locked) {
-                $blacklist = new LimeSurveyProfessional\email\BlacklistFilter($event, $lsp);
+                $blacklist = new LimeSurveyProfessional\email\BlacklistFilter($event);
                 $emailMethod = 'mail';
                 $folder = getcwd() . '/application/core/plugins/LimeSurveyProfessional';
-                $locked = $blacklist->detectSpam($emailMethod, $folder);
+                $locked = $blacklist->detectSpam($emailMethod, $folder, $dto->emailLock);
             }
         }
 
@@ -141,15 +163,12 @@ class LimeSurveyProfessionalTest extends TestBaseClass
         $pm = new PluginManager();
         $id = 'dummyid';
         $lsp = new LimeSurveyProfessional($pm, $id);
-        $lsp->dateSubscriptionCreated = '2020-10-29 00:00:00';
-        $lsp->dateSubscriptionPaid = '2021-12-31 00:00:00';
-        $lsp->paymentPeriod = 'M';
-
         $lsp->init();
+        $dto = $this->getBasicDto();
         $fakeTodayDate = new \DateTime('2022-01-28 00:00:00');
         $gracePeriodClass = new LimeSurveyProfessional\notifications\GracePeriodNotification($lsp);
 
-        $this->assertTrue($gracePeriodClass->isInGracePeriod($fakeTodayDate));
+        $this->assertTrue($gracePeriodClass->isInGracePeriod($fakeTodayDate, $dto));
     }
 
     public function testNoUpgradeButtonForPaidUsers()
@@ -157,10 +176,10 @@ class LimeSurveyProfessionalTest extends TestBaseClass
         $pm = new PluginManager();
         $id = 'dummyid';
         $lsp = new LimeSurveyProfessional($pm, $id);
-        $lsp->isPayingUser = true;
-        $lsp->init();
+        $dto = $this->getBasicDto();
+        $dto->isPayingUser = true;
         $upgradeButtonClass = new LimeSurveyProfessional\upgradeButton\UpgradeButton();
 
-        $this->assertFalse($upgradeButtonClass->displayUpgradeButton($lsp));
+        $this->assertFalse($upgradeButtonClass->displayUpgradeButton($lsp, $dto));
     }
 }

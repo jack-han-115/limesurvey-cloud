@@ -2,6 +2,7 @@
 
 namespace LimeSurveyProfessional\notifications;
 
+use LimeSurveyProfessional\DataTransferObject;
 use LimeSurveyProfessional\LinksAndContactHmtlHelper;
 
 class HardLockModal extends UnclosableModal
@@ -21,18 +22,19 @@ class HardLockModal extends UnclosableModal
 
     /**
      * creates the unpaid invoice or normal hard_lock notification, if required
+     * @param DataTransferObject $dto
      *
      * @return boolean
      */
-    public function createNotification()
+    public function createNotification(DataTransferObject $dto)
     {
         $notificationCreated = false;
-        if ($this->plugin->isHardLocked) {
+        if ($dto->isHardLocked) {
             $links = new LinksAndContactHmtlHelper();
             $notificationCreated = true;
             $this->title = $this->plugin->gT('Account Locked');
-            $this->initMessage($links);
-            $this->initButtons($links);
+            $this->initMessage($links, $dto->isSiteAdminUser);
+            $this->initButtons($links, $dto->isSiteAdminUser);
 
             $this->showModal();
         }
@@ -45,10 +47,11 @@ class HardLockModal extends UnclosableModal
      * Generates and sets the default html formatted message of the notification for installation hardlock
      *
      * @param LinksAndContactHmtlHelper $links
+     * @param bool $isSiteAdminUser
      */
-    private function initMessage(LinksAndContactHmtlHelper $links)
+    private function initMessage(LinksAndContactHmtlHelper $links, bool $isSiteAdminUser)
     {
-        if ($this->plugin->isSiteAdminUser) {
+        if ($isSiteAdminUser) {
             $this->message = sprintf(
                 $this->plugin->gT(
                     'Your account has been locked due to an unpaid invoice or suspected abuse.  To unlock your account, please view and pay the invoice from the %s tab of your LimeSurvey account homepage. If you are still locked after paying your invoice, please contact customer support.'
@@ -72,10 +75,12 @@ class HardLockModal extends UnclosableModal
      * Generates and sets the default button html for installation hardlock
      *
      * @param LinksAndContactHmtlHelper $links
+     * @param bool $isSiteAdminUser
+     *
      */
-    private function initButtons(LinksAndContactHmtlHelper $links)
+    private function initButtons(LinksAndContactHmtlHelper $links, bool $isSiteAdminUser)
     {
-        if ($this->plugin->isSiteAdminUser) {
+        if ($isSiteAdminUser) {
             $this->buttons[] = $links->toHtmlLinkButton(
                 $links->getTransactionHistoryLink(\Yii::app()->session['adminlang']),
                 $this->plugin->gT('Pay invoice')

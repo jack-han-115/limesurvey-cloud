@@ -3,39 +3,32 @@
 namespace LimeSurveyProfessional\email;
 
 use LimeSurvey\PluginManager\PluginEvent;
+use LimeSurveyProfessional\DataTransferObject;
 
 class EmailFilter
 {
     /** @var PluginEvent */
     public $event;
 
-    /** @var \LimeSurvey\PluginManager\PluginBase */
-    public $plugin;
-
-    /** @var int */
-    public $emailLock;
-
     /**
      * Constructor for BlacklistFilter
      *
      *
      * @param PluginEvent $event
-     * @param \LimeSurveyProfessional $plugin
      */
-    public function __construct(PluginEvent $event, \LimeSurveyProfessional $plugin)
+    public function __construct(PluginEvent $event)
     {
         $this->event = $event;
-        $this->plugin = $plugin;
-        $this->emailLock = $this->plugin->emailLock;
     }
 
     /**
      * @TODO for other email checkups before sending
      * Blacklist filter will be initialized here
+     * @param DataTransferObject $dto
      */
-    public function filter()
+    public function filter(DataTransferObject $dto)
     {
-        $blacklistFilter = new BlacklistFilter($this->event, $this->plugin);
-        $blacklistFilter->filterBlacklist();
+        $blacklistFilter = new BlacklistFilter($this->event);
+        $blacklistFilter->filterBlacklist($dto->emailLock);
     }
 }

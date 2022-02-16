@@ -2,6 +2,7 @@
 
 namespace LimeSurveyProfessional\notifications;
 
+use LimeSurveyProfessional\DataTransferObject;
 use LimeSurveyProfessional\LinksAndContactHmtlHelper;
 
 class GracePeriodNotification
@@ -17,6 +18,9 @@ class GracePeriodNotification
      */
     const GRACE_PERIOD_MAX = 30;
 
+    /** @var \LimeSurveyProfessional */
+    public $plugin;
+
     /**
      * Constructor for LimitReminderNotification
      *
@@ -31,19 +35,20 @@ class GracePeriodNotification
 
     /**
      * creates notification for "in grace period", if required
+     * @param DataTransferObject $dto
      *
      * @return void
      * @throws \CException
      */
-    public function createNotification()
+    public function createNotification(DataTransferObject $dto)
     {
-        if ($this->isInGracePeriod(new \DateTime())) {
+        if ($this->isInGracePeriod(new \DateTime(), $dto)) {
             $links = new LinksAndContactHmtlHelper();
             $not = new \UniqueNotification(array(
                 'user_id' => App()->user->id,
                 'importance' => \Notification::HIGH_IMPORTANCE,
                 'title' => $this->getTitle(),
-                'message' => $this->getMessage($links) . $this->getButton($links)
+                'message' => $this->getMessage($links, $dto->isSiteAdminUser) . $this->getButton($links, $dto->isSiteAdminUser)
             ));
             $not->save();
         }
@@ -52,16 +57,17 @@ class GracePeriodNotification
     /**
      * Calculates if user is in grace period.
      * @param \DateTime $now For testing purposes this a function parameter for the current date
+     * @param DataTransferObject $dto
      *
      * @return boolean  true, if user is grace period, false otherwise
      * @throws \CException
      */
-    public function isInGracePeriod(\DateTime $now)
+    public function isInGracePeriod(\DateTime $now, DataTransferObject $dto)
     {
-        $subscriptionCreated = new \DateTime($this->plugin->dateSubscriptionCreated);
-        $subscriptionPaidIsSet = $this->plugin->dateSubscriptionPaid !== null && $this->plugin->dateSubscriptionPaid != '';
-        $subscriptionPaid = new \DateTime($this->plugin->dateSubscriptionPaid);
-        $latestBillingDate = $this->getLastPaymentDueDate($subscriptionCreated, $now);
+        $subscriptionCreated = new \DateTime($dto->dateSubscriptionCreated);
+        $subscriptionPaidIsSet = $dto->dateSubscriptionPaid !== null && $dto->dateSubscriptionPaid != '';
+        $subscriptionPaid = new \DateTime($dto->dateSubscriptionPaid);
+        $latestBillingDate = $this->getLastPaymentDueDate($subscriptionCreated, $now, $dto->paymentPeriod);
 
         if ($subscriptionPaidIsSet && $latestBillingDate <= $subscriptionPaid) {
 //          subscription is paid: all good
@@ -79,13 +85,13 @@ class GracePeriodNotification
      *
      * @param \DateTime $subscriptionCreated
      * @param \DateTime $now For testing purposes this a function parameter for the current date
+     * @param string $paymentPeriod
      *
      * @return \DateTime
      * @throws \CException
      */
-    private function getLastPaymentDueDate(\DateTime $subscriptionCreated, \DateTime $now)
+    private function getLastPaymentDueDate(\DateTime $subscriptionCreated, \DateTime $now, string $paymentPeriod)
     {
-        $paymentPeriod = $this->plugin->paymentPeriod;
         $lastDueDate = $subscriptionCreated;
 
         if ($subscriptionCreated < $now) {
@@ -306,12 +312,13 @@ class GracePeriodNotification
     /**
      * Generates and returns the html formatted message of the notification
      * @param LinksAndContactHmtlHelper $links
+     * @param bool $isSiteAdminUser
      *
      * @return string
      */
-    private function getMessage(LinksAndContactHmtlHelper $links)
+    private function getMessage(LinksAndContactHmtlHelper $links, bool $isSiteAdminUser)
     {
-        if ($this->plugin->isSiteAdminUser) {
+        if ($isSiteAdminUser) {
             $message = sprintf(
                 $this->plugin->gT(
                     'You have an unpaid invoice. To avoid being locked out our your account, please view and pay the invoice from the %s tab of your LimeSurvey account homepage'
@@ -335,12 +342,13 @@ class GracePeriodNotification
     /**
      * Generates and returns the button html
      * @param LinksAndContactHmtlHelper $links
+     * @param bool $isSiteAdminUser
      *
      * @return string
      */
-    private function getButton(LinksAndContactHmtlHelper $links)
+    private function getButton(LinksAndContactHmtlHelper $links, bool $isSiteAdminUser)
     {
-        if ($this->plugin->isSiteAdminUser) {
+        if ($isSiteAdminUser) {
             $button = $links->toHtmlLinkButton(
                 $links->getTransactionHistoryLink(\Yii::app()->session['adminlang']),
                 $this->plugin->gT('Pay invoice')

@@ -51,35 +51,27 @@ class DataTransferObject
     /** @var boolean */
     public $hasStorageNotification;
 
-
-    public function __construct()
+    public function build()
     {
-        $this->limeserviceSystem = new \LimeSurvey\Models\Services\LimeserviceSystem(
+        $limeserviceSystem = new \LimeSurvey\Models\Services\LimeserviceSystem(
             \Yii::app()->dbstats,
             (int)getInstallationID()
         );
-        $this->build();
-    }
-
-    public function build()
-    {
-        $this->isHardLocked = $this->limeserviceSystem->getHardLock() === 1;
-        $this->plan = $this->limeserviceSystem->getUsersPlan();
+        $this->isHardLocked = $limeserviceSystem->getHardLock() === 1;
+        $this->plan = $limeserviceSystem->getUsersPlan();
         $this->isSiteAdminUser = App()->user->id == 1;
         $this->isPayingUser = $this->plan !== 'free' && $this->plan != '';
-        $this->outOfResponses = $this->limeserviceSystem->getResponsesAvailable() < 0;
-        $this->locked = $this->limeserviceSystem->getLocked() == 1;
-        $this->emailLock = $this->limeserviceSystem->getEmailLock();
-        $this->dateSubscriptionPaid = $this->limeserviceSystem->getSubscriptionPaid();
-        $this->dateSubscriptionCreated = $this->limeserviceSystem->getSubscriptionCreated();
-        $this->paymentPeriod = $this->limeserviceSystem->getSubscriptionPeriod();
-        $this->reminderLimitStorage = $this->limeserviceSystem->getReminderLimitStorage();
-        $this->reminderLimitResponses = $this->limeserviceSystem->getReminderLimitResponses();
-        $this->hasResponseNotification = $this->limeserviceSystem->showResponseNotificationForUser();
-        $calcRestStoragePercent = $this->limeserviceSystem->calcRestStoragePercent();
+        $this->outOfResponses = $limeserviceSystem->getResponsesAvailable() < 0;
+        $this->locked = $limeserviceSystem->getLocked() == 1;
+        $this->emailLock = $limeserviceSystem->getEmailLock();
+        $this->dateSubscriptionPaid = $limeserviceSystem->getSubscriptionPaid();
+        $this->dateSubscriptionCreated = $limeserviceSystem->getSubscriptionCreated();
+        $this->paymentPeriod = $limeserviceSystem->getSubscriptionPeriod();
+        $this->reminderLimitStorage = $limeserviceSystem->getReminderLimitStorage();
+        $this->reminderLimitResponses = $limeserviceSystem->getReminderLimitResponses();
+        $this->hasResponseNotification = $limeserviceSystem->showResponseNotificationForUser();
+        $calcRestStoragePercent = $limeserviceSystem->calcRestStoragePercent();
         $this->hasStorageNotification = $calcRestStoragePercent > 0
             && $calcRestStoragePercent < $this->reminderLimitStorage;
     }
-
-
 }

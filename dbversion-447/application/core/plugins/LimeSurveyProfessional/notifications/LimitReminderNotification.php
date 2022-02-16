@@ -2,22 +2,11 @@
 
 namespace LimeSurveyProfessional\notifications;
 
+use LimeSurveyProfessional\DataTransferObject;
 use LimeSurveyProfessional\LinksAndContactHmtlHelper;
 
 class LimitReminderNotification
 {
-    /** @var boolean */
-    private $hasResponseNotification;
-
-    /** @var boolean */
-    private $hasStorageNotification;
-
-    /** @var int */
-    private $reminderLimitStorage;
-
-    /** @var int */
-    private $reminderLimitResponses;
-
     /** @var \LimeSurveyProfessional */
     private $plugin;
 
@@ -31,29 +20,22 @@ class LimitReminderNotification
     public function __construct(\LimeSurveyProfessional $plugin)
     {
         $this->plugin = $plugin;
-
-        $this->reminderLimitStorage = $this->plugin->limeserviceSystem->getReminderLimitStorage();
-        $this->reminderLimitResponses = $this->plugin->limeserviceSystem->getReminderLimitResponses();
-
-        $this->hasResponseNotification = $this->plugin->limeserviceSystem->showResponseNotificationForUser();
-        // If no storage is left, this notification will not be shown!
-        $this->hasStorageNotification = $this->plugin->limeserviceSystem->calcRestStoragePercent() > 0
-            && $this->plugin->limeserviceSystem->calcRestStoragePercent() < $this->reminderLimitStorage;
     }
 
     /**
      * creates the limit notification for storage and responses, if required
+     * @param DataTransferObject $dto
      *
      * @return void
      */
-    public function createNotification()
+    public function createNotification(DataTransferObject $dto)
     {
-        if ($this->hasResponseNotification || $this->hasStorageNotification) {
+        if ($dto->hasResponseNotification || $dto->hasStorageNotification) {
             $not = new \UniqueNotification(array(
                 'user_id' => App()->user->id,
                 'importance' => \Notification::HIGH_IMPORTANCE,
-                'title' => $this->getTitle(),
-                'message' => $this->getMessage()
+                'title' => $this->getTitle($dto),
+                'message' => $this->getMessage($dto)
             ));
             $not->save();
         }
@@ -61,16 +43,18 @@ class LimitReminderNotification
 
     /**
      * Generates and returns the title of the notification
+     * @param DataTransferObject $dto
+     *
      * @return string
      */
-    private function getTitle()
+    private function getTitle(DataTransferObject $dto)
     {
         $title = '';
-        if ($this->hasResponseNotification && $this->hasStorageNotification) {
+        if ($dto->hasResponseNotification && $dto->hasStorageNotification) {
             $title = $this->plugin->gT('You are almost out of storage & responses');
-        } elseif ($this->hasResponseNotification) {
+        } elseif ($dto->hasResponseNotification) {
             $title = $this->plugin->gT('You are almost out of responses');
-        } elseif ($this->hasStorageNotification) {
+        } elseif ($dto->hasStorageNotification) {
             $title = $this->plugin->gT('You are almost out of storage');
         }
 
@@ -79,49 +63,52 @@ class LimitReminderNotification
 
     /**
      * Returns the html formatted message of the notification
+     * @param DataTransferObject $dto
+     *
      * @return string
      */
-    private function getMessage()
+    private function getMessage(DataTransferObject $dto)
     {
         $links = new LinksAndContactHmtlHelper();
 
-        return $this->getMainString() . $this->getContactString() . $this->getButton($links);
+        return $this->getMainString($dto) . $this->getContactString($dto) . $this->getButton($links, $dto->isSiteAdminUser);
     }
 
     /**
      * Generates and returns the main message string
+     * @param DataTransferObject $dto
      *
      * @return string
      */
-    public function getMainString()
+    public function getMainString(DataTransferObject $dto)
     {
         $mainString = '';
-        if ($this->hasResponseNotification && $this->hasStorageNotification) {
+        if ($dto->hasResponseNotification && $dto->hasStorageNotification) {
             $mainString = sprintf(
                 $this->plugin->gT(
                     'The responses on your survey site are below the configured responses reminder limit of %s.'
                 ),
-                $this->reminderLimitResponses
+                $dto->reminderLimitResponses
             );
             $mainString .= '<br>' . sprintf(
                     $this->plugin->gT(
                         'Also, the storage on your survey site is below the configured storage reminder limit of %s.'
                     ),
-                    $this->reminderLimitStorage . '%'
+                    $dto->reminderLimitStorage . '%'
                 );
-        } elseif ($this->hasResponseNotification) {
+        } elseif ($dto->hasResponseNotification) {
             $mainString = sprintf(
                 $this->plugin->gT(
                     'The responses on your survey site are below the configured responses reminder limit of %s.'
                 ),
-                $this->reminderLimitResponses
+                $dto->reminderLimitResponses
             );
-        } elseif ($this->hasStorageNotification) {
+        } elseif ($dto->hasStorageNotification) {
             $mainString = sprintf(
                 $this->plugin->gT(
                     'The storage on your survey site is below the configured storage reminder limit of %s.'
                 ),
-                $this->reminderLimitStorage . '%'
+                $dto->reminderLimitStorage . '%'
             );
         }
 
@@ -130,14 +117,15 @@ class LimitReminderNotification
 
     /**
      * Generates and returns the contact part of the message
+     * @param DataTransferObject $dto
      *
      * @return string
      */
-    public function getContactString()
+    public function getContactString(DataTransferObject $dto)
     {
         $contactString = '';
-        if ($this->hasResponseNotification && $this->hasStorageNotification) {
-            if ($this->plugin->isSiteAdminUser) {
+        if ($dto->hasResponseNotification && $dto->hasStorageNotification) {
+            if ($dto->isSiteAdminUser) {
                 $contactString = $this->plugin->gT(
                     'Please upgrade or renew your plan to increase your storage & responses.'
                 );
@@ -146,8 +134,8 @@ class LimitReminderNotification
                     'Please contact your Survey Site Administrator to upgrade or renew your plan to increase your storage & responses.'
                 );
             }
-        } elseif ($this->hasResponseNotification) {
-            if ($this->plugin->isSiteAdminUser) {
+        } elseif ($dto->hasResponseNotification) {
+            if ($dto->isSiteAdminUser) {
                 $contactString = $this->plugin->gT(
                     'Please upgrade or renew your plan to increase your responses.'
                 );
@@ -156,8 +144,8 @@ class LimitReminderNotification
                     'Please contact your Survey Site Administrator to upgrade or renew your plan to increase your responses.'
                 );
             }
-        } elseif ($this->hasStorageNotification) {
-            if ($this->plugin->isSiteAdminUser) {
+        } elseif ($dto->hasStorageNotification) {
+            if ($dto->isSiteAdminUser) {
                 $contactString = $this->plugin->gT('Please upgrade or renew your plan to increase your storage.');
             } else {//all other users
                 $contactString = $this->plugin->gT(
@@ -171,11 +159,13 @@ class LimitReminderNotification
     /**
      * Generates and returns the button html
      * @param LinksAndContactHmtlHelper $links
+     * @param bool $isSiteAdminUser
+     *
      * @return string
      */
-    private function getButton(LinksAndContactHmtlHelper $links)
+    private function getButton(LinksAndContactHmtlHelper $links, bool $isSiteAdminUser)
     {
-        if ($this->plugin->isSiteAdminUser) {
+        if ($isSiteAdminUser) {
             $button = $links->toHtmlLinkButton(
                 \Yii::app()->getConfig(
                     "linkToPricingPage"

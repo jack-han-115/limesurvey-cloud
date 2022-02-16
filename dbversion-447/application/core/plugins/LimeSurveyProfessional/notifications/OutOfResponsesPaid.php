@@ -2,6 +2,7 @@
 
 namespace LimeSurveyProfessional\notifications;
 
+use LimeSurveyProfessional\DataTransferObject;
 use LimeSurveyProfessional\LinksAndContactHmtlHelper;
 
 class OutOfResponsesPaid
@@ -23,15 +24,16 @@ class OutOfResponsesPaid
 
     /**
      * creates the notification when paid installation is out of responses
+     * @param DataTransferObject $dto
      */
-    public function createNotification()
+    public function createNotification(DataTransferObject $dto)
     {
-        if ($this->plugin->isPayingUser && $this->plugin->outOfResponses) {
+        if ($dto->isPayingUser && $dto->outOfResponses) {
             $not = new \UniqueNotification(array(
                 'user_id' => App()->user->id,
                 'importance' => \Notification::HIGH_IMPORTANCE,
                 'title' => $this->plugin->gT('Maximum Number of Responses Reached'),
-                'message' => $this->getMessage()
+                'message' => $this->getMessage($dto->isSiteAdminUser)
             ));
             $not->save();
         }
@@ -39,25 +41,29 @@ class OutOfResponsesPaid
 
     /**
      * Returns whole message for the notification
+     * @param bool $isSiteAdminUser
+     *
      * @return string
      */
-    private function getMessage()
+    private function getMessage(bool $isSiteAdminUser)
     {
         $links = new LinksAndContactHmtlHelper();
-        return $this->getMainString() . $this->getButton($links);
+        return $this->getMainString($isSiteAdminUser) . $this->getButton($links, $isSiteAdminUser);
     }
 
     /**
      * Returns the main message html for the notification
+     * @param bool $isSiteAdminUser
+     *
      * @return string
      */
-    private function getMainString()
+    private function getMainString(bool $isSiteAdminUser)
     {
         $message = $this->plugin->gT(
                 'You have reached the maximum number of responses allowed for your chosen plan.'
             ) . ' ';
 
-        if ($this->plugin->isSiteAdminUser) {
+        if ($isSiteAdminUser) {
             $message .= $this->plugin->gT(
                 'Please renew plan or purchase more responses.'
             );
@@ -73,12 +79,13 @@ class OutOfResponsesPaid
     /**
      * Returns the button html for the notification
      * @param LinksAndContactHmtlHelper $links
+     * @param bool $isSiteAdminUser
      *
      * @return string
      */
-    private function getButton(LinksAndContactHmtlHelper $links)
+    private function getButton(LinksAndContactHmtlHelper $links, bool $isSiteAdminUser)
     {
-        if ($this->plugin->isSiteAdminUser) {
+        if ($isSiteAdminUser) {
             $buttonText = $this->plugin->gT('Renew plan / Purchase responses');
             $button = $links->toHtmlLinkButton('https://account.limesurvey.org/', $buttonText);
         } else {
