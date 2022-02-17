@@ -72,11 +72,11 @@ class LimeserviceSystem
      */
     public function getReminderLimitResponses()
     {
-        $sql = 'select reminderlimitresponses 
-                from limeservice_system.installations 
-                where user_id=' . $this->userInstallationId;
-
-        $reminderLimitResponses = $this->dbConnection->createCommand($sql)->queryScalar();
+        $reminderLimitResponses = $this->dbConnection->createCommand()
+            ->select('reminderlimitresponses')
+            ->from('limeservice_system.installations')
+            ->where('user_id=:user_id', [':user_id' => $this->userInstallationId])
+            ->queryScalar();
 
         if ($reminderLimitResponses === null || $reminderLimitResponses === 0) {
             $reminderLimitResponses = self::DEFAULT_REMINDER_LIMIT_RESPONSES;
@@ -94,11 +94,11 @@ class LimeserviceSystem
      */
     public function getResponsesAvailable()
     {
-        $sql = "select responses_avail from limeservice_system.balances where user_id=" . $this->userInstallationId;
-
-        $responses = (int)$this->dbConnection->createCommand($sql)->queryScalar();
-
-        return $responses;
+        return (int)$this->dbConnection->createCommand()
+            ->select('responses_avail')
+            ->from('limeservice_system.balances')
+            ->where('user_id=:user_id', [':user_id' => $this->userInstallationId])
+            ->queryScalar();
     }
 
     /**
@@ -109,9 +109,11 @@ class LimeserviceSystem
      */
     public function getHardLock()
     {
-        $sql = "select hard_lock from limeservice_system.installations where user_id=" . $this->userInstallationId;
-
-        return (int)$this->dbConnection->createCommand($sql)->queryScalar();
+        return (int)$this->dbConnection->createCommand()
+            ->select('hard_lock')
+            ->from('limeservice_system.installations')
+            ->where('user_id=:user_id', [':user_id' => $this->userInstallationId])
+            ->queryScalar();
     }
 
     /**
@@ -122,9 +124,11 @@ class LimeserviceSystem
      */
     public function getLocked()
     {
-        $sql = "select locked from limeservice_system.installations where user_id=" . $this->userInstallationId;
-
-        return (int)$this->dbConnection->createCommand($sql)->queryScalar();
+        return (int)$this->dbConnection->createCommand()
+            ->select('locked')
+            ->from('limeservice_system.installations')
+            ->where('user_id=:user_id', [':user_id' => $this->userInstallationId])
+            ->queryScalar();
     }
 
     /**
@@ -153,13 +157,11 @@ class LimeserviceSystem
      */
     public function getUploadStorageSize()
     {
-        $sql = 'select upload_storage_size 
-                from limeservice_system.installations 
-                where user_id=' . $this->userInstallationId;
-
-        $uploadStorage = (int)$this->dbConnection->createCommand($sql)->queryScalar();
-
-        return $uploadStorage;
+        return (int)$this->dbConnection->createCommand()
+            ->select('upload_storage_size')
+            ->from('limeservice_system.installations')
+            ->where('user_id=:user_id', [':user_id' => $this->userInstallationId])
+            ->queryScalar();
     }
 
     /**
@@ -170,11 +172,11 @@ class LimeserviceSystem
      */
     public function getStorageUsed()
     {
-        $sql = "select storage_used from limeservice_system.balances where user_id=" . $this->userInstallationId;
-
-        $usedStorage = $this->dbConnection->createCommand($sql)->queryScalar();
-
-        return $usedStorage;
+        return $this->dbConnection->createCommand()
+            ->select('storage_used')
+            ->from('limeservice_system.balances')
+            ->where('user_id=:user_id', [':user_id' => $this->userInstallationId])
+            ->queryScalar();
     }
 
     /**
@@ -185,14 +187,11 @@ class LimeserviceSystem
      */
     public function getUsersPlan()
     {
-        $sql = 'select subscription_alias 
-                from limeservice_system.installations 
-                where user_id=' . $this->userInstallationId;
-
-        /* @todo check if there is more then one installation for a user in the table (in that case queryScalar is wrong) */
-        $userPlan = $this->dbConnection->createCommand($sql)->queryScalar();
-
-        return $userPlan;
+        return $this->dbConnection->createCommand()
+            ->select('subscription_alias')
+            ->from('limeservice_system.installations')
+            ->where('user_id=:user_id', [':user_id' => $this->userInstallationId])
+            ->queryScalar();
     }
 
     /**
@@ -203,11 +202,11 @@ class LimeserviceSystem
      */
     public function getReminderLimitStorage()
     {
-        $sql = 'select reminderlimitstorage 
-                from limeservice_system.installations 
-                where user_id=' . $this->userInstallationId;
-
-        return (int)$this->dbConnection->createCommand($sql)->queryScalar();
+        return (int)$this->dbConnection->createCommand()
+            ->select('reminderlimitstorage')
+            ->from('limeservice_system.installations')
+            ->where('user_id=:user_id', [':user_id' => $this->userInstallationId])
+            ->queryScalar();
     }
 
     /**
@@ -216,11 +215,11 @@ class LimeserviceSystem
      */
     public function getEmailLock()
     {
-        $sql = 'select email_lock 
-                from limeservice_system.installations 
-                where user_id=' . getInstallationID();
-
-        return (int)$this->dbConnection->createCommand($sql)->queryScalar();
+        return (int)$this->dbConnection->createCommand()
+            ->select('email_lock')
+            ->from('limeservice_system.installations')
+            ->where('user_id=:user_id', [':user_id' => $this->userInstallationId])
+            ->queryScalar();
     }
 
     /**
@@ -230,11 +229,13 @@ class LimeserviceSystem
      */
     public function setEmailLock(int $value = 1)
     {
-        $sql = "UPDATE limeservice_system.installations
-                SET email_lock = $value  
-                WHERE user_id=" . getInstallationID();
-
-        return $this->dbConnection->createCommand($sql)->execute();
+        return $this->dbConnection->createCommand()
+            ->update(
+                'limeservice_system.installations' ,
+                ['email_lock' => $value],
+                "user_id=:user_id",
+                [':user_id' => getInstallationID()]
+            );
     }
 
     /**
@@ -259,11 +260,17 @@ class LimeserviceSystem
      */
     public function getSubscriptionCreated()
     {
-        $sql = 'select subscription_created 
+       /* $sql = 'select subscription_created
             from limeservice_system.installations 
-            where user_id=' . $this->userInstallationId;
+            where user_id=' . $this->userInstallationId; */
 
-        return $this->dbConnection->createCommand($sql)->queryScalar();
+        return $this->dbConnection->createCommand()
+            ->select('subscription_created')
+            ->from('limeservice_system.installations')
+            ->where('user_id=:user_id', [':user_id' => $this->userInstallationId])
+            ->queryScalar();
+
+       // return $this->dbConnection->createCommand($sql)->queryScalar();
     }
 
     /**
@@ -274,11 +281,17 @@ class LimeserviceSystem
      */
     public function getSubscriptionPaid()
     {
-        $sql = 'select subscription_paid 
+       /* $sql = 'select subscription_paid
             from limeservice_system.installations 
-            where user_id=' . $this->userInstallationId;
+            where user_id=' . $this->userInstallationId; */
 
-        return $this->dbConnection->createCommand($sql)->queryScalar();
+        return $this->dbConnection->createCommand()
+            ->select('subscription_paid')
+            ->from('limeservice_system.installations')
+            ->where('user_id=:user_id', [':user_id' => $this->userInstallationId])
+            ->queryScalar();
+
+      //  return $this->dbConnection->createCommand($sql)->queryScalar();
     }
 
     /**
@@ -289,10 +302,16 @@ class LimeserviceSystem
      */
     public function getSubscriptionPeriod()
     {
-        $sql = 'select subscription_period 
+        /* $sql = 'select subscription_period
                 from limeservice_system.installations 
-                where user_id=' . $this->userInstallationId;
+                where user_id=' . $this->userInstallationId; */
 
-        return $this->dbConnection->createCommand($sql)->queryScalar();
+        return $this->dbConnection->createCommand()
+            ->select('subscription_period')
+            ->from('limeservice_system.installations')
+            ->where('user_id=:user_id', [':user_id' => $this->userInstallationId])
+            ->queryScalar();
+
+       // return $this->dbConnection->createCommand($sql)->queryScalar();
     }
 }
