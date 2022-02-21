@@ -109,17 +109,16 @@ class BlacklistFilter extends EmailFilter
         $violationFrom = $this->event->get('from', '');
 
         $message = '<p>Email blacklist filter was activated! ' .
-            'Field email_lock is now set to 2. Future emails of this installationId ' . $installationId .
-            ' will not be sent, silently</p>' .
+            'Field email_lock is now set to 2. Future emails of this installation ID ' . $installationId .' will not be sent, silently</p>' .
             '<p><b>Filtered email:</b></p>' .
-            '<b>Violation text</b>' . \LimeSurveyProfessional::$violationText . '<br>' .
-            '<b>sent by user:</b> ' . $loggedInUser . '<br>' .
-            '<b>type:</b> ' . $violationType . '<br>' .
-            '<b>from:</b> ' . $violationFrom . '<br>' .
-            '<b>to:</b> ' . print_r($violationTo, true) . '<br>' .
-            '<b>survey:</b> ' . $violationSurvey . '<br>' .
-            '<b>subject:</b> ' . $violationSubject . '<br>' .
-            '<b>body:</b> ' . '<p><pre>' . $violationBody . '</pre></p>' .
+            '<b>Matching keyword:</b> ' . \LimeSurveyProfessional::$violationText . '<br>' .
+            '<b>Sent by user:</b> ' . $loggedInUser . '<br>' .
+            '<b>Type:</b> ' . $violationType . '<br>' .
+            '<b>From:</b> ' . $violationFrom . '<br>' .
+            '<b>To:</b> ' . print_r($violationTo, true) . '<br>' .
+            '<b>Survey:</b> ' . $violationSurvey . '<br>' .
+            '<b>Subject:</b> ' . $violationSubject . '<br>' .
+            '<b>Body:</b> ' . '<p><pre>' . $violationBody . '</pre></p>' .
             '<p>-----------------------------------------------------</p>' .
             '<b>$_SERVER:</b> ' . '<br><pre>' . print_r($_SERVER, true) . '</pre>';
 
