@@ -231,7 +231,7 @@ class LimeserviceSystem
     {
         return $this->dbConnection->createCommand()
             ->update(
-                'limeservice_system.installations' ,
+                'limeservice_system.installations',
                 ['email_lock' => $value],
                 "user_id=:user_id",
                 [':user_id' => getInstallationID()]
@@ -239,6 +239,8 @@ class LimeserviceSystem
     }
 
     /**
+     * Update "sent" counter in table mail_ratings
+     *
      * @param int $value
      * @return int
      * @throws \CDbException
@@ -260,38 +262,26 @@ class LimeserviceSystem
      */
     public function getSubscriptionCreated()
     {
-       /* $sql = 'select subscription_created
-            from limeservice_system.installations 
-            where user_id=' . $this->userInstallationId; */
-
         return $this->dbConnection->createCommand()
             ->select('subscription_created')
             ->from('limeservice_system.installations')
             ->where('user_id=:user_id', [':user_id' => $this->userInstallationId])
             ->queryScalar();
-
-       // return $this->dbConnection->createCommand($sql)->queryScalar();
     }
 
     /**
-     *
+     * Returns subscription_paid value from table installations
      *
      * @return \CDbDataReader|false|mixed|string
      * @throws \CException
      */
     public function getSubscriptionPaid()
     {
-       /* $sql = 'select subscription_paid
-            from limeservice_system.installations 
-            where user_id=' . $this->userInstallationId; */
-
         return $this->dbConnection->createCommand()
             ->select('subscription_paid')
             ->from('limeservice_system.installations')
             ->where('user_id=:user_id', [':user_id' => $this->userInstallationId])
             ->queryScalar();
-
-      //  return $this->dbConnection->createCommand($sql)->queryScalar();
     }
 
     /**
@@ -302,16 +292,10 @@ class LimeserviceSystem
      */
     public function getSubscriptionPeriod()
     {
-        /* $sql = 'select subscription_period
-                from limeservice_system.installations 
-                where user_id=' . $this->userInstallationId; */
-
         return $this->dbConnection->createCommand()
             ->select('subscription_period')
             ->from('limeservice_system.installations')
             ->where('user_id=:user_id', [':user_id' => $this->userInstallationId])
             ->queryScalar();
-
-       // return $this->dbConnection->createCommand($sql)->queryScalar();
     }
 }
