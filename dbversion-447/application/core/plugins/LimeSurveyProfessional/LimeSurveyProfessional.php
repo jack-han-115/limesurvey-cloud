@@ -2,6 +2,7 @@
 
 use LimeSurveyProfessional\notifications\LimitReminderNotification;
 use LimeSurveyProfessional\notifications\OutOfResponsesPaid;
+use LimeSurveyProfessional\promotionalBanners\PromotionalBanners;
 use LimeSurveyProfessional\notifications\GracePeriodNotification;
 
 /**
@@ -16,8 +17,8 @@ use LimeSurveyProfessional\notifications\GracePeriodNotification;
 class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
 {
     protected $storage = 'DbStorage';
-    static protected $description = 'LimeSurvey Cloud extras';
-    static protected $name = 'LimeSurveyProfessional';
+    protected static $description = 'LimeSurvey Cloud extras';
+    protected static $name = 'LimeSurveyProfessional';
     static $violationCount = 0;
     static $violationText = '';
 
@@ -33,6 +34,7 @@ class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
         $this->subscribe('beforeControllerAction');
         $this->subscribe('beforeTokenEmail');
         $this->subscribe('beforeAdminMenuRender');
+        $this->subscribe('newDirectRequest');
     }
 
     /**
@@ -54,6 +56,7 @@ class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
      * if not:
      * 2. if admin welcome-page is called, the
      *    limitReminderNotification and outOfresponsesPaid functionalities will be called
+     * 3. promotionalBanner showing will be checked on every action
      */
     public function beforeControllerAction()
     {
@@ -78,6 +81,9 @@ class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
 //                    }
                 }
             }
+            $today = new \DateTime('midnight');
+            $promotionalBanner = new PromotionalBanners($this);
+            $promotionalBanner->showPromotionalBanner($today);
         }
     }
 
@@ -149,7 +155,6 @@ class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
             }
         }
 
-
         if ($blockingNotification && $this->forceRedirectToWelcomePage($event)) {
             $controller = Yii::app()->getController();
             $controller->redirect($controller->createUrl('admin/index'));
@@ -181,5 +186,23 @@ class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
         $dto = $this->getDto();
         $upgradeButton = new \LimeSurveyProfessional\upgradeButton\UpgradeButton();
         $upgradeButton->displayUpgradeButton($this, $dto);
+    }
+
+    /**
+     * @return void
+     */
+    public function newDirectRequest()
+    {
+        $request = $this->api->getRequest();
+        $event = $this->getEvent();
+        if ($event->get('target') != 'LimeSurveyProfessional') {
+            return;
+        }
+
+        $action = $event->get('function');
+        if ($action == 'updateBannersAcknowledgedObject') {
+            $promotionalBanner = new PromotionalBanners($this);
+            $promotionalBanner->updateBannersAcknowledgedObject($request);
+        }
     }
 }

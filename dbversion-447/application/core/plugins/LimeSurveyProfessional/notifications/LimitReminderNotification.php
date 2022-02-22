@@ -167,15 +167,13 @@ class LimitReminderNotification
     {
         if ($isSiteAdminUser) {
             $button = $links->toHtmlLinkButton(
-                \Yii::app()->getConfig(
-                    "linkToPricingPage"
-                ),
+                $links->getPricingPageLink(\Yii::app()->session['adminlang']),
                 $this->plugin->gT('Upgrade or renew plan')
             );
         } else {
             $button = $links->toHtmlMailLinkButton(
                 $links->getSiteAdminEmail(),
-                $this->plugin->gT('Contact Survey Site Admin')
+                $this->plugin->gT('Contact Survey Site Adminstrator')
             );
         }
 

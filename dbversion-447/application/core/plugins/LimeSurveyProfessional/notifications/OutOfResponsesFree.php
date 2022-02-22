@@ -32,7 +32,7 @@ class OutOfResponsesFree extends UnclosableModal
 
         if (!$dto->isPayingUser && ($dto->outOfResponses || $dto->locked)) {
             $notificationCreated = true;
-            $this->title = $this->plugin->gT('Maximum Number of Responses Reached');
+            $this->title = $this->plugin->gT('Maximum number of responses reached');
             $this->initMessage($dto->isSiteAdminUser);
             $this->initButton(new LinksAndContactHmtlHelper(), $dto->isSiteAdminUser);
             $this->showModal();
@@ -53,11 +53,11 @@ class OutOfResponsesFree extends UnclosableModal
 
         if ($isSiteAdminUser) {
             $this->message .= $this->plugin->gT(
-                'Please upgrade your plan or purchase more responses.'
+                'Please upgrade your plan to increase your responses.'
             );
         } else {
             $this->message .= $this->plugin->gT(
-                'Please contact your Survey Site Administrator to upgrade plan or purchase more responses.'
+                'Please contact your Survey Site Administrator to upgrade the plan to increase your responses.'
             );
         }
     }
@@ -75,7 +75,7 @@ class OutOfResponsesFree extends UnclosableModal
         } else {
             $this->buttons[] = $links->toHtmlMailLinkButton(
                 $links->getSiteAdminEmail(),
-                $this->plugin->gT('Contact Survey Site Admin')
+                $this->plugin->gT('Contact Survey Site Adminstrator')
             );
         }
     }

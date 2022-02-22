@@ -44,7 +44,7 @@ msgstr "Histórico de Transacções"
 msgid "Pay invoice"
 msgstr "Pagar factura"
 
-msgid "Contact Survey Site Admin"
+msgid "Contact Survey Site Adminstrator"
 msgstr "Contacto para o Inquérito Site Admin"
 
 msgid "Unpaid invoice"
