@@ -177,9 +177,7 @@ class LimitReminderNotification
     {
         if ($this->plugin->isSiteAdminUser) {
             $button = $links->toHtmlLinkButton(
-                \Yii::app()->getConfig(
-                    "linkToPricingPage"
-                ),
+                $links->getPricingPageLink(\Yii::app()->session['adminlang']),
                 $this->plugin->gT('Upgrade or renew plan')
             );
         } else {

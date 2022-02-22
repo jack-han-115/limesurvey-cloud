@@ -163,4 +163,62 @@ class LimeSurveyProfessionalTest extends TestBaseClass
 
         $this->assertFalse($upgradeButtonClass->displayUpgradeButton($lsp));
     }
+
+    public function testIsNotInGracePeriod()
+    {
+        $pm = new PluginManager();
+        $id = 'dummyid';
+        $lsp = new LimeSurveyProfessional($pm, $id);
+        // real case: subscription_paid came in seconds earlier than subscription_created
+        $lsp->dateSubscriptionCreated = '2022-01-21 15:49:51';
+        $lsp->dateSubscriptionPaid = '2022-01-21 15:49:46';
+        $lsp->paymentPeriod = 'Y';
+
+        $lsp->init();
+        $fakeTodayDate = new \DateTime('2022-02-09 00:00:00');
+        $gracePeriodClass = new LimeSurveyProfessional\notifications\GracePeriodNotification($lsp);
+
+        $this->assertFalse($gracePeriodClass->isInGracePeriod($fakeTodayDate));
+    }
+
+    public function testPromotionalBanner()
+    {
+        $pm = new PluginManager();
+        $id = 'dummyid';
+        $lsp = new LimeSurveyProfessional($pm, $id);
+        $lsp->init();
+        $lsp->plan = 'free';
+        $lsp->dateSubscriptionCreated = '2022-01-23 12:11:04';
+        $fakeTodayDateDay5 = new \DateTime('2022-01-27 00:00:00'); //1st show day of banner 1
+        $fakeTodayDateDay6 = new \DateTime('2022-03-04 00:00:00'); // 35 days after 1st show day of banner 2
+        $testConfig = [
+            'free' => [
+                [
+                    'id' => 1,
+                    'cycleStart' => 5,
+                    'maxShow' => 3,
+                    'mainMessage' => 'TestMessage 1',
+                    'messageSiteAdmin' => 'for site admin',
+                    'messageAdmin' => 'for normal admin',
+                    'test' => true
+                ],
+                [
+                    'id' => 2,
+                    'cycleStart' => 6,
+                    'maxShow' => 3,
+                    'mainMessage' => 'TestMessage 2',
+                    'messageSiteAdmin' => 'for site admin',
+                    'messageAdmin' => 'for normal admin',
+                    'test' => true
+                ],
+            ]
+        ];
+
+        $promotionalBannersClass = new LimeSurveyProfessional\promotionalBanners\PromotionalBanners($lsp);
+        $bannerDay5 = $promotionalBannersClass->getBannerFromConfig($fakeTodayDateDay5, $testConfig);
+        $this->assertTrue($bannerDay5->id == 1 && $bannerDay5->shows == 0);
+
+        $bannerDay6 = $promotionalBannersClass->getBannerFromConfig($fakeTodayDateDay6, $testConfig);
+        $this->assertTrue($bannerDay6->id == 2 && $bannerDay6->shows == 0);
+    }
 }
