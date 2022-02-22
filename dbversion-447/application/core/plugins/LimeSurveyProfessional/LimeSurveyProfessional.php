@@ -83,7 +83,7 @@ class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
             }
             $today = new \DateTime('midnight');
             $promotionalBanner = new PromotionalBanners($this);
-            $promotionalBanner->showPromotionalBanner($today);
+            $promotionalBanner->showPromotionalBanner($today, $dto);
         }
     }
 
@@ -201,8 +201,9 @@ class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
 
         $action = $event->get('function');
         if ($action == 'updateBannersAcknowledgedObject') {
+            $dto = $this->getDto();
             $promotionalBanner = new PromotionalBanners($this);
-            $promotionalBanner->updateBannersAcknowledgedObject($request);
+            $promotionalBanner->updateBannersAcknowledgedObject($request, $dto);
         }
     }
 }

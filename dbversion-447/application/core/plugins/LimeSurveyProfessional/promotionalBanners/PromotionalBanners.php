@@ -2,6 +2,7 @@
 
 namespace LimeSurveyProfessional\promotionalBanners;
 
+use LimeSurveyProfessional\DataTransferObject;
 use LimeSurveyProfessional\LinksAndContactHmtlHelper;
 
 class PromotionalBanners
@@ -33,13 +34,14 @@ class PromotionalBanners
     /**
      * If there is a banner to be shown today, it will be shown
      * @param \DateTime $today For testing purposes this is a parameter
+     * @param DataTransferObject $dto
      *
      * @throws \CException
      */
-    public function showPromotionalBanner(\DateTime $today)
+    public function showPromotionalBanner(\DateTime $today, DataTransferObject $dto)
     {
         $bannerConfig = new PromotionalBannerConfig();
-        $banner = $this->getBannerFromConfig($today, $bannerConfig->getBannerConfig($this->plugin));
+        $banner = $this->getBannerFromConfig($today, $bannerConfig->getBannerConfig($this->plugin), $dto);
         if ($banner) {
             $banner->show();
         }
@@ -55,16 +57,17 @@ class PromotionalBanners
      *
      * @param \DateTime $today For testing purposes this is a parameter
      * @param array $allBannersConfig For testing purposes this is a parameter
+     * @param DataTransferObject $dto
      *
      * @return Banner|null
      */
-    public function getBannerFromConfig(\DateTime $today, array $allBannersConfig)
+    public function getBannerFromConfig(\DateTime $today, array $allBannersConfig, DataTransferObject $dto)
     {
         $banner = null;
 //        1. check if there's banners for users plan
-        if (array_key_exists($this->plugin->plan, $allBannersConfig)) {
-            foreach ($allBannersConfig[$this->plugin->plan] as $bannerConfig) {
-                $subscriptionCreated = new \DateTime($this->plugin->dateSubscriptionCreated);
+        if (array_key_exists($dto->plan, $allBannersConfig)) {
+            foreach ($allBannersConfig[$dto->plan] as $bannerConfig) {
+                $subscriptionCreated = new \DateTime($dto->dateSubscriptionCreated);
                 $subscriptionCreated->setTime(0, 0, 0);
                 $firstShowDay = clone $subscriptionCreated;
                 $firstShowDay = $firstShowDay->add(new \DateInterval('P' . ($bannerConfig['cycleStart'] - 1) . 'D'));
@@ -72,7 +75,7 @@ class PromotionalBanners
                 $daysSinceFirstShow = (int)$interval->format('%r%a');
 //              2. check if today would be the day to show one particular banner
                 if ($daysSinceFirstShow == 0 || ($daysSinceFirstShow > 0 && $daysSinceFirstShow % self::CYCLE_DAYS === 0)) {
-                    $banner = new Banner($this->plugin, $bannerConfig);
+                    $banner = new Banner($dto, $bannerConfig);
 //                   3. this banner could be shown today - so check if it was already acknowledged today or has its maximum shows reached
                     if ($banner->shows >= $banner->maxShow || $banner->ackForToday) {
                         $banner = null;
@@ -88,15 +91,16 @@ class PromotionalBanners
      * Function that is called when a promotional banner is acknowledged (clicked away) by the user.
      * It triggers a update of the promotionalBanners setting in the table settings_user
      * @param \LSHttpRequest $request
+     * @param DataTransferObject $dto
      */
-    public function updateBannersAcknowledgedObject(\LSHttpRequest $request)
+    public function updateBannersAcknowledgedObject(\LSHttpRequest $request, DataTransferObject $dto)
     {
         if ($request->getIsPostRequest()) {
             $id = (int)$request->getPost('bid', 0);
             if ($id > 0) {
                 $bannersAckObj = new BannersAcknowledgedObject(
-                    $this->plugin->dateSubscriptionCreated,
-                    $this->plugin->plan
+                    $dto->dateSubscriptionCreated,
+                    $dto->plan
                 );
                 $bannersAckObj->update($id);
             }

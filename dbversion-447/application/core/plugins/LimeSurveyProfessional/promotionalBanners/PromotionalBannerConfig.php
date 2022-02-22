@@ -25,6 +25,8 @@ class PromotionalBannerConfig
             $plugin->gT('Contact your site admin %s to upgrade.'),
             $links->toHtmlMailLink($links->getSiteAdminEmail())
         );
+        $pricingPageLink = $links->getPricingPageLink(\Yii::app()->session['adminlang']);
+        $contactCorporateLink = $links->getContactCorporateLink(\Yii::app()->session['adminlang']);
         return [
             'free' => [
                 [
@@ -33,7 +35,7 @@ class PromotionalBannerConfig
                     'maxShow' => 3,
                     'mainMessage' => $plugin->gT('Unlock more powerful features.'),
                     'messageSiteAdmin' => $links->toHtmlLink(
-                        $links->getPricingPageLink(\Yii::app()->session['adminlang']),
+                        $pricingPageLink,
                         $plugin->gT('Upgrade to our paid basic plan.')
                     ),
                     'messageAdmin' => $contactSiteAdminLink
@@ -44,7 +46,7 @@ class PromotionalBannerConfig
                     'maxShow' => 3,
                     'mainMessage' => $plugin->gT('Need email support?'),
                     'messageSiteAdmin' => $links->toHtmlLink(
-                        $links->getPricingPageLink(\Yii::app()->session['adminlang']),
+                        $pricingPageLink,
                         $plugin->gT('Upgrade to email with our experts.')
                     ),
                     'messageAdmin' => $contactSiteAdminLink
@@ -57,7 +59,7 @@ class PromotionalBannerConfig
                     'maxShow' => 3,
                     'mainMessage' => $plugin->gT('Need faster email support?'),
                     'messageSiteAdmin' => $links->toHtmlLink(
-                        $links->getPricingPageLink(\Yii::app()->session['adminlang']),
+                        $pricingPageLink,
                         $plugin->gT('Upgrade to get faster support.')
                     ),
                     'messageAdmin' => $contactSiteAdminLink
@@ -70,7 +72,7 @@ class PromotionalBannerConfig
                         'Change your survey site url to surveyname.survey-research.net.'
                     ),
                     'messageSiteAdmin' => $links->toHtmlLink(
-                        $links->getPricingPageLink(\Yii::app()->session['adminlang']),
+                        $pricingPageLink,
                         $plugin->gT('Upgrade to our Expert plan.')
                     ),
                     'messageAdmin' => $contactSiteAdminLink
@@ -81,7 +83,7 @@ class PromotionalBannerConfig
                     'maxShow' => 3,
                     'mainMessage' => $plugin->gT('Change your survey site url to your own domain.'),
                     'messageSiteAdmin' => $links->toHtmlLink(
-                        $links->getPricingPageLink(\Yii::app()->session['adminlang']),
+                        $pricingPageLink,
                         $plugin->gT('Upgrade to our Enterprise plan.')
                     ),
                     'messageAdmin' => $contactSiteAdminLink
@@ -94,7 +96,7 @@ class PromotionalBannerConfig
                     'maxShow' => 3,
                     'mainMessage' => $plugin->gT('Need more then 1 alias domain?'),
                     'messageSiteAdmin' => $links->toHtmlLink(
-                        $links->getPricingPageLink(\Yii::app()->session['adminlang']),
+                        $pricingPageLink,
                         $plugin->gT('Upgrade to our Enterprise plan.')
                     ),
                     'messageAdmin' => $contactSiteAdminLink
@@ -105,7 +107,7 @@ class PromotionalBannerConfig
                     'maxShow' => 3,
                     'mainMessage' => $plugin->gT('Need priority email support?'),
                     'messageSiteAdmin' => $links->toHtmlLink(
-                        $links->getPricingPageLink(\Yii::app()->session['adminlang']),
+                        $pricingPageLink,
                         $plugin->gT('Upgrade to get priority support.')
                     ),
                     'messageAdmin' => $contactSiteAdminLink
@@ -118,7 +120,7 @@ class PromotionalBannerConfig
                     'maxShow' => 3,
                     'mainMessage' => $plugin->gT('Need a more tailored surveys solution?'),
                     'messageSiteAdmin' => $links->toHtmlLink(
-                        $links->getContactCorporateLink(\Yii::app()->session['adminlang']),
+                        $contactCorporateLink,
                         $plugin->gT('Please contact our sales team for a tailored solution.')
                     ),
                     'messageAdmin' => $contactSiteAdminLink
@@ -129,7 +131,7 @@ class PromotionalBannerConfig
                     'maxShow' => 3,
                     'mainMessage' => $plugin->gT('Need custom tailored email support?'),
                     'messageSiteAdmin' => $links->toHtmlLink(
-                        $links->getContactCorporateLink(\Yii::app()->session['adminlang']),
+                        $contactCorporateLink,
                         $plugin->gT('Please contact our sales team for a tailored solution.')
                     ),
                     'messageAdmin' => $contactSiteAdminLink

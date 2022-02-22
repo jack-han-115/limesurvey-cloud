@@ -189,15 +189,16 @@ class LimeSurveyProfessionalTest extends TestBaseClass
         $id = 'dummyid';
         $lsp = new LimeSurveyProfessional($pm, $id);
         // real case: subscription_paid came in seconds earlier than subscription_created
-        $lsp->dateSubscriptionCreated = '2022-01-21 15:49:51';
-        $lsp->dateSubscriptionPaid = '2022-01-21 15:49:46';
-        $lsp->paymentPeriod = 'Y';
+        $dto = $this->getBasicDto();
+        $dto->dateSubscriptionCreated = '2022-01-21 15:49:51';
+        $dto->dateSubscriptionPaid = '2022-01-21 15:49:46';
+        $dto->paymentPeriod = 'Y';
 
         $lsp->init();
         $fakeTodayDate = new \DateTime('2022-02-09 00:00:00');
         $gracePeriodClass = new LimeSurveyProfessional\notifications\GracePeriodNotification($lsp);
 
-        $this->assertFalse($gracePeriodClass->isInGracePeriod($fakeTodayDate));
+        $this->assertFalse($gracePeriodClass->isInGracePeriod($fakeTodayDate, $dto));
     }
 
     public function testPromotionalBanner()
@@ -206,8 +207,9 @@ class LimeSurveyProfessionalTest extends TestBaseClass
         $id = 'dummyid';
         $lsp = new LimeSurveyProfessional($pm, $id);
         $lsp->init();
-        $lsp->plan = 'free';
-        $lsp->dateSubscriptionCreated = '2022-01-23 12:11:04';
+        $dto = $this->getBasicDto();
+        $dto->plan = 'free';
+        $dto->dateSubscriptionCreated = '2022-01-23 12:11:04';
         $fakeTodayDateDay5 = new \DateTime('2022-01-27 00:00:00'); //1st show day of banner 1
         $fakeTodayDateDay6 = new \DateTime('2022-03-04 00:00:00'); // 35 days after 1st show day of banner 2
         $testConfig = [
@@ -234,10 +236,10 @@ class LimeSurveyProfessionalTest extends TestBaseClass
         ];
 
         $promotionalBannersClass = new LimeSurveyProfessional\promotionalBanners\PromotionalBanners($lsp);
-        $bannerDay5 = $promotionalBannersClass->getBannerFromConfig($fakeTodayDateDay5, $testConfig);
+        $bannerDay5 = $promotionalBannersClass->getBannerFromConfig($fakeTodayDateDay5, $testConfig, $dto);
         $this->assertTrue($bannerDay5->id == 1 && $bannerDay5->shows == 0);
 
-        $bannerDay6 = $promotionalBannersClass->getBannerFromConfig($fakeTodayDateDay6, $testConfig);
+        $bannerDay6 = $promotionalBannersClass->getBannerFromConfig($fakeTodayDateDay6, $testConfig, $dto);
         $this->assertTrue($bannerDay6->id == 2 && $bannerDay6->shows == 0);
     }
 }
