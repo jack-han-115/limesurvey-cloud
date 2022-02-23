@@ -241,6 +241,8 @@ class LimeserviceSystem
     /**
      * Update "sent" counter in table mail_ratings
      *
+     * todo: not used at the moment
+     *
      * @param int $value
      * @return int
      * @throws \CDbException
