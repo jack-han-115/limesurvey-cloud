@@ -234,14 +234,14 @@ class LimeserviceSystem
                 'limeservice_system.installations',
                 ['email_lock' => $value],
                 "user_id=:user_id",
-                [':user_id' => getInstallationID()]
+                [':user_id' => $this->userInstallationId]
             );
     }
 
     /**
      * Update "sent" counter in table mail_ratings
      *
-     * todo: not used at the moment
+     * todo: not used at the moment (will be used in future for blacklisting emails?)
      *
      * @param int $value
      * @return int
@@ -249,11 +249,19 @@ class LimeserviceSystem
      */
     public function increaseSentCount(int $value = 1)
     {
-        $sql = "UPDATE limeservice_system.mail_ratings
+      /*  $sql = "UPDATE limeservice_system.mail_ratings
                 SET sent = sent + {$value}
                 WHERE installation_id=" . getInstallationID();
 
-        return $this->dbConnection->createCommand($sql)->execute();
+        return $this->dbConnection->createCommand($sql)->execute(); */
+
+        return $this->dbConnection->createCommand()
+            ->update(
+                'limeservice_system.mail_ratings',
+                ['sent' => new \CDbExpression("sent + $value")],
+                "installation_id=:installation_id",
+                [':installation_id' => $this->userInstallationId]
+            );
     }
 
     /**
