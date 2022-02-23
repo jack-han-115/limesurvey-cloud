@@ -6,7 +6,7 @@ msgstr ""
 "Project-Id-Version: LimeSurvey Professional language file\n"
 "Report-Msgid-Bugs-To: http://translate.limesurvey.org/\n"
 "POT-Creation-Date: 2022-02-16 15:46+0100\n"
-"PO-Revision-Date: 2022-02-16 16:18+0100\n"
+"PO-Revision-Date: 2022-02-22 10:31+0100\n"
 "Last-Translator: \n"
 "Language-Team: LimeSurvey Team <c_schmitz@users.sourceforge.net>\n"
 "Language: es\n"
@@ -17,113 +17,104 @@ msgstr ""
 "X-Poedit-KeywordsList: gT;ngT:1,2;eT;neT:1,2\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 "X-Poedit-Basepath: ../..\n"
-"X-Generator: Poedit 3.0.1\n"
+"X-Generator: Poedit 3.0\n"
 "X-Poedit-SearchPath-0: .\n"
 
 #: LimeSurveyProfessional.php:78
-#, fuzzy
 msgid "Core plugin can not be disabled."
-msgstr "El complemento principal no se puede deshabilitar."
+msgstr "El complemento Core no se puede deshabilitar."
 
 #: notifications/GracePeriodNotification.php:303
-#, fuzzy
 msgid "Unpaid invoice"
-msgstr "factura sin pagar"
+msgstr "Factura impagada"
 
 #: notifications/GracePeriodNotification.php:317
-#, fuzzy, php-format
+#, php-format
 msgid ""
 "You have an unpaid invoice. To avoid being locked out of your survey site, "
 "please view and pay the invoice from the %s tab of your LimeSurvey account "
 "homepage"
 msgstr ""
-"Tienes una factura sin pagar. Para evitar el bloqueo del sitio de su "
-"encuesta, consulte y pague la factura desde la pestaña %s de la página de "
-"inicio de su cuenta de LimeSurvey."
+"Tiene una factura impagada. Para evitar ser bloqueado de su sitio de "
+"encuestas, vea y pague la factura desde la pestaña %s de la página de inicio "
+"de su cuenta de LimeSurvey"
 
 #: notifications/GracePeriodNotification.php:321
 #: notifications/HardLockModal.php:58
-#, fuzzy
 msgid "transaction history"
-msgstr "Historial de transacciones"
+msgstr "historial de transacciones"
 
 #: notifications/GracePeriodNotification.php:327
-#, fuzzy, php-format
+#, php-format
 msgid ""
 "There is an unpaid invoice for this account. Please contact your survey site "
 "admin, %s, to have the invoice paid to avoid being locked out of your survey "
 "site."
 msgstr ""
-"Hay una factura sin pagar para esta cuenta. Comuníquese con el administrador "
-"de su sitio de encuestas, %s, para pagar la factura y evitar que se le "
-"bloquee el acceso a su sitio de encuestas."
+"Hay una factura impaga para esta cuenta. Póngase en contacto con el "
+"administrador de su sitio de encuestas, %s, para que se pague la factura y "
+"evitar que se bloquee el acceso a su sitio de encuestas."
 
 #: notifications/GracePeriodNotification.php:346
 #: notifications/HardLockModal.php:81
-#, fuzzy
 msgid "Pay invoice"
-msgstr "Factura de pago"
+msgstr "Pagar factura"
 
 #: notifications/GracePeriodNotification.php:351
 #: notifications/HardLockModal.php:90
 #: notifications/LimitReminderNotification.php:188
 #: notifications/OutOfResponsesFree.php:75
 #: notifications/OutOfResponsesPaid.php:87 upgradeButton/UpgradeButton.php:73
-#, fuzzy
 msgid "Contact Survey Site Adminstrator"
-msgstr "Comuníquese con el administrador del sitio de la encuesta"
+msgstr "Administrador del sitio de la encuesta de contacto"
 
 #: notifications/HardLockModal.php:33
 msgid "Account locked"
 msgstr "Cuenta bloqueada"
 
 #: notifications/HardLockModal.php:54
-#, fuzzy, php-format
+#, php-format
 msgid ""
 "Your survey site has been locked due to an unpaid invoice or suspected "
 "abuse. To unlock your account, please view and pay the invoice from the %s "
 "tab of your LimeSurvey account homepage. If you do not have an unpaid "
 "invoice, please contact our customer support."
 msgstr ""
-"El sitio de su encuesta se bloqueó debido a una factura impaga o sospecha de "
-"abuso. Para desbloquear su cuenta, vea y pague la factura desde la pestaña "
-"%s de la página de inicio de su cuenta de LimeSurvey. Si no tiene una "
-"factura impaga, póngase en contacto con nuestro servicio de atención al "
-"cliente."
+"Su sitio de encuestas ha sido bloqueado debido a una factura impagada o "
+"sospecha de abuso. Para desbloquear su cuenta, vea y pague la factura desde "
+"la pestaña %s de la página de inicio de su cuenta de LimeSurvey. Si no tiene "
+"una factura impagada, póngase en contacto con nuestro servicio de atención "
+"al cliente."
 
 #: notifications/HardLockModal.php:64
-#, fuzzy, php-format
+#, php-format
 msgid ""
 "Your survey site has been locked due to an unpaid invoice or suspected "
 "abuse. Please contact your survey site admin, %s, to unlock the survey site."
 msgstr ""
-"El sitio de su encuesta se bloqueó debido a una factura impaga o sospecha de "
-"abuso. Comuníquese con el administrador del sitio de la encuesta, %s, para "
-"desbloquear el sitio de la encuesta."
+"El sitio de su encuesta se bloqueó debido a una factura impagada o sospecha "
+"de abuso. Comuníquese con el administrador del sitio de la encuesta, %s, "
+"para desbloquear el sitio de la encuesta."
 
 #: notifications/HardLockModal.php:85
-#, fuzzy
 msgid "Contact LimeSurvey support"
 msgstr "Póngase en contacto con el soporte de LimeSurvey"
 
 #: notifications/LimitReminderNotification.php:70
-#, fuzzy
 msgid "You are almost out of storage & responses"
 msgstr "Estás casi sin almacenamiento y respuestas"
 
 #: notifications/LimitReminderNotification.php:72
-#, fuzzy
 msgid "You are almost out of responses"
-msgstr "ya casi no tienes respuestas"
+msgstr "Estás casi sin respuestas"
 
 #: notifications/LimitReminderNotification.php:74
-#, fuzzy
 msgid "You are almost out of storage"
 msgstr "Estás casi sin almacenamiento"
 
 #: notifications/LimitReminderNotification.php:102
 #: notifications/LimitReminderNotification.php:115
-#, fuzzy, php-format
+#, php-format
 msgid ""
 "The responses on your survey site are below the configured responses "
 "reminder limit of %s."
@@ -132,7 +123,7 @@ msgstr ""
 "recordatorio de respuestas configurado de %s."
 
 #: notifications/LimitReminderNotification.php:108
-#, fuzzy, php-format
+#, php-format
 msgid ""
 "Also, the storage on your survey site is below the configured storage "
 "reminder limit of %s."
@@ -141,7 +132,7 @@ msgstr ""
 "límite de recordatorio de almacenamiento configurado de %s."
 
 #: notifications/LimitReminderNotification.php:122
-#, fuzzy, php-format
+#, php-format
 msgid ""
 "The storage on your survey site is below the configured storage reminder "
 "limit of %s."
@@ -150,13 +141,11 @@ msgstr ""
 "recordatorio de almacenamiento configurado de %s."
 
 #: notifications/LimitReminderNotification.php:142
-#, fuzzy
 msgid "Please upgrade or renew your plan to increase your storage & responses."
 msgstr ""
 "Actualice o renueve su plan para aumentar su almacenamiento y sus respuestas."
 
 #: notifications/LimitReminderNotification.php:146
-#, fuzzy
 msgid ""
 "Please contact your Survey Site Administrator to upgrade or renew your plan "
 "to increase your storage & responses."
@@ -165,13 +154,11 @@ msgstr ""
 "renovar su plan para aumentar su almacenamiento y sus respuestas."
 
 #: notifications/LimitReminderNotification.php:152
-#, fuzzy
 msgid "Please upgrade or renew your plan to increase your responses."
 msgstr "Actualice o renueve su plan para aumentar sus respuestas."
 
 #: notifications/LimitReminderNotification.php:156
 #: notifications/OutOfResponsesPaid.php:66
-#, fuzzy
 msgid ""
 "Please contact your Survey Site Administrator to upgrade or renew your plan "
 "to increase your responses."
@@ -180,12 +167,10 @@ msgstr ""
 "renovar su plan y aumentar sus respuestas."
 
 #: notifications/LimitReminderNotification.php:161
-#, fuzzy
 msgid "Please upgrade or renew your plan to increase your storage."
 msgstr "Actualice o renueve su plan para aumentar su almacenamiento."
 
 #: notifications/LimitReminderNotification.php:164
-#, fuzzy
 msgid ""
 "Please contact your Survey Site Administrator to upgrade or renew your plan "
 "to increase your storage."
@@ -194,19 +179,16 @@ msgstr ""
 "renovar su plan para aumentar su almacenamiento."
 
 #: notifications/LimitReminderNotification.php:183
-#, fuzzy
 msgid "Upgrade or renew plan"
 msgstr "Actualizar o renovar el plan"
 
 #: notifications/OutOfResponsesFree.php:33
 #: notifications/OutOfResponsesPaid.php:33
-#, fuzzy
 msgid "Maximum number of responses reached"
 msgstr "Número máximo de respuestas alcanzado"
 
 #: notifications/OutOfResponsesFree.php:48
 #: notifications/OutOfResponsesPaid.php:57
-#, fuzzy
 msgid ""
 "You have reached the maximum number of responses allowed for your chosen "
 "plan."
@@ -214,12 +196,10 @@ msgstr ""
 "Ha alcanzado el número máximo de respuestas permitidas para su plan elegido."
 
 #: notifications/OutOfResponsesFree.php:53
-#, fuzzy
 msgid "Please upgrade your plan to increase your responses."
 msgstr "Actualice su plan para aumentar sus respuestas."
 
 #: notifications/OutOfResponsesFree.php:57
-#, fuzzy
 msgid ""
 "Please contact your Survey Site Administrator to upgrade the plan to "
 "increase your responses."
@@ -228,17 +208,14 @@ msgstr ""
 "plan y aumentar sus respuestas."
 
 #: notifications/OutOfResponsesFree.php:70
-#, fuzzy
 msgid "Upgrade / Purchase responses"
-msgstr "Respuestas de actualización/compra"
+msgstr "Actualiza / compra respuestas"
 
 #: notifications/OutOfResponsesPaid.php:62
-#, fuzzy
 msgid "Please renew your current plan or upgrade to a higher plan."
 msgstr "Renueve su plan actual o actualice a un plan superior."
 
 #: notifications/OutOfResponsesPaid.php:82
-#, fuzzy
 msgid "Renew plan / Purchase responses"
 msgstr "Renovar plan / Comprar respuestas"
 
@@ -247,12 +224,11 @@ msgid "Upgrade"
 msgstr "Actualizar"
 
 #: upgradeButton/UpgradeButton.php:63
-#, fuzzy
 msgid "Upgrade notification"
 msgstr "Notificación de actualización"
 
 #: upgradeButton/UpgradeButton.php:66
-#, fuzzy, php-format
+#, php-format
 msgid ""
 "You do not have any permission to upgrade to a higher plan, please contact "
 "your site admin %s"
