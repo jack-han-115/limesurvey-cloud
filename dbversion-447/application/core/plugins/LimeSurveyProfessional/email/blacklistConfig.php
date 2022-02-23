@@ -17,5 +17,6 @@ $blacklistEntries = [
     'επιστροφή',
     'αναστολή',
     'να χρησιμοποιήσετε την κάρτα',
-    'Tax return'
+    'Tax return',
+    '$fu98u9f8n24f'
 ];
