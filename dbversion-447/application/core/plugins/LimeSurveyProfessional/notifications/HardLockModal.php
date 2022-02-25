@@ -2,7 +2,7 @@
 
 namespace LimeSurveyProfessional\notifications;
 
-use LimeSurveyProfessional\DataTransferObject;
+use LimeSurveyProfessional\InstallationData;
 use LimeSurveyProfessional\LinksAndContactHmtlHelper;
 
 class HardLockModal extends UnclosableModal
@@ -22,19 +22,19 @@ class HardLockModal extends UnclosableModal
 
     /**
      * creates the unpaid invoice or normal hard_lock notification, if required
-     * @param DataTransferObject $dto
+     * @param InstallationData $installationData
      *
      * @return boolean
      */
-    public function createNotification(DataTransferObject $dto)
+    public function createNotification(InstallationData $installationData)
     {
         $notificationCreated = false;
-        if ($dto->isHardLocked) {
+        if ($installationData->isHardLocked) {
             $links = new LinksAndContactHmtlHelper();
             $notificationCreated = true;
             $this->title = $this->plugin->gT('Account locked');
-            $this->initMessage($links, $dto->isSiteAdminUser);
-            $this->initButtons($links, $dto->isSiteAdminUser);
+            $this->initMessage($links, $installationData->isSiteAdminUser);
+            $this->initButtons($links, $installationData->isSiteAdminUser);
 
             $this->showModal();
         }

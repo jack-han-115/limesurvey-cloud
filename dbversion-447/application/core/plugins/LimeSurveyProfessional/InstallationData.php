@@ -4,11 +4,8 @@ namespace LimeSurveyProfessional;
 
 use LimeSurvey\Models\Services\LimeserviceSystem;
 
-class DataTransferObject
+class InstallationData
 {
-    /** @var \LimeSurvey\Models\Services\LimeserviceSystem */
-    public $limeserviceSystem;
-
     /** @var boolean */
     public $isSiteAdminUser;
 
@@ -51,15 +48,17 @@ class DataTransferObject
     /** @var boolean */
     public $hasStorageNotification;
 
-    public function build()
+    /**
+     * Populates this data object with relevant data of the installation
+     * @param LimeserviceSystem $limeserviceSystem
+     * @param int $userId
+     * @throws \CException
+     */
+    public function create(LimeserviceSystem $limeserviceSystem, int $userId)
     {
-        $limeserviceSystem = new \LimeSurvey\Models\Services\LimeserviceSystem(
-            \Yii::app()->dbstats,
-            (int)getInstallationID()
-        );
         $this->isHardLocked = $limeserviceSystem->getHardLock() === 1;
         $this->plan = $limeserviceSystem->getUsersPlan();
-        $this->isSiteAdminUser = App()->user->id == 1;
+        $this->isSiteAdminUser = $userId;
         $this->isPayingUser = $this->plan !== 'free' && $this->plan != '';
         $this->outOfResponses = $limeserviceSystem->getResponsesAvailable() < 0;
         $this->locked = $limeserviceSystem->getLocked() == 1;

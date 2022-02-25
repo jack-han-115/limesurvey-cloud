@@ -74,27 +74,27 @@ class LimeSurveyProfessionalTest extends TestBaseClass
     }
 
     /**
-     * @return LimeSurveyProfessional\DataTransferObject
+     * @return LimeSurveyProfessional\InstallationData
      */
-    private function getBasicDto()
+    private function getInstallationData()
     {
-        $dto = new LimeSurveyProfessional\DataTransferObject();
-        $dto->isHardLocked = false;
-        $dto->plan = 'free';
-        $dto->isSiteAdminUser = true;
-        $dto->isPayingUser = false;
-        $dto->outOfResponses = false;
-        $dto->locked = false;
-        $dto->emailLock = 0;
-        $dto->dateSubscriptionCreated = '2020-10-29 00:00:00';
-        $dto->dateSubscriptionPaid = '2021-12-31 00:00:00';
-        $dto->paymentPeriod = 'M';
-        $dto->reminderLimitStorage = 10;
-        $dto->reminderLimitResponses = 10;
-        $dto->hasResponseNotification = false;
-        $dto->hasStorageNotification = false;
+        $installationData = new LimeSurveyProfessional\InstallationData();
+        $installationData->isHardLocked = false;
+        $installationData->plan = 'free';
+        $installationData->isSiteAdminUser = true;
+        $installationData->isPayingUser = false;
+        $installationData->outOfResponses = false;
+        $installationData->locked = false;
+        $installationData->emailLock = 0;
+        $installationData->dateSubscriptionCreated = '2020-10-29 00:00:00';
+        $installationData->dateSubscriptionPaid = '2021-12-31 00:00:00';
+        $installationData->paymentPeriod = 'M';
+        $installationData->reminderLimitStorage = 10;
+        $installationData->reminderLimitResponses = 10;
+        $installationData->hasResponseNotification = false;
+        $installationData->hasStorageNotification = false;
 
-        return $dto;
+        return $installationData;
     }
 
     public function testHasNoBlockingNotification()
@@ -103,11 +103,11 @@ class LimeSurveyProfessionalTest extends TestBaseClass
         $id = 'dummyid';
         $lsp = new LimeSurveyProfessional($pm, $id);
         $lsp->init();
-        $dto = $this->getBasicDto();
+        $installationData = $this->getInstallationData();
         $event = new PluginEvent('eventname');
         $event->set('subaction', 'logout');
 
-        $this->assertFalse($lsp->createBlockingNotifications($event, $dto));
+        $this->assertFalse($lsp->createBlockingNotifications($event, $installationData));
     }
 
     public function testBlacklistFilterNoSpam()
@@ -116,7 +116,7 @@ class LimeSurveyProfessionalTest extends TestBaseClass
         $id = 'dummyid';
         $lsp = new LimeSurveyProfessional($pm, $id);
         $lsp->init();
-        $dto = $this->getBasicDto();
+        $installationData = $this->getInstallationData();
         $event = new PluginEvent('eventname');
         $event->set('body', '');
         $event->set('subject', '');
@@ -126,7 +126,7 @@ class LimeSurveyProfessionalTest extends TestBaseClass
         $emailMethod = 'mail';
         $folder = getcwd() . '/application/core/plugins/LimeSurveyProfessional';
 
-        $this->assertFalse($blacklist->detectSpam($emailMethod, $folder, $dto->emailLock));
+        $this->assertFalse($blacklist->detectSpam($emailMethod, $folder, $installationData->emailLock));
     }
 
     public function testBlacklistFilterSpam()
@@ -135,7 +135,7 @@ class LimeSurveyProfessionalTest extends TestBaseClass
         $id = 'dummyid';
         $lsp = new LimeSurveyProfessional($pm, $id);
         $lsp->init();
-        $dto = $this->getBasicDto();
+        $installationData = $this->getInstallationData();
         $event = new PluginEvent('eventname');
         $event->set('body', 'Tax return');
         $event->set('subject', '');
@@ -151,7 +151,7 @@ class LimeSurveyProfessionalTest extends TestBaseClass
                 $blacklist = new LimeSurveyProfessional\email\BlacklistFilter($event);
                 $emailMethod = 'mail';
                 $folder = getcwd() . '/application/core/plugins/LimeSurveyProfessional';
-                $locked = $blacklist->detectSpam($emailMethod, $folder, $dto->emailLock);
+                $locked = $blacklist->detectSpam($emailMethod, $folder, $installationData->emailLock);
             }
         }
 
@@ -164,11 +164,11 @@ class LimeSurveyProfessionalTest extends TestBaseClass
         $id = 'dummyid';
         $lsp = new LimeSurveyProfessional($pm, $id);
         $lsp->init();
-        $dto = $this->getBasicDto();
+        $installationData = $this->getInstallationData();
         $fakeTodayDate = new \DateTime('2022-01-28 00:00:00');
         $gracePeriodClass = new LimeSurveyProfessional\notifications\GracePeriodNotification($lsp);
 
-        $this->assertTrue($gracePeriodClass->isInGracePeriod($fakeTodayDate, $dto));
+        $this->assertTrue($gracePeriodClass->isInGracePeriod($fakeTodayDate, $installationData));
     }
 
     public function testNoUpgradeButtonForPaidUsers()
@@ -176,11 +176,11 @@ class LimeSurveyProfessionalTest extends TestBaseClass
         $pm = new PluginManager();
         $id = 'dummyid';
         $lsp = new LimeSurveyProfessional($pm, $id);
-        $dto = $this->getBasicDto();
-        $dto->isPayingUser = true;
+        $installationData = $this->getInstallationData();
+        $installationData->isPayingUser = true;
         $upgradeButtonClass = new LimeSurveyProfessional\upgradeButton\UpgradeButton();
 
-        $this->assertFalse($upgradeButtonClass->displayUpgradeButton($lsp, $dto));
+        $this->assertFalse($upgradeButtonClass->displayUpgradeButton($lsp, $installationData));
     }
 
     public function testIsNotInGracePeriod()
@@ -189,16 +189,16 @@ class LimeSurveyProfessionalTest extends TestBaseClass
         $id = 'dummyid';
         $lsp = new LimeSurveyProfessional($pm, $id);
         // real case: subscription_paid came in seconds earlier than subscription_created
-        $dto = $this->getBasicDto();
-        $dto->dateSubscriptionCreated = '2022-01-21 15:49:51';
-        $dto->dateSubscriptionPaid = '2022-01-21 15:49:46';
-        $dto->paymentPeriod = 'Y';
+        $installationData = $this->getInstallationData();
+        $installationData->dateSubscriptionCreated = '2022-01-21 15:49:51';
+        $installationData->dateSubscriptionPaid = '2022-01-21 15:49:46';
+        $installationData->paymentPeriod = 'Y';
 
         $lsp->init();
         $fakeTodayDate = new \DateTime('2022-02-09 00:00:00');
         $gracePeriodClass = new LimeSurveyProfessional\notifications\GracePeriodNotification($lsp);
 
-        $this->assertFalse($gracePeriodClass->isInGracePeriod($fakeTodayDate, $dto));
+        $this->assertFalse($gracePeriodClass->isInGracePeriod($fakeTodayDate, $installationData));
     }
 
     public function testPromotionalBanner()
@@ -207,9 +207,9 @@ class LimeSurveyProfessionalTest extends TestBaseClass
         $id = 'dummyid';
         $lsp = new LimeSurveyProfessional($pm, $id);
         $lsp->init();
-        $dto = $this->getBasicDto();
-        $dto->plan = 'free';
-        $dto->dateSubscriptionCreated = '2022-01-23 12:11:04';
+        $installationData = $this->getInstallationData();
+        $installationData->plan = 'free';
+        $installationData->dateSubscriptionCreated = '2022-01-23 12:11:04';
         $fakeTodayDateDay5 = new \DateTime('2022-01-27 00:00:00'); //1st show day of banner 1
         $fakeTodayDateDay6 = new \DateTime('2022-03-04 00:00:00'); // 35 days after 1st show day of banner 2
         $testConfig = [
@@ -236,10 +236,10 @@ class LimeSurveyProfessionalTest extends TestBaseClass
         ];
 
         $promotionalBannersClass = new LimeSurveyProfessional\promotionalBanners\PromotionalBanners($lsp);
-        $bannerDay5 = $promotionalBannersClass->getBannerFromConfig($fakeTodayDateDay5, $testConfig, $dto);
+        $bannerDay5 = $promotionalBannersClass->getBannerFromConfig($fakeTodayDateDay5, $testConfig, $installationData);
         $this->assertTrue($bannerDay5->id == 1 && $bannerDay5->shows == 0);
 
-        $bannerDay6 = $promotionalBannersClass->getBannerFromConfig($fakeTodayDateDay6, $testConfig, $dto);
+        $bannerDay6 = $promotionalBannersClass->getBannerFromConfig($fakeTodayDateDay6, $testConfig, $installationData);
         $this->assertTrue($bannerDay6->id == 2 && $bannerDay6->shows == 0);
     }
 }

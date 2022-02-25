@@ -3,7 +3,7 @@
 namespace LimeSurveyProfessional\email;
 
 use LimeSurvey\PluginManager\PluginEvent;
-use LimeSurveyProfessional\DataTransferObject;
+use LimeSurveyProfessional\InstallationData;
 
 class EmailFilter
 {
@@ -24,11 +24,11 @@ class EmailFilter
     /**
      * @TODO for other email checkups before sending
      * Blacklist filter will be initialized here
-     * @param DataTransferObject $dto
+     * @param InstallationData $installationData
      */
-    public function filter(DataTransferObject $dto)
+    public function filter(InstallationData $installationData)
     {
         $blacklistFilter = new BlacklistFilter($this->event);
-        $blacklistFilter->filterBlacklist($dto->emailLock);
+        $blacklistFilter->filterBlacklist($installationData->emailLock);
     }
 }

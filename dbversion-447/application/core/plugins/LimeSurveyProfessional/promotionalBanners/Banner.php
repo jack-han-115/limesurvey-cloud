@@ -2,7 +2,7 @@
 
 namespace LimeSurveyProfessional\promotionalBanners;
 
-use LimeSurveyProfessional\DataTransferObject;
+use LimeSurveyProfessional\InstallationData;
 
 class Banner extends AcknowledgedBanner
 {
@@ -32,18 +32,18 @@ class Banner extends AcknowledgedBanner
      * Banner properties consist of banner data from the bannerConfig of class PromotionalBanners
      * and will be enhanced with data from the db if this banner was acknowledged before.
      *
-     * @param DataTransferObject $dto
+     * @param InstallationData $installationData
      * @param array $bannerData
      */
-    public function __construct(DataTransferObject $dto, array $bannerData)
+    public function __construct(InstallationData $installationData, array $bannerData)
     {
-        parent::__construct($bannerData, $dto->dateSubscriptionCreated, $dto->plan);
+        parent::__construct($bannerData, $installationData->dateSubscriptionCreated, $installationData->plan);
         $this->cycleStart = $bannerData['cycleStart'];
         $this->maxShow = $bannerData['maxShow'];
         $this->mainMessage = $bannerData['mainMessage'];
         $this->messageSiteAdmin = $bannerData['messageSiteAdmin'];
         $this->messageAdmin = $bannerData['messageAdmin'];
-        $this->isSiteAdmin = $dto->isSiteAdminUser;
+        $this->isSiteAdmin = $installationData->isSiteAdminUser;
         $this->setAckForToday();
     }
 

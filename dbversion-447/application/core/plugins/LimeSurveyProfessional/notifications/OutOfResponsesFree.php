@@ -2,7 +2,7 @@
 
 namespace LimeSurveyProfessional\notifications;
 
-use LimeSurveyProfessional\DataTransferObject;
+use LimeSurveyProfessional\InstallationData;
 use LimeSurveyProfessional\LinksAndContactHmtlHelper;
 
 class OutOfResponsesFree extends UnclosableModal
@@ -22,19 +22,19 @@ class OutOfResponsesFree extends UnclosableModal
     /**
      * creates the unpaid invoice notification, if required
      * Returns true when notification was created
-     * @param DataTransferObject $dto
+     * @param InstallationData $installationData
      *
      * @return boolean
      */
-    public function createNotification(DataTransferObject $dto)
+    public function createNotification(InstallationData $installationData)
     {
         $notificationCreated = false;
 
-        if (!$dto->isPayingUser && ($dto->outOfResponses || $dto->locked)) {
+        if (!$installationData->isPayingUser && ($installationData->outOfResponses || $installationData->locked)) {
             $notificationCreated = true;
             $this->title = $this->plugin->gT('Maximum number of responses reached');
-            $this->initMessage($dto->isSiteAdminUser);
-            $this->initButton(new LinksAndContactHmtlHelper(), $dto->isSiteAdminUser);
+            $this->initMessage($installationData->isSiteAdminUser);
+            $this->initButton(new LinksAndContactHmtlHelper(), $installationData->isSiteAdminUser);
             $this->showModal();
         }
 

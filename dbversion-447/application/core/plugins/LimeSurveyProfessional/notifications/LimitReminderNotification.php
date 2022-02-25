@@ -2,7 +2,7 @@
 
 namespace LimeSurveyProfessional\notifications;
 
-use LimeSurveyProfessional\DataTransferObject;
+use LimeSurveyProfessional\InstallationData;
 use LimeSurveyProfessional\LinksAndContactHmtlHelper;
 
 class LimitReminderNotification
@@ -24,18 +24,18 @@ class LimitReminderNotification
 
     /**
      * creates the limit notification for storage and responses, if required
-     * @param DataTransferObject $dto
+     * @param InstallationData $installationData
      *
      * @return void
      */
-    public function createNotification(DataTransferObject $dto)
+    public function createNotification(InstallationData $installationData)
     {
-        if ($dto->hasResponseNotification || $dto->hasStorageNotification) {
+        if ($installationData->hasResponseNotification || $installationData->hasStorageNotification) {
             $not = new \UniqueNotification(array(
                 'user_id' => App()->user->id,
                 'importance' => \Notification::HIGH_IMPORTANCE,
-                'title' => $this->getTitle($dto),
-                'message' => $this->getMessage($dto)
+                'title' => $this->getTitle($installationData),
+                'message' => $this->getMessage($installationData)
             ));
             $not->save();
         }
@@ -43,18 +43,18 @@ class LimitReminderNotification
 
     /**
      * Generates and returns the title of the notification
-     * @param DataTransferObject $dto
+     * @param InstallationData $installationData
      *
      * @return string
      */
-    private function getTitle(DataTransferObject $dto)
+    private function getTitle(InstallationData $installationData)
     {
         $title = '';
-        if ($dto->hasResponseNotification && $dto->hasStorageNotification) {
+        if ($installationData->hasResponseNotification && $installationData->hasStorageNotification) {
             $title = $this->plugin->gT('You are almost out of storage & responses');
-        } elseif ($dto->hasResponseNotification) {
+        } elseif ($installationData->hasResponseNotification) {
             $title = $this->plugin->gT('You are almost out of responses');
-        } elseif ($dto->hasStorageNotification) {
+        } elseif ($installationData->hasStorageNotification) {
             $title = $this->plugin->gT('You are almost out of storage');
         }
 
@@ -63,52 +63,52 @@ class LimitReminderNotification
 
     /**
      * Returns the html formatted message of the notification
-     * @param DataTransferObject $dto
+     * @param InstallationData $installationData
      *
      * @return string
      */
-    private function getMessage(DataTransferObject $dto)
+    private function getMessage(InstallationData $installationData)
     {
         $links = new LinksAndContactHmtlHelper();
 
-        return $this->getMainString($dto) . $this->getContactString($dto) . $this->getButton($links, $dto->isSiteAdminUser);
+        return $this->getMainString($installationData) . $this->getContactString($installationData) . $this->getButton($links, $installationData->isSiteAdminUser);
     }
 
     /**
      * Generates and returns the main message string
-     * @param DataTransferObject $dto
+     * @param InstallationData $installationData
      *
      * @return string
      */
-    public function getMainString(DataTransferObject $dto)
+    public function getMainString(InstallationData $installationData)
     {
         $mainString = '';
-        if ($dto->hasResponseNotification && $dto->hasStorageNotification) {
+        if ($installationData->hasResponseNotification && $installationData->hasStorageNotification) {
             $mainString = sprintf(
                 $this->plugin->gT(
                     'The responses on your survey site are below the configured responses reminder limit of %s.'
                 ),
-                $dto->reminderLimitResponses
+                $installationData->reminderLimitResponses
             );
             $mainString .= '<br>' . sprintf(
                     $this->plugin->gT(
                         'Also, the storage on your survey site is below the configured storage reminder limit of %s.'
                     ),
-                    $dto->reminderLimitStorage . '%'
+                    $installationData->reminderLimitStorage . '%'
                 );
-        } elseif ($dto->hasResponseNotification) {
+        } elseif ($installationData->hasResponseNotification) {
             $mainString = sprintf(
                 $this->plugin->gT(
                     'The responses on your survey site are below the configured responses reminder limit of %s.'
                 ),
-                $dto->reminderLimitResponses
+                $installationData->reminderLimitResponses
             );
-        } elseif ($dto->hasStorageNotification) {
+        } elseif ($installationData->hasStorageNotification) {
             $mainString = sprintf(
                 $this->plugin->gT(
                     'The storage on your survey site is below the configured storage reminder limit of %s.'
                 ),
-                $dto->reminderLimitStorage . '%'
+                $installationData->reminderLimitStorage . '%'
             );
         }
 
@@ -117,15 +117,15 @@ class LimitReminderNotification
 
     /**
      * Generates and returns the contact part of the message
-     * @param DataTransferObject $dto
+     * @param InstallationData $installationData
      *
      * @return string
      */
-    public function getContactString(DataTransferObject $dto)
+    public function getContactString(InstallationData $installationData)
     {
         $contactString = '';
-        if ($dto->hasResponseNotification && $dto->hasStorageNotification) {
-            if ($dto->isSiteAdminUser) {
+        if ($installationData->hasResponseNotification && $installationData->hasStorageNotification) {
+            if ($installationData->isSiteAdminUser) {
                 $contactString = $this->plugin->gT(
                     'Please upgrade or renew your plan to increase your storage & responses.'
                 );
@@ -134,8 +134,8 @@ class LimitReminderNotification
                     'Please contact your Survey Site Administrator to upgrade or renew your plan to increase your storage & responses.'
                 );
             }
-        } elseif ($dto->hasResponseNotification) {
-            if ($dto->isSiteAdminUser) {
+        } elseif ($installationData->hasResponseNotification) {
+            if ($installationData->isSiteAdminUser) {
                 $contactString = $this->plugin->gT(
                     'Please upgrade or renew your plan to increase your responses.'
                 );
@@ -144,8 +144,8 @@ class LimitReminderNotification
                     'Please contact your Survey Site Administrator to upgrade or renew your plan to increase your responses.'
                 );
             }
-        } elseif ($dto->hasStorageNotification) {
-            if ($dto->isSiteAdminUser) {
+        } elseif ($installationData->hasStorageNotification) {
+            if ($installationData->isSiteAdminUser) {
                 $contactString = $this->plugin->gT('Please upgrade or renew your plan to increase your storage.');
             } else {//all other users
                 $contactString = $this->plugin->gT(

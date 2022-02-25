@@ -2,7 +2,7 @@
 
 namespace LimeSurveyProfessional\upgradeButton;
 
-use LimeSurveyProfessional\DataTransferObject;
+use LimeSurveyProfessional\InstallationData;
 use LimeSurveyProfessional\LinksAndContactHmtlHelper;
 
 class UpgradeButton
@@ -11,14 +11,14 @@ class UpgradeButton
      * Main function to display the upgrade button for free users
      * Loads necessary js and css and adds a menu item to the admin menu
      * @param \LimeSurveyProfessional $plugin
-     * @param DataTransferObject $dto
+     * @param InstallationData $installationData
      * @return bool
      * @throws \CException
      */
-    public function displayUpgradeButton(\LimeSurveyProfessional $plugin, DataTransferObject $dto)
+    public function displayUpgradeButton(\LimeSurveyProfessional $plugin, InstallationData $installationData)
     {
         $display = false;
-        if (!$dto->isPayingUser) {
+        if (!$installationData->isPayingUser) {
             // add upgradeButton js
             $assetsUrl = \Yii::app()->assetManager->publish(dirname(__FILE__) . '/../js/upgradeButton');
             App()->clientScript->registerScriptFile($assetsUrl . '/upgradeButton.js');
@@ -28,7 +28,7 @@ class UpgradeButton
 
             $links = new \LimeSurveyProfessional\LinksAndContactHmtlHelper();
             $iconClass = '';
-            if (!$dto->isSiteAdminUser) {
+            if (!$installationData->isSiteAdminUser) {
                 $iconClass = ' no-siteadmin';
                 $this->prepareModal($plugin, $links);
             }

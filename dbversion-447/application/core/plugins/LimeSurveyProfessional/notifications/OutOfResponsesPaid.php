@@ -2,7 +2,7 @@
 
 namespace LimeSurveyProfessional\notifications;
 
-use LimeSurveyProfessional\DataTransferObject;
+use LimeSurveyProfessional\InstallationData;
 use LimeSurveyProfessional\LinksAndContactHmtlHelper;
 
 class OutOfResponsesPaid
@@ -24,16 +24,16 @@ class OutOfResponsesPaid
 
     /**
      * creates the notification when paid installation is out of responses
-     * @param DataTransferObject $dto
+     * @param InstallationData $installationData
      */
-    public function createNotification(DataTransferObject $dto)
+    public function createNotification(InstallationData $installationData)
     {
-        if ($dto->isPayingUser && $dto->outOfResponses) {
+        if ($installationData->isPayingUser && $installationData->outOfResponses) {
             $not = new \UniqueNotification(array(
                 'user_id' => App()->user->id,
                 'importance' => \Notification::HIGH_IMPORTANCE,
                 'title' => $this->plugin->gT('Maximum number of responses reached'),
-                'message' => $this->getMessage($dto->isSiteAdminUser)
+                'message' => $this->getMessage($installationData->isSiteAdminUser)
             ));
             $not->save();
         }

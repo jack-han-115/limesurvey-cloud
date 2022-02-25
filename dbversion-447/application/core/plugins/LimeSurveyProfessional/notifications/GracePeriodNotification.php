@@ -2,7 +2,7 @@
 
 namespace LimeSurveyProfessional\notifications;
 
-use LimeSurveyProfessional\DataTransferObject;
+use LimeSurveyProfessional\InstallationData;
 use LimeSurveyProfessional\LinksAndContactHmtlHelper;
 
 class GracePeriodNotification
@@ -35,20 +35,20 @@ class GracePeriodNotification
 
     /**
      * creates notification for "in grace period", if required
-     * @param DataTransferObject $dto
+     * @param InstallationData $installationData
      *
      * @return void
      * @throws \CException
      */
-    public function createNotification(DataTransferObject $dto)
+    public function createNotification(InstallationData $installationData)
     {
-        if ($this->isInGracePeriod(new \DateTime(), $dto)) {
+        if ($this->isInGracePeriod(new \DateTime(), $installationData)) {
             $links = new LinksAndContactHmtlHelper();
             $not = new \UniqueNotification(array(
                 'user_id' => App()->user->id,
                 'importance' => \Notification::HIGH_IMPORTANCE,
                 'title' => $this->getTitle(),
-                'message' => $this->getMessage($links, $dto->isSiteAdminUser) . $this->getButton($links, $dto->isSiteAdminUser)
+                'message' => $this->getMessage($links, $installationData->isSiteAdminUser) . $this->getButton($links, $installationData->isSiteAdminUser)
             ));
             $not->save();
         }
@@ -57,17 +57,17 @@ class GracePeriodNotification
     /**
      * Calculates if user is in grace period.
      * @param \DateTime $now For testing purposes this a function parameter for the current date
-     * @param DataTransferObject $dto
+     * @param InstallationData $installationData
      *
      * @return boolean  true, if user is grace period, false otherwise
      * @throws \CException
      */
-    public function isInGracePeriod(\DateTime $now, DataTransferObject $dto)
+    public function isInGracePeriod(\DateTime $now, InstallationData $installationData)
     {
-        $subscriptionCreated = new \DateTime($dto->dateSubscriptionCreated);
-        $subscriptionPaidIsSet = $dto->dateSubscriptionPaid !== null && $dto->dateSubscriptionPaid != '';
-        $subscriptionPaid = new \DateTime($dto->dateSubscriptionPaid);
-        $latestBillingDate = $this->getLastPaymentDueDate($subscriptionCreated, $now, $dto->paymentPeriod);
+        $subscriptionCreated = new \DateTime($installationData->dateSubscriptionCreated);
+        $subscriptionPaidIsSet = $installationData->dateSubscriptionPaid !== null && $installationData->dateSubscriptionPaid != '';
+        $subscriptionPaid = new \DateTime($installationData->dateSubscriptionPaid);
+        $latestBillingDate = $this->getLastPaymentDueDate($subscriptionCreated, $now, $installationData->paymentPeriod);
 
         if ($subscriptionPaidIsSet && $latestBillingDate <= $subscriptionPaid) {
 //          subscription is paid: all good

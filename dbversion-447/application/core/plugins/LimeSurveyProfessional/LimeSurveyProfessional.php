@@ -63,27 +63,27 @@ class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
         $controller = $this->getEvent()->get('controller');
         $action = $this->getEvent()->get('action');
         if ($this->isBackendAccess()) {
-            $dto = $this->getDto();
+            $installationData = $this->getInstallationData();
 
-            if (!$this->createBlockingNotifications($this->getEvent(), $dto)) {
+            if (!$this->createBlockingNotifications($this->getEvent(), $installationData)) {
                 if ($controller === 'admin' && $action === 'index') {
                     $limitReminderNotification = new LimitReminderNotification($this);
-                    $limitReminderNotification->createNotification($dto);
+                    $limitReminderNotification->createNotification($installationData);
 
                     $outOfResponsesPaid = new OutOfResponsesPaid($this);
-                    $outOfResponsesPaid->createNotification($dto);
+                    $outOfResponsesPaid->createNotification($installationData);
 
                     // Deactivated because of insufficient data on cloud side
                     //only usefull for paying users
-//                    if ($dto->isPayingUser) {
+//                    if ($installationData->isPayingUser) {
 //                        $gracePeriodNotification = new GracePeriodNotification($this);
-//                        $gracePeriodNotification->createNotification($dto);
+//                        $gracePeriodNotification->createNotification($installationData);
 //                    }
                 }
             }
             $today = new \DateTime('midnight');
             $promotionalBanner = new PromotionalBanners($this);
-            $promotionalBanner->showPromotionalBanner($today, $dto);
+            $promotionalBanner->showPromotionalBanner($today, $installationData);
         }
     }
 
@@ -115,16 +115,22 @@ class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
     }
 
     /**
-     *  returns DataTransferObject after let it load all relevant installation data
+     *  returns populated InstallationData
      *
-     * @return \LimeSurveyProfessional\DataTransferObject
+     * @return \LimeSurveyProfessional\InstallationData
      */
-    private function getDto()
+    private function getInstallationData()
     {
-        $dto = new \LimeSurveyProfessional\DataTransferObject();
-        $dto->build();
+        $installationData = new \LimeSurveyProfessional\InstallationData();
+        $installationData->create(
+            new \LimeSurvey\Models\Services\LimeserviceSystem(
+                \Yii::app()->dbstats,
+                (int)getInstallationID()
+            ),
+            App()->user->id == 1
+        );
 
-        return $dto;
+        return $installationData;
     }
 
     /**
@@ -135,10 +141,10 @@ class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
      * Attention: Every class inside array $blockingNotifications needs to have the function createNotification()
      * createNotification() needs to return a boolean!
      * @param \LimeSurvey\PluginManager\PluginEvent $event
-     * @param \LimeSurveyProfessional\DataTransferObject $dto
+     * @param \LimeSurveyProfessional\InstallationData $installationData
      * @return boolean
      */
-    public function createBlockingNotifications($event, $dto)
+    public function createBlockingNotifications($event, $installationData)
     {
         $blockingNotification = false;
         $blockingNotifications = [
@@ -149,7 +155,7 @@ class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
         foreach ($blockingNotifications as $notification) {
             $className = $notification['class'];
             $blockingNotificationClass = new $className($this);
-            $blockingNotification = $blockingNotificationClass->createNotification($dto);
+            $blockingNotification = $blockingNotificationClass->createNotification($installationData);
             if ($blockingNotification) {
                 break;
             }
@@ -170,9 +176,9 @@ class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
     {
         $type = $this->getEvent()->get('type', '');
         if ($type == 'invite' || $type == 'remind') {
-            $dto = $this->getDto();
+            $installationData = $this->getInstallationData();
             $blacklistFilter = new \LimeSurveyProfessional\email\EmailFilter($this->getEvent());
-            $blacklistFilter->filter($dto);
+            $blacklistFilter->filter($installationData);
         }
     }
 
@@ -183,9 +189,9 @@ class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
      */
     public function beforeAdminMenuRender()
     {
-        $dto = $this->getDto();
+        $installationData = $this->getInstallationData();
         $upgradeButton = new \LimeSurveyProfessional\upgradeButton\UpgradeButton();
-        $upgradeButton->displayUpgradeButton($this, $dto);
+        $upgradeButton->displayUpgradeButton($this, $installationData);
     }
 
     /**
@@ -201,9 +207,9 @@ class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
 
         $action = $event->get('function');
         if ($action == 'updateBannersAcknowledgedObject') {
-            $dto = $this->getDto();
+            $installationData = $this->getInstallationData();
             $promotionalBanner = new PromotionalBanners($this);
-            $promotionalBanner->updateBannersAcknowledgedObject($request, $dto);
+            $promotionalBanner->updateBannersAcknowledgedObject($request, $installationData);
         }
     }
 }
