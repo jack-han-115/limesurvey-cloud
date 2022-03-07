@@ -3,7 +3,6 @@
 namespace LimeSurveyProfessional\email;
 
 use LimeSurvey\PluginManager\PluginEvent;
-use PHPMailer\PHPMailer\PHPMailer;
 
 class BlacklistFilter extends EmailFilter
 {
@@ -13,23 +12,23 @@ class BlacklistFilter extends EmailFilter
      *
      *
      * @param PluginEvent $event
-     * @param \LimeSurveyProfessional $plugin
      */
-    public function __construct(PluginEvent $event, \LimeSurveyProfessional $plugin)
+    public function __construct(PluginEvent $event)
     {
-        parent::__construct($event, $plugin);
+        parent::__construct($event);
     }
 
     /**
      * Calls the detectSpam function and takes further action if that returns true.
      * This function exists, so we can test the detectSpam function.
+     * @param int $emailLock
      */
-    public function filterBlacklist()
+    public function filterBlacklist(int $emailLock)
     {
         $emailMethod = \Yii::app()->getConfig('emailmethod');
         $folder = \Yii::getPathOfAlias('LimeSurveyProfessional');
-        if ($this->detectSpam($emailMethod, $folder)) {
-            $this->handleViolationCase();
+        if ($this->detectSpam($emailMethod, $folder, $emailLock)) {
+            $this->handleViolationCase($emailLock);
         }
     }
 
@@ -40,9 +39,10 @@ class BlacklistFilter extends EmailFilter
      * return will be "true".
      * @param string $emailMethod
      * @param string $folder
+     * @param int $emailLock
      * @return bool
      */
-    public function detectSpam(string $emailMethod, string $folder)
+    public function detectSpam(string $emailMethod, string $folder, int $emailLock)
     {
         $spamDetected = false;
         if ($emailMethod != 'smtp') {
@@ -54,11 +54,14 @@ class BlacklistFilter extends EmailFilter
             /** @var int $violationThreshold */
             /** @var array $blacklistEntries */
             foreach ($blacklistEntries as $entry) {
-                if ($this->emailLock == 2 || \LimeSurveyProfessional::$violationCount >= $violationThreshold) {
+                if ($emailLock == 2 || \LimeSurveyProfessional::$violationCount >= $violationThreshold) {
                     $spamDetected = true;
                     break;
                 }
-                if (stripos($emailBody, $entry) !== false || stripos($emailSubject, $entry) !== false || stripos($emailReplyTo, $entry) !== false) {
+                if (stripos($emailBody, $entry) !== false || stripos($emailSubject, $entry) !== false || stripos(
+                        $emailReplyTo,
+                        $entry
+                    ) !== false) {
                     \LimeSurveyProfessional::$violationCount++;
                     \LimeSurveyProfessional::$violationText = $entry;
                     break;
@@ -71,14 +74,19 @@ class BlacklistFilter extends EmailFilter
 
     /**
      * Calls functions to handle an email send attempt after too many violations
+     * @param int $emailLock
      */
-    private function handleViolationCase()
+    private function handleViolationCase(int $emailLock)
     {
         $this->pretendEmailSent();
 
-        if ($this->emailLock != 2) {
+        if ($emailLock != 2) {
+            $limeserviceSystem = new \LimeSurvey\Models\Services\LimeserviceSystem(
+                \Yii::app()->dbstats,
+                (int)getInstallationID()
+            );
             $this->sendSpamAlertEmail();
-            $this->plugin->limeserviceSystem->setEmailLock(2);
+            $limeserviceSystem->setEmailLock(2);
         }
     }
 

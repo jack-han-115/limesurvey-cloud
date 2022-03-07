@@ -24,39 +24,6 @@ class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
 
     protected $settings = array();
 
-    /** @var \LimeSurvey\Models\Services\LimeserviceSystem */
-    public $limeserviceSystem;
-
-    /** @var boolean */
-    public $isSiteAdminUser;
-
-    /** @var boolean */
-    public $isPayingUser;
-
-    /** @var bool */
-    public $outOfResponses;
-
-    /** @var boolean */
-    public $isHardLocked;
-
-    /** @var boolean */
-    public $locked;
-
-    /** @var int */
-    public $emailLock;
-
-    /** @var string|null */
-    public $dateSubscriptionPaid;
-
-    /** @var string|null */
-    public $dateSubscriptionCreated;
-
-    /** @var string|null */
-    public $paymentPeriod;
-
-    /** @var string */
-    public $plan;
-
     /**
      * @return void
      */
@@ -81,21 +48,6 @@ class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
 
         // Optionally set a custom error message.
         $this->getEvent()->set('message', gT('Core plugin can not be disabled.'));
-        /*
-        $isLimeServiceInstallation = function_exists('getInstallationID') && isset(Yii::app()->dbstats);
-        if ($isLimeServiceInstallation) {
-            // Get subsription plan
-            $result = Yii::app()->dbstats
-                ->createCommand(
-                    'SELECT advertising FROM limeservice_system.installations WHERE user_id = ' . getInstallationID()
-                )
-                ->queryRow();
-            // If "free", it should not be possible to deactivate
-            if ($result['advertising'] == '1') {
-                $event = $this->getEvent();
-                $event->set('success', false);
-            }
-        }*/
     }
 
     /**
@@ -111,27 +63,27 @@ class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
         $controller = $this->getEvent()->get('controller');
         $action = $this->getEvent()->get('action');
         if ($this->isBackendAccess()) {
-            $this->initPluginData();
+            $installationData = $this->getInstallationData();
 
-            if (!$this->createBlockingNotifications($this->getEvent())) {
+            if (!$this->createBlockingNotifications($this->getEvent(), $installationData)) {
                 if ($controller === 'admin' && $action === 'index') {
                     $limitReminderNotification = new LimitReminderNotification($this);
-                    $limitReminderNotification->createNotification();
+                    $limitReminderNotification->createNotification($installationData);
 
                     $outOfResponsesPaid = new OutOfResponsesPaid($this);
-                    $outOfResponsesPaid->createNotification();
+                    $outOfResponsesPaid->createNotification($installationData);
 
                     // Deactivated because of insufficient data on cloud side
                     //only usefull for paying users
-//                    if ($this->isPayingUser) {
+//                    if ($installationData->isPayingUser) {
 //                        $gracePeriodNotification = new GracePeriodNotification($this);
-//                        $gracePeriodNotification->createNotification();
+//                        $gracePeriodNotification->createNotification($installationData);
 //                    }
                 }
             }
             $today = new \DateTime('midnight');
             $promotionalBanner = new PromotionalBanners($this);
-            $promotionalBanner->showPromotionalBanner($today);
+            $promotionalBanner->showPromotionalBanner($today, $installationData);
         }
     }
 
@@ -163,25 +115,22 @@ class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
     }
 
     /**
-     * Sets class variables for subscription, installation and admin related data which is used in several subclasses
-     * @throws CException
+     *  returns populated InstallationData
+     *
+     * @return \LimeSurveyProfessional\InstallationData
      */
-    private function initPluginData()
+    private function getInstallationData()
     {
-        $this->limeserviceSystem = new \LimeSurvey\Models\Services\LimeserviceSystem(
-            \Yii::app()->dbstats,
-            (int)getInstallationID()
+        $installationData = new \LimeSurveyProfessional\InstallationData();
+        $installationData->create(
+            new \LimeSurvey\Models\Services\LimeserviceSystem(
+                \Yii::app()->dbstats,
+                (int)getInstallationID()
+            ),
+            App()->user->id == 1
         );
-        $this->isHardLocked = $this->limeserviceSystem->getHardLock() === 1;
-        $this->plan = $this->limeserviceSystem->getUsersPlan();
-        $this->isSiteAdminUser = App()->user->id == 1;
-        $this->isPayingUser = $this->plan !== 'free' && $this->plan != '';
-        $this->outOfResponses = $this->limeserviceSystem->getResponsesAvailable() < 0;
-        $this->locked = $this->limeserviceSystem->getLocked() == 1;
-        $this->emailLock = $this->limeserviceSystem->getEmailLock();
-        $this->dateSubscriptionPaid = $this->limeserviceSystem->getSubscriptionPaid();
-        $this->dateSubscriptionCreated = $this->limeserviceSystem->getSubscriptionCreated();
-        $this->paymentPeriod = $this->limeserviceSystem->getSubscriptionPeriod();
+
+        return $installationData;
     }
 
     /**
@@ -192,10 +141,10 @@ class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
      * Attention: Every class inside array $blockingNotifications needs to have the function createNotification()
      * createNotification() needs to return a boolean!
      * @param \LimeSurvey\PluginManager\PluginEvent $event
-     *
+     * @param \LimeSurveyProfessional\InstallationData $installationData
      * @return boolean
      */
-    public function createBlockingNotifications($event)
+    public function createBlockingNotifications($event, $installationData)
     {
         $blockingNotification = false;
         $blockingNotifications = [
@@ -206,7 +155,7 @@ class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
         foreach ($blockingNotifications as $notification) {
             $className = $notification['class'];
             $blockingNotificationClass = new $className($this);
-            $blockingNotification = $blockingNotificationClass->createNotification();
+            $blockingNotification = $blockingNotificationClass->createNotification($installationData);
             if ($blockingNotification) {
                 break;
             }
@@ -227,9 +176,9 @@ class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
     {
         $type = $this->getEvent()->get('type', '');
         if ($type == 'invite' || $type == 'remind') {
-            $this->initPluginData();
-            $blacklistFilter = new \LimeSurveyProfessional\email\EmailFilter($this->getEvent(), $this);
-            $blacklistFilter->filter();
+            $installationData = $this->getInstallationData();
+            $blacklistFilter = new \LimeSurveyProfessional\email\EmailFilter($this->getEvent());
+            $blacklistFilter->filter($installationData);
         }
     }
 
@@ -240,9 +189,9 @@ class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
      */
     public function beforeAdminMenuRender()
     {
-        $this->initPluginData();
+        $installationData = $this->getInstallationData();
         $upgradeButton = new \LimeSurveyProfessional\upgradeButton\UpgradeButton();
-        $upgradeButton->displayUpgradeButton($this);
+        $upgradeButton->displayUpgradeButton($this, $installationData);
     }
 
     /**
@@ -258,8 +207,9 @@ class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
 
         $action = $event->get('function');
         if ($action == 'updateBannersAcknowledgedObject') {
+            $installationData = $this->getInstallationData();
             $promotionalBanner = new PromotionalBanners($this);
-            $promotionalBanner->updateBannersAcknowledgedObject($request);
+            $promotionalBanner->updateBannersAcknowledgedObject($request, $installationData);
         }
     }
 }

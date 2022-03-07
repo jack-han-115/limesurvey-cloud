@@ -2,6 +2,7 @@
 
 namespace LimeSurveyProfessional\notifications;
 
+use LimeSurveyProfessional\InstallationData;
 use LimeSurveyProfessional\LinksAndContactHmtlHelper;
 
 class OutOfResponsesFree extends UnclosableModal
@@ -21,18 +22,19 @@ class OutOfResponsesFree extends UnclosableModal
     /**
      * creates the unpaid invoice notification, if required
      * Returns true when notification was created
+     * @param InstallationData $installationData
      *
      * @return boolean
      */
-    public function createNotification()
+    public function createNotification(InstallationData $installationData)
     {
         $notificationCreated = false;
 
-        if (!$this->plugin->isPayingUser && ($this->plugin->outOfResponses || $this->plugin->locked)) {
+        if (!$installationData->isPayingUser && ($installationData->outOfResponses || $installationData->locked)) {
             $notificationCreated = true;
             $this->title = $this->plugin->gT('Maximum number of responses reached');
-            $this->getMessage();
-            $this->getButton(new LinksAndContactHmtlHelper());
+            $this->initMessage($installationData->isSiteAdminUser);
+            $this->initButton(new LinksAndContactHmtlHelper(), $installationData->isSiteAdminUser);
             $this->showModal();
         }
 
@@ -41,14 +43,15 @@ class OutOfResponsesFree extends UnclosableModal
 
     /**
      * Generates and sets the html formatted message of the notification
+     * @param bool $isSiteAdminUser
      */
-    private function getMessage()
+    private function initMessage(bool $isSiteAdminUser)
     {
         $this->message = $this->plugin->gT(
                 'You have reached the maximum number of responses allowed for your chosen plan.'
             ) . ' ';
 
-        if ($this->plugin->isSiteAdminUser) {
+        if ($isSiteAdminUser) {
             $this->message .= $this->plugin->gT(
                 'Please upgrade your plan to increase your responses.'
             );
@@ -61,12 +64,12 @@ class OutOfResponsesFree extends UnclosableModal
 
     /**
      * Generates and sets the button html
-     *
      * @param LinksAndContactHmtlHelper $links
+     * @param bool $isSiteAdminUser
      */
-    private function getButton(LinksAndContactHmtlHelper $links)
+    private function initButton(LinksAndContactHmtlHelper $links, bool $isSiteAdminUser)
     {
-        if ($this->plugin->isSiteAdminUser) {
+        if ($isSiteAdminUser) {
             $buttonText = $this->plugin->gT('Upgrade / Purchase responses');
             $this->buttons[] = $links->toHtmlLinkButton('https://account.limesurvey.org/', $buttonText);
         } else {
