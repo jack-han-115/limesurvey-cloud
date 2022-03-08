@@ -165,17 +165,16 @@ class AdminController extends LSYii_Controller
         );
 
         //todo: (3) this has to be in a separate class and called in Plugin
-        $sDomain=$_SERVER['SERVER_NAME'];
-        $sSubdomain=substr($sDomain,0,strpos($sDomain,'.'));
-        $sDomain=substr($sDomain,strpos($sDomain,'.')+1);
+        $sDomain = $_SERVER['SERVER_NAME'];
+        $sSubdomain = substr($sDomain, 0, strpos($sDomain, '.'));
+        $sDomain = substr($sDomain, strpos($sDomain, '.') + 1);
 
         $limeserviceStatistics = new \LimeSurvey\Models\Services\LimeserviceStatistics(
             \Yii::app()->dbstats,
             $iInstallationId
         );
         $iAffectedRows = $limeserviceStatistics->updatePageViewsAdmin($sSubdomain, $sDomain);
-        if ($iAffectedRows==0)
-        {   //this happens on first login
+        if ($iAffectedRows == 0) {   //this happens on first login
             $limeserviceStatistics->insertPageViews($sSubdomain, $sDomain);
         }
 

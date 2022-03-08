@@ -51,11 +51,10 @@ class SurveyController extends LSYii_Controller
 
         // LimeService Mod start ===========================================
         $iInstallationId = (int) getInstallationID();
-        $aInstallation=Yii::app()->dbstats->createCommand('select hard_lock, locked, locked_storage from limeservice_system.installations where user_id='.$iInstallationId)->queryRow();
-        $iResponses = (int)Yii::app()->dbstats->createCommand("select responses_avail from limeservice_system.balances where user_id=".$iInstallationId)->queryScalar();
+        $aInstallation = Yii::app()->dbstats->createCommand('select hard_lock, locked, locked_storage from limeservice_system.installations where user_id=' . $iInstallationId)->queryRow();
+        $iResponses = (int)Yii::app()->dbstats->createCommand("select responses_avail from limeservice_system.balances where user_id=" . $iInstallationId)->queryScalar();
         $sid = returnGlobal('sid');
-        if ($aInstallation['hard_lock']>0 || $aInstallation['locked']>0 || $iResponses<0 || ($aInstallation['locked_storage']>0 && hasFileUploadQuestion($sid)))
-        {
+        if ($aInstallation['hard_lock'] > 0 || $aInstallation['locked'] > 0 || $iResponses < 0 || ($aInstallation['locked_storage'] > 0 && hasFileUploadQuestion($sid))) {
             $this->surveyIsHardlocked();
         }
         // LimeService Mod end ===========================================
@@ -92,23 +91,22 @@ class SurveyController extends LSYii_Controller
         Yii::app()->clientScript->registerPackage('decimal'); // decimal
         Yii::app()->clientScript->registerPackage('decimalcustom'); // decimal-customisations
          // ========================  Begin LimeService Mod
-        $sDomain=$_SERVER['SERVER_NAME'];
-        $sSubdomain=substr($sDomain,0,strpos($sDomain,'.'));
-        $sDomain=substr($sDomain,strpos($sDomain,'.')+1);
-         
+        $sDomain = $_SERVER['SERVER_NAME'];
+        $sSubdomain = substr($sDomain, 0, strpos($sDomain, '.'));
+        $sDomain = substr($sDomain, strpos($sDomain, '.') + 1);
+
         $iAffectedRows = Yii::app()->dbstats->createCommand("Update pageviews set modified=now(), pageviews_client=pageviews_client+1 where subdomain='{$sSubdomain}' and rootdomain='{$sDomain}'")->execute();
-        if ($iAffectedRows==0)
-        {
+        if ($iAffectedRows == 0) {
             Yii::app()->dbstats->createCommand("insert into pageviews (pageviews_client, pageviews_admin, subdomain, rootdomain, created, modified) values (1,0,'{$sSubdomain}','{$sDomain}', now(), now())")->execute();
-        } 
-        // ========================  End LimeService Mod              
+        }
+        // ========================  End LimeService Mod
     }
 
     /**
      * Renders the survey is hardlocked view.
      * If a participant tries to access the survey,
      * when the survey is hardlocked.
-     * 
+     *
      * @return void
      */
     private function surveyIsHardlocked()

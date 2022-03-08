@@ -1,4 +1,5 @@
 <?php
+
 /*
 * LimeSurvey
 * Copyright (C) 2007-2011 The LimeSurvey Project Team / Carsten Schmitz
@@ -17,7 +18,7 @@ if (!defined('BASEPATH')) {
     exit('No direct script access allowed');
 }
 
-class themeoptions  extends Survey_Common_Action
+class themeoptions extends Survey_Common_Action
 {
 
     /**
@@ -36,7 +37,7 @@ class themeoptions  extends Survey_Common_Action
     {
         if (Permission::model()->hasGlobalPermission('templates', 'read')) {
             $this->_renderWrappedTemplate('themeoptions', 'read', array(
-                'model'=>$model,
+                'model' => $model,
             ));
             return;
         }
@@ -51,17 +52,17 @@ class themeoptions  extends Survey_Common_Action
     public function create()
     {
         if (Permission::model()->hasGlobalPermission('templates', 'update')) {
-            $model = new TemplateOptions;
+            $model = new TemplateOptions();
 
             if (isset($_POST['TemplateOptions'])) {
                 $model->attributes = $_POST['TemplateOptions'];
                 if ($model->save()) {
-                    $this->getController()->redirect(array('admin/themeoptions/sa/update/id/'.$model->id));
+                    $this->getController()->redirect(array('admin/themeoptions/sa/update/id/' . $model->id));
                 }
             }
 
             $this->render('create', array(
-                'model'=>$model,
+                'model' => $model,
             ));
         } else {
             Yii::app()->setFlashMessage(gT("We are sorry but you don't have permissions to do this."), 'error');
@@ -88,7 +89,7 @@ class themeoptions  extends Survey_Common_Action
                 $model->attributes = $_POST['TemplateConfiguration'];
                 if ($model->save()) {
                     Yii::app()->user->setFlash('success', gT('Theme options saved.'));
-                    $this->getController()->redirect(array('admin/themeoptions/sa/update/id/'.$model->id));
+                    $this->getController()->redirect(array('admin/themeoptions/sa/update/id/' . $model->id));
                 }
             }
             $this->_updateCommon($model);
@@ -130,20 +131,20 @@ class themeoptions  extends Survey_Common_Action
      */
     public function updatesurvey($sid)
     {
-        if (Permission::model()->hasGlobalPermission('templates', 'update') || Permission::model()->hasSurveyPermission($sid,'surveysettings','update') ) {
+        if (Permission::model()->hasGlobalPermission('templates', 'update') || Permission::model()->hasSurveyPermission($sid, 'surveysettings', 'update')) {
             // Did we really need hasGlobalPermission template ? We are inside survey : hasSurveyPermission only seem better
             $model = TemplateConfiguration::getInstance(null, null, $sid);
             if (isset($_POST['TemplateConfiguration'])) {
                 $model->attributes = $_POST['TemplateConfiguration'];
                 if ($model->save()) {
                     Yii::app()->user->setFlash('success', gT('Theme options saved.'));
-                    $this->getController()->redirect(Yii::app()->getController()->createUrl("/admin/themeoptions/sa/updatesurvey", ['surveyid'=>$sid, 'sid'=>$sid]));
+                    $this->getController()->redirect(Yii::app()->getController()->createUrl("/admin/themeoptions/sa/updatesurvey", ['surveyid' => $sid, 'sid' => $sid]));
                 }
             }
             $this->_updateCommon($model, $sid);
         } else {
             Yii::app()->setFlashMessage(gT("We are sorry but you don't have permissions to do this."), 'error');
-            $this->getController()->redirect(array('admin/survey/sa/view/surveyid/'.$sid));
+            $this->getController()->redirect(array('admin/survey/sa/view/surveyid/' . $sid));
         }
     }
 
@@ -160,7 +161,7 @@ class themeoptions  extends Survey_Common_Action
             $model = TemplateConfiguration::getInstance($sTemplateName, $gsid);
 
             if ($model->bJustCreated === true && $l === null) {
-                $this->getController()->redirect(Yii::app()->getController()->createUrl("/admin/themeoptions/sa/updatesurveygroup/", ['id'=>$id, 'gsid'=>$gsid, 'l'=>1]));
+                $this->getController()->redirect(Yii::app()->getController()->createUrl("/admin/themeoptions/sa/updatesurveygroup/", ['id' => $id, 'gsid' => $gsid, 'l' => 1]));
             }
 
             if (isset($_POST['TemplateConfiguration'])) {
@@ -168,14 +169,14 @@ class themeoptions  extends Survey_Common_Action
                 $model->attributes = $_POST['TemplateConfiguration'];
                 if ($model->save()) {
                     Yii::app()->user->setFlash('success', gT('Theme options saved.'));
-                    $this->getController()->redirect(Yii::app()->getController()->createUrl("/admin/surveysgroups/sa/update/", ['id'=>$gsid]));
+                    $this->getController()->redirect(Yii::app()->getController()->createUrl("/admin/surveysgroups/sa/update/", ['id' => $gsid]));
                 }
             }
 
             $this->_updateCommon($model);
         } else {
             Yii::app()->setFlashMessage(gT("We are sorry but you don't have permissions to do this."), 'error');
-            $this->getController()->redirect(Yii::app()->getController()->createUrl("/admin/surveysgroups/sa/update/", ['id'=>$gsid]));
+            $this->getController()->redirect(Yii::app()->getController()->createUrl("/admin/surveysgroups/sa/update/", ['id' => $gsid]));
         }
     }
 
@@ -206,17 +207,15 @@ class themeoptions  extends Survey_Common_Action
             $importErrorMessage = null;
 
             if (!is_dir(Yii::app()->getConfig('userthemerootdir'))) {
-                mkdir(Yii::app()->getConfig('userthemerootdir'),0775,true);
+                mkdir(Yii::app()->getConfig('userthemerootdir'), 0775, true);
             }
-            if(!is_writable(Yii::app()->getConfig('tempdir'))) {
+            if (!is_writable(Yii::app()->getConfig('tempdir'))) {
                 $canImport = false;
                 $importErrorMessage = gT("The template upload directory doesn't exist or is not writable.");
-            }
-            else if (!is_writable(Yii::app()->getConfig('userthemerootdir'))) {
+            } elseif (!is_writable(Yii::app()->getConfig('userthemerootdir'))) {
                 $canImport = false;
                 $importErrorMessage = gT("Some directories are not writable. Please change the folder permissions for /tmp and /upload/themes in order to enable this option.");
-            }
-            else if (!function_exists("zip_open")) {
+            } elseif (!function_exists("zip_open")) {
                 $canImport = false;
                 $importErrorMessage = gT("You do not have the required ZIP library installed in PHP.");
             }
@@ -225,13 +224,13 @@ class themeoptions  extends Survey_Common_Action
             $filterForm = Yii::app()->request->getPost('TemplateConfiguration', false);
             if ($filterForm) {
                 $oSurveyTheme->setAttributes($filterForm, false);
-                if (array_key_exists('template_description', $filterForm)){
+                if (array_key_exists('template_description', $filterForm)) {
                     $oSurveyTheme->template_description = $filterForm['template_description'];
                 }
-                if (array_key_exists('template_type', $filterForm)){
+                if (array_key_exists('template_type', $filterForm)) {
                     $oSurveyTheme->template_type = $filterForm['template_type'];
                 }
-                if (array_key_exists('template_extends', $filterForm)){
+                if (array_key_exists('template_extends', $filterForm)) {
                     $oSurveyTheme->template_extends = $filterForm['template_extends'];
                 }
             }
@@ -266,7 +265,7 @@ class themeoptions  extends Survey_Common_Action
             }
 
             $this->render('admin', array(
-                'model'=>$model,
+                'model' => $model,
             ));
         } else {
             Yii::app()->setFlashMessage(gT("We are sorry but you don't have permissions to do this."), 'error');
@@ -302,7 +301,6 @@ class themeoptions  extends Survey_Common_Action
             Yii::app()->setFlashMessage(gT("We are sorry but you don't have permissions to do this."), 'error');
             $this->getController()->redirect(array("admin/themeoptions"));
         }
-
     }
 
     public function uninstall()
@@ -331,7 +329,7 @@ class themeoptions  extends Survey_Common_Action
             $this->getController()->redirect(array("admin/themeoptions"));
         } else {
             Yii::app()->setFlashMessage(gT("We are sorry but you don't have permissions to do this."), 'error');
-            $this->getController()->redirect(Yii::app()->getController()->createUrl("/admin/surveysgroups/sa/update/", ['id'=>$gsid]));            
+            $this->getController()->redirect(Yii::app()->getController()->createUrl("/admin/surveysgroups/sa/update/", ['id' => $gsid]));
         }
     }
 
@@ -368,10 +366,10 @@ class themeoptions  extends Survey_Common_Action
      * @param int $gsid : survey group id
      * @return void
      */
-    private function _updateCommon(TemplateConfiguration $model, $sid = null,$gsid = null)
+    private function _updateCommon(TemplateConfiguration $model, $sid = null, $gsid = null)
     {
         /* init the template to current one if option use some twig function (imageSrc for example) mantis #14363 */
-        Template::model()->getInstance($model->template_name,$sid,$gsid);
+        Template::model()->getInstance($model->template_name, $sid, $gsid);
 
         $oModelWithInheritReplacement = TemplateConfiguration::model()->findByPk($model->id);
         $templateOptionPage           = $oModelWithInheritReplacement->optionPage;

@@ -99,7 +99,7 @@ class InstallerController extends CController
     private function checkInstallation()
     {
         // LimeService Mod start ==============
-        if (file_exists(Yii::app()->getConfig('configdir'). '/config.php')) {
+        if (file_exists(Yii::app()->getConfig('configdir') . '/config.php')) {
         // LimeService Mod end ==============
 
             throw new CHttpException(500, 'Installation has been done already. Installer disabled.');

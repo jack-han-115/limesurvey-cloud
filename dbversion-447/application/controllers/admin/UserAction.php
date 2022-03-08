@@ -113,7 +113,7 @@ class UserAction extends SurveyCommonAction
         // LimeService Mod start =============
         // Limit number of administrators on the Free package to prevent spam.
         $iUserCount = User::model()->count();
-        $sPlan = Yii::app()->dbstats->createCommand('SELECT subscription_alias FROM limeservice_system.installations WHERE user_id='.getInstallationID())->queryRow();
+        $sPlan = Yii::app()->dbstats->createCommand('SELECT subscription_alias FROM limeservice_system.installations WHERE user_id=' . getInstallationID())->queryRow();
         if ($sPlan['subscription_alias'] === 'free' && $iUserCount > 9) {
             Yii::app()->setFlashMessage(
                 sprintf(
@@ -158,7 +158,7 @@ class UserAction extends SurveyCommonAction
                 Permission::model()->insertSomeRecords(array('uid' => $iNewUID, 'permission' => getGlobalSetting('defaulttheme'), 'entity' => 'template', 'read_p' => 1, 'entity_id' => 0));
                 // add default usersettings to the user
                 SettingsUser::applyBaseSettings($iNewUID);
-                
+
                 // send Mail
                 /* @todo : must move this to Plugin (or sendMail as boolean in plugin event) */
                 $body = sprintf(gT("Hello %s,"), $new_full_name) . "<br /><br />\n";
@@ -953,11 +953,11 @@ class UserAction extends SurveyCommonAction
     }
 
     /**
-     * +++++++++++++++++++++++LIMESERVICE MOD++++++++++++++++++++++++++++++++ 
+     * +++++++++++++++++++++++LIMESERVICE MOD++++++++++++++++++++++++++++++++
      * This function prepare the email template to send to the new created user
-     * @param string $fullname 
-     * @param string $username 
-     * @param string $password 
+     * @param string $fullname
+     * @param string $username
+     * @param string $password
      * @return mixed $aAdminEmail array with subject and email nody
      */
     private function generateAdminCreationEmail($fullname, $username, $password, $iNewUID)

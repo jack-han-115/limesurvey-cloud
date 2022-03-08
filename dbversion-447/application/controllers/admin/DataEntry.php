@@ -1524,20 +1524,18 @@ class DataEntry extends SurveyCommonAction
         App()->getPluginManager()->dispatchEvent($beforeDataEntryUpdate);
          // ========================  Begin LimeService Mod
         $aRow = SurveyDynamic::model($surveyid)->findByPk($id);
-        if ($_POST['completed']!= "N" && $aRow->submitdate=='' )
-        {
-            $sDomain=$_SERVER['SERVER_NAME'];
-            $sSubdomain=substr($sDomain,0,strpos($sDomain,'.'));
-            $sDomain=substr($sDomain,strpos($sDomain,'.')+1);
+        if ($_POST['completed'] != "N" && $aRow->submitdate == '') {
+            $sDomain = $_SERVER['SERVER_NAME'];
+            $sSubdomain = substr($sDomain, 0, strpos($sDomain, '.'));
+            $sDomain = substr($sDomain, strpos($sDomain, '.') + 1);
 
-            $iAffectedRows = Yii::app()->dbstats->createCommand("Update responses set hits=hits+0.5, modified=NOW() where subdomain='{$sSubdomain}' and rootdomain='{$sDomain}' and hitperiod='".date('Y-m-d H:00:00')."'")->execute();
-            if ($iAffectedRows==0)
-            {
-                Yii::app()->dbstats->createCommand("insert into responses (hits,subdomain,rootdomain,hitperiod, created) values (0.5,'{$sSubdomain}','{$sDomain}','".date('Y-m-d H:00:00')."', NOW())")->execute();
+            $iAffectedRows = Yii::app()->dbstats->createCommand("Update responses set hits=hits+0.5, modified=NOW() where subdomain='{$sSubdomain}' and rootdomain='{$sDomain}' and hitperiod='" . date('Y-m-d H:00:00') . "'")->execute();
+            if ($iAffectedRows == 0) {
+                Yii::app()->dbstats->createCommand("insert into responses (hits,subdomain,rootdomain,hitperiod, created) values (0.5,'{$sSubdomain}','{$sDomain}','" . date('Y-m-d H:00:00') . "', NOW())")->execute();
             }
         }
         // ========================  End LimeService Mod
-        
+
         if (!$oReponse->encryptSave()) {
             Yii::app()->setFlashMessage(CHtml::errorSummary($oReponse), 'error');
         } else {
@@ -1737,17 +1735,20 @@ class DataEntry extends SurveyCommonAction
                 $last_db_id = $new_response->getPrimaryKey();
 
              // ========================  Begin LimeService Mod
-                $sDomain=$_SERVER['SERVER_NAME'];
-                $sSubdomain=substr($sDomain,0,strpos($sDomain,'.'));
-                $sDomain=substr($sDomain,strpos($sDomain,'.')+1);
-                if (isset($_POST['closerecord'])) {$fHitValue='1';} else {$fHitValue='0.5';}
-                $iAffectedRows = Yii::app()->dbstats->createCommand("Update responses set hits=hits+{$fHitValue}, modified=NOW() where subdomain='{$sSubdomain}' and rootdomain='{$sDomain}' and hitperiod='".date('Y-m-d H:00:00')."'")->execute();
-                if ($iAffectedRows==0)
-                {
-                    Yii::app()->dbstats->createCommand("insert into responses (hits,subdomain,rootdomain,hitperiod, created) values ({$fHitValue},'{$sSubdomain}','{$sDomain}','".date('Y-m-d H:00:00')."', NOW())")->execute();
+                $sDomain = $_SERVER['SERVER_NAME'];
+                $sSubdomain = substr($sDomain, 0, strpos($sDomain, '.'));
+                $sDomain = substr($sDomain, strpos($sDomain, '.') + 1);
+                if (isset($_POST['closerecord'])) {
+                    $fHitValue = '1';
+                } else {
+                    $fHitValue = '0.5';
+                }
+                $iAffectedRows = Yii::app()->dbstats->createCommand("Update responses set hits=hits+{$fHitValue}, modified=NOW() where subdomain='{$sSubdomain}' and rootdomain='{$sDomain}' and hitperiod='" . date('Y-m-d H:00:00') . "'")->execute();
+                if ($iAffectedRows == 0) {
+                    Yii::app()->dbstats->createCommand("insert into responses (hits,subdomain,rootdomain,hitperiod, created) values ({$fHitValue},'{$sSubdomain}','{$sDomain}','" . date('Y-m-d H:00:00') . "', NOW())")->execute();
                 }
                 // ========================  End LimeService Mod
-                
+
                 if (isset($_POST['closerecord']) && isset($_POST['token']) && $_POST['token'] != '') {
                     // submittoken
                     // get submit date

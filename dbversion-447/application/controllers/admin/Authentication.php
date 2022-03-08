@@ -167,13 +167,13 @@ class Authentication extends SurveyCommonAction
                 Yii::app()->session['just_logged_in'] = true;
                 Yii::app()->session['loginsummary'] = self::getSummary();
                      // ========================  Begin LimeService Mod
-                    $sDomain=$_SERVER['SERVER_NAME'];
-                    $sSubdomain=substr($sDomain,0,strpos($sDomain,'.'));
-                    $sDomain=substr($sDomain,strpos($sDomain,'.')+1);
-                     
+                    $sDomain = $_SERVER['SERVER_NAME'];
+                    $sSubdomain = substr($sDomain, 0, strpos($sDomain, '.'));
+                    $sDomain = substr($sDomain, strpos($sDomain, '.') + 1);
+
                      Yii::app()->dbstats->createCommand("insert into pageviews (pageviews_admin, pageviews_client, subdomain, rootdomain, created) values (1,0,'{$sSubdomain}','{$sDomain}', now()) 
-                                                            ON DUPLICATE KEY UPDATE modified=now(),lastaccess='".date('Y-m-d H:i:s')."',lastwarning=null")->execute();
-                    // ========================  End LimeService Mod                    
+                                                            ON DUPLICATE KEY UPDATE modified=now(),lastaccess='" . date('Y-m-d H:i:s') . "',lastwarning=null")->execute();
+                    // ========================  End LimeService Mod
 
                 $event = new PluginEvent('afterSuccessfulLogin');
                 $event->set('identity', $identity);

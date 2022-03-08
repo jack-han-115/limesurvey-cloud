@@ -71,8 +71,8 @@ class Database extends SurveyCommonAction
                 'showwelcome' => ['type' => 'yesno', 'default' => false, 'dbname' => false, 'active' => true, 'required' => []],
                 'showsurveypolicynotice' => ['type' => '', 'default' => 0, 'dbname' => false, 'active' => true, 'required' => []],
                 // LimeService Mod Start
-                'showdatapolicybutton' => ['type'=> '', 'default' => 0, 'dbname'=>false, 'active'=>true, 'required'=>[]],
-                'showlegalnoticebutton' => ['type'=> '', 'default' => 0, 'dbname'=>false, 'active'=>true, 'required'=>[]],
+                'showdatapolicybutton' => ['type' => '', 'default' => 0, 'dbname' => false, 'active' => true, 'required' => []],
+                'showlegalnoticebutton' => ['type' => '', 'default' => 0, 'dbname' => false, 'active' => true, 'required' => []],
                 // LimeService Mod end
                 'allowprev' => ['type' => 'yesno', 'default' => false, 'dbname' => false, 'active' => true, 'required' => []],
                 'questionindex' => ['type' => '', 'default' => false, 'dbname' => false, 'active' => true, 'required' => []],
@@ -595,7 +595,7 @@ class Database extends SurveyCommonAction
                     $datasec = Yii::app()->request->getPost('datasec_' . $langname, null);
                     $datasecerror = Yii::app()->request->getPost('datasecerror_' . $langname, null);
                     // LimeService Mod Start
-                    $legalnotice = Yii::app()->request->getPost('legalnotice_'.$langname, null);
+                    $legalnotice = Yii::app()->request->getPost('legalnotice_' . $langname, null);
                     // LimeService Mod end
                     $dataseclabel = Yii::app()->request->getPost('dataseclabel_' . $langname, null);
                     $dateformat = Yii::app()->request->getPost('dateformat_' . $langname, null);
@@ -652,7 +652,7 @@ class Database extends SurveyCommonAction
                         $legalnotice = $this->oFixCKeditor->fixCKeditor($legalnotice);
                         $data['surveyls_legal_notice'] = $legalnotice;
                     }
-                    // LimeService Mod end                    
+                    // LimeService Mod end
 
                     if (count($data) > 0) {
                         $oSurveyLanguageSetting = SurveyLanguageSetting::model()->findByPk(array('surveyls_survey_id' => $iSurveyID, 'surveyls_language' => $langname));

@@ -142,13 +142,13 @@ class GlobalSettings extends SurveyCommonAction
         $data['sCurrentDefaultLanguage'] = getGlobalSetting('defaultlang');
         // LimeService Mod end
 
-        // LimeService - get user administration settings mod start 
+        // LimeService - get user administration settings mod start
         $data['sGlobalSendAdminCreationEmail'] = getGlobalSetting('sendadmincreationemail');
         $data['sGlobalAdminCreationEmailTemplate'] = getGlobalSetting('admincreationemailtemplate');
         $data['sGlobalAdminCreationEmailSubject'] = getGlobalSetting('admincreationemailsubject');
         // LimeService - get user administration settings mod end
 
-        
+
 
         // Green Bar Title
         $data['pageTitle'] = gT("Global settings");
@@ -437,7 +437,7 @@ class GlobalSettings extends SurveyCommonAction
         SettingGlobal::setSetting('admincreationemailsubject', App()->getRequest()->getPost('admincreationemailsubject'));
         SettingGlobal::setSetting('admincreationemailtemplate', App()->getRequest()->getPost('admincreationemailtemplate'));
         //LimeService user admininistration settings mod end
-        
+
 
         if (!empty($warning)) {
             Yii::app()->setFlashMessage($warning, 'warning');

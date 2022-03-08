@@ -490,7 +490,7 @@ class PluginManagerController extends SurveyCommonAction
         Yii::app()->setFlashMessage(gT('No permission'), 'error');
         $this->getController()->redirect($this->getPluginManagerUrl());
         // LimeService Mod End
-        
+
         // Check permissions.
         $this->checkUpdatePermission();
 

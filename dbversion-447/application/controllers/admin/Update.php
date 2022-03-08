@@ -159,7 +159,7 @@ class Update extends DynamicSurveyCommonAction
         Yii::app()->setFlashMessage(gT('LimeSurvey Cloud automatically provides updates - ComfortUpdate is not needed!'), 'error');
         $this->getController()->redirect(Yii::app()->getController()->createUrl("/admin"));
         // ================== LimeService Mod end
-        
+
         $buttons = 1;
         $updateModel = new UpdateForm();
         $serverAnswer = $updateModel->getUpdateInfo($buttons);
@@ -220,7 +220,7 @@ class Update extends DynamicSurveyCommonAction
         Yii::app()->setFlashMessage(gT('LimeSurvey Cloud automatically provides updates - ComfortUpdate is not needed!'), 'error');
         $this->getController()->redirect(Yii::app()->getController()->createUrl("/admin"));
         // ================== LimeService Mod end
-        
+
         $this->requirePostRequest();
 
         if (Permission::model()->hasGlobalPermission('superadmin')) {
@@ -261,7 +261,7 @@ class Update extends DynamicSurveyCommonAction
         Yii::app()->setFlashMessage(gT('LimeSurvey Cloud automatically provides updates - ComfortUpdate is not needed!'), 'error');
         $this->getController()->redirect(Yii::app()->getController()->createUrl("/admin"));
         // ================== LimeService Mod end
-        
+
         if (Permission::model()->hasGlobalPermission('superadmin')) {
             // We get the update key in the database. If it's empty, getWelcomeMessage will return subscription
             $updateKey = getGlobalSetting("update_key");
@@ -314,7 +314,7 @@ class Update extends DynamicSurveyCommonAction
         Yii::app()->setFlashMessage(gT('LimeSurvey Cloud automatically provides updates - ComfortUpdate is not needed!'), 'error');
         $this->getController()->redirect(Yii::app()->getController()->createUrl("/admin"));
         // ================== LimeService Mod end
-        
+
         if (Permission::model()->hasGlobalPermission('superadmin')) {
             // We use request rather than post, because this step can be called by url by displayComfortStep.js
             if (isset($_REQUEST['destinationBuild'])) {
@@ -351,7 +351,7 @@ class Update extends DynamicSurveyCommonAction
         Yii::app()->setFlashMessage(gT('LimeSurvey Cloud automatically provides updates - ComfortUpdate is not needed!'), 'error');
         $this->getController()->redirect(Yii::app()->getController()->createUrl("/admin"));
         // ================== LimeService Mod end
-        
+
         if (Permission::model()->hasGlobalPermission('superadmin')) {
             if (isset($_REQUEST['destinationBuild'])) {
                 $tobuild = $_REQUEST['destinationBuild'];
@@ -388,7 +388,7 @@ class Update extends DynamicSurveyCommonAction
         Yii::app()->setFlashMessage(gT('LimeSurvey Cloud automatically provides updates - ComfortUpdate is not needed!'), 'error');
         $this->getController()->redirect(Yii::app()->getController()->createUrl("/admin"));
         // ================== LimeService Mod end
-        
+
         if (Permission::model()->hasGlobalPermission('superadmin')) {
             if (App()->request->getPost('destinationBuild')) {
                 $destinationBuild = App()->request->getPost('destinationBuild');
@@ -434,7 +434,7 @@ class Update extends DynamicSurveyCommonAction
         Yii::app()->setFlashMessage(gT('LimeSurvey Cloud automatically provides updates - ComfortUpdate is not needed!'), 'error');
         $this->getController()->redirect(Yii::app()->getController()->createUrl("/admin"));
         // ================== LimeService Mod end
-        
+
         if (Permission::model()->hasGlobalPermission('superadmin')) {
             if (App()->request->getPost('destinationBuild')) {
                 $destinationBuild = App()->request->getPost('destinationBuild');
@@ -495,7 +495,7 @@ class Update extends DynamicSurveyCommonAction
         Yii::app()->setFlashMessage(gT('LimeSurvey Cloud automatically provides updates - ComfortUpdate is not needed!'), 'error');
         $this->getController()->redirect(Yii::app()->getController()->createUrl("/admin"));
         // ================== LimeService Mod end
-        
+
         if (Permission::model()->hasGlobalPermission('superadmin')) {
             if (App()->request->getPost('destinationBuild')) {
                 $destinationBuild = App()->request->getPost('destinationBuild');
@@ -541,7 +541,7 @@ class Update extends DynamicSurveyCommonAction
         Yii::app()->setFlashMessage(gT('LimeSurvey Cloud automatically provides updates - ComfortUpdate is not needed!'), 'error');
         $this->getController()->redirect(Yii::app()->getController()->createUrl("/admin"));
         // ================== LimeService Mod end
-        
+
         if (Permission::model()->hasGlobalPermission('superadmin')) {
             // We want to call the server to display the subscribe message
             // So if needed, we can display a specific html message (like we do for update to LTS with a free key)
@@ -596,7 +596,7 @@ class Update extends DynamicSurveyCommonAction
         Yii::app()->setFlashMessage(gT('LimeSurvey Cloud automatically provides updates - ComfortUpdate is not needed!'), 'error');
         $this->getController()->redirect(Yii::app()->getController()->createUrl("/admin"));
         // ================== LimeService Mod end
-        
+
         App()->loadHelper("update/update");
         if (isset($continue) && $continue == "yes") {
             $aViewUrls['output'] = CheckForDBUpgrades($continue);
@@ -620,7 +620,7 @@ class Update extends DynamicSurveyCommonAction
         Yii::app()->setFlashMessage(gT('LimeSurvey Cloud automatically provides updates - ComfortUpdate is not needed!'), 'error');
         $this->getController()->redirect(Yii::app()->getController()->createUrl("/admin"));
         // ================== LimeService Mod end
-        
+
         if (Permission::model()->hasGlobalPermission('superadmin')) {
             if (!isset(App()->session['installlstep4b'])) {
                 die();
@@ -641,7 +641,7 @@ class Update extends DynamicSurveyCommonAction
         Yii::app()->setFlashMessage(gT('LimeSurvey Cloud automatically provides updates - ComfortUpdate is not needed!'), 'error');
         $this->getController()->redirect(Yii::app()->getController()->createUrl("/admin"));
         // ================== LimeService Mod end
-        
+
         App()->session['notificationstate'] = $state;
         return '1';
     }
@@ -651,7 +651,7 @@ class Update extends DynamicSurveyCommonAction
      */
     private function getButtons($crosscheck)
     {
-        
+
         if (Permission::model()->hasGlobalPermission('superadmin')) {
             $updateModel = new UpdateForm();
             $serverAnswer = $updateModel->getUpdateInfo($crosscheck);
