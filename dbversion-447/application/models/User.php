@@ -403,47 +403,25 @@ class User extends LSActiveRecord
      */
     protected function joomla_verifyPassword($password, $hash)
     {
-
-        if(!function_exists('hash_equals'))
-        {
-            function hash_equals($str1, $str2)
-            {
-                if(strlen($str1) != strlen($str2))
-                {
-                    return false;
-                }
-                else
-                {
-                    $res = $str1 ^ $str2;
-                    $ret = 0;
-                    for($i = strlen($res) - 1; $i >= 0; $i--)
-                    {
-                        $ret |= ord($res[$i]);
-                    }
-                    return !$ret;
-                }
-            }
-        }
-
         //$rehash = false;
         $match = false;
 
         // If we are using phpass
-        if (strpos($hash, '$P$') === 0){
+        if (strpos($hash, '$P$') === 0) {
             // Use PHPass's portable hashes with a cost of 10.
             $phpass = Yii::app()->phpass; //new PasswordHash(10, true);
 
             $match = $phpass->CheckPassword($password, $hash);
 
             //$rehash = true;
-        }elseif ($hash[0] == '$'){
+        } elseif ($hash[0] == '$') {
             // JCrypt::hasStrongPasswordSupport() includes a fallback for us in the worst case
             //JCrypt::hasStrongPasswordSupport();
             $match = password_verify($password, $hash);
 
             // Uncomment this line if we actually move to bcrypt.
             //$rehash = password_needs_rehash($hash, PASSWORD_DEFAULT);
-        }elseif (substr($hash, 0, 8) == '{SHA256}'){
+        } elseif (substr($hash, 0, 8) == '{SHA256}') {
             // Check the password
             $parts     = explode(':', $hash);
             $crypt     = $parts[0];
@@ -452,7 +430,7 @@ class User extends LSActiveRecord
 
             //$match = JCrypt::timingSafeCompare($hash, $testcrypt);
             $match = hash_equals((string) $hash, (string) $testcrypt);
-        }else{
+        } else {
             // Check the password
             $parts = explode(':', $hash);
             $crypt = $parts[0];
@@ -466,7 +444,6 @@ class User extends LSActiveRecord
         }
 
         return $match;
-
     }
 
     /**
