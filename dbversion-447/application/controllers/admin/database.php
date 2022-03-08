@@ -23,7 +23,7 @@ use LimeSurvey\Helpers\questionHelper;
 * @copyright 2011
 * @access public
 */
-class database extends Survey_Common_Action
+class Database extends SurveyCommonAction
 {
     /**
      * @var integer Group id
@@ -149,7 +149,7 @@ class database extends Survey_Common_Action
      * @param string $language     Language (defaults are language specific)
      * @param mixed $defaultvalue    The default value itself
      */
-    public function _updateDefaultValues($qid, $sqid, $scale_id, $specialtype, $language, $defaultvalue)
+    public function updateDefaultValues($qid, $sqid, $scale_id, $specialtype, $language, $defaultvalue)
     {
         $arDefaultValue = DefaultValue::model()
             ->find(
@@ -225,10 +225,10 @@ class database extends Survey_Common_Action
             for ($iScaleID = 0; $iScaleID < (int)$questionThemeMetaData['settings']->answerscales; $iScaleID++) {
                 foreach ($aSurveyLanguages as $sLanguage) {
                     if (!is_null(Yii::app()->request->getPost('defaultanswerscale_' . $iScaleID . '_' . $sLanguage))) {
-                        $this->_updateDefaultValues($this->iQuestionID, 0, $iScaleID, '', $sLanguage, Yii::app()->request->getPost('defaultanswerscale_' . $iScaleID . '_' . $sLanguage));
+                        $this->updateDefaultValues($this->iQuestionID, 0, $iScaleID, '', $sLanguage, Yii::app()->request->getPost('defaultanswerscale_' . $iScaleID . '_' . $sLanguage));
                     }
                     if (!is_null(Yii::app()->request->getPost('other_' . $iScaleID . '_' . $sLanguage))) {
-                        $this->_updateDefaultValues($this->iQuestionID, 0, $iScaleID, 'other', $sLanguage, Yii::app()->request->getPost('other_' . $iScaleID . '_' . $sLanguage));
+                        $this->updateDefaultValues($this->iQuestionID, 0, $iScaleID, 'other', $sLanguage, Yii::app()->request->getPost('other_' . $iScaleID . '_' . $sLanguage));
                     }
                 }
             }
@@ -240,7 +240,7 @@ class database extends Survey_Common_Action
                 for ($iScaleID = 0; $iScaleID < (int)$questionThemeMetaData['settings']->subquestions; $iScaleID++) {
                     foreach ($arQuestions as $aSubquestionrow) {
                         if (!is_null(Yii::app()->request->getPost('defaultanswerscale_' . $iScaleID . '_' . $sLanguage . '_' . $aSubquestionrow['qid']))) {
-                            $this->_updateDefaultValues($this->iQuestionID, $aSubquestionrow['qid'], $iScaleID, '', $sLanguage, Yii::app()->request->getPost('defaultanswerscale_' . $iScaleID . '_' . $sLanguage . '_' . $aSubquestionrow['qid']));
+                            $this->updateDefaultValues($this->iQuestionID, $aSubquestionrow['qid'], $iScaleID, '', $sLanguage, Yii::app()->request->getPost('defaultanswerscale_' . $iScaleID . '_' . $sLanguage . '_' . $aSubquestionrow['qid']));
                         }
                     }
                 }
@@ -258,15 +258,15 @@ class database extends Survey_Common_Action
 
                     if (Yii::app()->request->getPost('defaultanswerscale_0_' . $sLanguage) == 'EM') {
 // Case EM, write expression to database
-                        $this->_updateDefaultValues($this->iQuestionID, 0, 0, '', $sLanguage, Yii::app()->request->getPost('defaultanswerscale_0_' . $sLanguage . '_EM'));
+                        $this->updateDefaultValues($this->iQuestionID, 0, 0, '', $sLanguage, Yii::app()->request->getPost('defaultanswerscale_0_' . $sLanguage . '_EM'));
                     } else {
                         // Case "other", write list value to database
-                        $this->_updateDefaultValues($this->iQuestionID, 0, 0, '', $sLanguage, Yii::app()->request->getPost('defaultanswerscale_0_' . $sLanguage));
+                        $this->updateDefaultValues($this->iQuestionID, 0, 0, '', $sLanguage, Yii::app()->request->getPost('defaultanswerscale_0_' . $sLanguage));
                     }
                     ///// end yes/no
                 } else {
                     if (!is_null(Yii::app()->request->getPost('defaultanswerscale_0_' . $sLanguage . '_0'))) {
-                        $this->_updateDefaultValues($this->iQuestionID, 0, 0, '', $sLanguage, Yii::app()->request->getPost('defaultanswerscale_0_' . $sLanguage . '_0'));
+                        $this->updateDefaultValues($this->iQuestionID, 0, 0, '', $sLanguage, Yii::app()->request->getPost('defaultanswerscale_0_' . $sLanguage . '_0'));
                     }
                 }
             }
@@ -375,7 +375,7 @@ class database extends Survey_Common_Action
 //        //This is SUPER important! Recalculating the ExpressionScript Engine state!
 //        LimeExpressionManager::SetDirtyFlag();
 //        LimeExpressionManager::UpgradeConditionsToRelevance($iSurveyID);
-//        $this->_resetEM();
+//        $this->resetEM();
 //
 //        if (!Yii::app()->request->getPost('bFullPOST')) {
 //            Yii::app()->setFlashMessage(gT("Not all answer options were saved. This usually happens due to server limitations ( PHP setting max_input_vars) - please contact your system administrator."), 'error');
@@ -550,7 +550,7 @@ class database extends Survey_Common_Action
 //        //This is SUPER important! Recalculating the ExpressionScript Engine state!
 //        LimeExpressionManager::SetDirtyFlag();
 //        LimeExpressionManager::UpgradeConditionsToRelevance($iSurveyID);
-//        $this->_resetEM();
+//        $this->resetEM();
 //
 //        if (!isset($aErrors) || !count($aErrors)) {
 //            if (!Yii::app()->request->getPost('bFullPOST')) {
@@ -684,7 +684,7 @@ class database extends Survey_Common_Action
             Yii::app()->loadLibrary('Date_Time_Converter');
 
             $unfilteredStartdate = App()->request->getPost('startdate', null);
-            $startdate = $this->_filterEmptyFields($oSurvey, 'startdate');
+            $startdate = $this->filterEmptyFields($oSurvey, 'startdate');
             if ($unfilteredStartdate === null) {
                 // Not submitted.
             } elseif (trim($unfilteredStartdate) == "") {
@@ -697,7 +697,7 @@ class database extends Survey_Common_Action
             }
 
             $unfilteredExpires = App()->request->getPost('expires', null);
-            $expires = $this->_filterEmptyFields($oSurvey, 'expires');
+            $expires = $this->filterEmptyFields($oSurvey, 'expires');
             if ($unfilteredExpires === null) {
                 // Not submitted.
             } elseif (trim($unfilteredExpires) == "") {
@@ -709,75 +709,73 @@ class database extends Survey_Common_Action
                 $oSurvey->expires = $expires;
             }
 
-            $oSurvey->assessments = $this->_filterEmptyFields($oSurvey, 'assessments');
+            $oSurvey->assessments = $this->filterEmptyFields($oSurvey, 'assessments');
 
             if ($oSurvey->active != 'Y') {
-                $oSurvey->anonymized = $this->_filterEmptyFields($oSurvey, 'anonymized');
-                $oSurvey->savetimings = $this->_filterEmptyFields($oSurvey, 'savetimings');
-                $oSurvey->datestamp = $this->_filterEmptyFields($oSurvey, 'datestamp');
-                $oSurvey->ipaddr = $this->_filterEmptyFields($oSurvey, 'ipaddr');
+                $oSurvey->anonymized = $this->filterEmptyFields($oSurvey, 'anonymized');
+                $oSurvey->savetimings = $this->filterEmptyFields($oSurvey, 'savetimings');
+                $oSurvey->datestamp = $this->filterEmptyFields($oSurvey, 'datestamp');
+                $oSurvey->ipaddr = $this->filterEmptyFields($oSurvey, 'ipaddr');
                 //save the new setting ipanonymize
-                $oSurvey->ipanonymize = $this->_filterEmptyFields($oSurvey, 'ipanonymize');
+                $oSurvey->ipanonymize = $this->filterEmptyFields($oSurvey, 'ipanonymize');
                 //todo: here we have to change the ip-addresses already saved ?!?
-                $oSurvey->refurl = $this->_filterEmptyFields($oSurvey, 'refurl');
+                $oSurvey->refurl = $this->filterEmptyFields($oSurvey, 'refurl');
             }
 
-            $oSurvey->publicgraphs = $this->_filterEmptyFields($oSurvey, 'publicgraphs');
-            $oSurvey->usecookie = $this->_filterEmptyFields($oSurvey, 'usecookie');
-            $oSurvey->allowregister = $this->_filterEmptyFields($oSurvey, 'allowregister');
-            $oSurvey->allowsave = $this->_filterEmptyFields($oSurvey, 'allowsave');
-            $oSurvey->navigationdelay = (int) $this->_filterEmptyFields($oSurvey, 'navigationdelay');
-            $oSurvey->printanswers = $this->_filterEmptyFields($oSurvey, 'printanswers');
-            $oSurvey->publicstatistics = $this->_filterEmptyFields($oSurvey, 'publicstatistics');
-            $oSurvey->autoredirect = $this->_filterEmptyFields($oSurvey, 'autoredirect');
+            $oSurvey->publicgraphs = $this->filterEmptyFields($oSurvey, 'publicgraphs');
+            $oSurvey->usecookie = $this->filterEmptyFields($oSurvey, 'usecookie');
+            $oSurvey->allowregister = $this->filterEmptyFields($oSurvey, 'allowregister');
+            $oSurvey->allowsave = $this->filterEmptyFields($oSurvey, 'allowsave');
+            $oSurvey->navigationdelay = (int) $this->filterEmptyFields($oSurvey, 'navigationdelay');
+            $oSurvey->printanswers = $this->filterEmptyFields($oSurvey, 'printanswers');
+            $oSurvey->publicstatistics = $this->filterEmptyFields($oSurvey, 'publicstatistics');
+            $oSurvey->autoredirect = $this->filterEmptyFields($oSurvey, 'autoredirect');
 
             // save into the database only if global settings are off
             //if (getGlobalSetting('showxquestions') === 'choose'){
-                $oSurvey->showxquestions = $this->_filterEmptyFields($oSurvey, 'showxquestions');
+                $oSurvey->showxquestions = $this->filterEmptyFields($oSurvey, 'showxquestions');
             //}
             //if (getGlobalSetting('showgroupinfo') === 'choose'){
-                $oSurvey->showgroupinfo = $this->_filterEmptyFields($oSurvey, 'showgroupinfo');
+                $oSurvey->showgroupinfo = $this->filterEmptyFields($oSurvey, 'showgroupinfo');
             //}
             //if (getGlobalSetting('showqnumcode') === 'choose'){
-                $oSurvey->showqnumcode = $this->_filterEmptyFields($oSurvey, 'showqnumcode');
+                $oSurvey->showqnumcode = $this->filterEmptyFields($oSurvey, 'showqnumcode');
             //}
             //if (getGlobalSetting('shownoanswer') == 2){  // Don't do exact comparison because the value could be from global settings table (string) or from config (integer)
-                $oSurvey->shownoanswer = $this->_filterEmptyFields($oSurvey, 'shownoanswer');
+                $oSurvey->shownoanswer = $this->filterEmptyFields($oSurvey, 'shownoanswer');
             //}
-
             // LimeService Mod Start
             $oSurvey->showdatapolicybutton = $this->_filterEmptyFields($oSurvey, 'showdatapolicybutton');
             $oSurvey->showlegalnoticebutton = $this->_filterEmptyFields($oSurvey, 'showlegalnoticebutton');
             // LimeService Mod end
-
-            $oSurvey->showwelcome = $this->_filterEmptyFields($oSurvey, 'showwelcome');
-            $oSurvey->showsurveypolicynotice = $this->_filterEmptyFields($oSurvey, 'showsurveypolicynotice');
-            $oSurvey->allowprev = $this->_filterEmptyFields($oSurvey, 'allowprev');
-            $oSurvey->questionindex = (int) $this->_filterEmptyFields($oSurvey, 'questionindex');
-            $oSurvey->nokeyboard = $this->_filterEmptyFields($oSurvey, 'nokeyboard');
-            $oSurvey->showprogress = $this->_filterEmptyFields($oSurvey, 'showprogress');
-            $oSurvey->listpublic = $this->_filterEmptyFields($oSurvey, 'listpublic');
-            $oSurvey->htmlemail = $this->_filterEmptyFields($oSurvey, 'htmlemail');
-            $oSurvey->sendconfirmation = $this->_filterEmptyFields($oSurvey, 'sendconfirmation');
-            $oSurvey->tokenanswerspersistence = $this->_filterEmptyFields($oSurvey, 'tokenanswerspersistence');
-            $oSurvey->alloweditaftercompletion = $this->_filterEmptyFields($oSurvey, 'alloweditaftercompletion');
+            $oSurvey->showwelcome = $this->filterEmptyFields($oSurvey, 'showwelcome');
+            $oSurvey->showsurveypolicynotice = $this->filterEmptyFields($oSurvey, 'showsurveypolicynotice');
+            $oSurvey->allowprev = $this->filterEmptyFields($oSurvey, 'allowprev');
+            $oSurvey->questionindex = (int) $this->filterEmptyFields($oSurvey, 'questionindex');
+            $oSurvey->nokeyboard = $this->filterEmptyFields($oSurvey, 'nokeyboard');
+            $oSurvey->showprogress = $this->filterEmptyFields($oSurvey, 'showprogress');
+            $oSurvey->listpublic = $this->filterEmptyFields($oSurvey, 'listpublic');
+            $oSurvey->htmlemail = $this->filterEmptyFields($oSurvey, 'htmlemail');
+            $oSurvey->sendconfirmation = $this->filterEmptyFields($oSurvey, 'sendconfirmation');
+            $oSurvey->tokenanswerspersistence = $this->filterEmptyFields($oSurvey, 'tokenanswerspersistence');
+            $oSurvey->alloweditaftercompletion = $this->filterEmptyFields($oSurvey, 'alloweditaftercompletion');
             $oSurvey->usecaptcha = Survey::saveTranscribeCaptchaOptions($oSurvey);
-            $oSurvey->emailresponseto = $this->_filterEmptyFields($oSurvey, 'emailresponseto');
-            $oSurvey->emailnotificationto = $this->_filterEmptyFields($oSurvey, 'emailnotificationto');
-            $googleanalyticsapikeysetting = $this->_filterEmptyFields($oSurvey, 'googleanalyticsapikeysetting');
+            $oSurvey->emailresponseto = $this->filterEmptyFields($oSurvey, 'emailresponseto');
+            $oSurvey->emailnotificationto = $this->filterEmptyFields($oSurvey, 'emailnotificationto');
+            $googleanalyticsapikeysetting = $this->filterEmptyFields($oSurvey, 'googleanalyticsapikeysetting');
             $oSurvey->googleanalyticsapikeysetting = $googleanalyticsapikeysetting;
 
             if ($googleanalyticsapikeysetting == "Y") {
-                $oSurvey->googleanalyticsapikey = $this->_filterEmptyFields($oSurvey, 'googleanalyticsapikey');
+                $oSurvey->googleanalyticsapikey = $this->filterEmptyFields($oSurvey, 'googleanalyticsapikey');
             } elseif ($googleanalyticsapikeysetting == "G") {
                 $oSurvey->googleanalyticsapikey = "9999useGlobal9999";
             } elseif ($googleanalyticsapikeysetting == "N") {
                 $oSurvey->googleanalyticsapikey = "";
             }
 
-            $oSurvey->googleanalyticsstyle = $this->_filterEmptyFields($oSurvey, 'googleanalyticsstyle');
+            $oSurvey->googleanalyticsstyle = $this->filterEmptyFields($oSurvey, 'googleanalyticsstyle');
 
-            $tokenlength = $this->_filterEmptyFields($oSurvey, 'tokenlength');
+            $tokenlength = $this->filterEmptyFields($oSurvey, 'tokenlength');
             $oSurvey->tokenlength = (int) ((($tokenlength < 5 || $tokenlength > 36) && $tokenlength != -1) ? 15 : $tokenlength);
 
             $event = new PluginEvent('beforeSurveySettingsSave');
@@ -827,7 +825,7 @@ class database extends Survey_Common_Action
         }
         //This is SUPER important! Recalculating the ExpressionScript Engine state!
         LimeExpressionManager::SetDirtyFlag();
-        $this->_resetEM();
+        $this->resetEM();
 
         if (Yii::app()->request->getPost('responsejson', 0) == 1) {
             $updatedFields = $this->updatedFields;
@@ -872,7 +870,16 @@ class database extends Survey_Common_Action
     {
         $oSurvey = Survey::model()->findByPk($iSurveyID);
         $request = Yii::app()->request;
-        $oSurvey->additional_languages = implode(' ', Yii::app()->request->getPost('additional_languages', array()));
+        $oldBaseLanguage = $oSurvey->language;
+        $newBaseLanguage = Yii::app()->request->getPost('language', $oldBaseLanguage);
+        $oSurvey->language = $newBaseLanguage;
+        // On the UI the field is "Survey Languages", but on the db and model the field is "additional_languages".
+        $additionalLanguages = Yii::app()->request->getPost('additional_languages', array());
+        // Exclude base language from the additional languages array
+        if (($newBaseLanguageKey = array_search($newBaseLanguage, $additionalLanguages)) !== false) {
+            unset($additionalLanguages[$newBaseLanguageKey]);
+        }
+        $oSurvey->additional_languages = implode(' ', $additionalLanguages);
         $oSurvey->admin = $request->getPost('admin');
         $oSurvey->adminemail = $request->getPost('adminemail');
         $oSurvey->bounce_email = $request->getPost('bounce_email');
@@ -900,15 +907,13 @@ class database extends Survey_Common_Action
             $oSurvey->owner_id = $request->getPost('owner_id');
         }
 
-        /* Delete removed language cleanLanguagesFromSurvey do it already why redo it (cleanLanguagesFromSurvey must be moved to model) ?*/
-        $aAvailableLanguage = $oSurvey->getAllLanguages();
-        $oCriteria = new CDbCriteria();
-        $oCriteria->compare('surveyls_survey_id', $iSurveyID);
-        $oCriteria->addNotInCondition('surveyls_language', $aAvailableLanguage);
-        SurveyLanguageSetting::model()->deleteAll($oCriteria);
+        // If the base language is changing, we may need the current title to avoid the survey
+        // being listed with an empty title.
+        $surveyTitle = $oSurvey->languagesettings[$oldBaseLanguage]->surveyls_title;
 
         /* Add new language fixLanguageConsistency do it ?*/
-        foreach ($oSurvey->additionalLanguages as $sLang) {
+        $aAvailableLanguage = $oSurvey->getAllLanguages();
+        foreach ($aAvailableLanguage as $sLang) {
             if ($sLang) {
                 $oLanguageSettings = SurveyLanguageSetting::model()->find(
                     'surveyls_survey_id=:surveyid AND surveyls_language=:langname',
@@ -919,7 +924,11 @@ class database extends Survey_Common_Action
                     $languagedetails = getLanguageDetails($sLang);
                     $oLanguageSettings->surveyls_survey_id = $iSurveyID;
                     $oLanguageSettings->surveyls_language = $sLang;
-                    $oLanguageSettings->surveyls_title = ''; // Not in default model ?
+                    if ($sLang == $newBaseLanguage) {
+                        $oLanguageSettings->surveyls_title = $surveyTitle;
+                    } else {
+                        $oLanguageSettings->surveyls_title = ''; // Not in default model ?
+                    }
                     $oLanguageSettings->surveyls_dateformat = $languagedetails['dateformat'];
                     if (!$oLanguageSettings->save()) {
                         Yii::app()->setFlashMessage(gT("Survey language could not be created."), "error");
@@ -928,13 +937,20 @@ class database extends Survey_Common_Action
                 }
             }
         }
+        fixLanguageConsistency($iSurveyID, implode(" ", $aAvailableLanguage), $oldBaseLanguage);
+
+        /* Delete removed language cleanLanguagesFromSurvey do it already why redo it (cleanLanguagesFromSurvey must be moved to model) ?*/
+        $oCriteria = new CDbCriteria();
+        $oCriteria->compare('surveyls_survey_id', $iSurveyID);
+        $oCriteria->addNotInCondition('surveyls_language', $aAvailableLanguage);
+        SurveyLanguageSetting::model()->deleteAll($oCriteria);
+
         /* Language fix : remove and add question/group */
         cleanLanguagesFromSurvey($iSurveyID, implode(" ", $oSurvey->additionalLanguages));
-        fixLanguageConsistency($iSurveyID, implode(" ", $oSurvey->additionalLanguages));
 
         //This is SUPER important! Recalculating the ExpressionScript Engine state!
         LimeExpressionManager::SetDirtyFlag();
-        $this->_resetEM();
+        $this->resetEM();
 
         // This will force the generation of the entry for survey group
         TemplateConfiguration::checkAndcreateSurveyConfig($iSurveyID);
@@ -953,7 +969,7 @@ class database extends Survey_Common_Action
      * @param mixed $newValue
      * @return mixed
      */
-    private function _filterEmptyFields($oSurvey, $fieldArrayName, $newValue = null)
+    private function filterEmptyFields($oSurvey, $fieldArrayName, $newValue = null)
     {
         $aSurvey = $oSurvey->attributes;
 
@@ -986,7 +1002,7 @@ class database extends Survey_Common_Action
         return $newValue;
     }
 
-    private function _resetEM()
+    private function resetEM()
     {
         $oSurvey = Survey::model()->findByPk($this->iSurveyID);
         $oEM =& LimeExpressionManager::singleton();

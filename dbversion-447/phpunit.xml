@@ -17,6 +17,7 @@
     <!-- This filter is for the code coverage -->
     <filter>
         <whitelist processUncoveredFilesFromWhitelist="true">
+            <directory suffix=".php">application/models/services</directory>
             <directory suffix=".php">application/core/plugins/LimeSurveyProfessional</directory>
             <exclude>
                 <directory>application/core/plugins/LimeSurveyProfessional/views</directory>

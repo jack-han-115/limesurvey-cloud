@@ -156,8 +156,16 @@ class LSYii_Application extends CWebApplication
             if (is_array($userConfigs['config'])) {
                 $this->config = array_merge($this->config, $userConfigs['config']);
             }
-        } else {
+        }
+
+        if (!file_exists(__DIR__ . '/../config/config.php')) {
+            /* Set up not done : then no other part to update */
             return;
+        }
+        /* User file config */
+        $userConfigs = require(__DIR__ . '/../config/config.php');
+        if (is_array($userConfigs['config'])) {
+            $this->config = array_merge($this->config, $userConfigs['config']);
         }
 
         /* encrypt emailsmtppassword value, because emailsmtppassword in database is also encrypted
@@ -314,7 +322,6 @@ class LSYii_Application extends CWebApplication
             $this->messages->basePath=__DIR__ . DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'locale';
         }
         /// LimeService modification end
-        $this->messages->catalog = $sLanguage;
         App()->session['_lang'] = $sLanguage; // See: http://www.yiiframework.com/wiki/26/setting-and-maintaining-the-language-in-application-i18n/
         parent::setLanguage($sLanguage);
     }

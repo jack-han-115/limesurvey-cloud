@@ -21,10 +21,9 @@
  * @package        LimeSurvey
  * @subpackage    Backend
  */
-class statistics extends Survey_Common_Action
+class Statistics extends SurveyCommonAction
 {
-
-    function __construct($controller, $id)
+    public function __construct($controller, $id)
     {
         parent::__construct($controller, $id);
 
@@ -49,7 +48,7 @@ class statistics extends Survey_Common_Action
          *  C - Array (Yes/No/Uncertain)
          *  D - Date
          *  E - Array (Increase, Same, Decrease)
-         *  F - Array 
+         *  F - Array
          *  G - Gender
          *  H - Array by Column
          *  I - Language Switch
@@ -504,14 +503,14 @@ class statistics extends Survey_Common_Action
             $aData['result'] = null;
         }
 
-        $this->_renderWrappedTemplate('export', 'statistics_view', $aData);
+        $this->renderWrappedTemplate('export', 'statistics_view', $aData);
     }
 
 
     /**
      *  Returns a simple list of values in a particular column, that meet the requirements of the SQL
      */
-    function listcolumn($surveyid, $column, $sortby = "", $sortmethod = "", $sorttype = "")
+    public function listcolumn($surveyid, $column, $sortby = "", $sortmethod = "", $sorttype = "")
     {
         if (!Permission::model()->hasSurveyPermission($surveyid, 'statistics', 'read')) {
             throw new CHttpException(403, gT("You do not have permission to access this page."));
@@ -529,7 +528,7 @@ class statistics extends Survey_Common_Action
     }
 
 
-    function graph()
+    public function graph()
     {
         Yii::app()->loadHelper('admin/statistics');
         Yii::app()->loadHelper("surveytranslator");
@@ -642,7 +641,7 @@ class statistics extends Survey_Common_Action
             $aData['success'] = 0;
         }
 
-        //$this->_renderWrappedTemplate('export', 'statistics_graph_view', $aData);
+        //$this->renderWrappedTemplate('export', 'statistics_graph_view', $aData);
         $this->getController()->renderPartial('export/statistics_graph_view', $aData);
     }
 
@@ -684,7 +683,8 @@ class statistics extends Survey_Common_Action
         $summary[4] = "idL";
 
         // 1: Get list of questions from survey
-        $rows = Question::model()->primary()->getQuestionList($surveyid);;
+        $rows = Question::model()->primary()->getQuestionList($surveyid);
+        ;
 
         // The questions to display (all question)
         foreach ($rows as $row) {
@@ -790,7 +790,7 @@ class statistics extends Survey_Common_Action
         App()->getClientScript()->registerScriptFile(App()->getConfig('adminscripts') . 'json-js/json2.min.js');
         yii::app()->clientScript->registerPackage('jspdf');
         yii::app()->clientScript->registerPackage('jszip');
-        echo $this->_renderWrappedTemplate('export', 'statistics_user_view', $aData);
+        echo $this->renderWrappedTemplate('export', 'statistics_user_view', $aData);
     }
 
 
@@ -809,7 +809,7 @@ class statistics extends Survey_Common_Action
      * @param string $aViewUrls View url(s)
      * @param array $aData Data to be passed on. Optional.
      */
-    protected function _renderWrappedTemplate($sAction = 'export', $aViewUrls = array(), $aData = array(), $sRenderFile = false)
+    protected function renderWrappedTemplate($sAction = 'export', $aViewUrls = array(), $aData = array(), $sRenderFile = false)
     {
         yii::app()->clientScript->registerPackage('bootstrap-switch');
         yii::app()->clientScript->registerPackage('jspdf');
@@ -832,6 +832,6 @@ class statistics extends Survey_Common_Action
 
         $aData['title_bar']['title'] = gT('Browse responses') . ': ' . $oSurvey->currentLanguageSettings->surveyls_title;
         $aData['subaction'] = gT('Statistics');
-        parent::_renderWrappedTemplate($sAction, $aViewUrls, $aData, $sRenderFile);
+        parent::renderWrappedTemplate($sAction, $aViewUrls, $aData, $sRenderFile);
     }
 }

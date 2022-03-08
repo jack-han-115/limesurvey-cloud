@@ -13,7 +13,7 @@
 *
 */
 
-class remotecontrol extends Survey_Common_Action
+class RemoteControl extends SurveyCommonAction
 {
     /**
      * @var Zend_XmlRpc_Server
@@ -86,7 +86,7 @@ class remotecontrol extends Survey_Common_Action
                 ksort($list);
                 $aData['method'] = $RPCType;
                 $aData['list'] = $list;
-                $this->_renderWrappedTemplate('remotecontrol', array('index_view'), $aData);
+                $this->renderWrappedTemplate('remotecontrol', array('index_view'), $aData);
             }
         }
         Yii::app()->session->destroy();
