@@ -8,7 +8,7 @@ $saveUrl = \Yii::app()->createUrl(
 );
 ?>
 
-<div id="promotional-banner" class="alert alert-info alert-dismissible" role="alert"
+<div id="promotional-banner" class="alert alert-info alert-dismissible text-center" role="alert"
      data-href="<?= $saveUrl ?>"
      data-bid="<?= $bannerId ?>">
 

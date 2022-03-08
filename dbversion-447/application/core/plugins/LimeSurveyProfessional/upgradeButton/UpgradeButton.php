@@ -36,7 +36,7 @@ class UpgradeButton
             $aMenuItemAdminOptions = [
                 'isDivider' => false,
                 'isSmallText' => false,
-                'label' => $plugin->gT("Upgrade"),
+                'label' => $plugin->gT("Upgrade plan"),
                 'href' => $links->getPricingPageLink(\Yii::app()->session['adminlang']),
                 'iconClass' => 'fa fa-arrow-circle-up upgrade-icon' . $iconClass,
             ];
