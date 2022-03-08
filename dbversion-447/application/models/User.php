@@ -266,7 +266,7 @@ class User extends LSActiveRecord
 
         // If password comes from the Joomla user, use this to check.
         // TODO: Method copied from Authdb plugin.
-        if ($this->joomla_verifyPassword($sPassword, $this->password)) {
+        if ($this->joomlaVerifyPassword($sPassword, $this->password)) {
             return true;
         }
 
@@ -401,7 +401,7 @@ class User extends LSActiveRecord
      * @param   string   $hash      The hash to verify against.
      * @return  boolean  True if the password and hash match, false otherwise
      */
-    protected function joomla_verifyPassword($password, $hash)
+    protected function joomlaVerifyPassword($password, $hash)
     {
         //$rehash = false;
         $match = false;
