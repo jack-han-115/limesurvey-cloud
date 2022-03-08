@@ -177,7 +177,7 @@ class Survey extends LSActiveRecord implements PermissionInterface
     public $showsurveypolicynotice = 0;
 
     public $bShowRealOptionValues = true;
-    
+
     // LimeService Mod start
     public $showdatapolicybutton = 0;
     public $showlegalnoticebutton = 0;
@@ -515,8 +515,8 @@ class Survey extends LSActiveRecord implements PermissionInterface
             array('showwelcome', 'in', 'range' => array('Y', 'N', 'I'), 'allowEmpty' => true),
             array('showsurveypolicynotice', 'in', 'range' => array('0', '1', '2'), 'allowEmpty' => true),
             // LimeService Mod start
-            array('showdatapolicybutton', 'in', 'range'=>array('0', '1'), 'allowEmpty'=>true),
-            array('showlegalnoticebutton', 'in', 'range'=>array('0', '1'), 'allowEmpty'=>true),
+            array('showdatapolicybutton', 'in', 'range' => array('0', '1'), 'allowEmpty' => true),
+            array('showlegalnoticebutton', 'in', 'range' => array('0', '1'), 'allowEmpty' => true),
             // LimeService Mod end
             array('showprogress', 'in', 'range' => array('Y', 'N', 'I'), 'allowEmpty' => true),
             array('questionindex', 'numerical', 'min' => -1, 'max' => 2, 'allowEmpty' => false),
