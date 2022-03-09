@@ -25,24 +25,24 @@ class InstalledVersions
 private static $installed = array (
   'root' => 
   array (
-    'pretty_version' => 'dev-develop',
-    'version' => 'dev-develop',
+    'pretty_version' => 'dev-master',
+    'version' => 'dev-master',
     'aliases' => 
     array (
     ),
-    'reference' => '0417917dc15116766d0143117d9176cf5aa60bc4',
+    'reference' => '65414f721cebb56e16c9d8588988a0e9e7db8acb',
     'name' => 'limesurvey/limesurvey',
   ),
   'versions' => 
   array (
     'limesurvey/limesurvey' => 
     array (
-      'pretty_version' => 'dev-develop',
-      'version' => 'dev-develop',
+      'pretty_version' => 'dev-master',
+      'version' => 'dev-master',
       'aliases' => 
       array (
       ),
-      'reference' => '0417917dc15116766d0143117d9176cf5aa60bc4',
+      'reference' => '65414f721cebb56e16c9d8588988a0e9e7db8acb',
     ),
     'paragonie/constant_time_encoding' => 
     array (
@@ -82,30 +82,21 @@ private static $installed = array (
     ),
     'phpseclib/phpseclib' => 
     array (
-      'pretty_version' => '3.0.12',
-      'version' => '3.0.12.0',
+      'pretty_version' => '3.0.13',
+      'version' => '3.0.13.0',
       'aliases' => 
       array (
       ),
-      'reference' => '89bfb45bd8b1abc3b37e910d57f5dbd3174f40fb',
+      'reference' => '1443ab79364eea48665fa8c09ac67f37d1025f7e',
     ),
     'symfony/polyfill-ctype' => 
     array (
-      'pretty_version' => 'v1.24.0',
-      'version' => '1.24.0.0',
+      'pretty_version' => 'v1.25.0',
+      'version' => '1.25.0.0',
       'aliases' => 
       array (
       ),
       'reference' => '30885182c981ab175d4d034db0f6f469898070ab',
-    ),
-    'symfony/polyfill-mbstring' => 
-    array (
-      'pretty_version' => 'v1.24.0',
-      'version' => '1.24.0.0',
-      'aliases' => 
-      array (
-      ),
-      'reference' => '0abb51d2f102e00a4eefcf46ba7fec406d245825',
     ),
     'tiamo/spss' => 
     array (
