@@ -13,10 +13,8 @@ $blacklistEntries = [
     'gift',
     'shipping',
     'smtpfox',
-    'tracking',
     'επιστροφή',
     'αναστολή',
     'να χρησιμοποιήσετε την κάρτα',
-    'Tax return',
-    '$fu98u9f8n24f'
+    'Tax return'
 ];

@@ -156,9 +156,23 @@ class LSYii_Application extends CWebApplication
             if (is_array($userConfigs['config'])) {
                 $this->config = array_merge($this->config, $userConfigs['config']);
             }
+        // LimeService Mod start
         } else {
             return;
         }
+        /*
+
+        if (!file_exists(__DIR__ . '/../config/config.php')) {
+            // Set up not done : then no other part to update
+            return;
+        }
+        // User file config
+        $userConfigs = require(__DIR__ . '/../config/config.php');
+        if (is_array($userConfigs['config'])) {
+            $this->config = array_merge($this->config, $userConfigs['config']);
+        }
+        */
+        // LimeService Mod end
 
         /* encrypt emailsmtppassword value, because emailsmtppassword in database is also encrypted
            it would be decrypted in LimeMailer when needed */
@@ -260,7 +274,7 @@ class LSYii_Application extends CWebApplication
         if (file_exists($this->config['configdir'] . '/' . $file . '.php')) {
             $config = require_once($this->config['configdir'] . '/' . $file . '.php');
         } else {
-        	$config = require_once(APPPATH . '/config/' . $file . '.php');
+            $config = require_once(APPPATH . '/config/' . $file . '.php');
         }
         // *************************LimeService Mod End
 
@@ -445,7 +459,7 @@ class LSYii_Application extends CWebApplication
         }
         $realFilePath = realpath($filePath);
         $baseDir = realpath($baseDir);
-        
+
         if (!is_file($realFilePath)) {
             /* Not existing file */
             Yii::log("Try to read invalid file " . $filePath, 'warning', 'application.security.files.is_file');
