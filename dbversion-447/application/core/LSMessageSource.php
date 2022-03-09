@@ -55,6 +55,13 @@ class LSMessageSource extends CMessageSource
      */
     protected function loadMessages($category, $language)
     {
+        // LimeService Mod start
+        $uploaddir = str_replace('instances', 'installations', dirname(dirname(dirname(dirname(__FILE__))))) . '/' . $_SERVER['SERVER_NAME'] . '/userdata/upload';
+        //var_dump($uploaddir);die();
+        if (file_exists($uploaddir . '/locale447/' . $language . '/' . $language . '.mo')) {
+            $this->basePath = $uploaddir . '/locale447';
+        }
+        // LimeService Mod end
         $messageFile = $this->basePath . DIRECTORY_SEPARATOR . $language . DIRECTORY_SEPARATOR . $language;
         if ($this->useMoFile) {
             $messageFile .= self::MO_FILE_EXT;

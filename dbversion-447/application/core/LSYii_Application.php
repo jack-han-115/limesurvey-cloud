@@ -303,18 +303,6 @@ class LSYii_Application extends CWebApplication
         }
 
         $sLanguage = preg_replace('/[^a-z0-9-]/i', '', $sLanguage);
-        // LimeService modification start
-		/*
-        $uploaddir=str_replace('instances','installations',dirname(dirname(dirname(dirname(__FILE__))))).'/'.$_SERVER['SERVER_NAME'].'/userdata/upload';
-        if (file_exists($uploaddir.'/locale447/'.$sLanguage.'/'.$sLanguage.'.mo'))
-        {
-            $this->messages->basePath=$uploaddir.'/locale447';
-        }
-        else
-        {
-            $this->messages->basePath=__DIR__ . DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'locale';
-        }*/
-        /// LimeService modification end
         App()->session['_lang'] = $sLanguage; // See: http://www.yiiframework.com/wiki/26/setting-and-maintaining-the-language-in-application-i18n/
         parent::setLanguage($sLanguage);
     }
