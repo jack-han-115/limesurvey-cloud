@@ -32,7 +32,8 @@
             ],
 			"LimeSurvey\\Models\\Services\\": "application/models/services",
 			"LimeSurvey\\Datavalueobjects\\": "application/datavalueobjects",
-			"LimeSurvey\\Exceptions\\": "application/exceptions"
+			"LimeSurvey\\Exceptions\\": "application/exceptions",
+            "LimeSurveyProfessional\\": "application/core/plugins/LimeSurveyProfessional"
 		}
 	},
 	"require": {
