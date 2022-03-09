@@ -24,6 +24,7 @@ define('YII_DEBUG', true);
 require_once __DIR__ . '/../../third_party/autoload.php';
 require_once BASEPATH . 'yii' . EXT;
 require_once APPPATH . 'core/LSYii_Application' . EXT;
+$_SERVER['SERVER_NAME'] = '';
 $config = require_once(APPPATH . 'config/internal' . EXT);
 
 
