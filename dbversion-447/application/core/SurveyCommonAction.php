@@ -496,7 +496,7 @@ class SurveyCommonAction extends CAction
             }
 
             $aData['dataForHelpMenu'] = [
-                "issuperadmin" => $aData["issuperadmin"],
+                "issuperadmin" => Permission::model()->hasGlobalPermission('superadmin'),
                 "currentPlan" => $result["subscription_alias"]
             ];
             // LimeService Mod End
