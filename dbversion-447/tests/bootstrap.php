@@ -249,6 +249,11 @@ if (file_exists($configFile)) {
     copy($configFile, $configBackupFile);
 }
 
+// LimeService Mod Start
+$_SERVER['HTTP_HOST'] = '';
+$_SERVER['REQUEST_URI'] = '';
+// LimeService Mod End
+
 register_shutdown_function(
     function () {
         $configFile = __DIR__ . '/application/config/config.php';
