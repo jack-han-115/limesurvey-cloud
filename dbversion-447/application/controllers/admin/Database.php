@@ -745,8 +745,8 @@ class Database extends SurveyCommonAction
                 $oSurvey->shownoanswer = $this->filterEmptyFields($oSurvey, 'shownoanswer');
             //}
             // LimeService Mod Start
-            $oSurvey->showdatapolicybutton = $this->_filterEmptyFields($oSurvey, 'showdatapolicybutton');
-            $oSurvey->showlegalnoticebutton = $this->_filterEmptyFields($oSurvey, 'showlegalnoticebutton');
+            $oSurvey->showdatapolicybutton = $this->filterEmptyFields($oSurvey, 'showdatapolicybutton');
+            $oSurvey->showlegalnoticebutton = $this->filterEmptyFields($oSurvey, 'showlegalnoticebutton');
             // LimeService Mod end
             $oSurvey->showwelcome = $this->filterEmptyFields($oSurvey, 'showwelcome');
             $oSurvey->showsurveypolicynotice = $this->filterEmptyFields($oSurvey, 'showsurveypolicynotice');
