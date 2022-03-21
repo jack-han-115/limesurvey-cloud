@@ -10,7 +10,7 @@ $blacklistEntries = [
     'Claim Now',
     'gift card',
     'shipment',
-    'gift',
+    ' gift',
     'shipping',
     'smtpfox',
     'επιστροφή',
