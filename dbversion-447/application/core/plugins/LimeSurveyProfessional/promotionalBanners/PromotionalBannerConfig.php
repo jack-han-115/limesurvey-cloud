@@ -40,17 +40,17 @@ class PromotionalBannerConfig
                     ),
                     'messageAdmin' => $contactSiteAdminLink
                 ],
-                [
-                    'id' => 2,
-                    'cycleStart' => 6,
-                    'maxShow' => 3,
-                    'mainMessage' => $plugin->gT('Need email support?'),
-                    'messageSiteAdmin' => $links->toHtmlLink(
-                        $pricingPageLink,
-                        $plugin->gT('Upgrade to email with our experts.')
-                    ),
-                    'messageAdmin' => $contactSiteAdminLink
-                ],
+//                [
+//                    'id' => 2,
+//                    'cycleStart' => 6,
+//                    'maxShow' => 3,
+//                    'mainMessage' => $plugin->gT('Need email support?'),
+//                    'messageSiteAdmin' => $links->toHtmlLink(
+//                        $pricingPageLink,
+//                        $plugin->gT('Upgrade to email with our experts.')
+//                    ),
+//                    'messageAdmin' => $contactSiteAdminLink
+//                ],
             ],
             'basic' => [
                 [
