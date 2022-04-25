@@ -4191,16 +4191,8 @@ class LimeExpressionManager
         if ($groupSeq > -1 && $questionSeq == -1 && isset($LEM->groupSeqInfo[$groupSeq]['qend'])) {
             $questionSeq = $LEM->groupSeqInfo[$groupSeq]['qend'];
         }
-        // EM core need questionSeq + question id â€¦ */
-        $qid = 0;
-        if ($questionSeq > -1 && !is_null($questionSeq)) {
-            $aQid = array_keys($LEM->questionId2questionSeq, $questionSeq);
-            if (isset($aQid[0])) {
-                $qid = $aQid[0];
-            }
-        }
         // Replace in string
-        $string = $LEM->em->sProcessStringContainingExpressions($string, $qid, $numRecursionLevels, 1, $groupSeq, $questionSeq, $static);
+        $string = $LEM->em->sProcessStringContainingExpressions($string, 0, $numRecursionLevels, 1, $groupSeq, $questionSeq, $static);
         return $string;
     }
 
@@ -4762,7 +4754,7 @@ class LimeExpressionManager
                     if ($LEM->currentGroupSeq > $LEM->maxGroupSeq) { // Did we need it ?
                         $LEM->maxGroupSeq = $LEM->currentGroupSeq;
                     }
-
+                    self::InitGroupRelevanceInfo();
                     $LEM->ProcessAllNeededRelevance($LEM->currentQuestionSeq);
                     $LEM->_CreateSubQLevelRelevanceAndValidationEqns($LEM->currentQuestionSeq);
                     $result = $LEM->_ValidateQuestion($LEM->currentQuestionSeq);
@@ -4977,7 +4969,7 @@ class LimeExpressionManager
                     if ($LEM->currentGroupSeq > $LEM->maxGroupSeq) {
                         $LEM->maxGroupSeq = $LEM->currentGroupSeq;
                     }
-
+                    self::InitGroupRelevanceInfo();
                     $LEM->ProcessAllNeededRelevance($LEM->currentQuestionSeq);
                     $LEM->_CreateSubQLevelRelevanceAndValidationEqns($LEM->currentQuestionSeq);
                     $result = $LEM->_ValidateQuestion($LEM->currentQuestionSeq);
@@ -5088,7 +5080,7 @@ class LimeExpressionManager
                 $oSurveyTimings->insertRecords($tdata);
             }
         }
-        if (count($updatedValues) > 0 || $finished) {
+            if (count($updatedValues) > 0 || $finished) {
                  // ========================  Begin LimeService Mod
                 if (!isset($_SESSION[$this->sessid]['limeservice_start']) && $this->surveyOptions['active']=='Y' && ($_SESSION[$this->sessid]['step']==1 || ($_SESSION[$this->sessid]['totalsteps']==1 && $_SESSION[$this->sessid]['step']==2)))
                 {
@@ -5105,7 +5097,8 @@ class LimeExpressionManager
                 }
                 // ========================  End LimeService Mod              
             $aResponseAttributes = [];
-            switch ($this->surveyMode) {
+                switch ($this->surveyMode)
+                {
                 case 'question':
                     $thisstep = $this->currentQuestionSeq;
                     break;
@@ -5493,7 +5486,7 @@ class LimeExpressionManager
                     if ($LEM->currentGroupSeq > $LEM->maxGroupSeq) {
                         $LEM->maxGroupSeq = $LEM->currentGroupSeq;
                     }
-
+                    self::InitGroupRelevanceInfo();
                     $LEM->ProcessAllNeededRelevance($LEM->currentQuestionSeq);
                     $LEM->_CreateSubQLevelRelevanceAndValidationEqns($LEM->currentQuestionSeq);
                     $result = $LEM->_ValidateQuestion($LEM->currentQuestionSeq, $force);
@@ -6756,6 +6749,34 @@ class LimeExpressionManager
     }
 
     /**
+     * Init groupRelevanceInfo with qid as 0 for expression not related to question
+     * see issue #17966
+     * @return void
+     */
+    private static function InitGroupRelevanceInfo()
+    {
+        $LEM =& LimeExpressionManager::singleton();
+        if (is_null($LEM->currentGroupSeq)) {
+            return;
+        }
+        $LEM->groupRelevanceInfo = [
+            [
+                'qid' => 0,
+                'gseq' => $LEM->currentGroupSeq,
+                'eqn' => '',
+                'result' => true,
+                'numJsVars' => 0,
+                'relevancejs' => '',
+                'relevanceVars' => '',
+                'jsResultVar' => '',
+                'type' => '',
+                'hidden' => false,
+                'hasErrors' => false,
+            ]
+        ];
+    }
+
+    /**
      * This should be called each time a new group is started, whether on same or different pages. Sets/Clears needed internal parameters.
      * @param int|null $gseq - the group sequence
      * @param boolean|null $anonymized - whether anonymized
@@ -6774,7 +6795,7 @@ class LimeExpressionManager
         $LEM->groupRelevanceInfo = [];
         if (!is_null($gseq)) {
             $LEM->currentGroupSeq = $gseq;
-
+            self::InitGroupRelevanceInfo();
             if (!is_null($surveyid)) {
                 $LEM->setVariableAndTokenMappingsForExpressionManager($surveyid, $forceRefresh, $anonymized);
                 if ($gseq > $LEM->maxGroupSeq) {

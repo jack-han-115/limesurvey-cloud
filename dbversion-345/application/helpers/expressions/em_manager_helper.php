@@ -37,6 +37,8 @@
     define('LEM_DEBUG_VALIDATION_DETAIL',4);
     define('LEM_PRETTY_PRINT_ALL_SYNTAX',32);
 
+    define('LEM_DEFAULT_PRECISION',12);
+
     class LimeExpressionManager {
         /**
         * LimeExpressionManager is a singleton.  $instance is its storage location.
@@ -1784,7 +1786,7 @@
                                 $validationEqn[$questionNum] = array();
                             }
                             // sumEqn and sumRemainingEqn may need to be rounded if using sliders
-                            $precision = null;    // default is not to round
+                            $precision=LEM_DEFAULT_PRECISION;    // default is not to round
                             if (isset($qattr['slider_layout']) && $qattr['slider_layout']=='1')
                             {
                                 $precision=0;   // default is to round to whole numbers
@@ -1799,7 +1801,7 @@
                                 }
                             }
                             $sumEqn = 'sum(' . implode(', ', $sq_names) . ')';
-                            $sumRemainingEqn = 'sum(' . $equals_num_value . ', sum(' . implode(', ', $sq_names) . ' ) * -1)';
+                            $sumRemainingEqn = '(' . $equals_num_value . ' - sum(' . implode(', ', $sq_names) . '))';
                             $mainEqn = 'sum(' . implode(', ', $sq_names) . ')';
 
                             if (!is_null($precision))
@@ -2369,6 +2371,12 @@
                             }
 
                             $sumEqn = 'sum(' . implode(', ', $sq_names) . ')';
+                            $precision = LEM_DEFAULT_PRECISION;
+                            if (!is_null($precision))
+                            {
+                                $sumEqn = 'round(' . $sumEqn . ', ' . $precision . ')';
+                            }
+
                             $noanswer_option = '';
                             if ($value_range_allows_missing)
                             {
@@ -2427,6 +2435,12 @@
                             }
 
                             $sumEqn = 'sum(' . implode(', ', $sq_names) . ')';
+                            $precision = LEM_DEFAULT_PRECISION;
+                            if (!is_null($precision))
+                            {
+                                $sumEqn = 'round(' . $sumEqn . ', ' . $precision . ')';
+                            }
+
                             $noanswer_option = '';
                             if ($value_range_allows_missing)
                             {
@@ -4559,16 +4573,8 @@
             if($groupSeq > -1 && $questionSeq == -1 && isset($LEM->groupSeqInfo[$groupSeq]['qend'])) {
                 $questionSeq = $LEM->groupSeqInfo[$groupSeq]['qend'];
             }
-            // EM core need questionSeq + question id â€¦ */
-            $qid = 0;
-            if($questionSeq > -1 && !is_null($questionSeq)) {
-                $aQid=array_keys($LEM->questionId2questionSeq,$questionSeq);
-                if(isset($aQid[0])) {
-                    $qid = $aQid[0];
-                }
-            }
             // Replace in string
-            $string = $LEM->em->sProcessStringContainingExpressions($string,$qid, $numRecursionLevels, 1, $groupSeq, $questionSeq,$static);
+            $string = $LEM->em->sProcessStringContainingExpressions($string,0 , $numRecursionLevels, 1, $groupSeq, $questionSeq, $static);
             return $string;
         }
 
@@ -5163,13 +5169,14 @@
                         }
 
                         // Set certain variables normally set by StartProcessingGroup()
-                        $LEM->groupRelevanceInfo=array();   // TODO only important thing from StartProcessingGroup?
+                        $LEM->groupRelevanceInfo=array();   // TODO only important thing from StartProcessingGroup, See self::InitGroupRelevanceInfo();
                         $qInfo = $LEM->questionSeq2relevance[$LEM->currentQuestionSeq];
                         $LEM->currentQID=$qInfo['qid'];
                         $LEM->currentGroupSeq=$qInfo['gseq'];
-                        if ($LEM->currentGroupSeq > $LEM->maxGroupSeq)// Did we need it ?
+                        if ($LEM->currentGroupSeq > $LEM->maxGroupSeq) {
                             $LEM->maxGroupSeq = $LEM->currentGroupSeq;
-
+                        }
+                        self::InitGroupRelevanceInfo();
                         $LEM->ProcessAllNeededRelevance($LEM->currentQuestionSeq);
                         $LEM->_CreateSubQLevelRelevanceAndValidationEqns($LEM->currentQuestionSeq);
                         $result = $LEM->_ValidateQuestion($LEM->currentQuestionSeq);
@@ -5379,14 +5386,14 @@
                         }
 
                         // Set certain variables normally set by StartProcessingGroup()
-                        $LEM->groupRelevanceInfo=array();   // TODO only important thing from StartProcessingGroup?
+                        $LEM->groupRelevanceInfo=array();   // TODO only important thing from StartProcessingGroup? see self::InitGroupRelevanceInfo();
                         $qInfo = $LEM->questionSeq2relevance[$LEM->currentQuestionSeq];
                         $LEM->currentQID=$qInfo['qid'];
                         $LEM->currentGroupSeq=$qInfo['gseq'];
                         if ($LEM->currentGroupSeq > $LEM->maxGroupSeq) {
                             $LEM->maxGroupSeq = $LEM->currentGroupSeq;
                         }
-
+                        self::InitGroupRelevanceInfo();;
                         $LEM->ProcessAllNeededRelevance($LEM->currentQuestionSeq);
                         $LEM->_CreateSubQLevelRelevanceAndValidationEqns($LEM->currentQuestionSeq);
                         $result = $LEM->_ValidateQuestion($LEM->currentQuestionSeq);
@@ -5906,7 +5913,7 @@
                         }
 
                         // Set certain variables normally set by StartProcessingGroup()
-                        $LEM->groupRelevanceInfo=array();   // TODO only important thing from StartProcessingGroup?
+                        $LEM->groupRelevanceInfo=array();   // TODO only important thing from StartProcessingGroup? see self::InitGroupRelevanceInfo();
                         if (!isset($LEM->questionSeq2relevance[$LEM->currentQuestionSeq])) {
                             return NULL;    // means an invalid question - probably no sub-quetions
                         }
@@ -5916,7 +5923,7 @@
                         if ($LEM->currentGroupSeq > $LEM->maxGroupSeq) {
                             $LEM->maxGroupSeq = $LEM->currentGroupSeq;
                         }
-
+                        self::InitGroupRelevanceInfo();;
                         $LEM->ProcessAllNeededRelevance($LEM->currentQuestionSeq);
                         $LEM->_CreateSubQLevelRelevanceAndValidationEqns($LEM->currentQuestionSeq);
                         $result = $LEM->_ValidateQuestion($LEM->currentQuestionSeq,$force);
@@ -7185,6 +7192,33 @@
         }
 
         /**
+         * Init groupRelevanceInfo with qid as 0 for expression not related to question
+         * see issue #17966
+         * @return void
+         */
+        private static function InitGroupRelevanceInfo()
+        {
+            $LEM =& LimeExpressionManager::singleton();
+            if (is_null($LEM->currentGroupSeq)) {
+                return;
+            }
+            $LEM->groupRelevanceInfo = [
+                [
+                    'qid' => 0,
+                    'gseq' => $LEM->currentGroupSeq,
+                    'eqn' => '',
+                    'result' => true,
+                    'numJsVars' => 0,
+                    'relevancejs' => '',
+                    'relevanceVars' => '',
+                    'jsResultVar' => '',
+                    'type' => '',
+                    'hidden' => false,
+                    'hasErrors' => false,
+                ]
+            ];
+        }
+        /**
         * This should be called each time a new group is started, whether on same or different pages. Sets/Clears needed internal parameters.
         * @param int|null $gseq - the group sequence
         * @param boolean|null $anonymized - whether anonymized
@@ -7204,7 +7238,7 @@
             if (!is_null($gseq))
             {
                 $LEM->currentGroupSeq = $gseq;
-
+                self::InitGroupRelevanceInfo();
                 if (!is_null($surveyid))
                 {
                     $LEM->setVariableAndTokenMappingsForExpressionManager($surveyid,$forceRefresh,$anonymized);
@@ -7410,7 +7444,6 @@
                     }
                 }
             }
-
             $valEqns = array();
             $relEqns = array();
             $relChangeVars = array();
