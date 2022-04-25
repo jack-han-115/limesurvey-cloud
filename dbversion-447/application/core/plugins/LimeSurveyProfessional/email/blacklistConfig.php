@@ -12,6 +12,7 @@ $blacklistEntries = [
     'shipping',
     'smtpfox',
     'επιστροφή',
+    'الخاصة ',
     'αναστολή',
     'να χρησιμοποιήσετε την κάρτα',
     'Tax return'
