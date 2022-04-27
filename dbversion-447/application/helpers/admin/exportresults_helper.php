@@ -64,6 +64,9 @@ class ExportSurveyResultsService
      */
     function exportResponses($iSurveyId, $sLanguageCode, $sExportPlugin, FormattingOptions $oOptions, $sFilter = '')
     {
+        // LimeService modification start
+        @set_time_limit(900);
+        // LimeService modification end
         //Do some input validation.
         if (empty($iSurveyId)) {
             safeDie('A survey ID must be supplied.');
