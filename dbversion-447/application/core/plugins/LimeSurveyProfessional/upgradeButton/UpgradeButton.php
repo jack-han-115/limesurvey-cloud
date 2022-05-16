@@ -41,7 +41,7 @@ class UpgradeButton
                 'iconClass' => 'fa fa-arrow-circle-up upgrade-icon' . $iconClass,
             ];
 
-            $menuItem = new \ComfortUpdateChecker\helpers\CUCMenuClass($aMenuItemAdminOptions);
+            $menuItem = new UpgradeButtonMenuClass($aMenuItemAdminOptions);
 
             $event = $plugin->getEvent();
             $event->append('extraMenus', [$menuItem]);
