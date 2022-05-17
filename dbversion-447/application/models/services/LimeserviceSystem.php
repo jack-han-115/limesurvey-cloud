@@ -308,4 +308,19 @@ class LimeserviceSystem
             ->where('user_id=:user_id', [':user_id' => $this->userInstallationId])
             ->queryScalar();
     }
+
+    /**
+     * Returns client_id value from table installations
+     *
+     * @return \CDbDataReader|mixed
+     * @throws \CException
+     */
+    public function getApiIdAndSecret()
+    {
+        return $this->dbConnection->createCommand()
+            ->select('installation_api_id, installation_api_secret')
+            ->from('limeservice_system.installations')
+            ->where('user_id=:user_id', [':user_id' => $this->userInstallationId])
+            ->queryRow();
+    }
 }

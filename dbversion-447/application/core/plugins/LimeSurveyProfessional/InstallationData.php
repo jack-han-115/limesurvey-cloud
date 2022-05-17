@@ -48,6 +48,15 @@ class InstallationData
     /** @var boolean */
     public $hasStorageNotification;
 
+    /** @var string */
+    public $accessToken;
+
+    /** @var string */
+    public $apiId;
+
+    /** @var string */
+    public $apiSecret;
+
     /**
      * Populates this data object with relevant data of the installation
      * @param LimeserviceSystem $limeserviceSystem
@@ -72,5 +81,11 @@ class InstallationData
         $calcRestStoragePercent = $limeserviceSystem->calcRestStoragePercent();
         $this->hasStorageNotification = $calcRestStoragePercent > 0
             && $calcRestStoragePercent < $this->reminderLimitStorage;
+
+        $accessTokenSetting = \SettingGlobal::model()->findByAttributes(['stg_name' => 'AccessToken']);
+        $this->accessToken = $accessTokenSetting ? $accessTokenSetting->stg_value : '';
+        $apiIdSecretResult = $limeserviceSystem->getApiIdAndSecret();
+        $this->apiId = $apiIdSecretResult['installation_api_id'];
+        $this->apiSecret = $apiIdSecretResult['installation_api_secret'];
     }
 }
