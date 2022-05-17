@@ -34,6 +34,39 @@ Thank you to everyone who helped with this new release!
 
 CHANGE LOG
 ------------------------------------------------------
+Changes from 3.28.10 (build 220510) to 3.28.11 (build 220517) May 16, 2022
+-Fixed issue #17991: Importing a question from the "List questions" menu fails with 400 error (#2349) (Gabriel Jenik)
+#Updated translation: Portuguese (Brazil) by effgarces, mauriciofurtado, samarta, soniagouveia, tamiel
+#Updated translation: French (France) by frederic93190
+
+
+Changes from 3.28.9 (build 220503) to 3.28.10 (build 220510) May 9, 2022
+-Fixed issue #18051: RemoteControl API: Deleting a question crashes  (#2377) (Denis Chenu)
+-Fixed issue #17889: Setting to correct server time not taken into account when sending email invitations (#2356) (Gabriel Jenik)
+#Updated translation: Uighur by walkingdead
+#Updated translation: Hungarian by kkd
+
+
+Changes from 3.28.8 (build 220426) to 3.28.9 (build 220503) May 2, 2022
+-Fixed issue: Kurdish (Kurmanji) is shown as RTL language but it is LTR (Carsten Schmitz)
+-Fixed issue #17804: InputOnDemand is not loading all prior rows when navigating back (#2342) (Gabriel Jenik)
+-Fixed issue #17174: Array dual scale doesn't show previously selected value when come back to same page (#2372) (Gabriel Jenik)
+#Updated translation: Thai by adzpire, tomzt
+#Updated translation: Swedish by c_schmitz, maxzomborszki
+#Updated translation: Spanish (Chile) by c_schmitz, corzel, eddylackmann, ireneoh, jmlopez, larjona, oleggorfinkel, segui, SirCrovax
+#Updated translation: Portuguese (Portugal) by brownst, c_schmitz, pmduque, samarta, soniagouveia, tamiel
+#Updated translation: Hungarian by c_schmitz, kkd, pivostar, vargazsoltivan
+#Updated translation: Finnish by Jmantysalo
+
+
+Changes from 3.28.7 (build 220420) to 3.28.8 (build 220426) April 26, 2022
+-Fixed issue #18048: Error message when managing ComfortUpdate key and key is expired (Carsten Schmitz)
+-Fixed issue #18046: Conditions not working as expected in All in One (#2366) (Denis Chenu)
+-Fixed issue #18026: Session expire message when submit button is clicked twice (#2353) (Gabriel Jenik)
+-Fixed issue #17955: newtest/Y in URL is not clearing session (#2294) (Denis Chenu)
+-Fixed issue #14123: Slider left/right labels not displayed correctly on iPad (#2350) (Gabriel Jenik)
+
+
 Changes from 3.28.6 (build 220412) to 3.28.7 (build 220420) April 19, 2022
 #Updated translation: Russian by Marysja, olly
 #Updated translation: Portuguese (Brazil) by educaticteced

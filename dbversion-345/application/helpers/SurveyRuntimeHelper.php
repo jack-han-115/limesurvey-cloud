@@ -1709,8 +1709,6 @@ class SurveyRuntimeHelper
                 $this->gid              = $this->aStepInfo['gid'];
                 $this->groupname        = $this->aStepInfo['gname'];
                 $this->groupdescription = $this->aStepInfo['gtext'];
-                $this->groupname        = $this->groupname;
-                $this->groupdescription = $this->groupdescription;
             }
         }
     }
