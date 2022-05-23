@@ -84,8 +84,8 @@ class InstallationData
 
         $accessTokenSetting = \SettingGlobal::model()->findByAttributes(['stg_name' => 'AccessToken']);
         $this->accessToken = $accessTokenSetting ? $accessTokenSetting->stg_value : '';
-        $apiIdSecretResult = $limeserviceSystem->getApiIdAndSecret();
-        $this->apiId = $apiIdSecretResult['installation_api_id'];
-        $this->apiSecret = $apiIdSecretResult['installation_api_secret'];
+//        $apiIdSecretResult = $limeserviceSystem->getApiIdAndSecret();
+//        $this->apiId = $apiIdSecretResult['installation_api_id'];
+//        $this->apiSecret = $apiIdSecretResult['installation_api_secret'];
     }
 }
