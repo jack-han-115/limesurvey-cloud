@@ -1482,7 +1482,6 @@ class Tokens extends SurveyCommonAction
                         $success = $mail->sendMessage();
                     }
                     // LimeService Mod End =======================
-                    
                     // If all checks passed, send the email
                     $success = $mail->sendMessage();
                     $stringInfo = CHtml::encode("{$emrow['tid']}: {$emrow['firstname']} {$emrow['lastname']} ({$emrow['email']}).");
