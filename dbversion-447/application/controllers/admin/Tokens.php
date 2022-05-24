@@ -1479,11 +1479,10 @@ class Tokens extends SurveyCommonAction
                     } else {
                         Yii::import('application.helpers.mailHelper');
                         mailHelper::setModeForNext(mailHelper::PREVIOUS_INSTANCE_MODE, ['smtpKeepAlive' => true]);
+                        // If all checks passed, send the email
                         $success = $mail->sendMessage();
                     }
                     // LimeService Mod End =======================
-                    // If all checks passed, send the email
-                    $success = $mail->sendMessage();
                     $stringInfo = CHtml::encode("{$emrow['tid']}: {$emrow['firstname']} {$emrow['lastname']} ({$emrow['email']}).");
                     if ($success) {
                         // Load token to set as sent, no need to check existence ? we just send the email
