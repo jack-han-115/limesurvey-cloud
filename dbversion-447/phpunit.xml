@@ -21,7 +21,6 @@
             <directory suffix=".php">application/core/plugins/LimeSurveyProfessional</directory>
             <exclude>
                 <directory>application/core/plugins/LimeSurveyProfessional/views</directory>
-                <directory>application/core/plugins/LimeSurveyProfessional/vendor</directory>
             </exclude>
         </whitelist>
     </filter>

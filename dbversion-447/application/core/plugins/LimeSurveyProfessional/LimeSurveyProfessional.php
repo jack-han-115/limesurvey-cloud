@@ -5,7 +5,6 @@ use LimeSurveyProfessional\notifications\OutOfResponsesPaid;
 use LimeSurveyProfessional\promotionalBanners\PromotionalBanners;
 use LimeSurveyProfessional\notifications\GracePeriodNotification;
 
-require_once(__DIR__ . '/vendor/autoload.php');
 /**
  * The LimeSurveyProfessional plugin for "free" LimeService systems
  * Source for the cookie consent popup: https://cookieconsent.insites.com/documentation/javascript-api/
@@ -28,12 +27,9 @@ class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
     /**
      * @return void
      */
-    public function init($loadConfig = true)
+    public function init()
     {
         \Yii::setPathOfAlias(get_class($this), dirname(__FILE__));
-        if($loadConfig) {
-            $this->readConfigFile();
-        }
         $this->subscribe('beforeDeactivate'); // user should not be able to deactivate this one ...
         $this->subscribe('beforeControllerAction');
         $this->subscribe('beforeTokenEmail');
