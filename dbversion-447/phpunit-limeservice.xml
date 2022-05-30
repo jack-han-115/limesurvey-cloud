@@ -1,23 +1,15 @@
-<phpunit bootstrap="tests/bootstrap.php" 
+<phpunit bootstrap="tests/bootstrap.php"
          stderr="true"
          colors="true" >
     <testsuites>
-        <testsuite name="unit">
-            <directory>tests/unit</directory>
-        </testsuite>
-        <testsuite name="functional">
-            <directory>tests/functional</directory>
-        </testsuite>
-        <testsuite name="acceptance">
-            <directory>tests/functional/acceptance</directory>
+        <testsuite name="limeservice">
+            <directory>tests/limeservice</directory>
         </testsuite>
     </testsuites>
 
-    <!-- LimeService Mod Start -->
     <!-- This filter is for the code coverage -->
     <filter>
         <whitelist processUncoveredFilesFromWhitelist="true">
-            <directory suffix=".php">application/models/services</directory>
             <directory suffix=".php">application/core/plugins/LimeSurveyProfessional</directory>
             <exclude>
                 <directory>application/core/plugins/LimeSurveyProfessional/views</directory>
@@ -29,5 +21,4 @@
     <logging>
         <log type="coverage-clover" target="cov.xml"/>
     </logging>
-    <!-- LimeService Mod End -->
 </phpunit>

@@ -23,7 +23,7 @@ class LimeSurveyProfessionalTest extends TestBaseClass
         $pm = new PluginManager();
         $id = 'dummyid';
         $lsp = new LimeSurveyProfessional($pm, $id);
-        $lsp->init();
+        $lsp->init(false);
         $this->assertFalse($lsp->forceRedirectToWelcomePage(null));
     }
 
@@ -32,7 +32,7 @@ class LimeSurveyProfessionalTest extends TestBaseClass
         $pm = new PluginManager();
         $id = 'dummyid';
         $lsp = new LimeSurveyProfessional($pm, $id);
-        $lsp->init();
+        $lsp->init(false);
         $event = new PluginEvent('eventname');
         $this->assertTrue($lsp->forceRedirectToWelcomePage($event));
     }
@@ -42,7 +42,7 @@ class LimeSurveyProfessionalTest extends TestBaseClass
         $pm = new PluginManager();
         $id = 'dummyid';
         $lsp = new LimeSurveyProfessional($pm, $id);
-        $lsp->init();
+        $lsp->init(false);
         $event = new PluginEvent('eventname');
         $event->set('subaction', 'logout');
         $this->assertFalse($lsp->forceRedirectToWelcomePage($event));
@@ -62,13 +62,38 @@ class LimeSurveyProfessionalTest extends TestBaseClass
         $this->assertTrue(strpos($historyLinkBr, 'pt/') !== false);
     }
 
-    public function testEmailButtonLink()
+    public function testContactCorporateLink()
+    {
+        $linksClass = new LimeSurveyProfessional\LinksAndContactHmtlHelper();
+        $corporateLink = $linksClass->getContactCorporateLink('de');
+        $this->assertTrue(strpos($corporateLink, 'de/hilfe') !== false);
+    }
+
+    public function testPricingPageLink()
+    {
+        $linksClass = new LimeSurveyProfessional\LinksAndContactHmtlHelper();
+        $pricingLink = $linksClass->getPricingPageLink('fr');
+        $this->assertTrue(strpos($pricingLink, 'fr/') !== false);
+    }
+
+    public function testButtonLink()
     {
         $linksClass = new LimeSurveyProfessional\LinksAndContactHmtlHelper();
         $emailButton = $linksClass->toHtmlLinkButton('test@limesurvey.org', 'Test-Title');
         $this->assertTrue(
             strpos($emailButton, 'test@limesurvey.org') !== false
             && strpos($emailButton, 'btn-') !== false
+            && strpos($emailButton, 'Test-Title') !== false
+        );
+    }
+
+    public function testEmailButtonLink()
+    {
+        $linksClass = new LimeSurveyProfessional\LinksAndContactHmtlHelper();
+        $emailButton = $linksClass->toHtmlMailLinkButton('test@limesurvey.org', 'Test-Title');
+        $this->assertTrue(
+            strpos($emailButton, 'test@limesurvey.org') !== false
+            && strpos($emailButton, 'fa-envelope') !== false
             && strpos($emailButton, 'Test-Title') !== false
         );
     }
@@ -93,6 +118,9 @@ class LimeSurveyProfessionalTest extends TestBaseClass
         $installationData->reminderLimitResponses = 10;
         $installationData->hasResponseNotification = false;
         $installationData->hasStorageNotification = false;
+        $installationData->accessToken = 12345;
+        $installationData->apiId = '';
+        $installationData->apiSecret = '';
 
         return $installationData;
     }
@@ -102,7 +130,7 @@ class LimeSurveyProfessionalTest extends TestBaseClass
         $pm = new PluginManager();
         $id = 'dummyid';
         $lsp = new LimeSurveyProfessional($pm, $id);
-        $lsp->init();
+        $lsp->init(false);
         $installationData = $this->getInstallationData();
         $event = new PluginEvent('eventname');
         $event->set('subaction', 'logout');
@@ -115,7 +143,7 @@ class LimeSurveyProfessionalTest extends TestBaseClass
         $pm = new PluginManager();
         $id = 'dummyid';
         $lsp = new LimeSurveyProfessional($pm, $id);
-        $lsp->init();
+        $lsp->init(false);
         $installationData = $this->getInstallationData();
         $event = new PluginEvent('eventname');
         $event->set('body', '');
@@ -134,7 +162,7 @@ class LimeSurveyProfessionalTest extends TestBaseClass
         $pm = new PluginManager();
         $id = 'dummyid';
         $lsp = new LimeSurveyProfessional($pm, $id);
-        $lsp->init();
+        $lsp->init(false);
         $installationData = $this->getInstallationData();
         $event = new PluginEvent('eventname');
         $event->set('body', 'Tax return');
@@ -158,19 +186,6 @@ class LimeSurveyProfessionalTest extends TestBaseClass
         $this->assertTrue($locked);
     }
 
-    public function testIsInGracePeriod()
-    {
-        $pm = new PluginManager();
-        $id = 'dummyid';
-        $lsp = new LimeSurveyProfessional($pm, $id);
-        $lsp->init();
-        $installationData = $this->getInstallationData();
-        $fakeTodayDate = new \DateTime('2022-01-28 00:00:00');
-        $gracePeriodClass = new LimeSurveyProfessional\notifications\GracePeriodNotification($lsp);
-
-        $this->assertTrue($gracePeriodClass->isInGracePeriod($fakeTodayDate, $installationData));
-    }
-
     public function testNoUpgradeButtonForPaidUsers()
     {
         $pm = new PluginManager();
@@ -183,30 +198,12 @@ class LimeSurveyProfessionalTest extends TestBaseClass
         $this->assertFalse($upgradeButtonClass->displayUpgradeButton($lsp, $installationData));
     }
 
-    public function testIsNotInGracePeriod()
-    {
-        $pm = new PluginManager();
-        $id = 'dummyid';
-        $lsp = new LimeSurveyProfessional($pm, $id);
-        // real case: subscription_paid came in seconds earlier than subscription_created
-        $installationData = $this->getInstallationData();
-        $installationData->dateSubscriptionCreated = '2022-01-21 15:49:51';
-        $installationData->dateSubscriptionPaid = '2022-01-21 15:49:46';
-        $installationData->paymentPeriod = 'Y';
-
-        $lsp->init();
-        $fakeTodayDate = new \DateTime('2022-02-09 00:00:00');
-        $gracePeriodClass = new LimeSurveyProfessional\notifications\GracePeriodNotification($lsp);
-
-        $this->assertFalse($gracePeriodClass->isInGracePeriod($fakeTodayDate, $installationData));
-    }
-
     public function testPromotionalBanner()
     {
         $pm = new PluginManager();
         $id = 'dummyid';
         $lsp = new LimeSurveyProfessional($pm, $id);
-        $lsp->init();
+        $lsp->init(false);
         $installationData = $this->getInstallationData();
         $installationData->plan = 'free';
         $installationData->dateSubscriptionCreated = '2022-01-23 12:11:04';

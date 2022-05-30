@@ -10,11 +10,14 @@
         <version>1.0.2</version>
         <license>GNU General Public License version 2 or later</license>
         <description><![CDATA[LimeSurvey Cloud customizations]]></description>
+        <apiUrl>http://account-rest-apiPROD.lsnet</apiUrl>
+        <apiUrlDev>http://account-rest-api.lsnet</apiUrlDev>
+        <apiUriSignin>/installation/signin</apiUriSignin>
+        <apiUriHasUnpaidDuringGp>/v1/invoices/unpaid/during-graceperiod</apiUriHasUnpaidDuringGp>
     </metadata>
 
     <compatibility>
         <version>5.0</version>
-        <version>4.0</version>
     </compatibility>
 
     <!-- Core plugins don't need updaters. -->
