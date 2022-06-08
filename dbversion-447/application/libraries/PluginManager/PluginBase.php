@@ -536,8 +536,8 @@ abstract class PluginBase implements iPlugin
     {
         \Yii::app()->db->createCommand()->update(
             '{{plugins}}',
-            ['version' => (string) $this->config->metadata->version],
-            'id = :id',
+            ['version' => (string)$this->config->metadata->version],
+            'id=:id',
             [
                 ':id' => $this->id
             ]

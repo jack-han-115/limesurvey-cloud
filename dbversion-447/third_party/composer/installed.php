@@ -1,106 +1,121 @@
-<?php return array (
-  'root' => 
-  array (
-    'pretty_version' => 'dev-master',
-    'version' => 'dev-master',
-    'aliases' => 
-    array (
+<?php return array(
+    'root' => array(
+        'name' => 'limesurvey/limesurvey',
+        'pretty_version' => 'dev-master',
+        'version' => 'dev-master',
+        'reference' => '17e5b46bdbe5a359ac02b67223b125782ec109ce',
+        'type' => 'library',
+        'install_path' => __DIR__ . '/../../',
+        'aliases' => array(),
+        'dev' => false,
     ),
-    'reference' => '65414f721cebb56e16c9d8588988a0e9e7db8acb',
-    'name' => 'limesurvey/limesurvey',
-  ),
-  'versions' => 
-  array (
-    'limesurvey/limesurvey' => 
-    array (
-      'pretty_version' => 'dev-master',
-      'version' => 'dev-master',
-      'aliases' => 
-      array (
-      ),
-      'reference' => '65414f721cebb56e16c9d8588988a0e9e7db8acb',
+    'versions' => array(
+        'limesurvey/limesurvey' => array(
+            'pretty_version' => 'dev-master',
+            'version' => 'dev-master',
+            'reference' => '17e5b46bdbe5a359ac02b67223b125782ec109ce',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../../',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
+        'paragonie/constant_time_encoding' => array(
+            'pretty_version' => 'v2.5.0',
+            'version' => '2.5.0.0',
+            'reference' => '9229e15f2e6ba772f0c55dd6986c563b937170a8',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../paragonie/constant_time_encoding',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
+        'paragonie/random_compat' => array(
+            'pretty_version' => 'v9.99.100',
+            'version' => '9.99.100.0',
+            'reference' => '996434e5492cb4c3edcb9168db6fbb1359ef965a',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../paragonie/random_compat',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
+        'paragonie/sodium_compat' => array(
+            'pretty_version' => 'v1.17.1',
+            'version' => '1.17.1.0',
+            'reference' => 'ac994053faac18d386328c91c7900f930acadf1e',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../paragonie/sodium_compat',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
+        'phpseclib/bcmath_compat' => array(
+            'pretty_version' => '1.0.4',
+            'version' => '1.0.4.0',
+            'reference' => 'f805922db4b3d8c1e174dafb74ac7374264e8880',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../phpseclib/bcmath_compat',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
+        'phpseclib/phpseclib' => array(
+            'pretty_version' => '3.0.14',
+            'version' => '3.0.14.0',
+            'reference' => '2f0b7af658cbea265cbb4a791d6c29a6613f98ef',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../phpseclib/phpseclib',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
+        'symfony/polyfill-ctype' => array(
+            'pretty_version' => 'v1.25.0',
+            'version' => '1.25.0.0',
+            'reference' => '30885182c981ab175d4d034db0f6f469898070ab',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../symfony/polyfill-ctype',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
+        'tiamo/spss' => array(
+            'pretty_version' => '2.2.2',
+            'version' => '2.2.2.0',
+            'reference' => '8fe40261cdf4980aab0913f64f8bca7aeb0937b0',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../tiamo/spss',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
+        'twbs/bootstrap' => array(
+            'pretty_version' => 'v5.1.3',
+            'version' => '5.1.3.0',
+            'reference' => '1a6fdfae6be09b09eaced8f0e442ca6f7680a61e',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../twbs/bootstrap',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
+        'twig/twig' => array(
+            'pretty_version' => 'v1.44.2',
+            'version' => '1.44.2.0',
+            'reference' => '138c493c5b8ee7cff3821f80b8896d371366b5fe',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../twig/twig',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
+        'twitter/bootstrap' => array(
+            'dev_requirement' => false,
+            'replaced' => array(
+                0 => 'v5.1.3',
+            ),
+        ),
+        'yiiext/twig-renderer' => array(
+            'pretty_version' => 'dev-master',
+            'version' => 'dev-master',
+            'reference' => '3cb9b60a0d579855c17d7830d5015b74705c9fdd',
+            'type' => 'yii-extension',
+            'install_path' => __DIR__ . '/../yiiext/twig-renderer',
+            'aliases' => array(
+                0 => '9999999-dev',
+            ),
+            'dev_requirement' => false,
+        ),
     ),
-    'paragonie/constant_time_encoding' => 
-    array (
-      'pretty_version' => 'v2.5.0',
-      'version' => '2.5.0.0',
-      'aliases' => 
-      array (
-      ),
-      'reference' => '9229e15f2e6ba772f0c55dd6986c563b937170a8',
-    ),
-    'paragonie/random_compat' => 
-    array (
-      'pretty_version' => 'v9.99.100',
-      'version' => '9.99.100.0',
-      'aliases' => 
-      array (
-      ),
-      'reference' => '996434e5492cb4c3edcb9168db6fbb1359ef965a',
-    ),
-    'paragonie/sodium_compat' => 
-    array (
-      'pretty_version' => 'v1.17.0',
-      'version' => '1.17.0.0',
-      'aliases' => 
-      array (
-      ),
-      'reference' => 'c59cac21abbcc0df06a3dd18076450ea4797b321',
-    ),
-    'phpseclib/bcmath_compat' => 
-    array (
-      'pretty_version' => '1.0.4',
-      'version' => '1.0.4.0',
-      'aliases' => 
-      array (
-      ),
-      'reference' => 'f805922db4b3d8c1e174dafb74ac7374264e8880',
-    ),
-    'phpseclib/phpseclib' => 
-    array (
-      'pretty_version' => '3.0.13',
-      'version' => '3.0.13.0',
-      'aliases' => 
-      array (
-      ),
-      'reference' => '1443ab79364eea48665fa8c09ac67f37d1025f7e',
-    ),
-    'symfony/polyfill-ctype' => 
-    array (
-      'pretty_version' => 'v1.25.0',
-      'version' => '1.25.0.0',
-      'aliases' => 
-      array (
-      ),
-      'reference' => '30885182c981ab175d4d034db0f6f469898070ab',
-    ),
-    'tiamo/spss' => 
-    array (
-      'pretty_version' => '2.2.2',
-      'version' => '2.2.2.0',
-      'aliases' => 
-      array (
-      ),
-      'reference' => '8fe40261cdf4980aab0913f64f8bca7aeb0937b0',
-    ),
-    'twig/twig' => 
-    array (
-      'pretty_version' => 'v1.44.2',
-      'version' => '1.44.2.0',
-      'aliases' => 
-      array (
-      ),
-      'reference' => '138c493c5b8ee7cff3821f80b8896d371366b5fe',
-    ),
-    'yiiext/twig-renderer' => 
-    array (
-      'pretty_version' => 'dev-master',
-      'version' => 'dev-master',
-      'aliases' => 
-      array (
-        0 => '9999999-dev',
-      ),
-      'reference' => '3cb9b60a0d579855c17d7830d5015b74705c9fdd',
-    ),
-  ),
 );
