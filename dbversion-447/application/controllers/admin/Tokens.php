@@ -1469,13 +1469,13 @@ class Tokens extends SurveyCommonAction
                     $iEmailLocked = (int)Yii::app()->dbstats->createCommand('select email_lock from limeservice_system.installations where user_id=' . getInstallationID())->queryScalar();
                     if ($iEmailLocked == 1 && Yii::app()->getConfig('emailmethod') != 'smtp') {
                         $success = false;
-                        $mail->addDebug(gT('You are currently banned from sending emails using the LimeSurvey email servers. Please configure your global settings to use your own SMTP server, instead. If you have any questions regarding this ban, please contact support@limesurvey.org.'));
+                        $mail->addDebug(gT('You are currently banned from sending emails using the LimeSurvey email servers. Please configure your global settings to use your own SMTP server, instead. If you have any questions regarding this ban, please contact support@limesurvey.org.', 'unescaped'));
                     } elseif ($bSpamLinks) {
                         $success = false;
-                        $mail->addDebug(gT('Using the FREE & BASIC plan only links to your survey are allowed.'));
+                        $mail->addDebug(gT('Using the FREE & BASIC plan only links to your survey are allowed.', 'unescaped'));
                     } elseif ($bnoSurveyLink) {
                         $success = false;
-                        $mail->addDebug(gT('Your email must contain an invitation link to the survey.'));
+                        $mail->addDebug(gT('Your email must contain an invitation link to the survey.', 'unescaped'));
                     } else {
                         Yii::import('application.helpers.mailHelper');
                         mailHelper::setModeForNext(mailHelper::PREVIOUS_INSTANCE_MODE, ['smtpKeepAlive' => true]);
