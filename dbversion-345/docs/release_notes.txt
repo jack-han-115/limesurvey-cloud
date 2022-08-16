@@ -34,6 +34,60 @@ Thank you to everyone who helped with this new release!
 
 CHANGE LOG
 ------------------------------------------------------
+Changes from 3.28.23 (build 220809) to 3.28.24 (build 220816) August 15, 2022
+#Updated translation: Croatian by rovinj
+
+
+Changes from 3.28.22 (build 220802) to 3.28.23 (build 220809) August 8, 2022
+#Updated translation: Lithuanian by c_schmitz, simasj
+
+
+Changes from 3.28.21 (build 220726) to 3.28.22 (build 220802) August 1, 2022
+-Fixed issue #17972: Events are dispatched if the plugin is deactivated (#2335) (Denis Chenu)
+#Updated translation: Turkish by kayazeren
+#Updated translation: Thai by tomzt
+#Updated translation: French (France) by c_schmitz, DenisChenu, eddylackmann, fradeff, frederic93190, Xave
+
+
+Changes from 3.28.20 (build 220719) to 3.28.21 (build 220726) July 25, 2022
+-Fixed issue #17458: Check integrity broke with SQL error (#2312) (Denis Chenu)
+#Updated translation: Swedish by maxzomborszki
+
+
+Changes from 3.28.19 (build 220712) to 3.28.20 (build 220719) July 18, 2022
+-Fixed issue #18183: Date filter at statistics is not applied correctly (#2493) (Gabriel Jenik)
+-Fixed issue #18106: Missing survey ID replacements at registration screen (Gabriel Jenik)
+#Updated translation: Japanese by nomoto
+#Updated translation: German (Informal) by c_schmitz
+#Updated translation: Basque by admin67
+
+
+Changes from 3.28.18 (build 220706) to 3.28.19 (build 220712) July 11, 2022
+-Fixed issue #17952: Command action tries to open unneeded session (#2496) (Denis Chenu)
+-Fixed issue #17488: Cannot view survey after updating to version 3.27.9 with custom twig extension (breaks survey) (#2360) (Gabriel Jenik)
+#Updated translation: Hungarian by kkd
+
+
+Changes from 3.28.17 (build 220627) to 3.28.18 (build 220706) July 5, 2022
+-Fixed issue [security] #18200: User with only reponse export can export Survey + token (survey archive) (#2491) (Gabriel Jenik)
+-Fixed issue [security] #18042: Path-relative stylesheet import (PRSSI) vulnerability (#2374) (#2495) (Gabriel Jenik)
+-Fixed issue #18201: Unable to import LSA file with MSSQL and debug set (#2472) (Denis Chenu)
+-Fixed issue #18189: Fonts showing differently on mobile Vs desktop (#2484) (Gabriel Jenik)
+#Updated translation: Zulu by erik.lamontagne
+#Updated translation: Ukrainian by olly
+#Updated translation: Slovak by jelen1
+#Updated translation: Luxembourgish by Mazi
+#Updated translation: Kazakh by CenterOfExcellence
+#Updated translation: Kannada by mahantesh19
+#Updated translation: Italian by lfanfoni, ritapas
+#Updated translation: Italian (Informal) by lfanfoni
+#Updated translation: German by c_schmitz
+#Updated translation: Dutch by Han
+#Updated translation: Dutch (Informal) by Han
+#Updated translation: Chinese (Simplified) by FangZhijian
+#Updated translation: Basque by zatarain
+
+
 Changes from 3.28.16 (build 220621) to 3.28.17 (build 220627) June 27, 2022
 -Fixed issue: Error after user deletion (Carsten Schmitz)
 -Fixed issue #18186: Language changer does not work in registration page (Roberto Longobardi)
