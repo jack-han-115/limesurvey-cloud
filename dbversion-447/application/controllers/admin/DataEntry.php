@@ -1414,8 +1414,8 @@ class DataEntry extends SurveyCommonAction
             throw new CHttpException(404, gT("Invalid survey ID"));
         }
         $id = (int)Yii::app()->request->getPost('id');
-        $oReponse = Response::model($surveyid)->findByPk($id);
-        if (empty($oReponse)) {
+        $oResponse = Response::model($surveyid)->findByPk($id);
+        if (empty($oResponse)) {
             throw new CHttpException(404, gT("Invalid ID"));
         }
         $fieldmap = createFieldMap($survey, 'full', false, false, $survey->language);
@@ -1444,7 +1444,7 @@ class DataEntry extends SurveyCommonAction
                     break;
                 case Question::QT_D_DATE:
                     if (empty($thisvalue)) {
-                        $oReponse->$fieldname = null;
+                        $oResponse->$fieldname = null;
                         break;
                     }
                     $qidattributes = QuestionAttribute::model()->getQuestionAttributes($irow['qid']);
@@ -1455,55 +1455,55 @@ class DataEntry extends SurveyCommonAction
                         $datetimeobj = DateTime::createFromFormat('Y-m-d\TH:i', $thisvalue);
                     }
                     if ($datetimeobj) {
-                        $oReponse->$fieldname = $datetimeobj->format('Y-m-d H:i');
+                        $oResponse->$fieldname = $datetimeobj->format('Y-m-d H:i');
                     } else {
                         Yii::app()->setFlashMessage(sprintf(gT("Invalid datetime %s value for %s"), htmlentities($thisvalue), $fieldname), 'warning');
-                        $oReponse->$fieldname = null;
+                        $oResponse->$fieldname = null;
                     }
                     break;
                 case Question::QT_N_NUMERICAL:
                 case Question::QT_K_MULTIPLE_NUMERICAL:
                     if ($thisvalue === "") {
-                        $oReponse->$fieldname = null;
+                        $oResponse->$fieldname = null;
                         break;
                     }
                     if (!preg_match("/^[-]?(\d{1,20}\.\d{0,10}|\d{1,20})$/", $thisvalue)) {
                         Yii::app()->setFlashMessage(sprintf(gT("Invalid numeric value for %s"), $fieldname), 'warning');
-                        $oReponse->$fieldname = null;
+                        $oResponse->$fieldname = null;
                         break;
                     }
-                    $oReponse->$fieldname = $thisvalue;
+                    $oResponse->$fieldname = $thisvalue;
                     break;
                 case Question::QT_VERTICAL_FILE_UPLOAD:
                     if (strpos($irow['fieldname'], '_filecount')) {
                         if (empty($thisvalue)) {
-                            $oReponse->$fieldname = null;
+                            $oResponse->$fieldname = null;
                             break;
                         }
-                        $oReponse->$fieldname = $thisvalue;
+                        $oResponse->$fieldname = $thisvalue;
                         break;
                     }
-                    $oReponse->$fieldname = $thisvalue;
+                    $oResponse->$fieldname = $thisvalue;
                     break;
                 case Question::QT_COLON_ARRAY_NUMBERS:
                     if (!empty($thisvalue) && strval($thisvalue) != strval(floatval($thisvalue))) {
                         // mysql not need, unsure about mssql
                         Yii::app()->setFlashMessage(sprintf(gT("Invalid numeric value for %s"), $fieldname), 'warning');
-                        $oReponse->$fieldname = null;
+                        $oResponse->$fieldname = null;
                         break;
                     }
-                    $oReponse->$fieldname = $thisvalue;
+                    $oResponse->$fieldname = $thisvalue;
                     break;
                 case 'submitdate':
                     if (Yii::app()->request->getPost('completed') == "N") {
-                        $oReponse->$fieldname = null;
+                        $oResponse->$fieldname = null;
                         break;
                     }
                     if (empty($thisvalue)) {
                         if (Survey::model()->findByPk($surveyid)->isDateStamp) {
-                            $oReponse->$fieldname = dateShift(date("Y-m-d H:i"), "Y-m-d\TH:i", Yii::app()->getConfig('timeadjust'));
+                            $oResponse->$fieldname = dateShift(date("Y-m-d H:i"), "Y-m-d\TH:i", Yii::app()->getConfig('timeadjust'));
                         } else {
-                            $oReponse->$fieldname = date("Y-m-d\TH:i", (int) mktime(0, 0, 0, 1, 1, 1980));
+                            $oResponse->$fieldname = date("Y-m-d\TH:i", (int) mktime(0, 0, 0, 1, 1, 1980));
                         }
                         break;
                     }
@@ -1512,21 +1512,21 @@ class DataEntry extends SurveyCommonAction
                 case 'startdate':
                 case 'datestamp':
                     if (empty($thisvalue)) {
-                        $oReponse->$fieldname = dateShift(date("Y-m-d H:i"), "Y-m-d\TH:i", Yii::app()->getConfig('timeadjust'));
+                        $oResponse->$fieldname = dateShift(date("Y-m-d H:i"), "Y-m-d\TH:i", Yii::app()->getConfig('timeadjust'));
                         break;
                     }
                     $dateformatdetails = getDateFormatData(Yii::app()->session['dateformat']);
                     $datetimeobj = DateTime::createFromFormat('!' . $dateformatdetails['phpdate'] . " H:i", $thisvalue);
                     if ($datetimeobj) {
-                        $oReponse->$fieldname = $datetimeobj->format('Y-m-d H:i');
+                        $oResponse->$fieldname = $datetimeobj->format('Y-m-d H:i');
                     } else {
                         Yii::app()->setFlashMessage(sprintf(gT("Invalid datetime %s value for %s"), htmlentities($thisvalue), $fieldname), 'warning');
                         /* We get here : we need a valid value : NOT NULL in db or completed != "N" */
-                        $oReponse->$fieldname = dateShift(date("Y-m-d H:i"), "Y-m-d\TH:i", Yii::app()->getConfig('timeadjust'));
+                        $oResponse->$fieldname = dateShift(date("Y-m-d H:i"), "Y-m-d\TH:i", Yii::app()->getConfig('timeadjust'));
                     }
                     break;
                 default:
-                    $oReponse->$fieldname = $thisvalue;
+                    $oResponse->$fieldname = $thisvalue;
             }
         }
         $beforeDataEntryUpdate = new PluginEvent('beforeDataEntryUpdate');
