@@ -552,17 +552,12 @@ class RegisterController extends LSYii_Controller
             $aData['aSurveyInfo']['alanguageChanger']['show']  = true;
             $aData['aSurveyInfo']['alanguageChanger']['datas'] = $alanguageChangerDatas;
         }
-
         // LimeService Mod start
         $aData['aSurveyInfo']['datasecurity_notice_label'] = Survey::replacePolicyLink($aSurveyInfo['datasecurity_notice_label'], $aSurveyInfo['sid']);
         $aData['aSurveyInfo']['surveyUrl'] = App()->createUrl("/survey/index", array("sid" => $surveyid));
         // LimeService Mod end
-        
 
-        $LEM =& LimeExpressionManager::singleton();
-        $LEM->setVariableAndTokenMappingsForExpressionManager($iSurveyId);
-
-        Yii::app()->clientScript->registerScriptFile(Yii::app()->getConfig("generalscripts").'nojs.js', CClientScript::POS_HEAD);
+        Yii::app()->clientScript->registerScriptFile(Yii::app()->getConfig("generalscripts") . 'nojs.js', CClientScript::POS_HEAD);
         Yii::app()->twigRenderer->renderTemplateFromFile('layout_global.twig', $aData, false);
 
     }
