@@ -5435,6 +5435,11 @@
             //  TODO - now that using $this->updatedValues, may be able to remove local copies of it (unless needed by other sub-systems)
             $updatedValues = $this->updatedValues;
             $message = '';
+            if (!$this->surveyOptions) {
+                // This should never happen, but happened in the past due to a bug - which then caused no responses to be saved
+                // This is a failsafe to not loose data without noticing
+                die('There was a problem saving your response. Please restart the survey.');
+            }
             if (!$this->surveyOptions['active'] || $this->sPreviewMode)
             {
                 return $message;
@@ -5617,6 +5622,8 @@
                         // This can happen if admin deletes incomple response while survey is running.
                         $message = submitfailed('', $this->gT('Error on response update'));
                         LimeExpressionManager::addFrontendFlashMessage('error', $message, $this->sid);
+                        // Todo: Fix me ^^^
+                        die('There was a problem saving your response (no values were updated). Please restart the survey.');
                         return;
                     }
                     //If the responses already have been submitted once they are marked as completed already, so they shouldn't be changed.
