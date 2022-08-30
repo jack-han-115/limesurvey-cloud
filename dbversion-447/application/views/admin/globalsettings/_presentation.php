@@ -133,7 +133,9 @@
             </div>
         </div>
 
-
+        <?php
+        // LimeService Mod start 
+        ?>
         <div class="form-group">
             <label class=" control-label" for="branding"><?php eT("Show LimeSurvey Branding:"); ?></label>
             <div class="">
@@ -147,6 +149,9 @@
                 ?>
             </div>
         </div>
+        <?php
+        // LimeService Mod end
+        ?>
     </div>
 </div>
 
