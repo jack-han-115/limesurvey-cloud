@@ -27,20 +27,25 @@ class ParticipantRegisterCta
 
     protected function prepareViewContent()
     {
-        $this->viewContentFooter =
-            $this->plugin->renderPartial(
-                'participantRegisterCta.footer',
-                array(),
-                true,
-                true
-            );
-        $this->viewContentCompleted =
-            $this->plugin->renderPartial(
-                'participantRegisterCta.complete',
-                array(),
-                true,
-                true
-            );
+        $event = $this->plugin->getEvent();
+        $surveyId = $event->get('surveyId');
+
+        if (!empty($surveyId)) {
+            $this->viewContentFooter =
+                $this->plugin->renderPartial(
+                    'participantRegisterCta.footer',
+                    array(),
+                    true,
+                    true
+                );
+            $this->viewContentCompleted =
+                $this->plugin->renderPartial(
+                    'participantRegisterCta.complete',
+                    array(),
+                    true,
+                    true
+                );
+        }
     }
 
     /**
