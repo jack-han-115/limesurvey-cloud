@@ -1,4 +1,4 @@
-<?php if (getGlobalSetting('branding') === '1') : ?>
+<?php if (App()->getConfig('branding') === '1') : ?>
     <div class="col-lg-5 col-md-6 col-sm-8 col-xs-12 col-centered">
         <div class="well text-center">
             <h3>

@@ -1,4 +1,4 @@
-<?php if (getGlobalSetting('branding') === '1') : ?>
+<?php if (App()->getConfig('branding') === '1') : ?>
     <div class="col-md-12">
         <div class="text-right">
             <a href="https://www.limesurvey.org/" target="_blank" class="btn btn-primary">

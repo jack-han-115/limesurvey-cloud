@@ -2,6 +2,7 @@
 
 namespace LimeSurveyProfessional\ParticipantRegisterCta;
 
+use DateTime;
 use LimeSurveyProfessional;
 use LimeSurveyProfessional\InstallationData;
 
@@ -21,7 +22,6 @@ class ParticipantRegisterCta
     {
         $this->plugin = $plugin;
         $this->installationData = $installationData;
-
         $this->prepareViewContent();
     }
 
@@ -68,25 +68,80 @@ class ParticipantRegisterCta
 
     /**
      * Main function to display the registration call to action
-     * @param \LimeSurveyProfessional $plugin
-     * @param InstallationData $installationData
+     * 
+     * @param bool $isComplete
      * @return bool
      * @throws \CException
      */
     public function display($isComplete = false)
     {
-        $event = $this->plugin->getEvent();
-        $surveyId = $event->get('surveyId');
-        $display = $surveyId && !$this->installationData->isPayingUser;
-        $plan = $this->installationData->plan;
-
-        if ($display) {
+        $shouldDisplay = $this->shouldDisplay();
+        if ($shouldDisplay) {
+            $event = $this->plugin->getEvent();
             if ($isComplete) {
                 $event->setContent($this->plugin, $this->viewContentCompleted);
             } else {
                 $event->set('html', $this->viewContentFooter);
             }
         }
-        return $display;
+        return $shouldDisplay;
+    }
+
+    /**
+     * Determine if the branding should be displayed
+     * 
+     * Todo: move this logic to some place that is also accessible from global settings view.
+     *
+     * @return bool
+     * @throws \CException
+     */
+    protected function shouldDisplay()
+    {
+        $event = $this->plugin->getEvent();
+        $surveyId = $event->get('surveyId');
+
+        $disable =
+            empty($surveyId)
+            || $this->isEnablePermitted() === false
+            || ($this->isDisablePermitted()
+                && App()->getConfig('branding') === '0');
+
+        return $disable === false;
+    }
+
+    /**
+     * Determine branding is permitted to be enabled
+     * 
+     * We don't display branding for users who signed up before we implemented
+     * the branding feature.
+     *
+     * Todo: move this logic to some place that is also accessible from global settings view.
+     *
+     * @return bool
+     * @throws \CException
+     */
+    protected function isEnablePermitted()
+    {
+        $introductionDate = new DateTime('2022-09-01');
+        //return $user->created_at > $introductionDate;
+        return true;
+    }
+
+    /**
+     * Determine branding is permitted to be disabled
+     * 
+     * Only paying customers on plan 'expert' or 'enterprise' can disable branding.
+     * 
+     * Todo: move this logic to some place that is also accessible from global settings view.
+     *
+     * @return bool
+     * @throws \CException
+     */
+    protected function isDisablePermitted()
+    {
+        $plansPermitted = ['expert', 'enterprise'];
+        return ($this->installationData->isPayingUser === true
+            && in_array($this->installationData->plan, $plansPermitted)
+        );
     }
 }

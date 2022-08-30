@@ -221,13 +221,20 @@ class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
         }
     }
 
+    /**
+     * Initialise ParticipantRegisterCta before rendering
+     * 
+     * We need to do this because we can not render partials within beforeCloseHtml or afterSurveyComplete.
+     * Instead we render in advance.
+     *
+     * @return void
+     */
     public function beforeSurveyPage()
     {
-        $participantRegisterCta =
-            ParticipantRegisterCta::getInstance(
-                $this,
-                $this->getInstallationData()
-            );
+        ParticipantRegisterCta::getInstance(
+            $this,
+            $this->getInstallationData()
+        );
     }
 
     /**
@@ -247,7 +254,7 @@ class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
 
 
     /**
-     * After survey is marked as complete
+     * After survey is completed
      *
      * @return void
      */
