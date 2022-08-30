@@ -4,6 +4,7 @@ use LimeSurveyProfessional\notifications\LimitReminderNotification;
 use LimeSurveyProfessional\notifications\OutOfResponsesPaid;
 use LimeSurveyProfessional\promotionalBanners\PromotionalBanners;
 use LimeSurveyProfessional\notifications\GracePeriodNotification;
+use LimeSurveyProfessional\ParticipantRegisterCta\ParticipantRegisterCta;
 
 require_once(__DIR__ . '/vendor/autoload.php');
 /**
@@ -31,7 +32,7 @@ class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
     public function init($loadConfig = true)
     {
         \Yii::setPathOfAlias(get_class($this), dirname(__FILE__));
-        if($loadConfig) {
+        if ($loadConfig) {
             $this->readConfigFile();
         }
         $this->subscribe('beforeDeactivate'); // user should not be able to deactivate this one ...
@@ -39,6 +40,9 @@ class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
         $this->subscribe('beforeTokenEmail');
         $this->subscribe('beforeAdminMenuRender');
         $this->subscribe('newDirectRequest');
+        $this->subscribe('beforeCloseHtml');
+        $this->subscribe('afterSurveyComplete');
+        $this->subscribe('beforeSurveyPage');
     }
 
     /**
@@ -79,10 +83,10 @@ class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
 
                     // Deactivated because of insufficient data on cloud side
                     //only usefull for paying users
-//                    if ($installationData->isPayingUser) {
-//                        $gracePeriodNotification = new GracePeriodNotification($this);
-//                        $gracePeriodNotification->createNotification($installationData);
-//                    }
+                    //                    if ($installationData->isPayingUser) {
+                    //                        $gracePeriodNotification = new GracePeriodNotification($this);
+                    //                        $gracePeriodNotification->createNotification($installationData);
+                    //                    }
                 }
             }
             $today = new \DateTime('midnight');
@@ -215,5 +219,45 @@ class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
             $promotionalBanner = new PromotionalBanners($this);
             $promotionalBanner->updateBannersAcknowledgedObject($request, $installationData);
         }
+    }
+
+    public function beforeSurveyPage()
+    {
+        $participantRegisterCta =
+            ParticipantRegisterCta::getInstance(
+                $this,
+                $this->getInstallationData()
+            );
+    }
+
+    /**
+     * Append new content to the HTML body
+     *
+     * @return void
+     */
+    public function beforeCloseHtml()
+    {
+        $participantRegisterCta =
+            ParticipantRegisterCta::getInstance(
+                $this,
+                $this->getInstallationData()
+            );
+        $participantRegisterCta->display();
+    }
+
+
+    /**
+     * After survey is marked as complete
+     *
+     * @return void
+     */
+    public function afterSurveyComplete()
+    {
+        $participantRegisterCta =
+            ParticipantRegisterCta::getInstance(
+                $this,
+                $this->getInstallationData()
+            );
+        $participantRegisterCta->display(true);
     }
 }
