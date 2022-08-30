@@ -1,5 +1,5 @@
-<div style="display: flex; flex-direction: row; justify-content: right;">
-    <div style="margin: 0 20px;">
-        <a href="https://www.limesurvey.org/" target="_blank">Made in LimeSurvey</a>
+<div class="col-md-12">
+    <div class="text-right">
+        <a href="https://www.limesurvey.org/" target="_blank" class="btn btn-primary">Made in LimeSurvey</a>
     </div>
 </div>

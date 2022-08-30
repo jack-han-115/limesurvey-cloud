@@ -1,13 +1,13 @@
-<div style="display:flex; flex-direction:row; justify-content:center; margin:20px;">
-    <div style="flex-direction:column; justify-content:center; text-align:center; max-width: 640px;">
-        <div style="font-size:xx-large; font-weight:600; margin:20px;">
+<div class="col-lg-5 col-md-6 col-sm-8 col-xs-12 col-centered">
+    <div class="well text-center">
+        <h3>
             Thank you for taking this survey powered by LimeSurvey.
-        </div>
-        <div style="margin:20px;">
+        </h3>
+        <p>
             Turn your own questions into answers and start building your own survey today.
-        </div>
-        <div style="margin:20px;">
-            <a href="https://www.limesurvey.org/" target="_blank">Get started now</a>
+        </p>
+        <div>
+            <a href="https://www.limesurvey.org/" target="_blank" class="btn btn-primary">Get started now</a>
         </div>
     </div>
 </div>
