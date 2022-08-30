@@ -14,8 +14,8 @@ class ParticipantRegisterCta
 
     private $plugin = null;
     private $installationData = null;
-    private $viewContentFooter = 'nope';
-    private $viewContentCompleted = 'nope nope';
+    private $viewContentFooter = '';
+    private $viewContentCompleted = '';
 
     public function __construct(LimeSurveyProfessional $plugin, InstallationData $installationData)
     {
@@ -32,14 +32,14 @@ class ParticipantRegisterCta
                 'participantRegisterCta.footer',
                 array(),
                 true,
-                false
+                true
             );
         $this->viewContentCompleted =
             $this->plugin->renderPartial(
                 'participantRegisterCta.complete',
                 array(),
                 true,
-                false
+                true
             );
     }
 
