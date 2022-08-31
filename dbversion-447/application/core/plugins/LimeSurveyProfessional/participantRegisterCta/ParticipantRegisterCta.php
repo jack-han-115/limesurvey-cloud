@@ -8,7 +8,7 @@ use LimeSurveyProfessional\InstallationData;
 
 class ParticipantRegisterCta
 {
-    private const INTRO_DATE = '2022-08-01';
+    private const INTRO_DATE = '2022-08-30';
 
     /**
      * @var ParticipantRegisterCta
@@ -91,8 +91,6 @@ class ParticipantRegisterCta
 
     /**
      * Determine if the branding should be displayed
-     * 
-     * Todo: move this logic to some place that is also accessible from global settings view.
      *
      * @return bool
      * @throws \CException
@@ -105,8 +103,9 @@ class ParticipantRegisterCta
         $disable =
             empty($surveyId)
             || $this->isEnablePermitted() === false
-            || ($this->isDisablePermitted()
-                && App()->getConfig('branding') === '0');
+            // Todo: Add ability to enable or disable branding for isDisablePermitted() installations
+            // - then compare here to decide if the branding should be disabled or not
+            || $this->isDisablePermitted();
 
         return $disable === false;
     }
@@ -116,8 +115,6 @@ class ParticipantRegisterCta
      * 
      * We don't display branding for installations who created before we implemented
      * the branding feature.
-     *
-     * Todo: move this logic to some place that is also accessible from global settings view.
      *
      * @return bool
      * @throws \CException
@@ -132,8 +129,6 @@ class ParticipantRegisterCta
      * Determine branding is permitted to be disabled
      * 
      * Only paying customers on plan 'expert' or 'enterprise' can disable branding.
-     * 
-     * Todo: move this logic to some place that is also accessible from global settings view.
      *
      * @return bool
      * @throws \CException
