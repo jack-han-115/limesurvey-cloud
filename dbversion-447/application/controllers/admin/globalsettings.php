@@ -14,12 +14,12 @@
 */
 
 /**
- * GlobalSettings Controller
- *
- *
- * @package        LimeSurvey
- * @subpackage    Backend
- */
+* GlobalSettings Controller
+*
+*
+* @package        LimeSurvey
+* @subpackage    Backend
+*/
 class GlobalSettings extends SurveyCommonAction
 {
     /**
@@ -140,7 +140,6 @@ class GlobalSettings extends SurveyCommonAction
         $data['sShowGlobalDataPolicyButton'] = getGlobalSetting('showdatapolicybutton');
         $data['scripts'] = PrepareEditorScript(false, $this->getController());
         $data['sCurrentDefaultLanguage'] = getGlobalSetting('defaultlang');
-        $data['sCurrentDefaultLanguage'] = getGlobalSetting('defaultlang');
         // LimeService Mod end
 
         // LimeService - get user administration settings mod start
@@ -212,7 +211,7 @@ class GlobalSettings extends SurveyCommonAction
                     'name'        => $surveyinfo === false ? '(' . gT('deleted') . ')' : $surveyinfo['name'],
                     'deleted'     => $surveyinfo === false,
                     'showPurgeButton' => Permission::model()->hasGlobalPermission('superadmin', 'delete')
-                        && $surveyinfo === false,
+                                         && $surveyinfo === false,
                     'sid'         => $surveyId
                 );
             }
@@ -405,7 +404,6 @@ class GlobalSettings extends SurveyCommonAction
         SettingGlobal::setSetting('bPdfQuestionBold', sanitize_int(Yii::app()->getRequest()->getPost('bPdfQuestionBold')));
         SettingGlobal::setSetting('bPdfQuestionBorder', sanitize_int(Yii::app()->getRequest()->getPost('bPdfQuestionBorder')));
         SettingGlobal::setSetting('bPdfResponseBorder', sanitize_int(Yii::app()->getRequest()->getPost('bPdfResponseBorder')));
-        SettingGlobal::setSetting('branding', sanitize_int(Yii::app()->getRequest()->getPost('branding')));
         SettingGlobal::setSetting('googleMapsAPIKey', Yii::app()->getRequest()->getPost('googleMapsAPIKey'));
         SettingGlobal::setSetting('googleanalyticsapikey', Yii::app()->getRequest()->getPost('googleanalyticsapikey'));
         SettingGlobal::setSetting('googletranslateapikey', Yii::app()->getRequest()->getPost('googletranslateapikey'));
@@ -497,12 +495,12 @@ class GlobalSettings extends SurveyCommonAction
             $activetokens = 0;
         }
         return array(
-            'usercount' => $usercount,
-            'surveycount' => $surveycount,
-            'activesurveycount' => $activesurveycount,
-            'deactivatedsurveys' => $deactivatedsurveys,
-            'activetokens' => $activetokens,
-            'deactivatedtokens' => $deactivatedtokens
+        'usercount' => $usercount,
+        'surveycount' => $surveycount,
+        'activesurveycount' => $activesurveycount,
+        'deactivatedsurveys' => $deactivatedsurveys,
+        'activetokens' => $activetokens,
+        'deactivatedtokens' => $deactivatedtokens
         );
     }
 
