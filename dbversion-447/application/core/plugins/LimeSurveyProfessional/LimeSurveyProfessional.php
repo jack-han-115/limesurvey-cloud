@@ -232,7 +232,8 @@ class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
     public function beforeSurveyPage()
     {
         // Use getInstance() to initialise the ParticipantRegisterCta instance
-        // - so that it can be re-used in other call backs
+        // - so that it can be re-used in other call backs.
+        // Missing variable assignment is intentional.
         ParticipantRegisterCta::getInstance(
             $this,
             $this->getInstallationData()
