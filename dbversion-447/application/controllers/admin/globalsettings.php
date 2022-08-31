@@ -405,11 +405,7 @@ class GlobalSettings extends SurveyCommonAction
         SettingGlobal::setSetting('bPdfQuestionBold', sanitize_int(Yii::app()->getRequest()->getPost('bPdfQuestionBold')));
         SettingGlobal::setSetting('bPdfQuestionBorder', sanitize_int(Yii::app()->getRequest()->getPost('bPdfQuestionBorder')));
         SettingGlobal::setSetting('bPdfResponseBorder', sanitize_int(Yii::app()->getRequest()->getPost('bPdfResponseBorder')));
-
-        // LimeService Mod start
         SettingGlobal::setSetting('branding', sanitize_int(Yii::app()->getRequest()->getPost('branding')));
-        // LimeService Mod end
-
         SettingGlobal::setSetting('googleMapsAPIKey', Yii::app()->getRequest()->getPost('googleMapsAPIKey'));
         SettingGlobal::setSetting('googleanalyticsapikey', Yii::app()->getRequest()->getPost('googleanalyticsapikey'));
         SettingGlobal::setSetting('googletranslateapikey', Yii::app()->getRequest()->getPost('googletranslateapikey'));
@@ -431,7 +427,6 @@ class GlobalSettings extends SurveyCommonAction
         }
         SettingGlobal::setSetting('timeadjust', $savetime);
         SettingGlobal::setSetting('usercontrolSameGroupPolicy', strip_tags(Yii::app()->getRequest()->getPost('usercontrolSameGroupPolicy')));
-
         // LimeService Mod start
         SettingGlobal::setSetting('datapolicy', App()->getRequest()->getPost('datapolicy'));
         SettingGlobal::setSetting('legalnotice', App()->getRequest()->getPost('legalnotice'));
