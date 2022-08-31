@@ -8,6 +8,8 @@ use LimeSurveyProfessional\InstallationData;
 
 class ParticipantRegisterCta
 {
+    private const INTRO_DATE = '2022-08-01';
+
     /**
      * @var ParticipantRegisterCta
      */
@@ -122,7 +124,7 @@ class ParticipantRegisterCta
      */
     protected function isEnablePermitted()
     {
-        $brandingFeatureIntroduced = new DateTime('2022-09-01');
+        $brandingFeatureIntroduced = new DateTime(self::INTRO_DATE);
         return $this->installationData->dateCreated < $brandingFeatureIntroduced;
     }
 
