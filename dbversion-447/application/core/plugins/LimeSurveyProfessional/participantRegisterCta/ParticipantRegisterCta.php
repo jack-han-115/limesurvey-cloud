@@ -8,9 +8,9 @@ use LimeSurveyProfessional\InstallationData;
 
 class ParticipantRegisterCta
 {
-    private const INTRO_DATE = '2022-08-30';
-    private const PLAN_BASIC = 'basic';
-    private const PLAN_FREE = 'free';
+    const INTRO_DATE = '2022-08-30';
+    const PLAN_BASIC = 'basic';
+    const PLAN_FREE = 'free';
 
     /**
      * @var ParticipantRegisterCta
@@ -56,10 +56,12 @@ class ParticipantRegisterCta
      * Get a single instance to be shared between plugin events
      * 
      * This plugin needs to handle plugin events beforeCloseHtml and afterSurveyComplete.
-     * The beforeCloseHtml should be triggered only if afterSurveyComplete as not triggered.
+     * The beforeCloseHtml should be triggered only if afterSurveyComplete is not triggered.
      * So we need to share state between plugin events. This method gives you back the 
      * same instance regardless of what event handler you are in.
-     *
+     * 
+     * @param LimeSurveyProfessional $plugin
+     * @param InstallationData $installationData
      * @return ParticipantRegisterCta
      */
     public static function getInstance(LimeSurveyProfessional $plugin, InstallationData $installationData)
