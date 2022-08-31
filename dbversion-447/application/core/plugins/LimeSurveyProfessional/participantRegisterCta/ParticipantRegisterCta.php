@@ -9,6 +9,8 @@ use LimeSurveyProfessional\InstallationData;
 class ParticipantRegisterCta
 {
     private const INTRO_DATE = '2022-08-30';
+    private const PLAN_BASIC = 'basic';
+    private const PLAN_FREE = 'free';
 
     /**
      * @var ParticipantRegisterCta
@@ -135,9 +137,12 @@ class ParticipantRegisterCta
      */
     protected function isDisablePermitted()
     {
-        $plansPermitted = ['expert', 'enterprise'];
+        $plansNotPermitted = [
+            self::PLAN_BASIC,
+            self::PLAN_FREE
+        ];
         return ($this->installationData->isPayingUser === true
-            && in_array($this->installationData->plan, $plansPermitted)
+            && false == in_array($this->installationData->plan, $plansNotPermitted)
         );
     }
 }
