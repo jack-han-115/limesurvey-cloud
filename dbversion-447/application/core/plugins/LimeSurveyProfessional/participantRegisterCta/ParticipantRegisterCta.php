@@ -112,7 +112,7 @@ class ParticipantRegisterCta
     /**
      * Determine branding is permitted to be enabled
      * 
-     * We don't display branding for users who signed up before we implemented
+     * We don't display branding for installations who created before we implemented
      * the branding feature.
      *
      * Todo: move this logic to some place that is also accessible from global settings view.
@@ -122,9 +122,8 @@ class ParticipantRegisterCta
      */
     protected function isEnablePermitted()
     {
-        $introductionDate = new DateTime('2022-09-01');
-        //return $user->created_at > $introductionDate;
-        return true;
+        $brandingFeatureIntroduced = new DateTime('2022-09-01');
+        return $this->installationData->dateCreated < $brandingFeatureIntroduced;
     }
 
     /**

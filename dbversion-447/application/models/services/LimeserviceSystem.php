@@ -249,7 +249,7 @@ class LimeserviceSystem
      */
     public function increaseSentCount(int $value = 1)
     {
-      /*  $sql = "UPDATE limeservice_system.mail_ratings
+        /*  $sql = "UPDATE limeservice_system.mail_ratings
                 SET sent = sent + {$value}
                 WHERE installation_id=" . getInstallationID();
 
@@ -262,6 +262,21 @@ class LimeserviceSystem
                 "installation_id=:installation_id",
                 [':installation_id' => $this->userInstallationId]
             );
+    }
+
+    /**
+     * Returns created value from table installations
+     *
+     * @return \CDbDataReader|false|mixed|string
+     * @throws \CException
+     */
+    public function getCreated()
+    {
+        return $this->dbConnection->createCommand()
+            ->select('created')
+            ->from('limeservice_system.installations')
+            ->where('user_id=:user_id', [':user_id' => $this->userInstallationId])
+            ->queryScalar();
     }
 
     /**
@@ -309,18 +324,18 @@ class LimeserviceSystem
             ->queryScalar();
     }
 
-//    /**
-//     * Returns client_id value from table installations
-//     *
-//     * @return \CDbDataReader|mixed
-//     * @throws \CException
-//     */
-//    public function getApiIdAndSecret()
-//    {
-//        return $this->dbConnection->createCommand()
-//            ->select('installation_api_id, installation_api_secret')
-//            ->from('limeservice_system.installations')
-//            ->where('user_id=:user_id', [':user_id' => $this->userInstallationId])
-//            ->queryRow();
-//    }
+    //    /**
+    //     * Returns client_id value from table installations
+    //     *
+    //     * @return \CDbDataReader|mixed
+    //     * @throws \CException
+    //     */
+    //    public function getApiIdAndSecret()
+    //    {
+    //        return $this->dbConnection->createCommand()
+    //            ->select('installation_api_id, installation_api_secret')
+    //            ->from('limeservice_system.installations')
+    //            ->where('user_id=:user_id', [':user_id' => $this->userInstallationId])
+    //            ->queryRow();
+    //    }
 }

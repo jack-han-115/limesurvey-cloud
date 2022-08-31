@@ -31,6 +31,9 @@ class InstallationData
     public $dateSubscriptionCreated;
 
     /** @var string|null */
+    public $dateCreated;
+
+    /** @var string|null */
     public $paymentPeriod;
 
     /** @var string */
@@ -74,6 +77,7 @@ class InstallationData
         $this->emailLock = $limeserviceSystem->getEmailLock();
         $this->dateSubscriptionPaid = $limeserviceSystem->getSubscriptionPaid();
         $this->dateSubscriptionCreated = $limeserviceSystem->getSubscriptionCreated();
+        $this->dateCreated = $limeserviceSystem->getCreated();
         $this->paymentPeriod = $limeserviceSystem->getSubscriptionPeriod();
         $this->reminderLimitStorage = $limeserviceSystem->getReminderLimitStorage();
         $this->reminderLimitResponses = $limeserviceSystem->getReminderLimitResponses();
@@ -84,8 +88,8 @@ class InstallationData
 
         $accessTokenSetting = \SettingGlobal::model()->findByAttributes(['stg_name' => 'AccessToken']);
         $this->accessToken = $accessTokenSetting ? $accessTokenSetting->stg_value : '';
-//        $apiIdSecretResult = $limeserviceSystem->getApiIdAndSecret();
-//        $this->apiId = $apiIdSecretResult['installation_api_id'];
-//        $this->apiSecret = $apiIdSecretResult['installation_api_secret'];
+        //        $apiIdSecretResult = $limeserviceSystem->getApiIdAndSecret();
+        //        $this->apiId = $apiIdSecretResult['installation_api_id'];
+        //        $this->apiSecret = $apiIdSecretResult['installation_api_secret'];
     }
 }
