@@ -1,6 +1,6 @@
 <?php
 
-namespace LimeSurveyProfessional\ParticipantRegisterCta;
+namespace LimeSurveyProfessional\participantRegisterCta;
 
 use DateTime;
 use LimeSurveyProfessional;
