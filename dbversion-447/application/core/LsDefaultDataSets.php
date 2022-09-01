@@ -105,9 +105,9 @@ class LsDefaultDataSets
                 null,
                 4,
                 'datasecurity',
-                gT('Data policy settings', 'unescaped'),
-                gT('Data policy settings', 'unescaped'),
-                gT('Edit data policy settings', 'unescaped'),
+                gT('Privacy policy settings', 'unescaped'),
+                gT('Privacy policy', 'unescaped'),
+                gT('Edit privacy policy settings', 'unescaped'),
                 'shield',
                 'fontawesome',
                 '',
@@ -908,7 +908,7 @@ class LsDefaultDataSets
         $returnArray[] = ['position' => 1, 'url' => 'surveyAdministration/newSurvey', 'title' => gT('Create survey'), 'ico' => 'icon-add', 'desc' => gT('Create a new survey'), 'page' => 'welcome', 'usergroup' => '-2'];
         $returnArray[] = ['position' => 2, 'url' => 'surveyAdministration/listsurveys', 'title' => gT('List surveys'), 'ico' => 'icon-list', 'desc' => gT('List available surveys'), 'page' => 'welcome', 'usergroup' => '-1'];
         $returnArray[] = ['position' => 3, 'url' => 'admin/globalsettings', 'title' => gT('Global settings'), 'ico' => 'icon-settings', 'desc' => gT('Edit global settings'), 'page' => 'welcome', 'usergroup' => '-2'];
-		$returnArray[] = ['position' => 4, 'url' => 'admin/user', 'title' => gT('Manage survey administrators'), 'ico' => 'icon-user', 'desc' => gT('User control'), 'page' => 'welcome', 'usergroup' => '-2'];
+		$returnArray[] = ['position' => 4, 'url' => 'userManagement/index', 'title' => gT('Manage survey administrators'), 'ico' => 'icon-user', 'desc' => gT('User management'), 'page' => 'welcome', 'usergroup' => '-2'];
         $returnArray[] = ['position' => 5, 'url' => 'admin/labels/sa/view', 'title' => gT('Label sets'), 'ico' => 'icon-label', 'desc' => gT('Edit label sets'), 'page' => 'welcome', 'usergroup' => '-2'];
         $returnArray[] = ['position' => 6, 'url' => 'themeOptions', 'title' => gT('Themes'), 'ico' => 'icon-templates', 'desc' => gT('Themes'), 'page' => 'welcome', 'usergroup' => '-2'];
 
