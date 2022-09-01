@@ -1,8 +1,8 @@
 <div class="col-md-12">
     <div class="text-right">
-        <a href="https://www.limesurvey.org/" target="_blank" class="btn btn-primary">
+        <a href="https://www.limesurvey.org/" target="_blank" class="btn btn-default">
             <?php eT('Made in LimeSurvey'); ?>
-            <span class="fa fa-window-restore" aria-hidden="true"></span>
+            <span class="fa fa-external-link" aria-hidden="true"></span>
         </a>
     </div>
 </div>
