@@ -126,7 +126,7 @@ class ParticipantRegisterCta
     protected function isEnablePermitted()
     {
         $brandingFeatureIntroduced = new DateTime(self::INTRO_DATE);
-        return $this->installationData->dateCreated >= $brandingFeatureIntroduced;
+        return new DateTime($this->installationData->dateCreated) >= $brandingFeatureIntroduced;
     }
 
     /**
