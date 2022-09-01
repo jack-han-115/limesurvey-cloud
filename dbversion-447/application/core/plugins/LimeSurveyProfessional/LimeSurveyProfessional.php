@@ -4,7 +4,7 @@ use LimeSurveyProfessional\notifications\LimitReminderNotification;
 use LimeSurveyProfessional\notifications\OutOfResponsesPaid;
 use LimeSurveyProfessional\promotionalBanners\PromotionalBanners;
 use LimeSurveyProfessional\notifications\GracePeriodNotification;
-use LimeSurveyProfessional\participantRegisterCta\ParticipantRegisterCta;
+use LimeSurveyProfessional\ParticipantRegisterCta\ParticipantRegisterCta;
 
 require_once(__DIR__ . '/vendor/autoload.php');
 /**
