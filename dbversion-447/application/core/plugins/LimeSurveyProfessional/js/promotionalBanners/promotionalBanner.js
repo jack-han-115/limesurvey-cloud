@@ -1,4 +1,4 @@
-let banner = $('#promotional-banner');
+var banner = $('#promotional-banner');
 
 if (!banner.length) {
     $(getBannerHtml()).insertBefore('nav.navbar');
