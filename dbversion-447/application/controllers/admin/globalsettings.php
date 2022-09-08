@@ -438,6 +438,9 @@ class GlobalSettings extends SurveyCommonAction
         SettingGlobal::setSetting('admincreationemailtemplate', App()->getRequest()->getPost('admincreationemailtemplate'));
         //LimeService user admininistration settings mod end
 
+        // NOTE: FormExtension code is back-ported from 5.5.0-dev
+        $request = App()->request;
+        Yii::app()->formExtensionService->applySave('globalsettings', $request);
 
         if (!empty($warning)) {
             Yii::app()->setFlashMessage($warning, 'warning');

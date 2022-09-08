@@ -3,6 +3,11 @@
 * This view generate the 'general' tab inside global settings.
 *
 */
+
+// NOTE: FormExtension code is back-ported from 5.5.0-dev
+use LimeSurvey\Libraries\FormExtension\FormExtensionWidget;
+use LimeSurvey\Libraries\FormExtension\Inputs\GlobalSettingsRenderer;
+
 ?>
 <?php
 $thisdefaulttheme=getGlobalSetting('defaulttheme');
@@ -370,6 +375,14 @@ Full lock - none of participants are allowed to take survey, even if they alread
         <?php endif; ?>
         LimeService Mod end ----------------------------------- */ ?>
     </div>
+
+    <div class="ls-flex-column ls-space padding left-5 right-5 col-md-7">
+        <?= FormExtensionWidget::render(
+            App()->formExtensionService->getAll('globalsettings.general'),
+            new GlobalSettingsRenderer()
+        ); ?>
+    </div>
+
 </div>
 
 <?php if (Yii::app()->getConfig("demoMode")==true):?>

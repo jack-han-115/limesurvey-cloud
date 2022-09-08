@@ -7,6 +7,4 @@ $baseDir = dirname($vendorDir);
 
 return array(
     'Composer\\InstalledVersions' => $vendorDir . '/composer/InstalledVersions.php',
-    'Yii' => $vendorDir . '/yiisoft/yii/framework/yii.php',
-    'YiiBase' => $vendorDir . '/yiisoft/yii/framework/YiiBase.php',
 );
