@@ -239,7 +239,7 @@ class UserAction extends SurveyCommonAction
         $aAdminEmail['body'] = $emailTemplate;
 
         return $aAdminEmail;
-    }    
+    }
 
     /**
      * Renders template(s) wrapped in header and footer
