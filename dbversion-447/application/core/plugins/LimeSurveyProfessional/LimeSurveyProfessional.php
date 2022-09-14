@@ -4,6 +4,8 @@ use LimeSurveyProfessional\notifications\LimitReminderNotification;
 use LimeSurveyProfessional\notifications\OutOfResponsesPaid;
 use LimeSurveyProfessional\promotionalBanners\PromotionalBanners;
 use LimeSurveyProfessional\notifications\GracePeriodNotification;
+use LimeSurvey\Libraries\FormExtension\Inputs\ButtonSwitchInput;
+use LimeSurvey\Libraries\FormExtension\SaveFailedException;
 
 require_once(__DIR__ . '/vendor/autoload.php');
 /**
@@ -39,11 +41,72 @@ class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
         $this->subscribe('beforeTokenEmail');
         $this->subscribe('beforeAdminMenuRender');
         $this->subscribe('newDirectRequest');
+
+        // Set advertisement to on if it's null
+        $val = $this->get('limesurvey_professional_advertisement');
+        if ($val === null) {
+            $this->set('limesurvey_professional_advertisement', 'Y');
+        }
+
+        // TODO: This could be a property?
+        $installationData = $this->getInstallationData();
+        $this->addAdvertisementGlobalSettings($installationData);
+    }
+
+    protected function addAdvertisementGlobalSettings($installationData)
+    {
+        $that = $this;
+        if ($installationData->plan === 'free' ||
+            $installationData->plan === 'basic') {
+            $isSuperAdmin = false; //App()->user->id == 1;
+            $help = $isSuperAdmin ?  sprintf(
+                $this->gT('This option can only be disabled by customers using our <a href="%s" target="_blank">Expert or Enterprise package</a>.', 'js'),
+                        'https://www.limesurvey.org/pricing'
+                ) :
+                $this->gT('Contact your site administrator to ugprade your LimeSurvey installations');
+
+            Yii::app()->formExtensionService->add(
+                'globalsettings.general',
+                new ButtonSwitchInput(
+                    [
+                        'name' => 'limesurvey_professional_advertisement',
+                        'label' => $this->gT('Advertisement'),
+                        'disabled' => true,
+                        'help' => $help,
+                        'save' => function($request, $connection) {
+                            throw new Exception('Cannot be saved');
+                        },
+                        'load' => function () {
+                            return 'Y';
+                        }
+                    ]
+                )
+            );
+        } else {
+            Yii::app()->formExtensionService->add(
+                'globalsettings.general',
+                new ButtonSwitchInput(
+                    [
+                        'name' => 'limesurvey_professional_advertisement',
+                        'label' => $this->gT('Advertisement'),
+                        'help' => $this->gT('Turn on or off LimeSurvey branding in survey footer and end of survey'),
+                        'save' => function($request, $connection) use ($that) {
+                            $value = $request->getPost('limesurvey_professional_advertisement');
+                            return $that->set('limesurvey_professional_advertisement', $value);
+                        },
+                        'load' => function() use ($that) {
+                            // Default to 'Y'
+                            $val = $that->get('limesurvey_professional_advertisement') ?? 'Y';
+                            return $val;
+                        }
+                    ]
+                )
+            );
+        }
     }
 
     /**
-     * If this is a LimeService installation with free subscription, don't allow to disable it
-     *
+     * This plugin can never be disabled.
      * @return void
      */
     public function beforeDeactivate()
