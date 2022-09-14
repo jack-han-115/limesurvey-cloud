@@ -33,6 +33,7 @@ class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
     public function init($loadConfig = true)
     {
         \Yii::setPathOfAlias(get_class($this), dirname(__FILE__));
+        \Yii::import('application.helpers.common_helper', true);
         if($loadConfig) {
             $this->readConfigFile();
         }
