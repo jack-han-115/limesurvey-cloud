@@ -42,12 +42,6 @@ class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
         $this->subscribe('beforeAdminMenuRender');
         $this->subscribe('newDirectRequest');
 
-        // Set advertisement to on if it's null
-        $val = $this->get('limesurvey_professional_advertisement');
-        if ($val === null) {
-            $this->set('limesurvey_professional_advertisement', 'Y');
-        }
-
         // TODO: This could be a property?
         $installationData = $this->getInstallationData();
         $this->addAdvertisementGlobalSettings($installationData);
