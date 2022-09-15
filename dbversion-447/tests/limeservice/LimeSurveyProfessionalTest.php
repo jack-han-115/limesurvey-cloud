@@ -16,6 +16,7 @@ class LimeSurveyProfessionalTest extends TestBaseClass
     {
         $pluginDir = 'application.core.plugins.LimeSurveyProfessional.*';
         Yii::import($pluginDir);
+        Yii::import('application.helpers.common_helper', true);
     }
 
     public function testForceRedirectToWelcomePageWithNoEvent()
