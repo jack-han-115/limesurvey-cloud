@@ -17,7 +17,7 @@ class ParticipantRegisterCta
      */
     private static $instance = null;
 
-    private $plugin = null;
+    private ?LimeSurveyProfessional $plugin = null;
     private $installationData = null;
     private $viewContentFooter = '';
     private $viewContentCompleted = '';
@@ -104,14 +104,14 @@ class ParticipantRegisterCta
         $event = $this->plugin->getEvent();
         $surveyId = $event->get('surveyId');
 
+        $optionDisabled = $this->plugin->getConfig('limesurvey_professional_advertisement') === 'N';
+
         $disable =
             empty($surveyId)
             || $this->isEnablePermitted() === false
-            // Todo: Add ability to enable or disable branding for isDisablePermitted() installations
-            // - then compare here to decide if the branding should be disabled or not
-            || $this->isDisablePermitted();
+            || ($this->isDisablePermitted() &&  $optionDisabled);
 
-        return $disable === false;
+        return $disable == false;
     }
 
     /**

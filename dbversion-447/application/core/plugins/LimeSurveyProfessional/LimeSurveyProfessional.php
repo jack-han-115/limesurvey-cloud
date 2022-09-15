@@ -92,13 +92,13 @@ class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
                         'label' => $this->gT('Advertisement'),
                         'help' => $this->gT('Turn on or off LimeSurvey branding in survey footer and end of survey'),
                         'save' => function ($request, $connection) use ($that) {
-                            $value = $request->getPost('limesurvey_professional_advertisement');
+                            $value = $request->getPost('limesurvey_professional_advertisement') === '1' ? 'Y' : 'N';
                             return $that->set('limesurvey_professional_advertisement', $value);
                         },
                         'load' => function () use ($that) {
                             // Default to 'Y'
                             $val = $that->get('limesurvey_professional_advertisement') ?? 'Y';
-                            return $val;
+                            return $val === 'Y' ? '1' : '0';
                         }
                     ]
                 )
@@ -329,5 +329,23 @@ class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
                 $this->getInstallationData()
             );
         $participantRegisterCta->display(true);
+    }
+
+    /**
+     * Get config to allow plugin config to be read from plugin "sub-modules".
+     * 
+     * This function retrieves plugin data. Do not cache this data; the plugin storage
+     * engine will handling caching. After the first call to this function, subsequent
+     * calls will only consist of a few function calls and array lookups.
+     *
+     * @param string $key
+     * @param string $model
+     * @param int $id
+     * @param mixed $default The default value to use when not was set
+     * @return boolean
+     */
+    public function getConfig($key = null, $model = null, $id = null, $default = null)
+    {
+        return $this->get($key, $model, $id, $default);
     }
 }
