@@ -297,91 +297,23 @@ class RegisterController extends LSYii_Controller
         $mailer->setToken($oToken->token);
         $mailer->setTypeWithRaw('register', $sLanguage);
         $mailer->replaceTokenAttributes = true;
+        // LimeService Mod Start
+        $iAdvertising = (int)Yii::app()->dbstats->createCommand('select advertising from limeservice_system.installations where user_id=' . getInstallationID())->queryScalar();
+        $bSpamLinks   = ( $iAdvertising ) ? $this->looksForSpamLinks(($aSurveyInfo['htmlemail'] == 'Y'), $mailer->rawBody, $aSurveyInfo['sid']) : false;
+        if ($bSpamLinks) {
+            $aMessage['mail-thanks'] = gT("Thank you for registering to participate in this survey.");
+            $aMessage['mail-message-error'] = gT("You are registered but an error happened when trying to send the email - please contact the survey administrator. Reason: Invalid links in registration email");
+            $aMessage['mail-contact'] = sprintf(gT("Survey administrator %s (%s)"), $aSurveyInfo['adminname'], $aSurveyInfo['adminemail']);
+            $this->sMessage = $this->renderPartial('/survey/system/message', array('aMessage' => $aMessage), true);
+            return false;
+        }
+        // LimeService Mod End
+
+
         $mailerSent = $mailer->sendMessage();
         if ($mailer->getEventMessage()) {
             $this->sMailMessage = $mailer->getEventMessage();
         }
-        /*
-        LimeService: Anti-Spam system needs to be re-implemented
-        $sToken = $oToken->token;
-        $useHtmlEmail = (getEmailFormat($iSurveyId) == 'html');
-        $aMail['subject'] = preg_replace("/{TOKEN:([A-Z0-9_]+)}/", "{"."$1"."}", $aMail['subject']);
-        $aMail['message'] = preg_replace("/{TOKEN:([A-Z0-9_]+)}/", "{"."$1"."}", $aMail['message']);
-        $aReplacementFields["{SURVEYURL}"] = Yii::app()->getController()->createAbsoluteUrl("/survey/index/sid/{$iSurveyId}", array('lang'=>$sLanguage, 'token'=>$sToken));
-        $aReplacementFields["{OPTOUTURL}"] = Yii::app()->getController()->createAbsoluteUrl("/optout/tokens/surveyid/{$iSurveyId}", array('langcode'=>$sLanguage, 'token'=>$sToken));
-        $aReplacementFields["{OPTINURL}"] = Yii::app()->getController()->createAbsoluteUrl("/optin/tokens/surveyid/{$iSurveyId}", array('langcode'=>$sLanguage, 'token'=>$sToken));
-        foreach (array('OPTOUT', 'OPTIN', 'SURVEY') as $key) {
-            $url = $aReplacementFields["{{$key}URL}"];
-            if ($useHtmlEmail) {
-                            $aReplacementFields["{{$key}URL}"] = "<a href='{$url}'>".htmlspecialchars($url).'</a>';
-            }
-            $aMail['subject'] = str_replace("@@{$key}URL@@", $url, $aMail['subject']);
-            $aMail['message'] = str_replace("@@{$key}URL@@", $url, $aMail['message']);
-        }
-        // Replace the fields
-        $aMail['subject'] = ReplaceFields($aMail['subject'], $aReplacementFields);
-        $aMail['message'] = ReplaceFields($aMail['message'], $aReplacementFields);
-        $sFrom = "{$aSurveyInfo['adminname']} <{$aSurveyInfo['adminemail']}>";
-        $sBounce = getBounceEmail($iSurveyId);
-        $sTo = $oToken->email;
-        $sitename = Yii::app()->getConfig('sitename');
-        // Plugin event for email handling (Same than admin token but with register type)
-        $event = new PluginEvent('beforeTokenEmail');
-        $event->set('survey', $iSurveyId);
-        $event->set('type', 'register');
-        $event->set('model', 'register');
-        $event->set('subject', $aMail['subject']);
-        $event->set('to', $sTo);
-        $event->set('body', $aMail['message']);
-        $event->set('from', $sFrom);
-        $event->set('bounce', $sBounce);
-        $event->set('token', $oToken->attributes);
-        App()->getPluginManager()->dispatchEvent($event);
-        $aMail['subject'] = $event->get('subject');
-        $aMail['message'] = $event->get('body');
-        $sTo = $event->get('to');
-        $sFrom = $event->get('from');
-        $sBounce = $event->get('bounce');
-
-        $customheaders = array('1' => "X-surveyid: ".$iSurveyId, '2' => "X-tokenid: ".$sToken);
-
-        $aRelevantAttachments = array();
-        if (isset($aSurveyInfo['attachments'])) {
-            $aAttachments = unserialize($aSurveyInfo['attachments']);
-            if (!empty($aAttachments)) {
-                if (isset($aAttachments['registration'])) {
-                    LimeExpressionManager::singleton()->loadTokenInformation($aSurveyInfo['sid'], $sToken);
-                    foreach ($aAttachments['registration'] as $aAttachment) {
-                        if(Yii::app()->is_file($aAttachment['url'],Yii::app()->getConfig('uploaddir').DIRECTORY_SEPARATOR."surveys".DIRECTORY_SEPARATOR.$iSurveyId,false)) {
-                            if (LimeExpressionManager::singleton()->ProcessRelevance($aAttachment['relevance'])) {
-                                $aRelevantAttachments[] = $aAttachment['url'];
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        // LimeService Mod Start
-        $iAdvertising = (int)Yii::app()->dbstats->createCommand('select advertising from limeservice_system.installations where user_id='.getInstallationID())->queryScalar();
-        $bSpamLinks   = ( $iAdvertising )?$this->looksForSpamLinks($useHtmlEmail,$aMail['message'], $aSurveyInfo['sid']):false;
-        // LimeService Mod End
-
-
-        if ($event->get('send', true) == false) {
-            $this->sMessage = $event->get('message', $this->sMailMessage); // event can send is own message
-            if ($event->get('error') == null) {
-// mimic core system, set send to today
-                $today = dateShift(date("Y-m-d H:i:s"), "Y-m-d H:i", Yii::app()->getConfig('timeadjust'));
-                $oToken->sent = $today;
-                $oToken->save();
-            }
-        } elseif (!$bSpamLinks && SendEmailMessage($aMail['message'], $aMail['subject'], $sTo, $sFrom, $sitename, $useHtmlEmail, $sBounce, $aRelevantAttachments, $customheaders)) {
-            // TLR change to put date into sent
-            $today = dateShift(date("Y-m-d H:i:s"), "Y-m-d H:i", Yii::app()->getConfig('timeadjust'));
-            $oToken->sent = $today;
-            $oToken->save();
-        */
         $aMessage = array();
         $aMessage['mail-thanks'] = gT("Thank you for registering to participate in this survey.");
         if ($mailerSent) {
