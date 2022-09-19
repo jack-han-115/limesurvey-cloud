@@ -611,8 +611,8 @@ class LimeMailer extends \PHPMailer\PHPMailer\PHPMailer
         // LimeService Mod Start
         $iAdvertising = (int)Yii::app()->dbstats->createCommand('select advertising from limeservice_system.installations where user_id=' . getInstallationID())->queryScalar();
         $bSpamLinks   = ( $iAdvertising ) ? $this->lookForSpamLinks($this->getIsHtml(), $this->Body, $this->$surveyId) : false;
-        if ($bSpamLinks && $emailType == 'register') {
-            $this->setError(gT("You are registered but an error happened when trying to send the email - please contact the survey administrator. Reason: Invalid links in registration email"));
+        if ($bSpamLinks && ($this->emailType == 'register' || $this->emailType == 'confirm')) {
+            $this->setError(gT("Invalid external links in email"));
             return false;
         }
         // LimeService Mod End
