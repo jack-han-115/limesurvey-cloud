@@ -311,7 +311,7 @@ class RegisterController extends LSYii_Controller
             $aMessage['mail-message'] = $this->sMailMessage;
         } else {
             // LimeService Mod Start
-            $this->aRegisterErrors[] = gT("You are registered but an error happened when trying to send the email - please contact the survey administrator.").'<br> Reason: '.$mailer->getError();
+            $this->aRegisterErrors[] = gT("You are registered but an error happened when trying to send the email - please contact the survey administrator.") . '<br> Reason: ' . $mailer->getError();
             // LimeService Mod End
         }
         $aMessage['mail-contact'] = sprintf(gT("Survey administrator %s (%s)"), $aSurveyInfo['adminname'], $aSurveyInfo['adminemail']);
