@@ -217,6 +217,8 @@ class RegisterController extends LSYii_Controller
         $aData['sLastName'] = $oToken->lastname;
         $aData['sEmail'] = $oToken->email;
         $aData['thissurvey'] = $oSurvey->attributes;
+        $aData['aErrors'] = $this->aRegisterErrors;
+
 
         return $aData;
     }
@@ -299,12 +301,9 @@ class RegisterController extends LSYii_Controller
         $mailer->replaceTokenAttributes = true;
         // LimeService Mod Start
         $iAdvertising = (int)Yii::app()->dbstats->createCommand('select advertising from limeservice_system.installations where user_id=' . getInstallationID())->queryScalar();
-        $bSpamLinks   = ( $iAdvertising ) ? $this->looksForSpamLinks(($aSurveyInfo['htmlemail'] == 'Y'), $mailer->rawBody, $aSurveyInfo['sid']) : false;
+        $bSpamLinks   = ( $iAdvertising ) ? $this->lookForSpamLinks(($aSurveyInfo['htmlemail'] == 'Y'), $mailer->rawBody, $aSurveyInfo['sid']) : false;
         if ($bSpamLinks) {
-            $aMessage['mail-thanks'] = gT("Thank you for registering to participate in this survey.");
-            $aMessage['mail-message-error'] = gT("You are registered but an error happened when trying to send the email - please contact the survey administrator. Reason: Invalid links in registration email");
-            $aMessage['mail-contact'] = sprintf(gT("Survey administrator %s (%s)"), $aSurveyInfo['adminname'], $aSurveyInfo['adminemail']);
-            $this->sMessage = $this->renderPartial('/survey/system/message', array('aMessage' => $aMessage), true);
+            $this->aRegisterErrors[] = gT("You are registered but an error happened when trying to send the email - please contact the survey administrator. Reason: Invalid links in registration email");
             return false;
         }
         // LimeService Mod End
@@ -498,7 +497,7 @@ class RegisterController extends LSYii_Controller
      * @return boolean    true if any spam link found, else false
      */
 
-    private function looksForSpamLinks($bHtml, $modmessage, $iSurveyId)
+    private function lookForSpamLinks($bHtml, $modmessage, $iSurveyId)
     {
         $aLinks     = array();
         $bSpamLinks = false;
