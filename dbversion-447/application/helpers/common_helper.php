@@ -2857,12 +2857,11 @@ function getParticipantAttributes($iSurveyID)
 */
 function getTokenFieldsAndNames($surveyid, $bOnlyAttributes = false)
 {
-
-
-    $aBasicTokenFields = array('firstname' => array(
-        'description' => gT('First name'),
-        'mandatory' => 'N',
-        'showregister' => 'Y'
+    $aBasicTokenFields = array(
+        'firstname' => array(
+            'description' => gT('First name'),
+            'mandatory' => 'N',
+            'showregister' => 'Y'
         ),
         'lastname' => array(
             'description' => gT('Last name'),
@@ -2882,32 +2881,37 @@ function getTokenFieldsAndNames($surveyid, $bOnlyAttributes = false)
         'token' => array(
             'description' => gT('Access code'),
             'mandatory' => 'N',
-            'showregister' => 'Y'
+            'showregister' => 'N'
         ),
         'language' => array(
             'description' => gT('Language code'),
             'mandatory' => 'N',
-            'showregister' => 'Y'
+            'showregister' => 'N'
         ),
         'sent' => array(
             'description' => gT('Invitation sent date'),
             'mandatory' => 'N',
-            'showregister' => 'Y'
+            'showregister' => 'N'
         ),
         'remindersent' => array(
             'description' => gT('Last reminder sent date'),
             'mandatory' => 'N',
-            'showregister' => 'Y'
+            'showregister' => 'N'
         ),
         'remindercount' => array(
             'description' => gT('Total numbers of sent reminders'),
             'mandatory' => 'N',
-            'showregister' => 'Y'
+            'showregister' => 'N'
         ),
         'usesleft' => array(
             'description' => gT('Uses left'),
             'mandatory' => 'N',
-            'showregister' => 'Y'
+            'showregister' => 'N'
+        ),
+        'completed' => array(
+            'description' => gT('Completed'),
+            'mandatory' => 'N',
+            'showregister' => 'N'
         ),
     );
 
