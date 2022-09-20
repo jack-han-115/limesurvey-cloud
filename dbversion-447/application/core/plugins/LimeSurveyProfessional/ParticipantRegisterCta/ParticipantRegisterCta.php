@@ -17,7 +17,7 @@ class ParticipantRegisterCta
      */
     private static $instance = null;
 
-    private ?LimeSurveyProfessional $plugin = null;
+    private $plugin = null;
     private $installationData = null;
     private $viewContentFooter = '';
     private $viewContentCompleted = '';
