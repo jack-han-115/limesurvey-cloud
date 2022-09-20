@@ -42,6 +42,7 @@ pipelines:
           - curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
           - chmod +x tests/bin/lint-tests
           - chmod +x tests/bin/lint-application
+          - export COMPOSER_ALLOW_SUPERUSER=1
           - composer update
           - DBENGINE=MyISAM php application/commands/console.php installfromconfig ../pipeline-config-447.php .
           - export COMPOSER_ALLOW_SUPERUSER=1

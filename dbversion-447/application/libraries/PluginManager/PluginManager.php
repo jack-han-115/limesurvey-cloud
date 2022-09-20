@@ -664,9 +664,11 @@ class PluginManager extends \CApplicationComponent
     public function isWhitelisted($pluginName)
     {
         if (App()->getConfig('usePluginWhitelist')) {
+            // Get the user plugins whitelist
             $whiteList = App()->getConfig('pluginWhitelist');
-            $coreList = self::getCorePluginList();
-            $allowedPlugins =  array_merge($coreList, $whiteList);
+            // Get the list of allowed core plugins
+            $coreList = $this->getAllowedCorePluginList();
+            $allowedPlugins = array_merge($coreList, $whiteList);
             return array_search($pluginName, $allowedPlugins) !== false;
         }
         return true;
@@ -702,5 +704,18 @@ class PluginManager extends \CApplicationComponent
             'LimeSurveyProfessional'
             // LimeService Mod End
         ];
+    }
+
+    /**
+     * Return the list of core plugins allowed to be loaded.
+     * That is, all core plugins not in the black list.
+     * @return string[]
+     */
+    private function getAllowedCorePluginList()
+    {
+        $corePlugins = self::getCorePluginList();
+        $blackList = Yii::app()->getConfig('corePluginBlacklist');
+        $allowedCorePlugins = array_diff($corePlugins, $blackList);
+        return $allowedCorePlugins;
     }
 }

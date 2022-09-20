@@ -24,6 +24,7 @@
 				"application/libraries/PluginManager/Storage"
 			],
 			"LimeSurvey\\Menu\\": "application/libraries/MenuObjects/",
+            "LimeSurvey\\Libraries\\": "application/libraries/",
 			"LimeSurvey\\ExtensionInstaller\\": "application/libraries/ExtensionInstaller/",
 			"LimeSurvey\\Helpers\\": "application/helpers",
 			"LimeSurvey\\Helpers\\Update\\": [
@@ -43,7 +44,8 @@
 		"phpseclib/phpseclib": "^3.0",
 		"tiamo/spss": "^2.2",
         "yiiext/twig-renderer":"dev-master",
-		"symfony/polyfill-mbstring": "^1.26"
+		"symfony/polyfill-mbstring": "^1.26",
+		"yiisoft/yii": "^1.1"
 	},
     "config": {
         "vendor-dir": "third_party",
