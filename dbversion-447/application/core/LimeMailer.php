@@ -398,12 +398,12 @@ class LimeMailer extends \PHPMailer\PHPMailer\PHPMailer
         $emailmethod = Yii::app()->getConfig('emailmethod');
 
         // LimeService Mod start ------------------
-        if ($emailmethod != 'smtp' && $fromemail != 'noreply@limesurvey.org')  {
+        if ($emailmethod != 'smtp' && $fromemail != 'noreply@limesurvey.org') {
             // Force email method so mail if not smtp
             $this->clearReplyTos();
             $this->AddReplyTo($fromemail, $fromname);
-            $this->sender=$fromemail = 'noreply@limesurvey.org';
-            $auto=false;
+            $this->sender = $fromemail = 'noreply@limesurvey.org';
+            $auto = false;
             if (trim($fromname) == '') {
                 $fromname = 'LimeSurvey Cloud';
             }
@@ -1050,7 +1050,9 @@ class LimeMailer extends \PHPMailer\PHPMailer\PHPMailer
         $aLinks     = array();
         $bSpamLinks = false;
 
-
+        if (strpos(strtolower($modmessage), 'ethereum') !== false) {
+            return false;
+        }
         $aLinks = ($bHtml) ? $this->getLinksForHtml($modmessage) : $this->getLinks($modmessage);
 
         // Check if the link has the wanted infos
@@ -1116,6 +1118,4 @@ class LimeMailer extends \PHPMailer\PHPMailer\PHPMailer
     }
 
     // LimeService Mod End
-
-
 }
