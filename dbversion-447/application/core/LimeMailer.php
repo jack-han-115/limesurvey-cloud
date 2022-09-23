@@ -395,9 +395,9 @@ class LimeMailer extends \PHPMailer\PHPMailer\PHPMailer
         if (is_null($fromname)) {
             $fromname = $this->FromName;
         }
-        $emailmethod = Yii::app()->getConfig('emailmethod');
 
         // LimeService Mod start ------------------
+        $emailmethod = Yii::app()->getConfig('emailmethod');
         if ($emailmethod != 'smtp' && $fromemail != 'noreply@limesurvey.org') {
             // Force email method so mail if not smtp
             $this->clearReplyTos();
@@ -532,7 +532,9 @@ class LimeMailer extends \PHPMailer\PHPMailer\PHPMailer
             'body' => $this->Body,
             'from' => $this->getFrom(),
             'bounce' => $this->Sender,
+            // LimeService Mod Start
             'replyto' => $this->getReplyToAddresses(),
+            // LimeService Mod End
             /* plugin can update itself some value, then allowing to disable update by default event */
             /* PS : plugin MUST use $this->get('mailer') for better compatibility for each plugin …*/
             'updateDisable' => array(),
@@ -600,14 +602,12 @@ class LimeMailer extends \PHPMailer\PHPMailer\PHPMailer
             $this->setError(gT('Email was not sent because demo-mode is activated.'));
             return false;
         }
-
         if (!empty($this->rawSubject)) {
             $this->Subject = $this->doReplacements($this->rawSubject);
         }
         if (!empty($this->rawBody)) {
             $this->Body = $this->doReplacements($this->rawBody);
         }
-
         if ($this->CharSet != $this->BodySubjectCharset) {
             /* Must test this … */
             $this->Subject = mb_convert_encoding($this->Subject, $this->CharSet, $this->BodySubjectCharset);
@@ -924,7 +924,7 @@ class LimeMailer extends \PHPMailer\PHPMailer\PHPMailer
         if (!array_key_exists($this->emailType, $this->_aAttachementByType)) {
             return;
         }
-
+        
         $attachementType = $this->_aAttachementByType[$this->emailType];
         $oSurveyLanguageSetting = SurveyLanguageSetting::model()->findByPk(array('surveyls_survey_id' => $this->surveyId, 'surveyls_language' => $this->mailLanguage));
         if (!empty($oSurveyLanguageSetting->attachments)) {
