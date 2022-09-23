@@ -851,7 +851,8 @@ $config['passwordValidationRules'] = array(
     'symbol' => 0,
 );
 
-$config['linkToPricingPage'] ='https://www.limesurvey.org/pricing';
+// For Email spam filter
+$config['disableEmailSpamChecking'] = false;
 
 return $config;
 //settings deleted

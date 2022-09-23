@@ -608,15 +608,6 @@ class LimeMailer extends \PHPMailer\PHPMailer\PHPMailer
             $this->Body = $this->doReplacements($this->rawBody);
         }
 
-        // LimeService Mod Start
-        $iAdvertising = (int)Yii::app()->dbstats->createCommand('select advertising from limeservice_system.installations where user_id=' . getInstallationID())->queryScalar();
-        $bSpamLinks   = ( $iAdvertising ) ? $this->lookForSpamLinks($this->getIsHtml(), $this->Body, $this->$surveyId) : false;
-        if ($bSpamLinks && ($this->emailType == 'register' || $this->emailType == 'confirm')) {
-            $this->setError(gT("Invalid external links in email"));
-            return false;
-        }
-        // LimeService Mod End
-
         if ($this->CharSet != $this->BodySubjectCharset) {
             /* Must test this … */
             $this->Subject = mb_convert_encoding($this->Subject, $this->CharSet, $this->BodySubjectCharset);
@@ -1035,87 +1026,4 @@ class LimeMailer extends \PHPMailer\PHPMailer\PHPMailer
         }
         return $aOutList;
     }
-
-   // LimeService Mod Start
-
-    /**
-     * Checks for a given mail if it has spam links
-     * @param $bHtml      boolean is the mail an HTML mail
-     * @param $modmessage string  the message of the mail
-     * @return boolean    true if any spam link found, else false
-     */
-
-    private function lookForSpamLinks($bHtml, $modmessage, $iSurveyId)
-    {
-        $aLinks     = array();
-        $bSpamLinks = false;
-
-        if (strpos(strtolower($modmessage), 'ethereum') !== false) {
-            return false;
-        }
-        $aLinks = ($bHtml) ? $this->getLinksForHtml($modmessage) : $this->getLinks($modmessage);
-
-        // Check if the link has the wanted infos
-        foreach ($aLinks as $sLink) {
-            if (strpos($sLink, 'token') === false || strpos($sLink, (string)$iSurveyId) === false || strpos($sLink, $_SERVER['HTTP_HOST']) === false) {
-                $bSpamLinks = true;
-                break;
-            }
-        }
-
-        return $bSpamLinks;
-    }
-
-    /**
-     * In HTML mode, the message of the mail must be filterer.
-     * We only want the body content: headers or css can have legitimate external links
-     * We also want to exclude pictures source
-     *
-     * @param $modmessage string the content of the mail
-     * @return array an array containing the links found inside that mail
-     */
-    private function getLinksForHtml($modmessage)
-    {
-        $aLinks     = array();
-        $doc = new DOMDocument();
-        @$doc->loadHTML($modmessage);
-
-        // This will exclude pictures but include links
-        $body = $doc->getElementsByTagName('body');
-        foreach ($body as $p) {
-            $aLinks = array_merge($aLinks, $this->getLinks($p->nodeValue));
-        }
-
-        // A link tag (<a href="">) can contain a link without http or https
-        // So we just add them to the array of links to check
-        $oLinkTags = $doc->getElementsByTagName('a');
-        foreach ($oLinkTags as $oLink) {
-            $aLinks[] = $oLink->getAttribute('href');
-        }
-        return $aLinks;
-    }
-
-    /**
-     * Look for any links inside a chunk of text (any string starting with http or https)
-     *
-     * @param $modmessage string the content of the mail
-     * @return array an array containing the links found inside that mail
-     */
-    private function getLinks($chunk)
-    {
-        $url_pattern = "/\b(?:(?:https?|ftp):\/\/|www\.)[-a-z0-9+&@#\/%?=~_|!:,.;]*[-a-z0-9+&@#\/%=~_|]/i";
-        $aLinks     = array();
-
-        preg_match_all($url_pattern, $chunk, $matches);
-
-        // The pattern catch too many things so this will clean the results
-        foreach ($matches[0] as $match) {
-            if (substr($match, 0, 4) == 'http' || substr($match, 0, 3) == 'www') {
-                $aLinks[] = $match;
-            }
-        }
-        return $aLinks;
-    }
-
-    // LimeService Mod End
 }

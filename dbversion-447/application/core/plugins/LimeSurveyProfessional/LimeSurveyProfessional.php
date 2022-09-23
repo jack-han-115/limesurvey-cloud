@@ -22,8 +22,10 @@ class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
     protected $storage = 'DbStorage';
     protected static $description = 'LimeSurvey Cloud extras';
     protected static $name = 'LimeSurveyProfessional';
-    static $violationCount = 0;
-    static $violationText = '';
+    /** @var int violationCounter for email blacklist filter */
+    public static $violationCount = 0;
+    /** @var string can contain info regarding the email blacklist filter */
+    public static $violationText = '';
 
     protected $settings = array();
 
@@ -232,12 +234,12 @@ class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
     }
 
     /**
-     *  Before a tokenEmail of types remind or invite are sent, it will run through a blacklist filter
+     *  Before a tokenEmail is sent, it will run through a blacklist filter, except this installation is whitelisted
+     *  via 'disableEmailSpamChecking' config param
      */
     public function beforeTokenEmail()
     {
-        $type = $this->getEvent()->get('type', '');
-        if ($type == 'invite' || $type == 'remind') {
+        if (!Yii::app()->getConfig("disableEmailSpamChecking")) {
             $installationData = $this->getInstallationData();
             $blacklistFilter = new \LimeSurveyProfessional\email\EmailFilter($this->getEvent());
             $blacklistFilter->filter($installationData);

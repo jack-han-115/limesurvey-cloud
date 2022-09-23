@@ -122,6 +122,7 @@ class LimeSurveyProfessionalTest extends TestBaseClass
         $installationData->accessToken = 12345;
         $installationData->apiId = '';
         $installationData->apiSecret = '';
+        $installationData->hasAdvertising = true;
 
         return $installationData;
     }
@@ -145,17 +146,16 @@ class LimeSurveyProfessionalTest extends TestBaseClass
         $id = 'dummyid';
         $lsp = new LimeSurveyProfessional($pm, $id);
         $lsp->init(false);
-        $installationData = $this->getInstallationData();
         $event = new PluginEvent('eventname');
         $event->set('body', '');
         $event->set('subject', '');
-        $event->set('replyto', ['test@limesurvey.org']);
+        $event->set('replyto', ['test@limesurvey.org' => ['tester' => 'test@limesurvey.org']]);
 
-        $blacklist = new LimeSurveyProfessional\email\BlacklistFilter($event);
+        $blacklistFilter = new LimeSurveyProfessional\email\BlacklistFilter($event);
         $emailMethod = 'mail';
-        $folder = getcwd() . '/application/core/plugins/LimeSurveyProfessional';
+        $blacklistFilter->detectSpam($emailMethod);
 
-        $this->assertFalse($blacklist->detectSpam($emailMethod, $folder, $installationData->emailLock));
+        $this->assertTrue($blacklistFilter->counter === 0);
     }
 
     public function testBlacklistFilterSpam()
@@ -164,27 +164,16 @@ class LimeSurveyProfessionalTest extends TestBaseClass
         $id = 'dummyid';
         $lsp = new LimeSurveyProfessional($pm, $id);
         $lsp->init(false);
-        $installationData = $this->getInstallationData();
         $event = new PluginEvent('eventname');
         $event->set('body', 'Tax return');
         $event->set('subject', '');
-        $event->set('replyto', ['test@limesurvey.org']);
+        $event->set('replyto', ['test@limesurvey.org' => ['tester' => 'test@limesurvey.org']]);
 
-        // as of now a random number of 3 to 5 emails containing blacklisted words
-        // need to be sent before filter hits. so we try it 6 times
-        $numberOfEmails = 6;
-        $locked = false;
+        $blacklistFilter = new LimeSurveyProfessional\email\BlacklistFilter($event);
+        $emailMethod = 'mail';
+        $blacklistFilter->detectSpam($emailMethod);
 
-        for ($i = 0; $i < $numberOfEmails; $i++) {
-            if (!$locked) {
-                $blacklist = new LimeSurveyProfessional\email\BlacklistFilter($event);
-                $emailMethod = 'mail';
-                $folder = getcwd() . '/application/core/plugins/LimeSurveyProfessional';
-                $locked = $blacklist->detectSpam($emailMethod, $folder, $installationData->emailLock);
-            }
-        }
-
-        $this->assertTrue($locked);
+        $this->assertTrue($blacklistFilter->counter === 1);
     }
 
     public function testNoUpgradeButtonForPaidUsers()
@@ -239,5 +228,37 @@ class LimeSurveyProfessionalTest extends TestBaseClass
 
         $bannerDay6 = $promotionalBannersClass->getBannerFromConfig($fakeTodayDateDay6, $testConfig, $installationData);
         $this->assertTrue($bannerDay6->id == 2 && $bannerDay6->shows == 0);
+    }
+
+    public function testLinkFilterNoSpam()
+    {
+        $pm = new PluginManager();
+        $id = 'dummyid';
+        $lsp = new LimeSurveyProfessional($pm, $id);
+        $lsp->init(false);
+        $event = new PluginEvent('eventname');
+        $event->set('body', '');
+        $event->set('subject', '');
+        $event->set('replyto', ['test@limesurvey.org' => ['tester' => 'test@limesurvey.org']]);
+
+        $linkFilter = new LimeSurveyProfessional\email\LinkFilter($event);
+
+        $this->assertFalse($linkFilter->lookForSpamLinks());
+    }
+
+    public function testLinkFilterSpam()
+    {
+        $pm = new PluginManager();
+        $id = 'dummyid';
+        $lsp = new LimeSurveyProfessional($pm, $id);
+        $lsp->init(false);
+        $event = new PluginEvent('eventname');
+        $event->set('body', 'https://www.google.de');
+        $event->set('subject', '');
+        $event->set('replyto', ['test@limesurvey.org' => ['tester' => 'test@limesurvey.org']]);
+
+        $linkFilter = new LimeSurveyProfessional\email\LinkFilter($event);
+
+        $this->assertTrue($linkFilter->lookForSpamLinks());
     }
 }
