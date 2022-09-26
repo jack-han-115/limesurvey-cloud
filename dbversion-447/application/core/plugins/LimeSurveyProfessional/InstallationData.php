@@ -60,6 +60,9 @@ class InstallationData
     /** @var string */
     public $apiSecret;
 
+    /** @var boolean */
+    public $hasAdvertising;
+
     /**
      * Populates this data object with relevant data of the installation
      * @param LimeserviceSystem $limeserviceSystem
@@ -91,5 +94,6 @@ class InstallationData
         //        $apiIdSecretResult = $limeserviceSystem->getApiIdAndSecret();
         //        $this->apiId = $apiIdSecretResult['installation_api_id'];
         //        $this->apiSecret = $apiIdSecretResult['installation_api_secret'];
+        $this->hasAdvertising = $limeserviceSystem->getAdvertising() > 0;
     }
 }

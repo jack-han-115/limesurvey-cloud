@@ -324,6 +324,21 @@ class LimeserviceSystem
             ->queryScalar();
     }
 
+    /**
+     * Returns advertising value from table installations
+     *
+     * @return int
+     * @throws \CException
+     */
+    public function getAdvertising()
+    {
+        return (int)$this->dbConnection->createCommand()
+            ->select('advertising')
+            ->from('limeservice_system.installations')
+            ->where('user_id=:user_id', [':user_id' => $this->userInstallationId])
+            ->queryScalar();
+    }
+
     //    /**
     //     * Returns client_id value from table installations
     //     *

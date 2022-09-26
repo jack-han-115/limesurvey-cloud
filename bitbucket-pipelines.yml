@@ -45,6 +45,7 @@ pipelines:
           - export COMPOSER_ALLOW_SUPERUSER=1
           - composer update
           - DBENGINE=MyISAM php application/commands/console.php installfromconfig ../pipeline-config-447.php .
+          - export COMPOSER_ALLOW_SUPERUSER=1
           - composer test
           - touch enabletests
           - XDEBUG_MODE=coverage php third_party/bin/phpunit --configuration phpunit-limeservice.xml

@@ -217,6 +217,8 @@ class RegisterController extends LSYii_Controller
         $aData['sLastName'] = $oToken->lastname;
         $aData['sEmail'] = $oToken->email;
         $aData['thissurvey'] = $oSurvey->attributes;
+        $aData['aErrors'] = $this->aRegisterErrors;
+
 
         return $aData;
     }
@@ -301,87 +303,6 @@ class RegisterController extends LSYii_Controller
         if ($mailer->getEventMessage()) {
             $this->sMailMessage = $mailer->getEventMessage();
         }
-        /*
-        LimeService: Anti-Spam system needs to be re-implemented
-        $sToken = $oToken->token;
-        $useHtmlEmail = (getEmailFormat($iSurveyId) == 'html');
-        $aMail['subject'] = preg_replace("/{TOKEN:([A-Z0-9_]+)}/", "{"."$1"."}", $aMail['subject']);
-        $aMail['message'] = preg_replace("/{TOKEN:([A-Z0-9_]+)}/", "{"."$1"."}", $aMail['message']);
-        $aReplacementFields["{SURVEYURL}"] = Yii::app()->getController()->createAbsoluteUrl("/survey/index/sid/{$iSurveyId}", array('lang'=>$sLanguage, 'token'=>$sToken));
-        $aReplacementFields["{OPTOUTURL}"] = Yii::app()->getController()->createAbsoluteUrl("/optout/tokens/surveyid/{$iSurveyId}", array('langcode'=>$sLanguage, 'token'=>$sToken));
-        $aReplacementFields["{OPTINURL}"] = Yii::app()->getController()->createAbsoluteUrl("/optin/tokens/surveyid/{$iSurveyId}", array('langcode'=>$sLanguage, 'token'=>$sToken));
-        foreach (array('OPTOUT', 'OPTIN', 'SURVEY') as $key) {
-            $url = $aReplacementFields["{{$key}URL}"];
-            if ($useHtmlEmail) {
-                            $aReplacementFields["{{$key}URL}"] = "<a href='{$url}'>".htmlspecialchars($url).'</a>';
-            }
-            $aMail['subject'] = str_replace("@@{$key}URL@@", $url, $aMail['subject']);
-            $aMail['message'] = str_replace("@@{$key}URL@@", $url, $aMail['message']);
-        }
-        // Replace the fields
-        $aMail['subject'] = ReplaceFields($aMail['subject'], $aReplacementFields);
-        $aMail['message'] = ReplaceFields($aMail['message'], $aReplacementFields);
-        $sFrom = "{$aSurveyInfo['adminname']} <{$aSurveyInfo['adminemail']}>";
-        $sBounce = getBounceEmail($iSurveyId);
-        $sTo = $oToken->email;
-        $sitename = Yii::app()->getConfig('sitename');
-        // Plugin event for email handling (Same than admin token but with register type)
-        $event = new PluginEvent('beforeTokenEmail');
-        $event->set('survey', $iSurveyId);
-        $event->set('type', 'register');
-        $event->set('model', 'register');
-        $event->set('subject', $aMail['subject']);
-        $event->set('to', $sTo);
-        $event->set('body', $aMail['message']);
-        $event->set('from', $sFrom);
-        $event->set('bounce', $sBounce);
-        $event->set('token', $oToken->attributes);
-        App()->getPluginManager()->dispatchEvent($event);
-        $aMail['subject'] = $event->get('subject');
-        $aMail['message'] = $event->get('body');
-        $sTo = $event->get('to');
-        $sFrom = $event->get('from');
-        $sBounce = $event->get('bounce');
-
-        $customheaders = array('1' => "X-surveyid: ".$iSurveyId, '2' => "X-tokenid: ".$sToken);
-
-        $aRelevantAttachments = array();
-        if (isset($aSurveyInfo['attachments'])) {
-            $aAttachments = unserialize($aSurveyInfo['attachments']);
-            if (!empty($aAttachments)) {
-                if (isset($aAttachments['registration'])) {
-                    LimeExpressionManager::singleton()->loadTokenInformation($aSurveyInfo['sid'], $sToken);
-                    foreach ($aAttachments['registration'] as $aAttachment) {
-                        if(Yii::app()->is_file($aAttachment['url'],Yii::app()->getConfig('uploaddir').DIRECTORY_SEPARATOR."surveys".DIRECTORY_SEPARATOR.$iSurveyId,false)) {
-                            if (LimeExpressionManager::singleton()->ProcessRelevance($aAttachment['relevance'])) {
-                                $aRelevantAttachments[] = $aAttachment['url'];
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        // LimeService Mod Start
-        $iAdvertising = (int)Yii::app()->dbstats->createCommand('select advertising from limeservice_system.installations where user_id='.getInstallationID())->queryScalar();
-        $bSpamLinks   = ( $iAdvertising )?$this->looksForSpamLinks($useHtmlEmail,$aMail['message'], $aSurveyInfo['sid']):false;
-        // LimeService Mod End
-
-
-        if ($event->get('send', true) == false) {
-            $this->sMessage = $event->get('message', $this->sMailMessage); // event can send is own message
-            if ($event->get('error') == null) {
-// mimic core system, set send to today
-                $today = dateShift(date("Y-m-d H:i:s"), "Y-m-d H:i", Yii::app()->getConfig('timeadjust'));
-                $oToken->sent = $today;
-                $oToken->save();
-            }
-        } elseif (!$bSpamLinks && SendEmailMessage($aMail['message'], $aMail['subject'], $sTo, $sFrom, $sitename, $useHtmlEmail, $sBounce, $aRelevantAttachments, $customheaders)) {
-            // TLR change to put date into sent
-            $today = dateShift(date("Y-m-d H:i:s"), "Y-m-d H:i", Yii::app()->getConfig('timeadjust'));
-            $oToken->sent = $today;
-            $oToken->save();
-        */
         $aMessage = array();
         $aMessage['mail-thanks'] = gT("Thank you for registering to participate in this survey.");
         if ($mailerSent) {
@@ -389,7 +310,9 @@ class RegisterController extends LSYii_Controller
             Token::model($iSurveyId)->updateByPk($iTokenId, array('sent' => $today));
             $aMessage['mail-message'] = $this->sMailMessage;
         } else {
-            $aMessage['mail-message-error'] = gT("You are registered but an error happened when trying to send the email - please contact the survey administrator.");
+            // LimeService Mod Start
+            $this->aRegisterErrors[] = gT("You are registered but an error happened when trying to send the email - please contact the survey administrator.") . '<br> Reason: ' . $mailer->getError();
+            // LimeService Mod End
         }
         $aMessage['mail-contact'] = sprintf(gT("Survey administrator %s (%s)"), $aSurveyInfo['adminname'], $aSurveyInfo['adminemail']);
         $this->sMessage = $this->renderPartial('/survey/system/message', array('aMessage' => $aMessage), true);
@@ -556,87 +479,4 @@ class RegisterController extends LSYii_Controller
         Yii::app()->clientScript->registerScriptFile(Yii::app()->getConfig("generalscripts") . 'nojs.js', CClientScript::POS_HEAD);
         Yii::app()->twigRenderer->renderTemplateFromFile('layout_global.twig', $aData, false);
     }
-
-   // LimeService Mod Start
-
-    /**
-     * Checks for a given mail if it has spam links
-     * @param $bHtml      boolean is the mail an HTML mail
-     * @param $modmessage string  the message of the mail
-     * @return boolean    true if any spam link found, else false
-     */
-
-    private function looksForSpamLinks($bHtml, $modmessage, $iSurveyId)
-    {
-        $aLinks     = array();
-        $bSpamLinks = false;
-
-
-        $aLinks = ($bHtml) ? $this->getLinksForHtml($modmessage) : $this->getLinks($modmessage);
-
-        // Check if the link has the wanted infos
-        foreach ($aLinks as $sLink) {
-            if (strpos($sLink, 'token') === false || strpos($sLink, (string)$iSurveyId) === false || strpos($sLink, $_SERVER['HTTP_HOST']) === false) {
-                $bSpamLinks = true;
-                break;
-            }
-        }
-
-        return $bSpamLinks;
-    }
-
-    /**
-     * In HTML mode, the message of the mail must be filterer.
-     * We only want the body content: headers or css can have legitimate external links
-     * We also want to exclude pictures source
-     *
-     * @param $modmessage string the content of the mail
-     * @return array an array containing the links found inside that mail
-     */
-    private function getLinksForHtml($modmessage)
-    {
-        $aLinks     = array();
-        $doc = new DOMDocument();
-        @$doc->loadHTML($modmessage);
-
-        // This will exclude pictures but include links
-        $body = $doc->getElementsByTagName('body');
-        foreach ($body as $p) {
-            $aLinks = array_merge($aLinks, $this->getLinks($p->nodeValue));
-        }
-
-        // A link tag (<a href="">) can contain a link without http or https
-        // So we just add them to the array of links to check
-        $oLinkTags = $doc->getElementsByTagName('a');
-        foreach ($oLinkTags as $oLink) {
-            $aLinks[] = $oLink->getAttribute('href');
-        }
-
-
-        return $aLinks;
-    }
-
-    /**
-     * Look for any links inside a chunk of text (any string starting with http or https)
-     *
-     * @param $modmessage string the content of the mail
-     * @return array an array containing the links found inside that mail
-     */
-    private function getLinks($chunk)
-    {
-        $url_pattern = "/\b(?:(?:https?|ftp):\/\/|www\.)[-a-z0-9+&@#\/%?=~_|!:,.;]*[-a-z0-9+&@#\/%=~_|]/i";
-        $aLinks     = array();
-
-        preg_match_all($url_pattern, $chunk, $matches);
-
-        // The pattern catch too many things so this will clean the results
-        foreach ($matches[0] as $match) {
-            if (substr($match, 0, 4) == 'http' || substr($match, 0, 3) == 'www') {
-                $aLinks[] = $match;
-            }
-        }
-        return $aLinks;
-    }
-
-    // LimeService Mod End
 }

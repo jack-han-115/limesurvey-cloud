@@ -395,15 +395,15 @@ class LimeMailer extends \PHPMailer\PHPMailer\PHPMailer
         if (is_null($fromname)) {
             $fromname = $this->FromName;
         }
-        $emailmethod = Yii::app()->getConfig('emailmethod');
 
         // LimeService Mod start ------------------
-        if ($emailmethod != 'smtp' && $fromemail != 'noreply@limesurvey.org')  {
+        $emailmethod = Yii::app()->getConfig('emailmethod');
+        if ($emailmethod != 'smtp' && $fromemail != 'noreply@limesurvey.org') {
             // Force email method so mail if not smtp
             $this->clearReplyTos();
             $this->AddReplyTo($fromemail, $fromname);
-            $this->sender=$fromemail = 'noreply@limesurvey.org';
-            $auto=false;
+            $this->sender = $fromemail = 'noreply@limesurvey.org';
+            $auto = false;
             if (trim($fromname) == '') {
                 $fromname = 'LimeSurvey Cloud';
             }
@@ -532,7 +532,9 @@ class LimeMailer extends \PHPMailer\PHPMailer\PHPMailer
             'body' => $this->Body,
             'from' => $this->getFrom(),
             'bounce' => $this->Sender,
+            // LimeService Mod Start
             'replyto' => $this->getReplyToAddresses(),
+            // LimeService Mod End
             /* plugin can update itself some value, then allowing to disable update by default event */
             /* PS : plugin MUST use $this->get('mailer') for better compatibility for each plugin …*/
             'updateDisable' => array(),
@@ -922,7 +924,7 @@ class LimeMailer extends \PHPMailer\PHPMailer\PHPMailer
         if (!array_key_exists($this->emailType, $this->_aAttachementByType)) {
             return;
         }
-
+        
         $attachementType = $this->_aAttachementByType[$this->emailType];
         $oSurveyLanguageSetting = SurveyLanguageSetting::model()->findByPk(array('surveyls_survey_id' => $this->surveyId, 'surveyls_language' => $this->mailLanguage));
         if (!empty($oSurveyLanguageSetting->attachments)) {
