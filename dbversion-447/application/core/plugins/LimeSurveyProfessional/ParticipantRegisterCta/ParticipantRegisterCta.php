@@ -35,17 +35,23 @@ class ParticipantRegisterCta
         $surveyId = $event->get('surveyId');
 
         if (!empty($surveyId)) {
+            $data = array(
+                'surveyId' => $surveyId,
+                'utm_source' => $_SERVER['HTTP_HOST'],
+                'utm_medium' => 'survey',
+                'utm_campaign' => $surveyId
+            );
             $this->viewContentFooter =
                 $this->plugin->renderPartial(
                     'participantRegisterCta.footer',
-                    array(),
+                    $data,
                     true,
                     true
                 );
             $this->viewContentCompleted =
                 $this->plugin->renderPartial(
                     'participantRegisterCta.complete',
-                    array(),
+                    $data,
                     true,
                     true
                 );
