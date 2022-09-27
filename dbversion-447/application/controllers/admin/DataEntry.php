@@ -1547,7 +1547,7 @@ class DataEntry extends SurveyCommonAction
         }
         // ========================  End LimeService Mod
 
-        if (!$oReponse->encryptSave()) {
+        if (!$oResponse->encryptSave()) {
             Yii::app()->setFlashMessage(CHtml::errorSummary($oReponse), 'error');
         } else {
             Yii::app()->setFlashMessage(sprintf(gT("The response record %s was updated."), $id));
