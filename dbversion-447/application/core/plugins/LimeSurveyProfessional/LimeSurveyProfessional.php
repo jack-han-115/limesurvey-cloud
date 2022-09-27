@@ -23,6 +23,7 @@ class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
     protected $storage = 'DbStorage';
     protected static $description = 'LimeSurvey Cloud extras';
     protected static $name = 'LimeSurveyProfessional';
+    protected $complete = false;
     /** @var int violationCounter for email blacklist filter */
     public static $violationCount = 0;
     /** @var string can contain info regarding the email blacklist filter */
@@ -309,12 +310,14 @@ class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
      */
     public function beforeCloseHtml()
     {
-        $participantRegisterCta =
-            ParticipantRegisterCta::getInstance(
-                $this,
-                $this->getInstallationData()
-            );
-        $participantRegisterCta->display();
+        if (!$this->complete) {
+            $participantRegisterCta =
+                ParticipantRegisterCta::getInstance(
+                    $this,
+                    $this->getInstallationData()
+                );
+            $participantRegisterCta->display();
+        }
     }
 
 
@@ -325,6 +328,8 @@ class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
      */
     public function afterSurveyComplete()
     {
+        $this->complete = true;
+
         $participantRegisterCta =
             ParticipantRegisterCta::getInstance(
                 $this,
