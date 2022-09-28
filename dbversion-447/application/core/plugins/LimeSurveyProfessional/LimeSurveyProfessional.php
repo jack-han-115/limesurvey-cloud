@@ -48,6 +48,20 @@ class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
         // TODO: This could be a property?
         $installationData = $this->getInstallationData();
         $this->addAdvertisementGlobalSettings($installationData);
+
+        Yii::app()->loadHelper('update/updatedb');
+        $Column = $this->db->getSchema()->getTable('{{surveys_languagesettings}}')->getColumn('surveyls_legal_notice');
+        if ($Column === null) {
+            addColumn('{{surveys_languagesettings}}', 'surveyls_legal_notice', "text");
+        }
+        $Column = $this->db->getSchema()->getTable('{{surveys}}')->getColumn('showdatapolicybutton');
+        if ($Column === null) {
+            addColumn('{{surveys}}', 'showdatapolicybutton', 'integer DEFAULT 0');
+        }
+        $Column = $this->db->getSchema()->getTable('{{surveys}}')->getColumn('showlegalnoticebutton');
+        if ($Column === null) {
+            addColumn('{{surveys}}', 'showlegalnoticebutton', 'integer DEFAULT 0');
+        }
     }
 
     protected function addAdvertisementGlobalSettings($installationData)
