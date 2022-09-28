@@ -46,7 +46,7 @@ class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
         $this->subscribe('newDirectRequest');
 
         // @todo This needs to be properly db versioned
-        Yii::app()->loadHelper('update/updatedb');
+        Yii::import('application.helpers.database_helper', true);
         $Column = App()->db->getSchema()->getTable('{{surveys_languagesettings}}')->getColumn('surveyls_legal_notice');
         if ($Column === null) {
             addColumn('{{surveys_languagesettings}}', 'surveyls_legal_notice', "text");
