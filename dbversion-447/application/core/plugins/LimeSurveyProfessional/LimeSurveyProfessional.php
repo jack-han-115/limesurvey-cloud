@@ -45,23 +45,24 @@ class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
         $this->subscribe('beforeAdminMenuRender');
         $this->subscribe('newDirectRequest');
 
-        // TODO: This could be a property?
-        $installationData = $this->getInstallationData();
-        $this->addAdvertisementGlobalSettings($installationData);
-
+        // @todo This needs to be properly db versioned
         Yii::app()->loadHelper('update/updatedb');
-        $Column = $this->db->getSchema()->getTable('{{surveys_languagesettings}}')->getColumn('surveyls_legal_notice');
+        $Column = App()->db->getSchema()->getTable('{{surveys_languagesettings}}')->getColumn('surveyls_legal_notice');
         if ($Column === null) {
             addColumn('{{surveys_languagesettings}}', 'surveyls_legal_notice', "text");
         }
-        $Column = $this->db->getSchema()->getTable('{{surveys}}')->getColumn('showdatapolicybutton');
+        $Column = App()->db->getSchema()->getTable('{{surveys}}')->getColumn('showdatapolicybutton');
         if ($Column === null) {
             addColumn('{{surveys}}', 'showdatapolicybutton', 'integer DEFAULT 0');
         }
-        $Column = $this->db->getSchema()->getTable('{{surveys}}')->getColumn('showlegalnoticebutton');
+        $Column = App()->db->getSchema()->getTable('{{surveys}}')->getColumn('showlegalnoticebutton');
         if ($Column === null) {
             addColumn('{{surveys}}', 'showlegalnoticebutton', 'integer DEFAULT 0');
         }
+
+        $installationData = $this->getInstallationData();
+        $this->addAdvertisementGlobalSettings($installationData);
+
     }
 
     protected function addAdvertisementGlobalSettings($installationData)
