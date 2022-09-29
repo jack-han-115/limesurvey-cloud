@@ -62,7 +62,6 @@ class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
 
         $installationData = $this->getInstallationData();
         $this->addAdvertisementGlobalSettings($installationData);
-
     }
 
     protected function addAdvertisementGlobalSettings($installationData)
@@ -86,7 +85,8 @@ class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
                         'disabled' => true,
                         'help' => $help,
                         'save' => function($request, $connection) {
-                            throw new Exception('Cannot be saved');
+                            // Empty function, free and basic installation cannot change this value
+                            return true;
                         },
                         'load' => function () {
                             return 'Y';
