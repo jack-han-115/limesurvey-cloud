@@ -50,7 +50,21 @@ class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
         $this->subscribe('afterSurveyComplete');
         $this->subscribe('beforeSurveyPage');
 
-        // TODO: This could be a property?
+        // @todo This needs to be properly db versioned
+        Yii::import('application.helpers.update.updatedb_helper', true);
+        $Column = App()->db->getSchema()->getTable('{{surveys_languagesettings}}')->getColumn('surveyls_legal_notice');
+        if ($Column === null) {
+            addColumn('{{surveys_languagesettings}}', 'surveyls_legal_notice', "text");
+        }
+        $Column = App()->db->getSchema()->getTable('{{surveys}}')->getColumn('showdatapolicybutton');
+        if ($Column === null) {
+            addColumn('{{surveys}}', 'showdatapolicybutton', 'integer DEFAULT 0');
+        }
+        $Column = App()->db->getSchema()->getTable('{{surveys}}')->getColumn('showlegalnoticebutton');
+        if ($Column === null) {
+            addColumn('{{surveys}}', 'showlegalnoticebutton', 'integer DEFAULT 0');
+        }
+
         $installationData = $this->getInstallationData();
         $this->addAdvertisementGlobalSettings($installationData);
     }
@@ -78,7 +92,8 @@ class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
                         'disabled' => true,
                         'help' => $help,
                         'save' => function ($request, $connection) {
-                            throw new Exception('Cannot be saved');
+                            // Empty function, free and basic installation cannot change this value
+                            return true;
                         },
                         'load' => function () {
                             return 'Y';
@@ -286,7 +301,7 @@ class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
 
     /**
      * Initialise ParticipantRegisterCta before rendering
-     * 
+     *
      * We need to do this because we can not render partials within beforeCloseHtml or afterSurveyComplete.
      * Instead we render in advance.
      *
@@ -340,7 +355,7 @@ class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
 
     /**
      * Get config to allow plugin config to be read from plugin "sub-modules".
-     * 
+     *
      * This function retrieves plugin data. Do not cache this data; the plugin storage
      * engine will handling caching. After the first call to this function, subsequent
      * calls will only consist of a few function calls and array lookups.
