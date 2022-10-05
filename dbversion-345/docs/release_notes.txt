@@ -34,6 +34,70 @@ Thank you to everyone who helped with this new release!
 
 CHANGE LOG
 ------------------------------------------------------
+Changes from 3.28.30 (build 220927) to 3.28.31 (build 221005) October 4, 2022
+#Updated translation: Uighur by walkingdead
+#Updated translation: Thai by tomzt
+#Updated translation: Polish by elissa
+#Updated translation: Polish (Informal) by elissa
+
+
+Changes from 3.28.29 (build 220920) to 3.28.30 (build 220927) September 26, 2022
+-Fixed issue #18351: Extra token placeholder show as invalid in expression (#2601) (Denis Chenu)
+-Fixed issue #18240: QuestionTheme browserdetect, Show Platform information didn't work (#2596) (Gabriel Jenik)
+-Fixed issue #17870: Default value with line feed broke Expression Script (Denis Chenu)
+#Updated translation: Urdu by lucas_encuesta.biz
+#Updated translation: Khmer by lucas_encuesta.biz
+#Updated translation: Italian by lfanfoni
+#Updated translation: Italian (Informal) by lfanfoni
+#Updated translation: German by c_schmitz
+#Updated translation: German (Informal) by c_schmitz
+
+
+Changes from 3.28.28 (build 220912) to 3.28.29 (build 220920) September 19, 2022
+-Fixed issue #18344: Unable to download file in response list (IIS) (Olle Haerstedt)
+-Fixed issue #18133: Set "Other" state has no clue about current state (Gabriel Jenik)
+-Fixed issue #16697: «inherit everything» still not translated (#2609) (Gabriel Jenik)
+#Updated translation: Polish by elissa
+#Updated translation: Polish (Informal) by elissa
+
+
+Changes from 3.28.27 (build 220905) to 3.28.28 (build 220912) September 12, 2022
+#Updated translation: Dutch by Han
+#Updated translation: Dutch (Informal) by Han
+
+
+Changes from 3.28.26 (build 220829) to 3.28.27 (build 220905) September 5, 2022
+#Updated translation: Valencian by joamuran, vbraque
+#Updated translation: Turkish by kayazeren
+#Updated translation: Thai by adzpire, tomzt
+#Updated translation: Swedish by maxzomborszki
+#Updated translation: Italian by lfanfoni
+#Updated translation: Italian (Informal) by lfanfoni
+#Updated translation: Galician by Calidonia
+#Updated translation: Chinese (Simplified) by johnxan
+
+
+Changes from 3.28.25 (build 220822) to 3.28.26 (build 220829) August 29, 2022
+-Fixed issue: No response recorded when using registration (Carsten Schmitz)
+#Updated translation: German by c_schmitz
+#Updated translation: German (Informal) by c_schmitz
+#Updated translation: Georgian by lucas_encuesta.biz
+#Updated translation: Georgian by c_schmitz
+#Updated translation: Czech by jelen1
+#Updated translation: Czech (Informal) by jelen1, slansky
+#Updated translation: Bengali by lucas_encuesta.biz
+
+
+Changes from 3.28.24 (build 220816) to 3.28.25 (build 220822) August 22, 2022
+-Fixed issue: Cannot load previously saved response to resume, instead the message "There is no matching saved response" is shown after entering identifier and password (Carsten Schmitz)
+-Fixed issue #17485: The getAnswerQuery method cannot be used in the Answers model (#2569) (Gabriel Jenik)
+-Fixed issue #18209: Missing RemoteControl function to get the field mapping (#2490) (Gabriel Jenik)
+-Fixed issue #16795: Typo in default text for confirmation email (in English) (#2572) (Gabriel Jenik)
+#Updated translation: Polish by elissa
+#Updated translation: Polish (Informal) by elissa
+#Updated translation: Catalan by qualitatuvic
+
+
 Changes from 3.28.23 (build 220809) to 3.28.24 (build 220816) August 15, 2022
 #Updated translation: Croatian by rovinj
 

@@ -437,12 +437,12 @@ class RegisterController extends LSYii_Controller
         } else {
             // TODO : move xss filtering in model
             $oToken = Token::create($iSurveyId);
-            $oToken->firstname = sanitize_xss_string($aFieldValue['sFirstName']);
-            $oToken->lastname = sanitize_xss_string($aFieldValue['sLastName']);
+            $oToken->firstname = $aFieldValue['sFirstName'];
+            $oToken->lastname = $aFieldValue['sLastName'];
             $oToken->email = $aFieldValue['sEmail'];
             $oToken->emailstatus = 'OK';
             $oToken->language = $sLanguage;
-            $aFieldValue['aAttribute'] = array_map('sanitize_xss_string', $aFieldValue['aAttribute']);
+            $aFieldValue['aAttribute'] = $aFieldValue['aAttribute'];
             $oToken->setAttributes($aFieldValue['aAttribute']);
             if ($aSurveyInfo['startdate']) {
                 $oToken->validfrom = $aSurveyInfo['startdate'];
@@ -451,6 +451,7 @@ class RegisterController extends LSYii_Controller
                 $oToken->validuntil = $aSurveyInfo['expires'];
             }
             $oToken->generateToken();
+            $oToken->setScenario('register');
             $oToken->save();
             $this->sMailMessage = gT("An email has been sent to the address you provided with access details for this survey. Please follow the link in that email to proceed.");
             return $oToken->tid;
@@ -539,7 +540,9 @@ class RegisterController extends LSYii_Controller
         } else {
             $aData['aSurveyInfo'] = self::getRegisterForm($iSurveyId);
         }
+
         $aData['aSurveyInfo']['registration_view'] = $registerContent;
+
         $aData['aSurveyInfo']['registerform']['hiddeninputs'] = '<input value="'.$aData['aSurveyInfo']['sLanguage'].'"  type="hidden" name="lang" id="register_lang" />';
         $aData['aSurveyInfo']['include_content'] = 'register';
 
@@ -556,8 +559,7 @@ class RegisterController extends LSYii_Controller
         $aData['aSurveyInfo']['datasecurity_notice_label'] = Survey::replacePolicyLink($aSurveyInfo['datasecurity_notice_label'], $aSurveyInfo['sid']);
         $aData['aSurveyInfo']['surveyUrl'] = App()->createUrl("/survey/index", array("sid" => $surveyid));
         // LimeService Mod end
-
-        Yii::app()->clientScript->registerScriptFile(Yii::app()->getConfig("generalscripts") . 'nojs.js', CClientScript::POS_HEAD);
+        Yii::app()->clientScript->registerScriptFile(Yii::app()->getConfig("generalscripts").'nojs.js', CClientScript::POS_HEAD);
         Yii::app()->twigRenderer->renderTemplateFromFile('layout_global.twig', $aData, false);
 
     }

@@ -4268,7 +4268,7 @@
                 //                . "','relevance':'" . (($relevance != '') ? htmlspecialchars(preg_replace('/[[:space:]]/',' ',$relevance),ENT_QUOTES) : 1)
                 //                . "','readWrite':'" . $readWrite
                 //                . "','grelevance':'" . (($grelevance != '') ? htmlspecialchars(preg_replace('/[[:space:]]/',' ',$grelevance),ENT_QUOTES) : 1)
-                . "','default':'" . (is_null($defaultValue) ? '' : str_replace("'", "\'", $defaultValue))
+                . "','default':'" . (is_null($defaultValue) ? '' : json_encode($defaultValue)) // Don't found usage in em_javascript, used in expression ?
                 . "','rowdivid':'" . (is_null($rowdivid) ?  '' : $rowdivid)
                 . "','onlynum':'" . ($onlynum ? '1' : '')
                 . "','gseq':" . $groupSeq
@@ -4324,13 +4324,10 @@
                     'jsName'=>'',
                     'readWrite'=>'N',
                 );
-                // DON'T set $this->knownVars['TOKEN'] = $blankVal; becuase optout/optin can need it, then don't replace this from templatereplace
+                // DON'T set $this->knownVars['TOKEN'] = $blankVal; because optout/optin can need it, then don't replace this from templatereplace
                 foreach ($attrs as $key)
                 {
-                    if (preg_match('/^(firstname|lastname|email|usesleft|token|attribute_\d+)$/',$key))
-                    {
-                        $this->knownVars['TOKEN:' . strtoupper($key)] = $blankVal;
-                    }
+                    $this->knownVars['TOKEN:' . strtoupper($key)] = $blankVal;
                 }
             }
             // set default value for reserved 'this' variable
