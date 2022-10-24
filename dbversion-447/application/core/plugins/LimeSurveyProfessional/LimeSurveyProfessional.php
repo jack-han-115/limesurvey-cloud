@@ -83,7 +83,7 @@ class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
                 $this->gT('This option can only be disabled by customers using our <a href="%s" target="_blank">Expert or Enterprise package</a>.', 'js'),
                 'https://www.limesurvey.org/pricing'
             ) :
-                $this->gT('Contact your site administrator to ugprade your LimeSurvey installations');
+                $this->gT('Contact your site administrator to upgrade your LimeSurvey installations');
 
             Yii::app()->formExtensionService->add(
                 'globalsettings.general',
