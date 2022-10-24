@@ -37,6 +37,10 @@ class LinkFilter extends EmailFilter
 
         // Check if the link has the wanted infos
         foreach ($links as $link) {
+            // E-Mail Links are allowed
+            if (strpos($link, 'mailto:') === 0) {
+                continue;
+            }
             if (
                 strpos($link, 'token') === false || strpos($link, (string)$surveyId) === false || strpos(
                     $link,
