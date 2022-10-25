@@ -46,7 +46,7 @@ class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
         $this->subscribe('beforeTokenEmail');
         $this->subscribe('beforeAdminMenuRender');
         $this->subscribe('newDirectRequest');
-        $this->subscribe('beforeCloseHtml');
+        //$this->subscribe('beforeCloseHtml');
         $this->subscribe('afterSurveyComplete');
         $this->subscribe('beforeSurveyPage');
 
