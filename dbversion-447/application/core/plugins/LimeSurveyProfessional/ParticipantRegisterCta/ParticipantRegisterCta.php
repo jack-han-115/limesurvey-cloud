@@ -60,12 +60,12 @@ class ParticipantRegisterCta
 
     /**
      * Get a single instance to be shared between plugin events
-     * 
+     *
      * This plugin needs to handle plugin events beforeCloseHtml and afterSurveyComplete.
      * The beforeCloseHtml should be triggered only if afterSurveyComplete is not triggered.
-     * So we need to share state between plugin events. This method gives you back the 
+     * So we need to share state between plugin events. This method gives you back the
      * same instance regardless of what event handler you are in.
-     * 
+     *
      * @param LimeSurveyProfessional $plugin
      * @param InstallationData $installationData
      * @return ParticipantRegisterCta
@@ -80,7 +80,7 @@ class ParticipantRegisterCta
 
     /**
      * Main function to display the registration call to action
-     * 
+     *
      * @param bool $isComplete
      * @return bool
      * @throws \CException
@@ -91,7 +91,8 @@ class ParticipantRegisterCta
         if ($shouldDisplay) {
             $event = $this->plugin->getEvent();
             if ($isComplete) {
-                $event->setContent($this->plugin, $this->viewContentCompleted);
+                // $event->getContent() returns LimeSurvey\PluginManager\PluginEventContent
+                $event->getContent($this->plugin)->addContent($this->viewContentCompleted);
             } else {
                 $event->set('html', $this->viewContentFooter);
             }
@@ -122,7 +123,7 @@ class ParticipantRegisterCta
 
     /**
      * Determine branding is permitted to be enabled
-     * 
+     *
      * We don't display branding for installations who created before we implemented
      * the branding feature.
      *
@@ -137,7 +138,7 @@ class ParticipantRegisterCta
 
     /**
      * Determine branding is permitted to be disabled
-     * 
+     *
      * Only paying customers on plan 'expert' or 'enterprise' can disable branding.
      *
      * @return bool
