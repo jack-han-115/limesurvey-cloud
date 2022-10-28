@@ -46,7 +46,7 @@ class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
         $this->subscribe('beforeTokenEmail');
         $this->subscribe('beforeAdminMenuRender');
         $this->subscribe('newDirectRequest');
-        //$this->subscribe('beforeCloseHtml');
+        $this->subscribe('beforeCloseHtml');
         $this->subscribe('afterSurveyComplete');
         $this->subscribe('beforeSurveyPage');
 
@@ -321,13 +321,24 @@ class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
     }
 
     /**
+     * Is Survey Complete
+     *
+     * @return void
+     */
+    public function isComplete()
+    {
+        $iSurveyID = Yii::app()->request->getQuery('surveyid');
+        return $this->complete || isset($_SESSION['survey_' . $iSurveyID]['srid']);
+    }
+
+    /**
      * Append new content to the HTML body
      *
      * @return void
      */
     public function beforeCloseHtml()
     {
-        if (!$this->complete) {
+        if (!$this->isComplete()) {
             $participantRegisterCta =
                 ParticipantRegisterCta::getInstance(
                     $this,
@@ -346,7 +357,6 @@ class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
     public function afterSurveyComplete()
     {
         $this->complete = true;
-
         $participantRegisterCta =
             ParticipantRegisterCta::getInstance(
                 $this,
