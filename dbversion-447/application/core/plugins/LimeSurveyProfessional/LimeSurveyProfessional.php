@@ -46,7 +46,7 @@ class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
         $this->subscribe('beforeTokenEmail');
         $this->subscribe('beforeAdminMenuRender');
         $this->subscribe('newDirectRequest');
-        //$this->subscribe('beforeCloseHtml');
+        $this->subscribe('beforeCloseHtml');
         $this->subscribe('afterSurveyComplete');
         $this->subscribe('beforeSurveyPage');
 
@@ -327,8 +327,27 @@ class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
      */
     public function isComplete()
     {
-        $iSurveyID = Yii::app()->request->getQuery('surveyid');
-        return $this->complete || isset($_SESSION['survey_' . $iSurveyID]['srid']);
+        $isSurveyController = Yii::app()->controller->getId() == 'survey';
+        $iSurveyID = Yii::app()->request->getQuery('sid');
+        return $isSurveyController && (
+            $this->complete || isset(Yii::app()->session['survey_' . $iSurveyID]['srid'])
+        );
+    }
+
+    /**
+     * Is Survey in Progress
+     *
+     * @return void
+     */
+    public function isViewingSurvey()
+    {
+        $session = Yii::app()->session;
+        $isSurveyController = Yii::app()->controller->getId() == 'survey';
+        $isSurveyAction = Yii::app()->controller->getAction()->getId() == 'index';
+        $sid = Yii::app()->request->getQuery('sid');
+        return $isSurveyController
+            && $isSurveyAction
+            && isset($session['survey_' . $sid]);
     }
 
     /**
@@ -338,7 +357,7 @@ class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
      */
     public function beforeCloseHtml()
     {
-        if (!$this->isComplete()) {
+        if ($this->isViewingSurvey() && !$this->isComplete()) {
             $participantRegisterCta =
                 ParticipantRegisterCta::getInstance(
                     $this,
