@@ -78,19 +78,23 @@ class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
             $installationData->plan === 'free' ||
             $installationData->plan === 'basic'
         ) {
-            $isSuperAdmin = false; //App()->user->id == 1;
-            $help = $isSuperAdmin ?  sprintf(
-                $this->gT('This option can only be disabled by customers using our <a href="%s" target="_blank">Expert or Enterprise package</a>.', 'js'),
+            $helpLinkText = $this->gT('Upgrade now');
+            $helpLink = sprintf(
+                ' <a href="%s" target="_blank">' . $helpLinkText . '</a>.',
                 'https://www.limesurvey.org/pricing'
-            ) :
-                $this->gT('Contact your site administrator to upgrade your LimeSurvey installations');
+            );
+            $help = $installationData->isSiteAdminUser ?
+                $this->gT(
+                    'This option can only be disabled by customers using our Expert or Enterprise package.'
+                ) . $helpLink
+            : $this->gT('Contact your site admin to upgrade');
 
             Yii::app()->formExtensionService->add(
                 'globalsettings.general',
                 new ButtonSwitchInput(
                     [
                         'name' => 'limesurvey_professional_advertisement',
-                        'label' => $this->gT('Advertisement'),
+                        'label' => $this->gT('Show LimeSurvey branding in survey'),
                         'disabled' => true,
                         'help' => $help,
                         'save' => function ($request, $connection) {
@@ -109,7 +113,7 @@ class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
                 new ButtonSwitchInput(
                     [
                         'name' => 'limesurvey_professional_advertisement',
-                        'label' => $this->gT('Advertisement'),
+                        'label' => $this->gT('Show LimeSurvey branding in survey'),
                         'help' => $this->gT('Turn on or off LimeSurvey branding in survey footer and end of survey'),
                         'save' => function ($request, $connection) use ($that) {
                             $value = $request->getPost('limesurvey_professional_advertisement') === '1' ? 'Y' : 'N';
