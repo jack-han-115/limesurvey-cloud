@@ -5215,9 +5215,6 @@
 
             $LEM->ParseResultCache=array();    // to avoid running same test more than once for a given group
             $LEM->updatedValues = array();
-
-	    error_log($LEM->surveyMode);
-	    error_log($LEM->currentGroupSeq);
             switch ($LEM->surveyMode)
             {
                 case 'survey':
