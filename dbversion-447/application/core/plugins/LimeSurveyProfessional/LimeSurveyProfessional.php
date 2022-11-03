@@ -46,7 +46,7 @@ class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
         $this->subscribe('beforeTokenEmail');
         $this->subscribe('beforeAdminMenuRender');
         $this->subscribe('newDirectRequest');
-        //$this->subscribe('beforeCloseHtml');
+        $this->subscribe('beforeCloseHtml');
         $this->subscribe('afterSurveyComplete');
         $this->subscribe('beforeSurveyPage');
 
@@ -346,8 +346,10 @@ class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
     public function isViewingSurvey()
     {
         $session = Yii::app()->session;
-        $isSurveyController = Yii::app()->controller->getId() == 'survey';
-        $isSurveyAction = Yii::app()->controller->getAction()->getId() == 'index';
+        $controller = Yii::app()->controller;
+        $action = $controller ? $controller->getAction() : null;
+        $isSurveyController = $controller ? $controller->getId() == 'survey' : false;
+        $isSurveyAction = $action? $action->getId() == 'index' : false;
         $sid = Yii::app()->request->getQuery('sid');
         return $isSurveyController
             && $isSurveyAction
