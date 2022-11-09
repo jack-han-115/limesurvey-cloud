@@ -269,9 +269,9 @@ class index extends CAction
         $redata = compact(array_keys(get_defined_vars()));
 
         if ($this->_didSessionTimeout($surveyid)) {
-            error_log('Server data: ' . var_export($_SERVER, true) .' ');
-            error_log('Session data: ' . var_export($_SESSION['survey_'.$surveyid], true).' ');
-            error_log('POST data:' . var_export($_POST, true).' ');
+            error_log("\nCookie data: " . var_export($_COOKIE, true) . ' ');
+            error_log("\nSession data: " . var_export($_SESSION['survey_' . $surveyid], true) . ' ');
+            error_log("\nPOST data:" . var_export($_POST, true) . ' ');
             $aErrors = array(gT('We are sorry but your session has expired.'));
             $aMessage = array(
                 gT("Either you have been inactive for too long, you have cookies disabled for your browser, or there were problems with your connection."),
