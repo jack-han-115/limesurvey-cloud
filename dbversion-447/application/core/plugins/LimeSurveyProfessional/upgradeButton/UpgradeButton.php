@@ -9,7 +9,7 @@ class UpgradeButton
 {
     /**
      * Main function to display the upgrade button for free users
-     * Loads necessary js and css and adds a menu item to the admin menu
+     * Loads necessary js and adds a menu button item to the admin menu
      * @param \LimeSurveyProfessional $plugin
      * @param InstallationData $installationData
      * @return bool
@@ -22,9 +22,6 @@ class UpgradeButton
             // add upgradeButton js
             $assetsUrl = \Yii::app()->assetManager->publish(dirname(__FILE__) . '/../js/upgradeButton');
             App()->clientScript->registerScriptFile($assetsUrl . '/upgradeButton.js');
-            // add upgradeButton css
-            $cssUrl = \Yii::app()->assetManager->publish(dirname(__FILE__) . '/../css/upgradeButton');
-            \Yii::app()->clientScript->registerCssFile($cssUrl . '/upgradeButton.css');
 
             $links = new \LimeSurveyProfessional\LinksAndContactHmtlHelper();
             $iconClass = '';
@@ -33,18 +30,20 @@ class UpgradeButton
                 $this->prepareModal($plugin, $links);
             }
 
-            $aMenuItemAdminOptions = [
-                'isDivider' => false,
-                'isSmallText' => false,
+            $buttonOptions = [
+                'buttonId' => 'upgrade-button',
                 'label' => $plugin->gT("Upgrade plan"),
                 'href' => $links->getPricingPageLink(\Yii::app()->session['adminlang']),
-                'iconClass' => 'fa fa-arrow-circle-up upgrade-icon' . $iconClass,
+                'iconClass' => 'fa fa-arrow-circle-up ' . $iconClass,
+                'openInNewTab' => true,
+                'isPrepended' => true,
+                'tooltip' => $plugin->gT("Upgrade to a higher plan"),
             ];
 
-            $menuItem = new UpgradeButtonMenuClass($aMenuItemAdminOptions);
+            $menuButton = new \LimeSurvey\Menu\MenuButton($buttonOptions);
 
             $event = $plugin->getEvent();
-            $event->append('extraMenus', [$menuItem]);
+            $event->append('extraMenus', [$menuButton]);
             $display = true;
         }
 
@@ -89,7 +88,7 @@ class UpgradeButton
         );
 
         // add notifications js
-        $assetsUrl = \Yii::app()->assetManager->publish(dirname(__FILE__) . '/../js/upgradeButton');
+        \Yii::app()->assetManager->publish(dirname(__FILE__) . '/../js/upgradeButton');
 
         // Make modal html accessible for js
         App()->clientScript->registerScript(
