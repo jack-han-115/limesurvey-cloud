@@ -3048,7 +3048,8 @@ class Tokens extends SurveyCommonAction
         $aLinks = ($bHtml) ? $this->getLinksForHtml($modmessage) : $this->getLinks($modmessage);
         // Check if the link has the wanted infos
         foreach ($aLinks as $sLink) {
-            if (strpos($sLink, 'token') !== false & strpos($sLink, (string)$iSurveyId) !== false || strpos($sLink, $_SERVER['HTTP_HOST']) !== false) {
+            // Host has to match and (survey id or token)
+            if (strpos($sLink, $_SERVER['HTTP_HOST']) !== false && strpos($sLink, 'token') !== false && strpos($sLink, (string)$iSurveyId) !== false) {
                 $StandardSurveyLinkExists = true;
                 break;
             }
