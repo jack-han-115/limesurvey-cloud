@@ -24,6 +24,8 @@ class DbConnection extends \CDbConnection
         $driver = strtolower($pdo->getAttribute(PDO::ATTR_DRIVER_NAME));
         if (in_array($driver, array('mysql', 'mysqli'))) {
             $pdo->exec("SET collation_connection='utf8mb4_unicode_ci'");
+            $pdo->exec("SET character_set_client='utf8mb4'");
+            $pdo->exec("SET character_set_results='utf8mb4'");
             if (Yii::app()->getConfig('debug') > 1) {
                 $pdo->exec("SET SESSION SQL_MODE='STRICT_ALL_TABLES,IGNORE_SPACE,ONLY_FULL_GROUP_BY'");
             }
