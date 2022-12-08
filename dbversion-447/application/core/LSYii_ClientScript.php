@@ -454,7 +454,10 @@ class LSYii_ClientScript extends CClientScript
                         property_blacklist: ["$current_url", "$host", "$referrer", "$referring_domain"]
                     }
                 );
-                posthog.register({"limeSurveyVersion": "5"});
+                posthog.register(
+                    {"limeSurveyVersion": "5"},
+                    {"pathWithGetParams": window.location.pathname+window.location.search}
+                );
             </script>';
         }
 
