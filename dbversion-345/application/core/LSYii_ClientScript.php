@@ -436,7 +436,7 @@ class LSYii_ClientScript extends CClientScript
         $user = Yii::app()->user;
 
         $isItSurvey = substr($query['r'] ?? '', 0, 7) === 'survey/' ||
-            (substr($parts['path'], 0, 1) === '/' && is_numeric(substr($parts['path'] ?? '', 1)))
+            (substr($parts['path'] ?? '', 0, 1) === '/' && is_numeric(substr($parts['path'] ?? '', 1)))
         ;
 
         /** If we are in the admin part of LimeSurvey */
