@@ -377,7 +377,7 @@ class LimeSurveyProfessional extends PluginBase
     /**
      * Add analytics script of PostHog
      */
-    public function registerPosthogScript(): void
+    private function registerPosthogScript(): void
     {
         $settings = $this->settings['analytics'];
 
