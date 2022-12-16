@@ -399,7 +399,7 @@ class LimeSurveyProfessional extends PluginBase
                 $this->getPostHogScriptTemplate(),
                 $settings['postHogToken'],
                 $settings['apiHost'],
-                '"$current_url", "$host", "$referrer", "$referring_domain"',
+                implode('", "', ['$current_url', '$host', '$referrer', '$referring_domain']),
                 $versionConfig['versionnumber'],
                 $this->getInstallationData()->plan
             )
