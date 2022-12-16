@@ -31,8 +31,12 @@ class LimeSurveyProfessional extends PluginBase
     public static $violationText = '';
 
     protected $settings = [
-        'allowedServersForAnalytics' => [
-            'limesurvey-1.limesurvey.org',
+        'analytics' => [
+            'apiHost' => 'https://analytics.limesurvey.org',
+            'postHogToken' => 'phc_zgWEIuSlDVtXXISxJce6HvJC7mYI0UvuDlD8QfI3s8L',
+            'allowedServersForAnalytics' => [
+                'limesurvey-1.limesurvey.org',
+            ],
         ]
     ];
 
@@ -51,9 +55,6 @@ class LimeSurveyProfessional extends PluginBase
         $this->subscribe('beforeCloseHtml');
         $this->subscribe('afterSurveyComplete');
         $this->subscribe('beforeSurveyPage');
-        if (in_array(gethostname(), $this->settings['allowedServersForAnalytics'], true)) {
-            $this->subscribe('renderHead');
-        }
 
         // @todo This needs to be properly db versioned
         if (!function_exists('db_upgrade_all')) {
@@ -74,6 +75,8 @@ class LimeSurveyProfessional extends PluginBase
 
         $installationData = $this->getInstallationData();
         $this->addAdvertisementGlobalSettings($installationData);
+
+        $this->registerPosthogScript();
     }
 
     protected function addAdvertisementGlobalSettings(InstallationData $installationData): void
@@ -374,38 +377,29 @@ class LimeSurveyProfessional extends PluginBase
     /**
      * Add analytics script of PostHog
      */
-    public function renderHead(): void
+    public function registerPosthogScript(): void
     {
-        if (!in_array(gethostname(), $this->settings['allowedServersForAnalytics'], true)) {
+        $settings = $this->settings['analytics'];
+
+        if (!in_array(gethostname(), $settings['allowedServersForAnalytics'], true)) {
             return;
         }
-
-        $html = $this->getEvent()->get('html') ?? '';
 
         $versionConfig = require(__DIR__ . '/../config/version.php');
 
         /** If we are in the admin part of LimeSurvey */
         if ($this->isBackendAccess() && !$this->isViewingSurvey()) {
-            $html .= '<script>
-                !function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.async=!0,p.src=s.api_host+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="capture identify alias people.set people.set_once set_config register register_once unregister opt_out_capturing has_opted_out_capturing opt_in_capturing reset isFeatureEnabled onFeatureFlags".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
-                posthog.init(
-                    \'phc_zgWEIuSlDVtXXISxJce6HvJC7mYI0UvuDlD8QfI3s8L\',
-                    {
-                        api_host:\'https://analytics.limesurvey.org\',
-                        save_referrer: false,
-                        ip: false,
-                        property_blacklist: ["$current_url", "$host", "$referrer", "$referring_domain"],
-                        disable_session_recording: true,
-                    }
-                );
-                posthog.register(
-                    {"limeSurveyVersion": "' . $versionConfig['versionnumber'] . '"},
-                    {"tarifPlan": "' . $this->getInstallationData()->plan . '"}
-                    {"pathWithGetParams": window.location.pathname+window.location.search}
-                );
-            </script>';
-
-            $this->getEvent()->set('html', $html);
+            Yii::app()->clientScript->registerScript(
+                'PostHog',
+                sprintf(
+                    $this->getPostHogScriptTemplate(),
+                    $settings['postHogToken'],
+                    $settings['apiHost'],
+                    '"$current_url", "$host", "$referrer", "$referring_domain"',
+                    $versionConfig['versionnumber'],
+                    $this->getInstallationData()->plan
+                )
+            );
         }
     }
 
@@ -421,5 +415,25 @@ class LimeSurveyProfessional extends PluginBase
     public function getConfig(?string $key = null, ?string $model = null, ?int $id = null, $default = null): bool
     {
         return $this->get($key, $model, $id, $default);
+    }
+
+    private function getPostHogScriptTemplate(): string
+    {
+        return '!function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.async=!0,p.src=s.api_host+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="capture identify alias people.set people.set_once set_config register register_once unregister opt_out_capturing has_opted_out_capturing opt_in_capturing reset isFeatureEnabled onFeatureFlags".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
+posthog.init(
+    \'%s\',
+    {
+        api_host:\'%s\',
+        save_referrer: false,
+        ip: false,
+        property_blacklist: [%s],
+        disable_session_recording: true,
+    }
+);
+posthog.register(
+    {"limeSurveyVersion": "%s"},
+    {"tariffPlan": "%s"}
+    {"pathWithGetParams": window.location.pathname+window.location.search}
+);';
     }
 }

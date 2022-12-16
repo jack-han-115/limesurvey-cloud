@@ -416,13 +416,6 @@ class LSYii_ClientScript extends CClientScript
     {
         $html = '';
 
-        $event = new PluginEvent('renderHead');
-        App()->getPluginManager()->dispatchEvent($event);
-
-        if ($htmlFromPlugins = $event->get('html')) {
-            $html .= $htmlFromPlugins;
-        }
-
         foreach ($this->metaTags as $meta) {
                     $html .= CHtml::metaTag($meta['content'], null, null, $meta) . "\n";
         }
