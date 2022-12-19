@@ -331,14 +331,21 @@ class LimeSurveyProfessional extends PluginBase
     /**
      * Is Survey in Progress
      */
-    public function isViewingSurvey(): bool
+    public function isViewingSurvey(bool $ignoreAction = false): bool
     {
         $session = Yii::app()->session;
         $controller = Yii::app()->controller;
-        $action = $controller ? $controller->getAction() : null;
+
+        if (!$ignoreAction) {
+            $action = $controller ? $controller->getAction() : null;
+            $isSurveyAction = $action? $action->getId() == 'index' : false;
+        } else {
+            $isSurveyAction = true;
+        }
+
         $isSurveyController = $controller ? $controller->getId() == 'survey' : false;
-        $isSurveyAction = $action? $action->getId() == 'index' : false;
         $sid = Yii::app()->request->getQuery('sid');
+
         return $isSurveyController
             && $isSurveyAction
             && isset($session['survey_' . $sid]);
@@ -386,12 +393,12 @@ class LimeSurveyProfessional extends PluginBase
          */
         if (!in_array(gethostname(), $settings['allowedServersForAnalytics'], true)
             || !$this->isBackendAccess()
-            || $this->isViewingSurvey()
+            || $this->isViewingSurvey(true)
         ) {
             return;
         }
 
-        $versionConfig = require(__DIR__ . '/../config/version.php');
+        $versionNumber = App()->getConfig('versionnumber');
 
         Yii::app()->clientScript->registerScript(
             'PostHog',
@@ -400,7 +407,7 @@ class LimeSurveyProfessional extends PluginBase
                 $settings['postHogToken'],
                 $settings['apiHost'],
                 implode('", "', ['$current_url', '$host', '$referrer', '$referring_domain']),
-                $versionConfig['versionnumber'],
+                $versionNumber,
                 $this->getInstallationData()->plan
             )
         );
