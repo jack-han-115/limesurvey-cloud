@@ -9,6 +9,7 @@ use LimeSurvey\Libraries\FormExtension\Inputs\ButtonSwitchInput;
 use LimeSurvey\Libraries\FormExtension\SaveFailedException;
 
 require_once(__DIR__ . '/vendor/autoload.php');
+
 /**
  * The LimeSurveyProfessional plugin for "free" LimeService systems
  * Source for the cookie consent popup: https://cookieconsent.insites.com/documentation/javascript-api/
@@ -333,8 +334,13 @@ class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
     {
         $isSurveyController = Yii::app()->controller->getId() == 'survey';
         $iSurveyID = Yii::app()->request->getQuery('sid');
-        return $isSurveyController && (
-            $this->complete || isset(Yii::app()->session['survey_' . $iSurveyID]['srid'])
+        $session = isset(Yii::app()->session['survey_' . $iSurveyID])
+            ? Yii::app()->session['survey_' . $iSurveyID]
+            : [];
+        return $isSurveyController && $iSurveyID && (
+            $this->complete || (
+                !empty($session['finished'])
+            )
         );
     }
 
