@@ -13,6 +13,8 @@
 *
 */
 
+use LimeSurvey\Libraries\FormExtension\Inputs\TextInput;
+
 /**
 * GlobalSettings Controller
 *
@@ -439,6 +441,9 @@ class GlobalSettings extends SurveyCommonAction
         //LimeService user admininistration settings mod end
 
         // NOTE: FormExtension code is back-ported from 5.5.0-dev
+        $request = App()->request;
+        Yii::app()->formExtensionService->applySave('globalsettings', $request);
+
         $request = App()->request;
         Yii::app()->formExtensionService->applySave('globalsettings', $request);
 
