@@ -486,12 +486,13 @@ $internalConfig = array(
         ]
     )
 );
-
+// LImeService Mod start
 if (!file_exists($userdir .  '/config.php')) {
     $userConfig = require(dirname(__FILE__) . '/config-sample-mysql.php');
 } else {
     $userConfig = require($userdir . '/config.php');
 }
+// LImeService Mod end
 
 $result = CMap::mergeArray($internalConfig, $userConfig);
 /**
