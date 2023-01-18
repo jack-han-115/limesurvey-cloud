@@ -4,10 +4,10 @@
         <name>LimeSurveyProfessional</name>
         <type>plugin</type>
         <creationDate>2018-10-04</creationDate>
-        <lastUpdate>2022-02-16</lastUpdate>
+        <lastUpdate>2022-12-15</lastUpdate>
         <author>Olle Haerstedt</author>
         <authorUrl>https://www.limesurvey.org</authorUrl>
-        <version>1.0.2</version>
+        <version>1.0.3</version>
         <license>GNU General Public License version 2 or later</license>
         <description><![CDATA[LimeSurvey Cloud customizations]]></description>
         <apiUrl>http://account-rest-apiPROD.lsnet</apiUrl>

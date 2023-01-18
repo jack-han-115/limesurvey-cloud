@@ -1,12 +1,13 @@
 <?php
 
+use LimeSurveyProfessional\InstallationData;
 use LimeSurveyProfessional\notifications\LimitReminderNotification;
 use LimeSurveyProfessional\notifications\OutOfResponsesPaid;
 use LimeSurveyProfessional\promotionalBanners\PromotionalBanners;
-use LimeSurveyProfessional\notifications\GracePeriodNotification;
 use LimeSurveyProfessional\ParticipantRegisterCta\ParticipantRegisterCta;
 use LimeSurvey\Libraries\FormExtension\Inputs\ButtonSwitchInput;
-use LimeSurvey\Libraries\FormExtension\SaveFailedException;
+use LimeSurvey\PluginManager\PluginBase;
+use LimeSurvey\PluginManager\PluginEvent;
 
 require_once(__DIR__ . '/vendor/autoload.php');
 
@@ -19,7 +20,7 @@ require_once(__DIR__ . '/vendor/autoload.php');
  *
  *
  */
-class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
+class LimeSurveyProfessional extends PluginBase
 {
     protected $storage = 'DbStorage';
     protected static $description = 'LimeSurvey Cloud extras';
@@ -30,12 +31,17 @@ class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
     /** @var string can contain info regarding the email blacklist filter */
     public static $violationText = '';
 
-    protected $settings = array();
+    protected $settings = [
+        'analytics' => [
+            'apiHost' => 'https://analytics.limesurvey.org',
+            'postHogToken' => 'phc_zgWEIuSlDVtXXISxJce6HvJC7mYI0UvuDlD8QfI3s8L',
+            'allowedServersForAnalytics' => [
+                'limesurvey-1.limesurvey.org',
+            ],
+        ]
+    ];
 
-    /**
-     * @return void
-     */
-    public function init($loadConfig = true)
+    public function init($loadConfig = true): void
     {
         \Yii::setPathOfAlias(get_class($this), dirname(__FILE__));
         \Yii::import('application.helpers.common_helper', true);
@@ -70,9 +76,11 @@ class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
 
         $installationData = $this->getInstallationData();
         $this->addAdvertisementGlobalSettings($installationData);
+
+        $this->registerPosthogScript();
     }
 
-    protected function addAdvertisementGlobalSettings($installationData)
+    protected function addAdvertisementGlobalSettings(InstallationData $installationData): void
     {
         $that = $this;
         if (
@@ -133,9 +141,8 @@ class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
 
     /**
      * This plugin can never be disabled.
-     * @return void
      */
-    public function beforeDeactivate()
+    public function beforeDeactivate(): void
     {
         $this->getEvent()->set('success', false);
 
@@ -151,7 +158,7 @@ class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
      *    limitReminderNotification and outOfresponsesPaid functionalities will be called
      * 3. promotionalBanner showing will be checked on every action
      */
-    public function beforeControllerAction()
+    public function beforeControllerAction(): void
     {
         $controller = $this->getEvent()->get('controller');
         $action = $this->getEvent()->get('action');
@@ -182,9 +189,8 @@ class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
 
     /**
      * If user is a logged-in user we can assume, that backend is accessed right now.
-     * @return bool
      */
-    public function isBackendAccess()
+    public function isBackendAccess(): bool
     {
         return !Yii::app()->user->isGuest;
     }
@@ -192,11 +198,9 @@ class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
     /**
      * Redirects to welcome-page if any other url is opened except welcome-page and logout
      *
-     * @param \LimeSurvey\PluginManager\PluginEvent $event
-     * @return boolean
      * @throws Exception if there's no event
      */
-    public function forceRedirectToWelcomePage($event = null)
+    public function forceRedirectToWelcomePage(PluginEvent $event = null): bool
     {
         if (is_null($event)) {
             return false;
@@ -209,12 +213,10 @@ class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
 
     /**
      *  returns populated InstallationData
-     *
-     * @return \LimeSurveyProfessional\InstallationData
      */
-    private function getInstallationData()
+    private function getInstallationData(): InstallationData
     {
-        $installationData = new \LimeSurveyProfessional\InstallationData();
+        $installationData = new InstallationData();
         $installationData->create(
             new \LimeSurvey\Models\Services\LimeserviceSystem(
                 \Yii::app()->dbstats,
@@ -233,11 +235,8 @@ class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
      *
      * Attention: Every class inside array $blockingNotifications needs to have the function createNotification()
      * createNotification() needs to return a boolean!
-     * @param \LimeSurvey\PluginManager\PluginEvent $event
-     * @param \LimeSurveyProfessional\InstallationData $installationData
-     * @return boolean
      */
-    public function createBlockingNotifications($event, $installationData)
+    public function createBlockingNotifications(PluginEvent $event, InstallationData $installationData): bool
     {
         $blockingNotification = false;
         $blockingNotifications = [
@@ -266,7 +265,7 @@ class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
      *  Before a tokenEmail is sent, it will run through a blacklist filter, except this installation is whitelisted
      *  via 'disableEmailSpamChecking' config param
      */
-    public function beforeTokenEmail()
+    public function beforeTokenEmail(): void
     {
         if (!Yii::app()->getConfig("disableEmailSpamChecking")) {
             $installationData = $this->getInstallationData();
@@ -277,20 +276,15 @@ class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
 
     /**
      * Append new menu item to the admin topbar
-     *
-     * @return void
      */
-    public function beforeAdminMenuRender()
+    public function beforeAdminMenuRender(): void
     {
         $installationData = $this->getInstallationData();
         $upgradeButton = new \LimeSurveyProfessional\upgradeButton\UpgradeButton();
         $upgradeButton->displayUpgradeButton($this, $installationData);
     }
 
-    /**
-     * @return void
-     */
-    public function newDirectRequest()
+    public function newDirectRequest(): void
     {
         $request = $this->api->getRequest();
         $event = $this->getEvent();
@@ -310,11 +304,9 @@ class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
      * Initialise ParticipantRegisterCta before rendering
      *
      * We need to do this because we can not render partials within beforeCloseHtml or afterSurveyComplete.
-     * Instead we render in advance.
-     *
-     * @return void
+     * Instead, we render in advance.
      */
-    public function beforeSurveyPage()
+    public function beforeSurveyPage(): void
     {
         // Use getInstance() to initialise the ParticipantRegisterCta instance
         // - so that it can be re-used in other call backs.
@@ -327,10 +319,8 @@ class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
 
     /**
      * Is Survey Complete
-     *
-     * @return void
      */
-    public function isComplete()
+    public function isComplete(): bool
     {
         $isSurveyController = Yii::app()->controller->getId() == 'survey';
         $iSurveyID = Yii::app()->request->getQuery('sid');
@@ -346,17 +336,22 @@ class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
 
     /**
      * Is Survey in Progress
-     *
-     * @return void
      */
-    public function isViewingSurvey()
+    public function isViewingSurvey(bool $ignoreAction = false): bool
     {
         $session = Yii::app()->session;
         $controller = Yii::app()->controller;
-        $action = $controller ? $controller->getAction() : null;
+
+        if (!$ignoreAction) {
+            $action = $controller ? $controller->getAction() : null;
+            $isSurveyAction = $action? $action->getId() == 'index' : false;
+        } else {
+            $isSurveyAction = true;
+        }
+
         $isSurveyController = $controller ? $controller->getId() == 'survey' : false;
-        $isSurveyAction = $action? $action->getId() == 'index' : false;
         $sid = Yii::app()->request->getQuery('sid');
+
         return $isSurveyController
             && $isSurveyAction
             && isset($session['survey_' . $sid]);
@@ -364,10 +359,8 @@ class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
 
     /**
      * Append new content to the HTML body
-     *
-     * @return void
      */
-    public function beforeCloseHtml()
+    public function beforeCloseHtml(): void
     {
         if ($this->isViewingSurvey() && !$this->isComplete()) {
             $participantRegisterCta =
@@ -382,10 +375,8 @@ class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
 
     /**
      * After survey is completed
-     *
-     * @return void
      */
-    public function afterSurveyComplete()
+    public function afterSurveyComplete(): void
     {
         $this->complete = true;
         $participantRegisterCta =
@@ -397,20 +388,70 @@ class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
     }
 
     /**
+     * Add analytics script of PostHog
+     */
+    private function registerPosthogScript(): void
+    {
+        $settings = $this->settings['analytics'];
+
+        /**
+         * If we are not allowed to track users on this server or user is not logged in or user viewing survey -> return
+         */
+        if (!in_array(gethostname(), $settings['allowedServersForAnalytics'], true)
+            || !$this->isBackendAccess()
+            || $this->isViewingSurvey(true)
+        ) {
+            return;
+        }
+
+        $versionNumber = App()->getConfig('versionnumber');
+
+        Yii::app()->clientScript->registerScript(
+            'PostHog',
+            sprintf(
+                $this->getPostHogScriptTemplate(),
+                $settings['postHogToken'],
+                $settings['apiHost'],
+                implode('", "', ['$current_url', '$host', '$referrer', '$referring_domain']),
+                $versionNumber,
+                $this->getInstallationData()->plan
+            )
+        );
+    }
+
+    /**
      * Get config to allow plugin config to be read from plugin "sub-modules".
      *
      * This function retrieves plugin data. Do not cache this data; the plugin storage
-     * engine will handling caching. After the first call to this function, subsequent
+     * engine will handle caching. After the first call to this function, subsequent
      * calls will only consist of a few function calls and array lookups.
      *
-     * @param string $key
-     * @param string $model
-     * @param int $id
      * @param mixed $default The default value to use when not was set
-     * @return boolean
      */
-    public function getConfig($key = null, $model = null, $id = null, $default = null)
+    public function getConfig(?string $key = null, ?string $model = null, ?int $id = null, $default = null): bool
     {
         return $this->get($key, $model, $id, $default);
+    }
+
+    private function getPostHogScriptTemplate(): string
+    {
+        return <<<JAVASCRIPT
+!function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.async=!0,p.src=s.api_host+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="capture identify alias people.set people.set_once set_config register register_once unregister opt_out_capturing has_opted_out_capturing opt_in_capturing reset isFeatureEnabled onFeatureFlags".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
+posthog.init(
+    '%s',
+    {
+        api_host:'%s',
+        save_referrer: false,
+        ip: false,
+        property_blacklist: ["%s"],
+        disable_session_recording: true,
+    }
+);
+posthog.register(
+    {"limeSurveyVersion": "%s"},
+    {"tariffPlan": "%s"},
+    {"pathWithGetParams": window.location.pathname+window.location.search}
+);
+JAVASCRIPT;
     }
 }
