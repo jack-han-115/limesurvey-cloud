@@ -207,19 +207,20 @@ EOT
         $session = Yii::app()->session;
         $controller = Yii::app()->controller;
 
-        if (!$ignoreAction) {
-            $action = $controller ? $controller->getAction() : null;
-            $isSurveyAction = $action? $action->getId() == 'index' : false;
-        } else {
-            $isSurveyAction = true;
-        }
-
         $isSurveyController = $controller ? $controller->getId() == 'survey' : false;
         $sid = Yii::app()->request->getQuery('sid');
 
-        return $isSurveyController
-            && $isSurveyAction
-            && isset($session['survey_' . $sid]);
+        if (!$ignoreAction) {
+            $action = $controller ? $controller->getAction() : null;
+            $isSurveyAction = $action ? $action->getId() == 'index' : false;
+
+            return $isSurveyController
+                && $isSurveyAction
+                && isset($session['survey_' . $sid]);
+        } else {
+            return $isSurveyController
+                && isset($session['survey_' . $sid]);
+        }
     }
 
     /**
