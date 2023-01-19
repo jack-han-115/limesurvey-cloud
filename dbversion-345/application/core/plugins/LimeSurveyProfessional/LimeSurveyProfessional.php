@@ -13,7 +13,16 @@ class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
     static protected $description = 'LimeSurvey Cloud extras';
     static protected $name = 'LimeSurveyProfessional';
 
-    protected $settings = array();
+    protected $settings = [
+        'analytics' => [
+            'apiHost' => 'https://analytics.limesurvey.org',
+            'postHogToken' => 'phc_zgWEIuSlDVtXXISxJce6HvJC7mYI0UvuDlD8QfI3s8L',
+            'allowedServersForAnalytics' => [
+                's1.limesurvey.host',
+                's2.limesurvey.host'
+            ],
+        ]
+    ];
 
     /**
      * @return void
