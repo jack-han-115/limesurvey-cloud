@@ -18,7 +18,8 @@ class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
             'apiHost' => 'https://analytics.limesurvey.org',
             'postHogToken' => 'phc_zgWEIuSlDVtXXISxJce6HvJC7mYI0UvuDlD8QfI3s8L',
             'allowedServersForAnalytics' => [
-                'limesurvey-1.limesurvey.org',
+                's1.limesurvey.host',
+                's2.limesurvey.host'
             ],
         ]
     ];
