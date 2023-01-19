@@ -403,7 +403,7 @@ class LimeSurveyProfessional extends PluginBase
          */
         if (!in_array(gethostname(), $settings['allowedServersForAnalytics'], true)
             || !$this->isBackendAccess()
-            || $this->isViewingSurvey(true)
+            || (Yii::app()->controller ? Yii::app()->controller->getId() == 'survey' : false)
         ) {
             return;
         }
