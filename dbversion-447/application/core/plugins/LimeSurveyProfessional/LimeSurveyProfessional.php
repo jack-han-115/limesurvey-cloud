@@ -10,6 +10,7 @@ use LimeSurvey\PluginManager\PluginBase;
 use LimeSurvey\PluginManager\PluginEvent;
 
 require_once(__DIR__ . '/vendor/autoload.php');
+
 /**
  * The LimeSurveyProfessional plugin for "free" LimeService systems
  * Source for the cookie consent popup: https://cookieconsent.insites.com/documentation/javascript-api/
@@ -37,6 +38,8 @@ class LimeSurveyProfessional extends PluginBase
             'allowedServersForAnalytics' => [
                 's1.limesurvey.host',
                 's2.limesurvey.host',
+                's3.limesurvey.host',
+                's27.limesurvey.host'
             ],
         ]
     ];
@@ -324,8 +327,13 @@ class LimeSurveyProfessional extends PluginBase
     {
         $isSurveyController = Yii::app()->controller->getId() == 'survey';
         $iSurveyID = Yii::app()->request->getQuery('sid');
-        return $isSurveyController && (
-            $this->complete || isset(Yii::app()->session['survey_' . $iSurveyID]['srid'])
+        $session = isset(Yii::app()->session['survey_' . $iSurveyID])
+            ? Yii::app()->session['survey_' . $iSurveyID]
+            : [];
+        return $isSurveyController && $iSurveyID && (
+            $this->complete || (
+                !empty($session['finished'])
+            )
         );
     }
 

@@ -4,7 +4,6 @@
 *
 */
 
-// NOTE: FormExtension code is back-ported from 5.5.0-dev
 use LimeSurvey\Libraries\FormExtension\FormExtensionWidget;
 use LimeSurvey\Libraries\FormExtension\Inputs\GlobalSettingsRenderer;
 
@@ -348,7 +347,6 @@ Full lock - none of participants are allowed to take survey, even if they alread
         </div>
 
         <!-- Allow unstable extension updates (only visible for super admin)-->
-        <?php /* LimeService Mod Start -----------------------------------
         <?php if(Permission::model()->hasGlobalPermission('superadmin','read')):?>
             <div class="row ls-space margin top-10">
                 <div class="form-group col-xs-12">
@@ -373,7 +371,6 @@ Full lock - none of participants are allowed to take survey, even if they alread
                 </div>
             </div>
         <?php endif; ?>
-        LimeService Mod end ----------------------------------- */ ?>
     </div>
 
     <div class="ls-flex-column ls-space padding left-5 right-5 col-md-7">
@@ -382,7 +379,7 @@ Full lock - none of participants are allowed to take survey, even if they alread
             new GlobalSettingsRenderer()
         ); ?>
     </div>
-
+    
 </div>
 
 <?php if (Yii::app()->getConfig("demoMode")==true):?>

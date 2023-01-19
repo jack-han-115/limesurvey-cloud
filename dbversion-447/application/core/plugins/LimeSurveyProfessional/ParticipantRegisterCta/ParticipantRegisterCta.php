@@ -41,18 +41,19 @@ class ParticipantRegisterCta
                 'utm_medium' => 'survey',
                 'utm_campaign' => $surveyId
             );
+            // It is not possible to call render partial during execution of this plugin
+            // - because it is executed during output buffer callback.
+            // - Instead we render the partials in advance.
             $this->viewContentFooter =
                 $this->plugin->renderPartial(
                     'participantRegisterCta.footer',
                     $data,
-                    true,
                     true
                 );
             $this->viewContentCompleted =
                 $this->plugin->renderPartial(
                     'participantRegisterCta.complete',
                     $data,
-                    true,
                     true
                 );
         }

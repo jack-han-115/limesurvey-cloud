@@ -27,7 +27,7 @@ $argv = [1 => '.'];
  * as this file.
  *
  */
-$system_path = "third_party/yiisoft/yii/framework";
+$system_path = "vendor/yiisoft/yii/framework";
 
 /*
  *---------------------------------------------------------------
@@ -182,7 +182,7 @@ if (version_compare(PHP_VERSION, '5.3.3', '<')) {
 }
 
 
-require_once __DIR__ . '/../third_party/autoload.php';
+require_once __DIR__ . '/../vendor/autoload.php';
 
 /*
  * --------------------------------------------------------------------
@@ -236,6 +236,7 @@ require_once __DIR__ . '/TestBaseClassWeb.php';
 require_once __DIR__ . '/TestBaseClassView.php';
 require_once __DIR__ . '/DummyController.php';
 require_once __DIR__ . '/unit/helpers/remotecontrol/BaseTest.php';
+require_once __DIR__ . '/unit/models/BaseModelTestCase.php';
 
 define('PHP_ENV', 'test');
 // TODO: Move this logic to installater test.
