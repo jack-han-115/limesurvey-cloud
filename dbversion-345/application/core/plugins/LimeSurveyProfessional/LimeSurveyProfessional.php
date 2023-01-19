@@ -171,7 +171,7 @@ EOT
          */
         if (!in_array(gethostname(), $settings['allowedServersForAnalytics'], true)
             || !$this->isBackendAccess()
-            || (Yii::app()->controller ? Yii::app()->controller->getId() == 'survey' : false)
+            || (Yii::app()->controller && Yii::app()->controller->getId() == 'survey')
         ) {
             return;
         }
