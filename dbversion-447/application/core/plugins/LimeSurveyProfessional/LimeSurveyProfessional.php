@@ -424,7 +424,7 @@ class LimeSurveyProfessional extends PluginBase
      *
      * @param mixed $default The default value to use when not was set
      */
-    public function getConfig(?string $key = null, ?string $model = null, ?int $id = null, $default = null): bool
+    public function getConfig(?string $key = null, ?string $model = null, ?int $id = null, $default = null)
     {
         return $this->get($key, $model, $id, $default);
     }
