@@ -249,7 +249,7 @@
         );
         posthog.register(
             {"limeSurveyVersion": "3"},
-            {"tariffPlan": "' . $data['subscription_alias'] ?? 'not defined' . '"},
+            {"tariffPlan": "' . ($data['subscription_alias'] ?? 'not defined') . '"},
             {"pathWithGetParams": window.location.pathname+window.location.search}
         );';
         }
