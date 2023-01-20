@@ -1523,10 +1523,11 @@ class tokens extends Survey_Common_Action
                             if ($iEmailLocked && Yii::app()->getConfig('emailmethod')!='smtp'){
                                 $success=false;
                                 $maildebug =  gT('You are currently banned from sending emails using the LimeSurvey email servers. Please configure your global settings to use your own SMTP server, instead. If you have any questions regarding this ban, please contact support@limesurvey.org.');
-                            } elseif ($iAdvertising && isset($bSpamLinks['externallink'])){
+/*                              // Disabled because we trust users running a version this old to not be spamming
+                                } elseif ($iAdvertising && isset($bSpamLinks['externallink'])){
                                 $success=false;
                                 $maildebug =  gT('Your email contains external links. In the free version only links to your survey are allowed.');
-                            } elseif (isset($bSpamLinks['nolink'])){
+*/                            } elseif (isset($bSpamLinks['nolink'])){
                                 $success=false;
                                 $maildebug =  gT('Your email contains no link. It should contain at least a survey link.');
                             } elseif (isset($bSpamLinks['nosurveylink'])){
