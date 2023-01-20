@@ -32,8 +32,6 @@ class LimeSurveyProfessional extends \LimeSurvey\PluginManager\PluginBase
         $this->subscribe('beforeCloseHtml');
         $this->subscribe('beforeDeactivate');
 
-        $this->registerPosthogScript();
-
         /* Settings not available in LimeService version
         $this->settings = array(
             'protectionPolicyOption' => array(
