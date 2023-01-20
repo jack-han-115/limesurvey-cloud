@@ -403,7 +403,7 @@ class LimeSurveyProfessional extends PluginBase
          */
         if (!in_array(gethostname(), $settings['allowedServersForAnalytics'], true)
             || !$this->isBackendAccess()
-            || (Yii::app()->controller ? Yii::app()->controller->getId() == 'survey' : false)
+            || (Yii::app()->controller && Yii::app()->controller->getId() == 'survey')
         ) {
             return;
         }
@@ -432,7 +432,7 @@ class LimeSurveyProfessional extends PluginBase
      *
      * @param mixed $default The default value to use when not was set
      */
-    public function getConfig(?string $key = null, ?string $model = null, ?int $id = null, $default = null): bool
+    public function getConfig(?string $key = null, ?string $model = null, ?int $id = null, $default = null)
     {
         return $this->get($key, $model, $id, $default);
     }
