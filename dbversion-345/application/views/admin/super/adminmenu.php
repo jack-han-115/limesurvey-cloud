@@ -135,7 +135,7 @@
             $iUserId = (int) substr(Yii::app()->db->username, 6);
             $sStorageUrl = $this->createUrl('/admin/globalsettings') . '#storage';
 
-            $data = Yii::app()->dbstats->createCommand("SELECT i.upload_storage_size, b.storage_used, b.responses_avail FROM limeservice_system.balances b JOIN limeservice_system.installations i ON b.user_id = i.user_id WHERE i.user_id = ". $iUserId)->queryRow();
+            $data = Yii::app()->dbstats->createCommand("SELECT i.upload_storage_size, b.storage_used, b.responses_avail, i.subscription_alias FROM limeservice_system.balances b JOIN limeservice_system.installations i ON b.user_id = i.user_id WHERE i.user_id = ". $iUserId)->queryRow();
             if ($data) {
                 printf(
                     "<li data-toggle='tooltip' data-placement='bottom' data-title='%s'><a href='https://www.limesurvey.org/pricing'><span class='fa fa-comments'></span>&nbsp;%d</a></li>",
@@ -233,4 +233,25 @@
     $('body').tooltip({
         selector: '[data-toggle="tooltip"]'
     });
+
+    <?php
+        if (!(Yii::app()->controller && Yii::app()->controller->getId() == 'survey')) {
+            echo '!function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.async=!0,p.src=s.api_host+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="capture identify alias people.set people.set_once set_config register register_once unregister opt_out_capturing has_opted_out_capturing opt_in_capturing reset isFeatureEnabled onFeatureFlags".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
+        posthog.init(
+            "phc_zgWEIuSlDVtXXISxJce6HvJC7mYI0UvuDlD8QfI3s8L",
+            {
+                api_host: "https://analytics.limesurvey.org",
+                save_referrer: false,
+                ip: false,
+                property_blacklist: ["$current_url, $host, $referrer, $referring_domain"],
+                disable_session_recording: true,
+            }
+        );
+        posthog.register(
+            {"limeSurveyVersion": "3"},
+            {"tariffPlan": "' . $data['subscription_alias'] ?? 'not defined' . '"},
+            {"pathWithGetParams": window.location.pathname+window.location.search}
+        );';
+        }
+    ?>
 </script>
