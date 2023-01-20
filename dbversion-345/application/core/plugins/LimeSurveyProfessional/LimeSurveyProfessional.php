@@ -204,5 +204,5 @@ EOT
         );
 
         return $installationData;
-    }K
+    }
 }
