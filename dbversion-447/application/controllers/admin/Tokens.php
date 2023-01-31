@@ -1373,8 +1373,8 @@ class Tokens extends SurveyCommonAction
 
         $iMaxEmails = Yii::app()->getConfig('maxemails');
         // LImeService Mod Start =========================================
-        $iAdvertising = (int)Yii::app()->dbstats->createCommand('select advertising from limeservice_system.installations where user_id=' . getInstallationID())->queryScalar();
-        if ($iAdvertising) {
+        $installationData = $this->getInstallationData();
+        if ($installationData->isPayingUser == false) {
             $iMaxEmails = 10;
         }
         // LImeService Mod End =========================================
@@ -3113,5 +3113,30 @@ class Tokens extends SurveyCommonAction
         return $aLinks;
     }
 
+    // LimeService Mod End
+
+
+    // LimeService Mod Start
+    /**
+     * Get installation data
+     *
+     * Horrible dirty hack quick fix copying code from LimeSurveyProfessional plugin
+     * to replace references to advertising flag from limeservice_system.installations.
+     *
+     * TODO: replace this method asap
+     */
+    private function getInstallationData(): \LimeSurveyProfessional\InstallationData
+    {
+        $installationData = new  \LimeSurveyProfessional\InstallationData();
+        $installationData->create(
+            new \LimeSurvey\Models\Services\LimeserviceSystem(
+                \Yii::app()->dbstats,
+                (int)getInstallationID()
+            ),
+            App()->user->id == 1
+        );
+
+        return $installationData;
+    }
     // LimeService Mod End
 }
