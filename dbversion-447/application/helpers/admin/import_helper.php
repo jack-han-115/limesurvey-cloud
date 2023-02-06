@@ -1422,6 +1422,7 @@ function XMLImportSurvey($sFullFilePath, $sXMLdata = null, $sNewSurveyName = nul
 
         $surveyLanguageSetting = new SurveyLanguageSetting();
         $surveyLanguageSetting->setAttributes($insertdata, false);
+        $surveyLanguageSetting->surveyls_alias=null; // Can not be imported
         try {
             if (!$surveyLanguageSetting->save()) {
                 throw new Exception(gT("Error") . ": Failed to import survey language settings - data is invalid.");
