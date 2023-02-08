@@ -1,5 +1,5 @@
 <?php
-
+use GeoIp2\Database\Reader;
 /*
 * LimeSurvey
 * Copyright (C) 2007-2011 The LimeSurvey Project Team / Carsten Schmitz
@@ -2665,23 +2665,16 @@ function getLatLongFromIp($ip)
 {
 
 // LimeService Mod Start -------------------------
-    require_once(APPPATH.'/third_party/maxmind/geoipcity.inc');
-    require_once(APPPATH.'/third_party/maxmind/geoipregionvars.php');
-
-    // uncomment for Shared Memory support
-    // geoip_load_shared_mem("/usr/local/share/GeoIP/GeoIPCity.dat");
-    // $gi = geoip_open("/usr/local/share/GeoIP/GeoIPCity.dat",GEOIP_SHARED_MEMORY);
-    $gi = geoip_open(APPPATH.'/third_party/maxmind/GeoLiteCity.dat', GEOIP_STANDARD);
-
-    $record = geoip_record_by_addr($gi, $ip);
+    $reader = new Reader('/usr/local/share/GeoIP/GeoLite2-City.mmdb');
+    $record = $reader->city($ip);
 
     if (is_object($record)) {
-        $lat = (float)$record->latitude;
-        $lng = (float)$record->longitude;
+        $lat = (float)$record->location->latitude;
+        $lng = (float)$record->location->longitude;
             return(array($lat, $lng));
-    }
-    else
+    } else {
         return false;
+    }
 // LimeService Mod End ----------------------
 }
 

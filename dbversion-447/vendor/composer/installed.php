@@ -6,11 +6,29 @@
     'aliases' => 
     array (
     ),
-    'reference' => 'f8145fc4d3c19851f6fd0299efc9a0da9db26dba',
+    'reference' => '155d73a30e1672aa1db0774f4d3a70953622cf38',
     'name' => 'limesurvey/limesurvey',
   ),
   'versions' => 
   array (
+    'composer/ca-bundle' => 
+    array (
+      'pretty_version' => '1.3.5',
+      'version' => '1.3.5.0',
+      'aliases' => 
+      array (
+      ),
+      'reference' => '74780ccf8c19d6acb8d65c5f39cd72110e132bbd',
+    ),
+    'geoip2/geoip2' => 
+    array (
+      'pretty_version' => 'v2.13.0',
+      'version' => '2.13.0.0',
+      'aliases' => 
+      array (
+      ),
+      'reference' => '6a41d8fbd6b90052bc34dff3b4252d0f88067b23',
+    ),
     'html2text/html2text' => 
     array (
       'pretty_version' => '4.3.1',
@@ -22,12 +40,12 @@
     ),
     'khaled.alshamaa/ar-php' => 
     array (
-      'pretty_version' => 'v6.3.1',
-      'version' => '6.3.1.0',
+      'pretty_version' => 'v6.3.2',
+      'version' => '6.3.2.0',
       'aliases' => 
       array (
       ),
-      'reference' => '1f3122947869d1241dc75d931e4ff4b211fb18df',
+      'reference' => '590da34e9897ef8b9fedb678647c436253e91da0',
     ),
     'limesurvey/limesurvey' => 
     array (
@@ -36,7 +54,25 @@
       'aliases' => 
       array (
       ),
-      'reference' => 'f8145fc4d3c19851f6fd0299efc9a0da9db26dba',
+      'reference' => '155d73a30e1672aa1db0774f4d3a70953622cf38',
+    ),
+    'maxmind-db/reader' => 
+    array (
+      'pretty_version' => 'v1.11.0',
+      'version' => '1.11.0.0',
+      'aliases' => 
+      array (
+      ),
+      'reference' => 'b1f3c0699525336d09cc5161a2861268d9f2ae5b',
+    ),
+    'maxmind/web-service-common' => 
+    array (
+      'pretty_version' => 'v0.9.0',
+      'version' => '0.9.0.0',
+      'aliases' => 
+      array (
+      ),
+      'reference' => '4dc5a3e8df38aea4ca3b1096cee3a038094e9b53',
     ),
     'mk-j/php_xlsxwriter' => 
     array (

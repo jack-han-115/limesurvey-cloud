@@ -5,7 +5,7 @@ namespace ArPHP\I18N;
 /**
  * ----------------------------------------------------------------------
  *
- * Copyright (c) 2006-2022 Khaled Al-Sham'aa.
+ * Copyright (c) 2006-2023 Khaled Al-Sham'aa.
  *
  * http://www.ar-php.org
  *
@@ -48,17 +48,17 @@ namespace ArPHP\I18N;
  *         soundex, Hijri calendar, spell numbers, keyboard language, and more...
  *
  * @author    Khaled Al-Shamaa <khaled@ar-php.org>
- * @copyright 2006-2022 Khaled Al-Shamaa
+ * @copyright 2006-2023 Khaled Al-Shamaa
  *
  * @license   LGPL <http://www.gnu.org/licenses/lgpl.txt>
- * @version   6.3.1 released in Dec 18, 2022
+ * @version   6.3.2 released in Jan 21, 2023
  * @link      http://www.ar-php.org
  */
  
 class Arabic
 {
     /** @var string */
-    public $version = '6.3.1';
+    public $version = '6.3.2';
     
     /** @var array<string> */
     private $arStandardPatterns = array();
@@ -1125,14 +1125,14 @@ class Arabic
             $patterns[] = 'j';
             $patterns[] = 'd';
 
-            $replacements[] = 'x1';
-            $replacements[] = 'x2';
-            $replacements[] = 'x3';
-            $replacements[] = 'x3';
-            $replacements[] = 'x4';
-            $replacements[] = 'x5';
-            $replacements[] = 'x6';
-            $replacements[] = 'x7';
+            $replacements[] = 'b1';
+            $replacements[] = 'b2';
+            $replacements[] = 'b3';
+            $replacements[] = 'b3';
+            $replacements[] = 'b4';
+            $replacements[] = 'b5';
+            $replacements[] = 'b6';
+            $replacements[] = 'b7';
 
             if ($this->arDateMode == 8) {
                 $patterns[] = 'S';
@@ -1166,13 +1166,13 @@ class Arabic
             $patterns     = array();
             $replacements = array();
 
-            $patterns[] = 'x1';
-            $patterns[] = 'x2';
-            $patterns[] = 'x3';
-            $patterns[] = 'x4';
-            $patterns[] = 'x5';
-            $patterns[] = 'x6';
-            $patterns[] = 'x7';
+            $patterns[] = 'b1';
+            $patterns[] = 'b2';
+            $patterns[] = 'b3';
+            $patterns[] = 'b4';
+            $patterns[] = 'b5';
+            $patterns[] = 'b6';
+            $patterns[] = 'b7';
             
             $replacements[] = $hj_y;
             $replacements[] = substr((string)$hj_y, -2);
@@ -2389,11 +2389,16 @@ class Arabic
                 $crntChar == 'ل' && isset($nextChar)
                 && (mb_strpos('آأإا', $nextChar) !== false)
             ) {
-                $output = substr_replace($output, '', strrpos($output, $this->arGlyphs[$nextChar][1]) - 3, 8);
+                $output = substr($output, 0, strlen($output) - 8);
                 if (isset($this->arGlyphs[$prevChar]['prevLink']) && $this->arGlyphs[$prevChar]['prevLink'] == true) {
                     $output .= '&#x' . $this->arGlyphs[$crntChar . $nextChar][1] . ';';
                 } else {
                     $output .= '&#x' . $this->arGlyphs[$crntChar . $nextChar][0] . ';';
+                }
+                if ($prevChar == 'ل') {
+                    $tmp_form = ($this->arGlyphs[$chars[$i - 2]]['prevLink'] == true) ? 3 : 2;
+                    $output .= '&#x' . $this->arGlyphs[$prevChar][$tmp_form] . ';';
+                    $i--;
                 }
                 continue;
             }
