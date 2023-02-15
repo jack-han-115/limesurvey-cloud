@@ -181,7 +181,6 @@ function getSurveyList($bReturnArray = false)
     if (is_null($cached)) {
         $surveyidresult = Survey::model()
             ->permission(Yii::app()->user->getId())
-            ->with('languagesettings')
             ->findAll();
         foreach ($surveyidresult as $result) {
             $surveynames[] = array_merge($result->attributes, $result->languagesettings[$result->language]->attributes);
@@ -347,7 +346,7 @@ function convertGETtoPOST($url)
             function ($v, $k) {
                 return $k.'='.$v;
             },
-            $getArray, 
+            $getArray,
             array_keys($getArray)
         ));
     }
@@ -974,11 +973,11 @@ function groupOrderThenQuestionOrder($a, $b)
 /**
  * Shifts the sortorder for questions, creating extra spaces at the start of the group
  * This is an alias for updateQuestionOrder()
- * 
+ *
  * @param integer $sid SID is not needed anymore, but is left here for backward compatibility
  * @param integer $gid
  * @param integer $shiftvalue
- * 
+ *
  * @return void
  */
 function shiftOrderQuestions($sid, $gid, $shiftvalue)
@@ -991,9 +990,9 @@ function shiftOrderQuestions($sid, $gid, $shiftvalue)
 
 /**
  * Rewrites the sortorder for groups
- * 
+ *
  * @param integer $surveyid
- * 
+ *
  * @return void
  */
 function fixSortOrderGroups($surveyid)
@@ -3274,13 +3273,13 @@ function SSLRedirect($enforceSSLMode)
 */
 function enforceSSLMode()
 {
-    $bForceSSL = ''; // off 
+    $bForceSSL = ''; // off
     $bSSLActive = ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != "off") ||
     (isset($_SERVER['HTTP_FORWARDED_PROTO']) && $_SERVER['HTTP_FORWARDED_PROTO'] == "https") ||
     (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == "https"));
     if (Yii::app()->getConfig('ssl_emergency_override') !== true) {
         $bForceSSL = strtolower(getGlobalSetting('force_ssl'));
-    } 
+    }
     if ($bForceSSL == 'on' && !$bSSLActive) {
         SSLRedirect('s');
     }
@@ -3817,11 +3816,11 @@ function fixLanguageConsistency($sid, $availlangs = '')
     $result = Yii::app()->db->createCommand($query)->queryColumn();
     foreach ($result as $questionID) {
         // Get the question in base language
-        $oQuestion=Question::model()->findByAttributes(array('qid'=>$questionID,'language'=>$baselang)); 
+        $oQuestion=Question::model()->findByAttributes(array('qid'=>$questionID,'language'=>$baselang));
         // Update the scale ID according to language
-        Yii::app()->db->createCommand()->update('{{questions}}',array('scale_id'=>$oQuestion->scale_id),'qid='.$questionID);   
+        Yii::app()->db->createCommand()->update('{{questions}}',array('scale_id'=>$oQuestion->scale_id),'qid='.$questionID);
     }
-    
+
     $quests = array();
     $query = "SELECT * FROM {{questions}} WHERE sid='{$sid}' AND language='{$baselang}' ORDER BY question_order";
     $result = Yii::app()->db->createCommand($query)->query()->readAll();
@@ -4992,11 +4991,11 @@ function regenerateCSRFToken()
         return $sCustomerID;
     }
 
-    // LimeService Mod End --------------------------    
+    // LimeService Mod End --------------------------
 
     /**
     * A function to remove ../ or ./ from paths to prevent directory traversal
-    * 
+    *
     * @param mixed $path
     */
 function get_absolute_path($path)
@@ -5015,8 +5014,8 @@ function get_absolute_path($path)
             }
         }
         return implode(DIRECTORY_SEPARATOR, $absolutes);
-    }    
-    
+    }
+
 // Closing PHP tag intentionally omitted - yes, it is okay
 
 /**
@@ -5124,14 +5123,14 @@ function isZipBomb($zip_filename)
     $totalSize = 0;
     $zip = new ZipArchive();
     if ($zip->open($zip_filename) === true) {
-        
+
         for ($i = 0; $i < $zip->numFiles; $i++) {
             $fileStats = $zip->statIndex($i);
             $totalSize += $fileStats['size'];
         }
-           
+
         $zip->close();
-    }        
+    }
     return ( $totalSize >  Yii::app()->getConfig('maximum_unzipped_size'));
 }
 
@@ -5167,7 +5166,7 @@ function get_zip_originalsize($filename)
 /**
  * PHP7 has created a little nasty bomb with count throwing erroros on uncountables
  * This is to "fix" this problem
- * 
+ *
  * @param mixed $element
  * @return integer counted element
  * @author
