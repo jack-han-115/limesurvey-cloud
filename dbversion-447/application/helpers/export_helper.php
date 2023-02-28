@@ -2315,9 +2315,9 @@ function tokensExport($iSurveyID)
     // LimeService Mode ende -------------------------------
 
     $bresult = $oRecordSet->query();
-    // fetching all records into array, values need to be decrypted
-    $bresultAll = $bresult->readAll();
-    foreach ($bresultAll as $tokenKey => $tokenValue) {
+    // Walk the result set row by row and decrypt values
+    foreach ($bresult as $tokenValue) {
+        $tokenKey = $token['tid'];
         // creating TokenDynamic object to be able to decrypt easier
         $token = TokenDynamic::model($iSurveyID);
         $attributes = array_keys($token->getAttributes());
