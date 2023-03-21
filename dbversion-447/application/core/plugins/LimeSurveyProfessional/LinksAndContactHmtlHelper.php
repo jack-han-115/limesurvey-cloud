@@ -52,11 +52,26 @@ class LinksAndContactHmtlHelper
         $enPricingSubDir = 'pricing';
         // @TODO this array will need to be in a separate config file at some point
         $languages = [
+            'cs' => 'cs/cenik',
             'de' => 'de/preise',
             'es' => 'es/precios',
+            'es-MX' => 'es-mx/precios',
+            'fi' => 'fi/hinnat',
             'fr' => 'fr/prix',
+            'hr' => 'hr/cijene',
+            'id' => 'id/harga',
+            'it' => 'it/prezzi',
+            'hu' => 'hu/arkepzes',
+            'ms' => 'ms/harga',
+            'nb' => 'nb/priser',
+            'nl' => 'nl/prijzen',
+            'pl' => 'pl/wycena',
             'pt' => 'pt/precos',
-            'pt-BR' => 'pt/precos'
+            'pt-BR' => 'pt/precos',
+            'ro' => 'ro/tarife',
+            'sk ' => 'sk/stanovenie-cien',
+            'tr' => 'tr/fiyatlandirma',
+            'vi' => 'vi/bieu-gia',
         ];
         $pricingSubDir = array_key_exists($adminLang, $languages) ? $languages[$adminLang] . '/' : $enPricingSubDir;
 
