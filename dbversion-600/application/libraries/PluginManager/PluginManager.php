@@ -560,7 +560,7 @@ class PluginManager extends \CApplicationComponent
             foreach ($event->get('questionplugins', array()) as $pluginClass => $paths) {
                 foreach ($paths as $path) {
                     Yii::import("webroot.plugins.$pluginClass.$path");
-                    $parts = explode('.', $path);
+                    $parts = explode('.', (string) $path);
 
                     // Get the class name.
                     $className = array_pop($parts);

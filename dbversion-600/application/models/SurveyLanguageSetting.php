@@ -132,7 +132,7 @@ class SurveyLanguageSetting extends LSActiveRecord
             // LimeService Mod start
             array('surveyls_legal_notice', 'LSYii_Validators'),
             // LimeService Mod end
-            array('surveyls_url', 'filter', 'filter' => 'trim'),
+            array('surveyls_url', 'LSYii_FilterValidator', 'filter' => 'trim', 'skipOnEmpty' => true),
             array('surveyls_url', 'LSYii_Validators', 'isUrl' => true),
             array('surveyls_urldescription', 'LSYii_Validators'),
             array('surveyls_urldescription', 'length', 'min' => 0, 'max' => 255),

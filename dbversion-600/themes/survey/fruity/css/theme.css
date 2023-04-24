@@ -27,35 +27,12 @@
     see: https://developer.mozilla.org/en-US/docs/Web/CSS/Specificity
 
 */
-/* LimeService mod start */
-html {
-    height: 100%;
-}
-
 body {
-    padding-bottom: 10px;
-    padding-top: 60px; /* now is redefine in JS to fit any title length */
-    display: flex;
-    flex-direction: column;
-    height: 100%;
+     padding-bottom: 10px;
+     padding-top: 90px;/* now is redefine in JS to fit any title length */
 }
 
-#datapolicy {
-    margin-top: 1em;
-    flex: 1 1 auto;
-    display: flex;
-    align-items: flex-end;
-}
 
-.datapolicy-links a {
-    padding: 10px;
-}
-
-.datapolicy-links a:hover {
-    cursor: pointer;
-    text-decoration: none;
-}
-/* LimeService mod end */
 
 element.style {
 }
@@ -71,10 +48,7 @@ element.style {
 /* specific for survey listing */
 @media (min-width: 761px) {
   .surveys-list .btn-group {
-    width: 50%;
-  }
-  .language_change_container{
-      height: 90vh;
+    width: 49%;
   }
 }
 
@@ -371,11 +345,13 @@ only screen and (max-width: 760px),
  */
 
 /* General */
-.button-item .ls-icon {
+.button-item .ls-icon, .ls-button-label .ls-icon {
     display: block;
 }
-.button-item .ls-icon {
+
+.button-item .ls-icon, .ls-button-label .ls-icon {
     font-size: 1.4em;
+    line-height: 1.4em;
 }
 
 html body .navbar.navbar-default.navbar-fixed-top {
@@ -748,4 +724,8 @@ body .checkbox-item label::after {
     border-left: none;
     border-right: none;
     outline: none;
+}
+
+label {
+    font-weight: bold;
 }

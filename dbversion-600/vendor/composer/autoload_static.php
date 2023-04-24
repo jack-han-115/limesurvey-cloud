@@ -8,10 +8,10 @@ class ComposerStaticInitddb1a145e450f862353420acc5153e40
 {
     public static $files = array (
         '320cde22f66dd4f5d3fd621d3e88b98f' => __DIR__ . '/..' . '/symfony/polyfill-ctype/bootstrap.php',
+        '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
         'decc78cc4436b1292c6c0d151b19445c' => __DIR__ . '/..' . '/phpseclib/phpseclib/phpseclib/bootstrap.php',
         '3109cb1a231dcd04bee1f9f620d46975' => __DIR__ . '/..' . '/paragonie/sodium_compat/autoload.php',
         '56823cacd97af379eceaf82ad00b928f' => __DIR__ . '/..' . '/phpseclib/bcmath_compat/lib/bcmath.php',
-        '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
     );
 
     public static $prefixLengthsPsr4 = array (
@@ -38,12 +38,6 @@ class ComposerStaticInitddb1a145e450f862353420acc5153e40
             'ParagonIE\\ConstantTime\\' => 23,
             'PHPMailer\\PHPMailer\\' => 20,
         ),
-        'M' => 
-        array (
-            'MaxMind\\WebService\\' => 19,
-            'MaxMind\\Exception\\' => 18,
-            'MaxMind\\Db\\' => 11,
-        ),
         'L' => 
         array (
             'LimeSurvey\\PluginManager\\' => 25,
@@ -55,19 +49,10 @@ class ComposerStaticInitddb1a145e450f862353420acc5153e40
             'LimeSurvey\\ExtensionInstaller\\' => 30,
             'LimeSurvey\\Exceptions\\' => 22,
             'LimeSurvey\\Datavalueobjects\\' => 28,
-            'LimeSurveyProfessional\\' => 23,
         ),
         'H' => 
         array (
             'Html2Text\\' => 10,
-        ),
-        'G' => 
-        array (
-            'GeoIp2\\' => 7,
-        ),
-        'C' => 
-        array (
-            'Composer\\CaBundle\\' => 18,
         ),
         'A' => 
         array (
@@ -108,18 +93,6 @@ class ComposerStaticInitddb1a145e450f862353420acc5153e40
         array (
             0 => __DIR__ . '/..' . '/phpmailer/phpmailer/src',
         ),
-        'MaxMind\\WebService\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/maxmind/web-service-common/src/WebService',
-        ),
-        'MaxMind\\Exception\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/maxmind/web-service-common/src/Exception',
-        ),
-        'MaxMind\\Db\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/maxmind-db/reader/src/MaxMind/Db',
-        ),
         'LimeSurvey\\PluginManager\\' => 
         array (
             0 => __DIR__ . '/../..' . '/application/libraries/PluginManager',
@@ -158,22 +131,10 @@ class ComposerStaticInitddb1a145e450f862353420acc5153e40
         array (
             0 => __DIR__ . '/../..' . '/application/datavalueobjects',
         ),
-        'LimeSurveyProfessional\\' => 
-        array (
-            0 => __DIR__ . '/../..' . '/application/core/plugins/LimeSurveyProfessional',
-        ),
         'Html2Text\\' => 
         array (
             0 => __DIR__ . '/..' . '/html2text/html2text/src',
             1 => __DIR__ . '/..' . '/html2text/html2text/test',
-        ),
-        'GeoIp2\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/geoip2/geoip2/src',
-        ),
-        'Composer\\CaBundle\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/composer/ca-bundle/src',
         ),
         'ArPHP\\I18N\\' => 
         array (
@@ -182,13 +143,6 @@ class ComposerStaticInitddb1a145e450f862353420acc5153e40
     );
 
     public static $prefixesPsr0 = array (
-        'T' => 
-        array (
-            'Twig_' => 
-            array (
-                0 => __DIR__ . '/..' . '/twig/twig/lib',
-            ),
-        ),
         'S' => 
         array (
             'Spreadsheet' => 
