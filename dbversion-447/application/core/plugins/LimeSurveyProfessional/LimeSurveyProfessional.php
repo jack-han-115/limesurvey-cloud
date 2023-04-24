@@ -38,8 +38,14 @@ class LimeSurveyProfessional extends PluginBase
             'allowedServersForAnalytics' => [
                 's1.limesurvey.host',
                 's2.limesurvey.host',
-                's3.limesurvey.host',
-                's27.limesurvey.host'
+                's5.limesurvey.host',
+                's6.limesurvey.host',
+                's11.limesurvey.host',
+                's12.limesurvey.host',
+                's30.limesurvey.host',
+                's40.limesurvey.host',
+                's50.limesurvey.host',
+                's60.limesurvey.host',
             ],
         ]
     ];
