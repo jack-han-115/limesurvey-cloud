@@ -1,0 +1,24 @@
+<phpunit bootstrap="tests/bootstrap.php"
+         stderr="true"
+         colors="true" >
+    <testsuites>
+        <testsuite name="limeservice">
+            <directory>tests/limeservice</directory>
+        </testsuite>
+    </testsuites>
+
+    <!-- This filter is for the code coverage -->
+    <filter>
+        <whitelist processUncoveredFilesFromWhitelist="true">
+            <directory suffix=".php">application/core/plugins/LimeSurveyProfessional</directory>
+            <exclude>
+                <directory>application/core/plugins/LimeSurveyProfessional/views</directory>
+                <directory>application/core/plugins/LimeSurveyProfessional/vendor</directory>
+            </exclude>
+        </whitelist>
+    </filter>
+
+    <logging>
+        <log type="coverage-clover" target="cov.xml"/>
+    </logging>
+</phpunit>

@@ -1,0 +1,49 @@
+/* This file contains all styles which are related and only used in hardlockParticipantsStyles.php! */
+    $auto: auto;
+    $relative: relative;
+    $fixed: fixed;
+
+    $zero: 0;
+    $onePixel: 1px;
+    $fivePixels: 5px;
+    $thirdthyPixels: 30px;
+    $fourthyPixels: 40px;
+    $fifthyPixels: 50px;
+    $oneHundertPixels: 100px;
+    $twoHundertPixels: 200px;
+    $minusFifteenPixels: -15px;
+    
+    $fourthyPercent: 40%;
+    $oneHundertPercent: 100%;
+ 
+    $color: #f8f8f8;
+    $border-color: #e7e7e7;
+    
+    .align-image-for-navigation {
+        width: $fifthyPixels;
+        height: $fourthyPixels;
+        position: $relative;
+        top: $minusFifteenPixels;
+        padding: $fivePixels;
+    }
+
+    .fixed-hardlock-footer {
+        position: $fixed;
+        height: $oneHundertPixels;
+        bottom: $zero;
+        background-color: $color;
+        width: $oneHundertPercent;
+        border: $onePixel solid $border-color;
+    }
+
+    .align-image-for-footer {
+        position: $relative;
+        height: $auto;
+        width: $twoHundertPixels;
+        left: $fourthyPercent;
+        top: $thirdthyPixels;
+    }
+
+    .align-panel {
+        margin: $fifthyPixels;
+    }

@@ -1,0 +1,261 @@
+# LimeSurvey Profesionnal LANGUAGE FILE.
+# Copyright (C) 2022 LimeSurvey
+# This file is distributed under the same license as the LimeSurvey package.
+msgid ""
+msgstr ""
+"Project-Id-Version: LimeSurvey Professional language file\n"
+"Report-Msgid-Bugs-To: http://translate.limesurvey.org/\n"
+"POT-Creation-Date: 2022-02-16 15:46+0100\n"
+"PO-Revision-Date: 2022-02-16 15:55+0100\n"
+"Last-Translator: \n"
+"Language-Team: LimeSurvey Team <c_schmitz@users.sourceforge.net>\n"
+"Language: de_DE\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Poedit-KeywordsList: gT;ngT:1,2;eT;neT:1,2\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-Basepath: ../..\n"
+"X-Generator: Poedit 3.0.1\n"
+"X-Poedit-SearchPath-0: .\n"
+
+#: LimeSurveyProfessional.php:78
+msgid "Core plugin can not be disabled."
+msgstr "Standard-Plugins können nicht deaktiviert werden,"
+
+#: notifications/GracePeriodNotification.php:303
+msgid "Unpaid invoice"
+msgstr "Unbezahlte Rechnung"
+
+#: notifications/GracePeriodNotification.php:317
+#, php-format
+msgid ""
+"You have an unpaid invoice. To avoid being locked out of your survey site, "
+"please view and pay the invoice from the %s tab of your LimeSurvey account "
+"homepage"
+msgstr ""
+"Sie haben eine unbezahlte Rechnung. Um zu vermeiden, dass Sie von Ihrer "
+"Umfrageseite ausgeschlossen werden, sehen Sie sich die Rechnung bitte auf "
+"der Registerkarte %s auf der Startseite Ihres LimeSurvey-Kontos an und "
+"bezahlen Sie sie."
+
+#: notifications/GracePeriodNotification.php:321
+#: notifications/HardLockModal.php:58
+msgid "transaction history"
+msgstr "Transaktionsverlauf"
+
+#: notifications/GracePeriodNotification.php:327
+#, php-format
+msgid ""
+"There is an unpaid invoice for this account. Please contact your survey site "
+"admin, %s, to have the invoice paid to avoid being locked out of your survey "
+"site."
+msgstr ""
+"Für dieses Konto gibt es eine unbezahlte Rechnung. Bitte wenden Sie sich an "
+"den Administrator Ihrer Umfrage-Website, %s, um die Rechnung bezahlen zu "
+"lassen, damit Sie nicht von Ihrer Umfrage-Website ausgesperrt werden."
+
+#: notifications/GracePeriodNotification.php:346
+#: notifications/HardLockModal.php:81
+msgid "Pay invoice"
+msgstr "Rechnung bezahlen"
+
+#: notifications/GracePeriodNotification.php:351
+#: notifications/HardLockModal.php:90
+#: notifications/LimitReminderNotification.php:188
+#: notifications/OutOfResponsesFree.php:75
+#: notifications/OutOfResponsesPaid.php:87 upgradeButton/UpgradeButton.php:73
+msgid "Contact Survey Site Adminstrator"
+msgstr "Umfrage-Site-Administrator kontaktieren"
+
+#: notifications/HardLockModal.php:33
+msgid "Account locked"
+msgstr "Konto gesperrt"
+
+#: notifications/HardLockModal.php:54
+#, php-format
+msgid ""
+"Your survey site has been locked due to an unpaid invoice or suspected "
+"abuse. To unlock your account, please view and pay the invoice from the %s "
+"tab of your LimeSurvey account homepage. If you do not have an unpaid "
+"invoice, please contact our customer support."
+msgstr ""
+"Ihre Umfrageseite wurde aufgrund einer unbezahlten Rechnung oder "
+"mutmaßlichen Missbrauchs gesperrt. Um Ihr Konto zu entsperren, sehen Sie "
+"sich bitte die Rechnung auf der Registerkarte %s Ihrer LimeSurvey-Konto-"
+"Startseite an und bezahlen Sie sie. Wenn Sie keine unbezahlte Rechnung "
+"haben, wenden Sie sich bitte an unseren Kundensupport."
+
+#: notifications/HardLockModal.php:64
+#, php-format
+msgid ""
+"Your survey site has been locked due to an unpaid invoice or suspected "
+"abuse. Please contact your survey site admin, %s, to unlock the survey site."
+msgstr ""
+"Ihre Umfrageseite wurde aufgrund einer unbezahlten Rechnung oder "
+"mutmaßlichen Missbrauchs gesperrt. Bitte wenden Sie sich an den "
+"Administrator Ihrer Umfrage-Site, %s, um die Umfrage-Site zu entsperren."
+
+#: notifications/HardLockModal.php:85
+msgid "Contact LimeSurvey support"
+msgstr "LimeSurvey-Support kontaktieren"
+
+#: notifications/LimitReminderNotification.php:70
+msgid "You are almost out of storage & responses"
+msgstr "Sie haben fast keinen Speicherplatz und keine Antworten mehr"
+
+#: notifications/LimitReminderNotification.php:72
+msgid "You are almost out of responses"
+msgstr "Sie haben fast keine Antworten mehr"
+
+#: notifications/LimitReminderNotification.php:74
+msgid "You are almost out of storage"
+msgstr "Sie haben fast keinen Speicherplatz mehr"
+
+#: notifications/LimitReminderNotification.php:102
+#: notifications/LimitReminderNotification.php:115
+#, php-format
+msgid ""
+"The responses on your survey site are below the configured responses "
+"reminder limit of %s."
+msgstr ""
+"Die Anzahl der übrigen Antworten auf Ihrer Umfrage-Website liegen unter dem "
+"konfigurierten Antwort-Erinnerungslimit von %s."
+
+#: notifications/LimitReminderNotification.php:108
+#, php-format
+msgid ""
+"Also, the storage on your survey site is below the configured storage "
+"reminder limit of %s."
+msgstr ""
+"Außerdem liegt der Speicherplatz auf Ihrer Umfrage-Website unter dem "
+"konfigurierten Speichererinnerungslimit von %s."
+
+#: notifications/LimitReminderNotification.php:122
+#, php-format
+msgid ""
+"The storage on your survey site is below the configured storage reminder "
+"limit of %s."
+msgstr ""
+"Der verbleibende Speicherplatz auf Ihrer Umfrage-Website liegt unter dem "
+"konfigurierten Speicher-Erinnerungslimit von %s."
+
+#: notifications/LimitReminderNotification.php:142
+msgid "Please upgrade or renew your plan to increase your storage & responses."
+msgstr ""
+"Bitte aktualisieren oder erneuern Sie Ihren Plan, um Ihren Speicherplatz und "
+"Ihre Antworten zu erhöhen."
+
+#: notifications/LimitReminderNotification.php:146
+msgid ""
+"Please contact your Survey Site Administrator to upgrade or renew your plan "
+"to increase your storage & responses."
+msgstr ""
+"Wenden Sie sich bitte an Ihren Umfrage-Site-Administrator, um Ihren Plan zu "
+"erneuern oder auf einen besseren Plan mit mehr Antworten & Speicherplatz zu "
+"aktualisieren."
+
+#: notifications/LimitReminderNotification.php:152
+msgid "Please upgrade or renew your plan to increase your responses."
+msgstr ""
+"Bitte aktualisieren oder erneuern Sie Ihren Plan, um Ihre Antworten zu "
+"erhöhen."
+
+#: notifications/LimitReminderNotification.php:156
+#: notifications/OutOfResponsesPaid.php:66
+msgid ""
+"Please contact your Survey Site Administrator to upgrade or renew your plan "
+"to increase your responses."
+msgstr ""
+"Wenden Sie sich bitte an Ihren Umfrage-Site-Administrator, um Ihren Plan zu "
+"erneuern oder auf einen besseren Plan mit mehr Antworten zu aktualisieren."
+
+#: notifications/LimitReminderNotification.php:161
+msgid "Please upgrade or renew your plan to increase your storage."
+msgstr ""
+"Bitte aktualisieren oder erneuern Sie Ihren Plan, um Ihren Speicherplatz zu "
+"erhöhen."
+
+#: notifications/LimitReminderNotification.php:164
+msgid ""
+"Please contact your Survey Site Administrator to upgrade or renew your plan "
+"to increase your storage."
+msgstr ""
+"Wenden Sie sich bitte an Ihren Umfrage-Site-Administrator, um Ihren Plan zu "
+"erneuern oder auf einen besseren Plan mit mehr Speicherplatz zu "
+"aktualisieren."
+
+#: notifications/LimitReminderNotification.php:183
+msgid "Upgrade or renew plan"
+msgstr "Plan upgraden oder erneuern"
+
+#: notifications/OutOfResponsesFree.php:33
+#: notifications/OutOfResponsesPaid.php:33
+msgid "Maximum number of responses reached"
+msgstr "Maximale Anzahl an Antworten erreicht"
+
+#: notifications/OutOfResponsesFree.php:48
+#: notifications/OutOfResponsesPaid.php:57
+msgid ""
+"You have reached the maximum number of responses allowed for your chosen "
+"plan."
+msgstr ""
+"Sie haben die maximal zulässige Anzahl an Antworten für Ihren gewählten Plan "
+"erreicht."
+
+#: notifications/OutOfResponsesFree.php:53
+msgid "Please upgrade your plan to increase your responses."
+msgstr "Bitte aktualisieren Sie Ihren Plan, um Ihre Antworten zu erhöhen."
+
+#: notifications/OutOfResponsesFree.php:57
+msgid ""
+"Please contact your Survey Site Administrator to upgrade the plan to "
+"increase your responses."
+msgstr ""
+"Wenden Sie sich bitte an Ihren Umfrage-Site-Administrator, um Ihren Plan zu "
+"erneuern oder auf einen besseren Plan mit mehr Antworten & Speicherplatz zu "
+"aktualisieren."
+
+#: notifications/OutOfResponsesFree.php:70
+msgid "Upgrade / Purchase responses"
+msgstr "Upgrade/ Antworten kaufen"
+
+#: notifications/OutOfResponsesPaid.php:62
+msgid "Please renew your current plan or upgrade to a higher plan."
+msgstr ""
+"Bitte erneuern Sie Ihren aktuellen Plan oder führen Sie ein Upgrade auf "
+"einen höheren Plan durch."
+
+#: notifications/OutOfResponsesPaid.php:82
+msgid "Renew plan / Purchase responses"
+msgstr "Plan erneuern/Antworten kaufen"
+
+#: upgradeButton/UpgradeButton.php:37
+msgid "Upgrade"
+msgstr "Upgrade"
+
+#: upgradeButton/UpgradeButton.php:63
+msgid "Upgrade notification"
+msgstr "Upgrade-Benachrichtigung"
+
+#: upgradeButton/UpgradeButton.php:66
+#, php-format
+msgid ""
+"You do not have any permission to upgrade to a higher plan, please contact "
+"your site admin %s"
+msgstr ""
+"Sie haben keine Berechtigung zum Upgrade auf einen höheren Plan. Bitte "
+"wenden Sie sich an Ihren Site-Administrator %s"
+
+#: views/modal.php:6
+msgid "Data protection policy"
+msgstr "Datenschutzrichtlinie"
+
+#: views/modal.php:12
+msgid "Close"
+msgstr "Schließen"
+
+#: views/notifications/modal.php:19
+msgid "Logout"
+msgstr "Abmeldung"
