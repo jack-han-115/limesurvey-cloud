@@ -16,12 +16,10 @@
                         'name'          => 'usercontrolSameGroupPolicy',
                         'id'            => 'usercontrolSameGroupPolicy',
                         'checkedOption' => $sShowGlobalDataPolicyButton ?? 0,
-                        'htmlOptions' => array(
-                            'class' => 'custom-data bootstrap-switch-boolean',
-                            'uncheckValue' => false,
-                        ),
-                                          'onLabel' => gT('On'),
-                                          'offLabel' => gT('Off')
+                        'selectOptions' => [
+                            '1' => gT('On'),
+                            '0' => gT('Off'),
+                        ]
                     ]); ?>
         </div>
     </div>
@@ -33,12 +31,10 @@
                         'name'          => 'showlegalnoticebutton',
                         'id'            => 'showlegalnoticebutton',
                         'checkedOption' => $sShowGlobalLegalNoticeButton ?? 0,
-                        'htmlOptions' => array(
-                            'class' => 'custom-data bootstrap-switch-boolean',
-                            'uncheckValue' => false,
-                        ),
-                                          'onLabel' => gT('On'),
-                                          'offLabel' => gT('Off')
+                        'selectOptions' => [
+                            '1' => gT('On'),
+                            '0' => gT('Off'),
+                        ]
                     ]); ?>            
         </div>
     </div>
