@@ -134,8 +134,8 @@
                                                     . '<br/> '
                                                     . gT("If the link does not work and you turn on HTTPS, you will not be able to access and use your LimeSurvey application!"); ?></span>
             </div>
-        </div>
 	LimeService Mod end */ ?>
+        </div>
         <div class="clearfix"></div>
 
         <!-- Brute-force for admin -->
