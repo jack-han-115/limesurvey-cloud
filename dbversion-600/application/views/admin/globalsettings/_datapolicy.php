@@ -11,38 +11,35 @@
         <label class="control-label"
                for='showdatapolicybutton'><?php eT("Show data policy on public survey list page:"); ?></label>
         <div>
-            <?php $this->widget(
-                'yiiwheels.widgets.switch.WhSwitch',
-                array(
-                    'name' => 'showdatapolicybutton',
-                    'htmlOptions' => array(
-                        'class' => 'custom-data bootstrap-switch-boolean',
-                        'uncheckValue' => false,
-                    ),
-                    'value' => isset($sShowGlobalDataPolicyButton) ? $sShowGlobalDataPolicyButton : 0,
-                    'onLabel' => gT('On'),
-                    'offLabel' => gT('Off')
-                ));
-            ?>
+
+        <?php $this->widget('ext.ButtonGroupWidget.ButtonGroupWidget', [
+                        'name'          => 'usercontrolSameGroupPolicy',
+                        'id'            => 'usercontrolSameGroupPolicy',
+                        'checkedOption' => $sShowGlobalDataPolicyButton ?? 0,
+                        'htmlOptions' => array(
+                            'class' => 'custom-data bootstrap-switch-boolean',
+                            'uncheckValue' => false,
+                        ),
+                                          'onLabel' => gT('On'),
+                                          'offLabel' => gT('Off')
+                    ]); ?>
         </div>
     </div>
     <div class="col-sm-6">
         <label class="control-label"
                for='showlegalnoticebutton'><?php eT("Show legal notice on public survey list page:"); ?></label>
         <div>
-            <?php $this->widget(
-                'yiiwheels.widgets.switch.WhSwitch',
-                array(
-                    'name' => 'showlegalnoticebutton',
-                    'htmlOptions' => array(
-                        'class' => 'custom-data bootstrap-switch-boolean',
-                        'uncheckValue' => false,
-                    ),
-                    'value' => isset($sShowGlobalLegalNoticeButton) ? $sShowGlobalLegalNoticeButton : 0,
-                    'onLabel' => gT('On'),
-                    'offLabel' => gT('Off')
-                ));
-            ?>
+        <?php $this->widget('ext.ButtonGroupWidget.ButtonGroupWidget', [
+                        'name'          => 'showlegalnoticebutton',
+                        'id'            => 'showlegalnoticebutton',
+                        'checkedOption' => $sShowGlobalLegalNoticeButton ?? 0,
+                        'htmlOptions' => array(
+                            'class' => 'custom-data bootstrap-switch-boolean',
+                            'uncheckValue' => false,
+                        ),
+                                          'onLabel' => gT('On'),
+                                          'offLabel' => gT('Off')
+                    ]); ?>            
         </div>
     </div>
 </div>
