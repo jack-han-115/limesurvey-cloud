@@ -32,7 +32,7 @@ if (isset($scripts)) {
         <li role="presentation" class="nav-item"><a role="tab" class="nav-link" data-bs-toggle="tab" href='#useradmin'><?php eT("User administration"); ?></a></li>
         <li role="presentation" class="nav-item"><a role="tab" class="nav-link" data-bs-toggle="tab" href='#presentation'><?php eT("Presentation"); ?></a></li>
         <?php // LimeService Mod start ?>
-        <li role="presentation" ><a role="tab" data-toggle="tab" href='#datapolicy_legalnotice'><?php eT("Data policy"); ?></a></li>
+        <li role="presentation" class="nav-item"><a role="tab" class="nav-link" data-bs-toggle="tab" href='#datapolicy_legalnotice'><?php eT("Data policy"); ?></a></li>
         <?php // LimeService Mod end ?>
         <li role="presentation" class="nav-item"><a role="tab" class="nav-link" data-bs-toggle="tab" href='#language'><?php eT("Language"); ?></a></li>
         <li role="presentation" class="nav-item"><a role="tab" class="nav-link" data-bs-toggle="tab" href='#interfaces'><?php eT("Interfaces"); ?></a></li>
