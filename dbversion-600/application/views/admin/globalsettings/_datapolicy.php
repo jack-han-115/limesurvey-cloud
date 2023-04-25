@@ -13,8 +13,8 @@
         <div>
 
         <?php $this->widget('ext.ButtonGroupWidget.ButtonGroupWidget', [
-                        'name'          => 'usercontrolSameGroupPolicy',
-                        'id'            => 'usercontrolSameGroupPolicy',
+                        'name'          => 'showdatapolicybutton',
+                        'id'            => 'showdatapolicybutton',
                         'checkedOption' => $sShowGlobalDataPolicyButton ?? 0,
                         'selectOptions' => [
                             '1' => gT('On'),
