@@ -21,8 +21,16 @@ class Update_496 extends DatabaseUpdateBase
      */
     public function up()
     {
-        $this->db->createCommand()->createIndex('{{idx1_quota_id}}', '{{quota_languagesettings}}', ['quotals_quota_id']);
-        $this->db->createCommand()->createIndex('{{idx2_quota_id}}', '{{quota_members}}', ['quota_id']);
+        try {
+            $this->db->createCommand()->createIndex('{{idx1_quota_id}}', '{{quota_languagesettings}}', ['quotals_quota_id']);
+        } catch (Exception $e) {
+            // Index already exists - ignore
+        }
+        try {
+            $this->db->createCommand()->createIndex('{{idx2_quota_id}}', '{{quota_members}}', ['quota_id']);
+        } catch (Exception $e) {
+            // Index already exists - ignore
+        }
     }
 
 }
