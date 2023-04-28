@@ -31,13 +31,14 @@ class UpgradeButton
             }
 
             $buttonOptions = [
-                'buttonId' => 'upgrade-button',
-                'label' => $plugin->gT("Upgrade plan"),
-                'href' => $links->getPricingPageLink(\Yii::app()->session['adminlang']),
-                'iconClass' => 'fa fa-arrow-circle-up ' . $iconClass,
-                'openInNewTab' => true,
-                'isPrepended' => true,
-                'tooltip' => $plugin->gT("Upgrade to a higher plan"),
+                'buttonId'          => 'upgrade-button',
+                'label'             => $plugin->gT("Upgrade plan"),
+                'href'              => $links->getPricingPageLink(\Yii::app()->session['adminlang']),
+                'iconClass'         => $iconClass,
+                'openInNewTab'      => true,
+                'isInMiddleSection' => false,
+                'isPrepended'       => false,
+                'tooltip'           => $plugin->gT("Upgrade to a higher plan"),
             ];
 
             $menuButton = new \LimeSurvey\Menu\MenuButton($buttonOptions);
