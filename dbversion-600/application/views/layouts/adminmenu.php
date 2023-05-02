@@ -116,7 +116,7 @@
                 $data = Yii::app()->dbstats->createCommand("SELECT i.upload_storage_size, b.storage_used, b.responses_avail FROM limeservice_system.balances b JOIN limeservice_system.installations i ON b.user_id = i.user_id WHERE i.user_id = ". $iUserId)->queryRow();
                 if ($data) {
                     printf(
-                        "<li class='nav-item d-flex' data-toggle='tooltip' data-placement='bottom' data-title='%s'><a href='https://www.limesurvey.org/pricing' class='nav-link'><span class='ri-question-answer-line'></span>&nbsp;%d</a></li>",
+                        "<li class='nav-item d-flex' data-bs-toggle='tooltip' data-bs-placement='bottom' title='%s'><a href='https://www.limesurvey.org/pricing' class='nav-link'><span class='ri-question-answer-line'></span>&nbsp;%d</a></li>",
                         gT('Response balance'),
                         $data['responses_avail']
                     );
@@ -129,7 +129,7 @@
                     $storageString = str_replace('.', $radix['separator'], $storageString);
 
                     printf(
-                        "<li class='nav-item d-flex' data-toggle='tooltip' data-placement='bottom' data-title='%s'><a href='%s' class='nav-link'><span class='ri-database-2-line'></span>&nbsp;$storageString</a></li>",
+                        "<li class='nav-item d-flex' data-bs-toggle='tooltip' data-bs-placement='bottom' title='%s'><a href='%s' class='nav-link'><span class='ri-database-2-line'></span>&nbsp;$storageString</a></li>",
                         gT('Storage used / storage available (MB)'),
                         $sStorageUrl
                     );
