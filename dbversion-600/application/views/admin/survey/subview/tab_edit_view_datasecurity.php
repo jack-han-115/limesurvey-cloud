@@ -21,6 +21,11 @@ Yii::app()->session['FileManagerContext'] = "edit:survey:{$iSurveyID}";
 initKcfinder();
 
 PrepareEditorScript(false, $this);
+
+$optionsOnOff = array(
+    1 => gT('On','unescaped'),
+    0 => gT('Off','unescaped'),
+);
 ?>
 <!-- security notice -->
 <div class="mb-3">
@@ -43,46 +48,36 @@ PrepareEditorScript(false, $this);
     </div>
 </div>
 
-                <div class="row">
-                    <div class="col-sm-6">
-                        <label class="control-label" for='showdatapolicybutton'><?php eT("Show data policy in survey:"); ?></label>
-                        <div>
-                            <?php $this->widget(
-                                'yiiwheels.widgets.switch.WhSwitch',
-                                array(
-                                    'name'        => 'showdatapolicybutton',
-                                    'htmlOptions' => array(
-                                        'class'        => 'custom-data bootstrap-switch-boolean',
-                                        'uncheckValue' => false,
-                                    ),
-                                    'value'       => isset($oSurvey->showdatapolicybutton) ? $oSurvey->showdatapolicybutton : 0,
-                                    'onLabel'     => gT('On'),
-                                    'offLabel'    => gT('Off')
-                                ));
-                            ?>
-                        </div>
-                    </div>
-                    <div class="col-sm-6">
-                        <label class="control-label" for='showlegalnoticebutton'><?php eT("Show legal notice in survey:"); ?></label>
-                        <div>
-                            <?php $this->widget(
-                                'yiiwheels.widgets.switch.WhSwitch',
-                                array(
-                                    'name'        => 'showlegalnoticebutton',
-                                    'htmlOptions' => array(
-                                        'class'        => 'custom-data bootstrap-switch-boolean',
-                                        'uncheckValue' => false,
-                                    ),
-                                    'value'       => isset($oSurvey->showlegalnoticebutton) ? $oSurvey->showlegalnoticebutton : 0,
-                                    'onLabel'     => gT('On'),
-                                    'offLabel'    => gT('Off')
-                                ));
-                            ?>
-                        </div>
-                    </div>
-                </div>
-            </div>
+<div class="row mb-3">
+    <div class="col-sm-6">
+        <label class="control-label" for='showdatapolicybutton'><?php eT("Show data policy in survey:"); ?></label>
+        <div>
+            <?php $this->widget('ext.ButtonGroupWidget.ButtonGroupWidget', [
+                'name'          => 'showdatapolicybutton',
+                'checkedOption' => isset($oSurvey->showdatapolicybutton) ? $oSurvey->showdatapolicybutton : 0,
+                'selectOptions' => $optionsOnOff,
+                'htmlOptions'   => [
+                    'class'        => 'custom-data bootstrap-switch-boolean',
+                    'uncheckValue' => false,
+                ]
+            ]); ?>
         </div>
+    </div>
+    <div class="col-sm-6">
+        <label class="control-label" for='showlegalnoticebutton'><?php eT("Show legal notice in survey:"); ?></label>
+        <div>
+            <?php $this->widget('ext.ButtonGroupWidget.ButtonGroupWidget', [
+                'name'          => 'showlegalnoticebutton',
+                'checkedOption' => isset($oSurvey->showlegalnoticebutton) ? $oSurvey->showlegalnoticebutton : 0,
+                'selectOptions' => $optionsOnOff,
+                'htmlOptions'   => [
+                    'class'        => 'custom-data bootstrap-switch-boolean',
+                    'uncheckValue' => false,
+                ]
+            ]); ?>
+        </div>
+    </div>
+</div>
 
 <nav>
     <div class="nav nav-tabs" id="edit-survey-datasecurity-element-language-selection">

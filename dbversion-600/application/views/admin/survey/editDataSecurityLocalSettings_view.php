@@ -44,12 +44,14 @@ echo viewHelper::getViewTestTag('surveyTexts');
             ); ?>
         </div>
         <div class="col-12 col-xl-6">
-            <div class="well">
-                <?= gT('If you want to specify a link to the privacy policy, 
+            <?php
+            $this->widget('ext.AlertWidget.AlertWidget', [
+                'text' => gT('If you want to specify a link to the privacy policy, 
                 set "Show privacy policy text with mandatory checkbox" to "Collapsible text" and use the placeholders {STARTPOLICYLINK} and {ENDPOLICYLINK} in the 
-                "Privacy policy checkbox label" field to define the link that opens the policy popup. If there is no placeholder given, there will be an appendix.') ?>
-                ) ?>
-            </div>
+                "Privacy policy checkbox label" field to define the link that opens the policy popup. If there is no placeholder given, there will be an appendix.'),
+                'type' => 'info',
+            ]);
+            ?>
         </div>
         <?php // LimeService Mod start ?>
         <div class="row">
