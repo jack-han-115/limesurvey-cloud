@@ -59,7 +59,7 @@
                 <?php } ?>
 
                 <!-- Prepended extra menus from plugins -->
-                <?php $this->renderPartial("application.libraries.MenuObjects.views._extraMenu", ['extraMenus' => $extraMenus, 'prependedMenu' => true]); ?>
+                <?php $this->renderPartial("application.libraries.MenuObjects.views._extraMenu", ['extraMenus' => $extraMenus, 'middleSection' => true, 'prependedMenu' => true]); ?>
 
                 <!-- create survey -->
                 <li class="nav-item">
@@ -97,44 +97,44 @@
 
 
                 <!-- Extra menus from plugins -->
-                <?php $this->renderPartial("application.libraries.MenuObjects.views._extraMenu", ['extraMenus' => $extraMenus, 'prependedMenu' => false]); ?>
+                <?php $this->renderPartial("application.libraries.MenuObjects.views._extraMenu", ['extraMenus' => $extraMenus, 'middleSection' => true, 'prependedMenu' => false]); ?>
             </ul>
         </div>
 
-            <?php
-            //===============Begin LimeService Mod
-            $sDomain=$_SERVER['SERVER_NAME'];
-            $sSubdomain=substr($sDomain,0,strpos($sDomain,'.'));
-            $sDomain=substr($sDomain,strpos($sDomain,'.')+1);
-            $iUserId = (int) substr(Yii::app()->db->username, 6);
-            $sStorageUrl = $this->createUrl('/admin/globalsettings') . '#storage';
-
-            $data = Yii::app()->dbstats->createCommand("SELECT i.upload_storage_size, b.storage_used, b.responses_avail FROM limeservice_system.balances b JOIN limeservice_system.installations i ON b.user_id = i.user_id WHERE i.user_id = ". $iUserId)->queryRow();
-            if ($data) {
-                printf(
-                    "<li data-toggle='tooltip' data-placement='bottom' data-title='%s'><a href='https://www.limesurvey.org/pricing'><span class='fa fa-comments'></span>&nbsp;%d</a></li>",
-                    gT('Response balance'),
-                    $data['responses_avail']
-                );
-                $storageString = sprintf("%.1f / %.1f",
-                    $data['storage_used'],
-                    $data['upload_storage_size']);
-                $aLangData = getLanguageData();
-                $radix = getRadixPointData($aLangData[Yii::app()->session['adminlang']]['radixpoint']);
-                $storageString = str_replace('.0', '', $storageString);
-                $storageString = str_replace('.', $radix['separator'], $storageString);
-
-                printf(
-                    "<li data-toggle='tooltip' data-placement='bottom' data-title='%s'><a href='%s'><span class='fa fa-database'></span>&nbsp;$storageString</a></li>",
-                    gT('Storage used / storage available (MB)'),
-                    $sStorageUrl
-                );
-            }
-            //===============End LimeService Mod ?>
-
-        
         <div class="collapse navbar-collapse justify-content-end">
             <ul class="nav navbar-nav">
+                <!-- Extra menus from plugins -->
+                <?php $this->renderPartial("application.libraries.MenuObjects.views._extraMenu", ['extraMenus' => $extraMenus, 'middleSection' => false, 'prependedMenu' => true]); ?>
+                <?php
+                //===============Begin LimeService Mod
+                $sDomain=$_SERVER['SERVER_NAME'];
+                $sSubdomain=substr($sDomain,0,strpos($sDomain,'.'));
+                $sDomain=substr($sDomain,strpos($sDomain,'.')+1);
+                $iUserId = (int) substr(Yii::app()->db->username, 6);
+                $sStorageUrl = $this->createUrl('/admin/globalsettings') . '#storage';
+
+                $data = Yii::app()->dbstats->createCommand("SELECT i.upload_storage_size, b.storage_used, b.responses_avail FROM limeservice_system.balances b JOIN limeservice_system.installations i ON b.user_id = i.user_id WHERE i.user_id = ". $iUserId)->queryRow();
+                if ($data) {
+                    printf(
+                        "<li class='nav-item d-flex' data-bs-toggle='tooltip' data-bs-placement='bottom' title='%s'><a href='https://www.limesurvey.org/pricing' class='nav-link'><span class='ri-question-answer-line'></span>&nbsp;%d</a></li>",
+                        gT('Response balance'),
+                        $data['responses_avail']
+                    );
+                    $storageString = sprintf("%.1f / %.1f",
+                        $data['storage_used'],
+                        $data['upload_storage_size']);
+                    $aLangData = getLanguageData();
+                    $radix = getRadixPointData($aLangData[Yii::app()->session['adminlang']]['radixpoint']);
+                    $storageString = str_replace('.0', '', $storageString);
+                    $storageString = str_replace('.', $radix['separator'], $storageString);
+
+                    printf(
+                        "<li class='nav-item d-flex' data-bs-toggle='tooltip' data-bs-placement='bottom' title='%s'><a href='%s' class='nav-link'><span class='ri-database-2-line'></span>&nbsp;$storageString</a></li>",
+                        gT('Storage used / storage available (MB)'),
+                        $sStorageUrl
+                    );
+                }
+                //===============End LimeService Mod ?>
                 <!-- Admin notification system -->
                 <?php echo $adminNotifications; ?>
 
@@ -163,7 +163,8 @@
                         </li>
                     </ul>
                 </li>
-
+                <!-- Extra menus from plugins -->
+                <?php $this->renderPartial("application.libraries.MenuObjects.views._extraMenu", ['extraMenus' => $extraMenus, 'middleSection' => false, 'prependedMenu' => false]); ?>
             </ul>
         </div><!-- /.nav-collapse -->
 

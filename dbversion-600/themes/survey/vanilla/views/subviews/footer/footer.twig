@@ -22,7 +22,7 @@ body > article {
     <div class="container">
         <div class="row text-center datapolicy-links">
             {% if aSurveyInfo.oSurvey.showdatapolicybutton == 1 or aSurveyInfo.sShowGlobalDataPolicyButton == '1' %}
-                <a data-toggle="modal" data-target="#datapolicy-modal">
+                <a data-bs-toggle="modal" data-bs-target="#datapolicy-modal">
                     {{ gT('Data policy') }}
                 </a>
             {% endif %}
@@ -30,7 +30,7 @@ body > article {
                 <span>|</span>
             {% endif %}
             {% if aSurveyInfo.oSurvey.showlegalnoticebutton == 1 or aSurveyInfo.sShowGlobalLegalNoticeButton == '1' %}
-                <a data-toggle="modal" data-target="#legalnotice-modal">
+                <a data-bs-toggle="modal" data-bs-target="#legalnotice-modal">
                     {{ gT('Legal notice') }}
                 </a>
             {% endif %}
@@ -42,10 +42,10 @@ body > article {
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"><span
                             aria-hidden="true">&times;</span>
                     </button>
-                    <h4 class="modal-title" id="datapolicy-label">{{ gT('Data policy') }}</h4>
+                    <h5 class="modal-title" id="datapolicy-label">{{ gT('Data policy') }}</h5>
                 </div>
                 <div class="modal-body">
                     {% if aSurveyInfo.oSurvey.showdatapolicybutton %}
@@ -55,7 +55,7 @@ body > article {
                     {% endif %}
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>
@@ -67,10 +67,10 @@ body > article {
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"><span
                             aria-hidden="true">&times;</span>
                     </button>
-                    <h4 class="modal-title" id="legalnotice-label">{{ gT('Legal notice') }}</h4>
+                    <h5 class="modal-title" id="legalnotice-label">{{ gT('Legal notice') }}</h5>
                 </div>
                 <div class="modal-body">
                     {% if aSurveyInfo.oSurvey.showlegalnoticebutton %}
@@ -80,7 +80,7 @@ body > article {
                     {% endif %}
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>

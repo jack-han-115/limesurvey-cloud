@@ -1,2 +1,3 @@
 $(document.body).append(getUnclosableModalHtml());
-$('#unclosable-notification-modal').modal('show');
+var modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('unclosable-notification-modal'));
+modal.show();

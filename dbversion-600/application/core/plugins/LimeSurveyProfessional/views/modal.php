@@ -9,7 +9,7 @@
         <iframe src='https://www.limesurvey.org/index.php?option=com_content&view=article&id=1978&tmpl=component&lang=<?php echo $lang; ?>' style='height: 50%; width: 100%; border: none;'></iframe>
       </div>
       <div class="modal-footer">
-      <button type="button" class="btn btn-default" data-dismiss="modal"><?php eT('Close'); ?></button>
+      <button type="button" class="btn btn-outline-secondary" data-dismiss="modal"><?php eT('Close'); ?></button>
       </div>
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->

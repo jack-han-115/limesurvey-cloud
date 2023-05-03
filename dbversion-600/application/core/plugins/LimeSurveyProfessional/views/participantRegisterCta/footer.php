@@ -19,7 +19,7 @@ $signupUrl = 'https://www.limesurvey.org/?' . $trackingQueryString;
 ?>
 <div class="col-md-12">
     <div class="text-right">
-        <a href="<?= $signupUrl ?>" target="_blank" class="btn btn-default">
+        <a href="<?= $signupUrl ?>" target="_blank" class="btn btn-outline-secondary">
             <?php eT('Made in LimeSurvey'); ?>
             <span class="fa fa-external-link" aria-hidden="true"></span>
         </a>
