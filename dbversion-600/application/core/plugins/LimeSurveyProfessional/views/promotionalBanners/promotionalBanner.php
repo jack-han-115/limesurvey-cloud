@@ -16,7 +16,7 @@ $this->widget('ext.AlertWidget.AlertWidget', [
         'isFilled'        => false,
         'htmlOptions'     => [
             'id'        => 'promotional-banner',
-            'class'     => 'text-center fw-bold',
+            'class'     => 'text-center fw-bold m-2',
             'data-href' => $saveUrl,
             'data-bid'  => $bannerId
         ],
