@@ -15,10 +15,10 @@ $modalAttr = '';
 $closeButton = '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>';
 // Logout Button will always be added when unclosable Modal
 if ($unclosable) {
-    $buttons[] = '<a class="btn btn-default" href="' . $this->createUrl("admin/authentication/sa/logout") . '">' .
-        '<span class="fa fa-sign-out"></span>&nbsp;' . $plugin->gT("Logout") .
+    $buttons[] = '<a class="btn btn-outline-secondary" href="' . $this->createUrl("admin/authentication/sa/logout") . '">' .
+        '<span class="ri-logout-box-r-line"></span>&nbsp;' . $plugin->gT("Logout") .
         '</a>';
-    $modalAttr = 'data-keyboard="false" data-backdrop="static"';
+    $modalAttr = 'data-bs-keyboard="false" data-bs-backdrop="static"';
     $closeButton = '';
 }
 
@@ -26,7 +26,7 @@ if ($unclosable) {
 
 <!-- Modal for block -->
 <div id="<?= $modalId ?>" class="modal fade" role="dialog" <?= $modalAttr ?>>
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-lg">
         <!-- Modal content-->
         <div class="modal-content">
             <div class="modal-header">

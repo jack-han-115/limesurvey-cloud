@@ -109,7 +109,7 @@ class LinksAndContactHmtlHelper
      */
     public function toHtmlLinkButton(string $link, string $title)
     {
-        return '<a class="btn btn-primary" href="' . $link . '" target="_blank"><span class="fa fa-external-link"></span>&nbsp;' . $title . '</a>';
+        return '<a class="btn btn-primary" href="' . $link . '" target="_blank"><span class="ri-external-link-fill"></span>&nbsp;' . $title . '</a>';
     }
 
     /**
@@ -130,7 +130,7 @@ class LinksAndContactHmtlHelper
      */
     public function toHtmlMailLinkButton(string $email, string $title)
     {
-        return '<a class="btn btn-primary" href="mailto:' . $email . '"><span class="fa fa-envelope"></span>&nbsp;' . $title . '</a>';
+        return '<a class="btn btn-primary" href="mailto:' . $email . '"><span class="ri-mail-fill"></span>&nbsp;' . $title . '</a>';
     }
 
 
