@@ -34,6 +34,48 @@ Thank you to everyone who helped with this new release!
 
 CHANGE LOG
 ------------------------------------------------------
+Changes from 5.6.22 (build 230523) to 5.6.23 (build 230524) May 24, 2023
+-Fixed issue: Dragging a question between groups can be unresponsive (Patrick Teichmann)
+-Fixed issue #18659: Cannot install two plugins in a row (#3146) (Gabriel Jenik)
+
+Changes from 5.6.21 (build 230518) to 5.6.22 (build 230523) May 22, 2023
+-Fixed issue #18814: Array question statistics fail for Remote Control. (#3141) (Gabriel Jenik)
+-Fixed issue #18736: Error exporting participants when using MSSQL DB (Carsten Schmitz)
+-Fixed issue #18725: Reorder questions/question groups can broke survey (#3091) (Denis Chenu)
+-Fixed issue #18670: "Validation of quota" action button always shows 1st quota (#3122) (Gabriel Jenik)
+-Fixed issue #18343: Problem with double slash in an URL(IIS) (#3155) (Denis Chenu)
+#Updated translation: German by c_schmitz
+
+
+Changes from 5.6.20 (build 230516) to 5.6.21 (build 230518) May 16, 2023
+-Fixed issue: ComfortUpdate showing updates as unstable, even though they are not (Carsten Schmitz)
+-Fixed issue #18787: Wrong default answers are loaded for multilingual surveys (#3107) (Denis Chenu)
+-Fixed issue #18703: Upload files show error if not seen (using index) (#3066) (Denis Chenu)
+
+
+Changes from 5.6.19 (build 230509) to 5.6.20 (build 230516) May 15, 2023
+-Fixed issue: No proper error when entering ComfortUpdate key and server cannot be reached (Carsten Schmitz)
+-Fixed issue #18765: Answers are not populated correct in array dual scale after clicking "Back" (#3117) (Gabriel Jenik)
+-Fixed issue #17560: Layout issue when setting user rights. (#3074) (Gabriel Jenik)
+
+Changes from 5.6.18 (build 230503) to 5.6.19 (build 230509) May 8, 2023
+-Fixed issue: Error when using detailed admin notifications or print responses on encrypted fields (#3094) (Patricia Stell)
+-Fixed issue: Cannot add survey menu when using PHP8 (#3110) (Patricia Stell)
+-Fixed issue #18635: Export single response can goes to a white page (#2923) (Denis Chenu)
+#Updated translation: Spanish (Spain) by ireneoh
+#Updated translation: Slovak by c_schmitz, jelen1
+#Updated translation: Portuguese (Portugal) by samarta
+#Updated translation: Polish by elissa
+#Updated translation: Polish (Informal) by elissa
+#Updated translation: Japanese by d_inoue
+#Updated translation: Italian by lfanfoni
+#Updated translation: Italian (Informal) by ciampix, lfanfoni
+#Updated translation: Dutch by Han, kbadata
+#Updated translation: Dutch (Informal) by Han
+#Updated translation: Czech by jelen1
+#Updated translation: Czech (Informal) by jelen1
+
+
 Changes from 5.6.17 (build 230426) to 5.6.18 (build 230503) May 2, 2023
 -Fixed issue: Very slow survey start if a lot of quotas exist (Carsten Schmitz)
 -Fixed issue: SPSS import throws error on "RENAME VARIABLE" (Patricia Stell)
