@@ -251,15 +251,24 @@ class CaptchaExtendedAction extends CCaptchaAction{
 	* Return code for math mode like 9+1= or 95-5=
 	*/
 	protected function getCodeMath(){
+		$n1 = mt_rand(1,90);
 		$n2 = mt_rand(1,9);
-		if(mt_rand(1,100) > 50){
-			$n1 = mt_rand(1,9)*10+$n2;
-			$code = $n1.' - '.$n2.' =';
-			$r = $n1-$n2;
-		}else{
-			$n1 = mt_rand(1,10)*10-$n2;
-			$code = $n1.' + '.$n2.' =';
-			$r = $n1+$n2;
+		$method = mt_rand(0,2);
+		switch ($method) {
+			case 0:
+				$code = $n1.' + '.$n2.' =';
+				$r = $n1+$n2;
+				break;
+			case 1:
+				$code = $n1.' - '.$n2.' =';
+				$r = $n1-$n2;
+				break;
+			case 2:
+				$n1 = mt_rand(2,9);
+				$n2 = mt_rand(2,9);
+				$code = $n1.' * '.$n2.' =';
+				$r = $n1*$n2;
+				break;
 		}
 		return array('code' => $code, 'result' => $r);
 	}

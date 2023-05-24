@@ -1671,9 +1671,15 @@ class SurveyRuntimeHelper
             if (!$subscenarios['captchaCorrect']) {
                 if (App()->getRequest()->getPost('loadsecurity')) {
                     $aEnterErrors['captcha'] = gT("Your answer to the security question was not correct - please try again.");
+                    FailedLoginAttempt::model()->addAttempt(FailedLoginAttempt::TYPE_TOKEN);
+
                 } elseif (null !== App()->getRequest()->getPost('loadsecurity')) {
                     $aEnterErrors['captcha'] = gT("Your have to answer the security question - please try again.");
                 }
+                $renderCaptcha = 'main';
+            } elseif (FailedLoginAttempt::model()->isLockedOut(FailedLoginAttempt::TYPE_TOKEN)) {
+                $aEnterErrors['captcha'] = sprintf(gT('You have exceeded the number of maximum access code validation attempts. Please wait %d minutes before trying again.'), App()->getConfig('timeOutParticipants') / 60);
+                FailedLoginAttempt::model()->addAttempt(FailedLoginAttempt::TYPE_TOKEN);
                 $renderCaptcha = 'main';
             } else {
                 $_SESSION['survey_' . $this->iSurveyid]['captcha_surveyaccessscreen'] = true;
