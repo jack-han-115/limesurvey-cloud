@@ -1218,7 +1218,7 @@ function createCompleteSGQA($iSurveyID, $aFilters, $sLanguage)
 
                 //go through all the (multiple) answers
                 foreach ($result as $row) {
-                    $myfield2 = $myfield . reset($row);
+                    $myfield2 = $myfield . $row['title'];
                     $allfields[] = $myfield2;
                 }
                 break;
@@ -1417,8 +1417,8 @@ function createFieldMap($survey, $style = 'short', $force_refresh = false, $ques
 
     $defaultsQuery = "SELECT a.qid, a.sqid, a.scale_id, a.specialtype, al10.defaultvalue"
     . " FROM {{defaultvalues}} as a "
-    . " LEFT JOIN  {{defaultvalue_l10ns}} as al10 ON a.dvid = al10.dvid "
-    . " LEFT JOIN {{questions}} as b ON a.qid = b.qid "
+    . " JOIN {{defaultvalue_l10ns}} as al10 ON a.dvid = al10.dvid " // We NEED a default value set
+    . " JOIN {{questions}} as b ON a.qid = b.qid " // We NEED only question in this survey
     . " AND al10.language = '{$sLanguage}'"
     . " AND b.same_default=0"
     . " AND b.sid = " . $surveyid;
@@ -1438,8 +1438,8 @@ function createFieldMap($survey, $style = 'short', $force_refresh = false, $ques
     $baseLanguage = $survey->language;
     $defaultsQuery = "SELECT a.qid, a.sqid, a.scale_id, a.specialtype, al10.defaultvalue"
     . " FROM {{defaultvalues}} as a "
-    . " LEFT JOIN  {{defaultvalue_l10ns}} as al10 ON a.dvid = al10.dvid "
-    . " LEFT JOIN {{questions}} as b ON a.qid = b.qid "
+    . " JOIN {{defaultvalue_l10ns}} as al10 ON a.dvid = al10.dvid " // We NEED a default value set
+    . " JOIN {{questions}} as b ON a.qid = b.qid " // We NEED only question in this survey
     . " AND al10.language = '{$baseLanguage}'"
     . " AND b.same_default=1"
     . " AND b.sid = " . $surveyid;
@@ -2633,10 +2633,10 @@ function hasTemplateManageRights($userid, $sThemeFolder)
 * @param string $sType 'survey' or 'label'
 * @param mixed $iOldSurveyID
 * @param mixed $iNewSurveyID
-* @param string $sString
+* @param string $sString A string or null
 * @return string
 */
-function translateLinks($sType, $iOldSurveyID, $iNewSurveyID, string $sString)
+function translateLinks($sType, $iOldSurveyID, $iNewSurveyID, $sString)
 {
     if ($sString == '') {
         return $sString;
@@ -2656,6 +2656,32 @@ function translateLinks($sType, $iOldSurveyID, $iNewSurveyID, string $sString)
         return $sString;
     }
 }
+/**
+ * Returns true if there are old links in answer/question/survey/email template/label set texts.
+ *
+ * @param string $type 'survey' or 'label'
+ * @param mixed $oldSurveyId
+ * @param mixed $string
+ * @return boolean True if the provided string includes links to the old survey. If the type is not 'survey' or 'label', it returns false.
+ */
+function checkOldLinks($type, $oldSurveyId, $string)
+{
+    if (empty($string)) {
+        return false;
+    }
+    $oldSurveyId = (int) $oldSurveyId;
+    if ($type == 'survey') {
+        $pattern = '(http(s)?:\/\/)?(([a-z0-9\/\.])*(?=(\/upload))\/upload\/surveys\/' . $oldSurveyId . '\/)';
+        return preg_match('/' . $pattern . '/u', $string, $m);
+    } elseif ($type == 'label') {
+        $pattern = '(http(s)?:\/\/)?(([a-z0-9\/\.])*(?=(\/upload))\/upload\/labels\/' . $oldSurveyId . '\/)';
+        return preg_match('/' . $pattern . '/u', $string, $m);
+    } else // unknown type
+    {
+        return false;
+    }
+}
+
 /**
  * This function creates the old fieldnames for survey import
  *
@@ -3208,6 +3234,7 @@ function getFullResponseTable($iSurveyID, $iResponseID, $sLanguageCode, $bHonorC
 
     //Get response data
     $idrow = SurveyDynamic::model($iSurveyID)->findByAttributes(array('id' => $iResponseID));
+    $idrow->decryptBeforeOutput();
 
     // Create array of non-null values - those are the relevant ones
     $aRelevantFields = array();
@@ -3794,7 +3821,6 @@ function fixLanguageConsistency($sid, $availlangs = '', $baselang = '')
     switchMSSQLIdentityInsert('assessments', false);
 
 
-    switchMSSQLIdentityInsert('quota_languagesettings', true);
     $query = "SELECT * FROM {{quota_languagesettings}} join {{quota}} q on quotals_quota_id=q.id WHERE q.sid='{$sid}' AND quotals_language='{$baselang}'";
     $result = Yii::app()->db->createCommand($query)->query();
     foreach ($result->readAll() as $qls) {
@@ -3815,7 +3841,6 @@ function fixLanguageConsistency($sid, $availlangs = '', $baselang = '')
         }
         reset($langs);
     }
-    switchMSSQLIdentityInsert('quota_languagesettings', false);
 
     return true;
 }
@@ -4590,6 +4615,22 @@ function getIPAddress()
         $sIPAddress = $_SERVER['REMOTE_ADDR'];
     }
 
+    return $sIPAddress;
+}
+
+
+/**
+ * This function returns the real IP address and should mainly be used for security sensitive purposes
+ * If you want to use the IP address for language detection or similar, use getIPAddress() instead
+ * 
+ * @return  string  Client IP Address
+ */
+function getRealIPAddress()
+{
+    $sIPAddress = '127.0.0.1';
+    if (!empty($_SERVER['REMOTE_ADDR']) && filter_var($_SERVER['REMOTE_ADDR'], FILTER_VALIDATE_IP) !== false) {
+        $sIPAddress = $_SERVER['REMOTE_ADDR'];
+    }
     return $sIPAddress;
 }
 

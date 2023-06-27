@@ -49,7 +49,7 @@ class Menu implements MenuInterface
     protected $isInMiddleSection = true;
 
     /**
-     * If true, render this menu before the selected menu section.
+     * If true, render this menu before the main menu.
      * @var bool
      */
     protected $isPrepended = false;

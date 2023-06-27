@@ -17605,18 +17605,6 @@
 	};
 
 	/**
-	 * Methods to load when a the surveygrid is available
-	 *     if($('#survey-grid').length>0)
-	 */
-
-	const onExistBinding = () => {
-	  $(document).on('click', '.has-link', function () {
-	    const linkUrl = $(this).find('a').attr('href');
-	    window.location.href = linkUrl;
-	  });
-	};
-
-	/**
 	 * Check the browsers console capabilities and bundle them into general functions
 	 * If the build environment was "production" only put out error messages.
 	 */
@@ -17965,6 +17953,9 @@
 	  },
 	  doSelect2: () => {
 	    $("select.activate-search").select2();
+	    $(document).on('select2:open', function (e) {
+	      document.querySelector("[aria-controls=\"select2-".concat(e.target.id, "-results\"]")).focus();
+	    });
 	  },
 	  // finds any duplicate array elements using the fewest possible comparison
 	  arrHasDupes: arrayToCheck => {
@@ -19209,6 +19200,13 @@
 	      LS.EventBus.$emit('loadingFinished');
 	      // $('.lsLoadingStateIndicator').each((i,item) => {$(item).remove();});
 	    },
+	    bindInvalidFormHandler = $form => {
+	      var $submittableElements = $form.find('button, input, select, textarea');
+	      $submittableElements.off('invalid.save').on('invalid.save', function () {
+	        stopDisplayLoadingState();
+	        $submittableElements.off('invalid.save');
+	      });
+	    },
 	    //###########PRIVATE
 	    checks = () => {
 	      return {
@@ -19242,11 +19240,21 @@
 	            } catch (e) {
 	              console.ls.log('Seems no CKEDITOR4 is loaded');
 	            }
+
+	            // If the form has the 'data-trigger-validation' attribute set, trigger the standard form
+	            // validation and quit if it fails.
+	            if ($form.attr('data-trigger-validation')) {
+	              if (!$form[0].reportValidity()) {
+	                return;
+	              }
+	            }
 	            if ($form.data('isvuecomponent') == true) {
 	              LS.EventBus.$emit('componentFormSubmit', button);
 	            } else {
-	              $form.find('[type="submit"]:not(.ck)').first().trigger('click');
+	              // Attach handler to detect validation errors on the form and re-enable the button
+	              bindInvalidFormHandler($form);
 	              displayLoadingState(this);
+	              $form.find('[type="submit"]:not(.ck)').first().trigger('click');
 	            }
 	          },
 	          on: 'click'
@@ -20908,7 +20916,7 @@
 	};
 
 	var activateSubSubMenues = function () {
-	  $('ul.dropdown-menu [data-toggle=dropdown]').on('click', function (event) {
+	  $('ul.dropdown-menu [data-bs-toggle=dropdown]').on('click', function (event) {
 	    event.preventDefault();
 	    event.stopPropagation();
 	    $(this).parent().siblings().removeClass('open');
@@ -28878,7 +28886,6 @@
 	  };
 	  const onLoadRegister = () => {
 	      globalStartUpMethods.bootstrapping();
-	      onExistBinding();
 	      appendToLoad(function () {
 	        adminCoreLSConsole.log('TRIGGERWARNING', 'Document ready triggered');
 	      }, 'ready');
@@ -28938,7 +28945,6 @@
 	          }
 	        });
 	      });
-	      onExistBinding();
 	    },
 	    addToNamespace = function (object) {
 	      let name = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : "globalAddition";

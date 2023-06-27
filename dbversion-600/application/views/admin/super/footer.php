@@ -55,11 +55,11 @@ foreach ($systemInfos as $key => $systemInfo) {
         <a data-bs-toggle="tooltip" title='<?php eT("Visit our website!"); ?>' href='https://community.limesurvey.org' target='_blank'>LimeSurvey Cloud</a>
         <?php if (Permission::model()->hasGlobalPermission('superadmin', 'read')) { ?>
             <a href="#modalSystemInformation" data-bs-toggle="modal" title="<?= gT("Get system information") ?>">
-            <?php } ?>
+        <?php } ?>
             <?php echo $versiontitle . "  " . $versionnumber . $buildtext; ?>
             <?php if (Permission::model()->hasGlobalPermission('superadmin', 'read')) { ?>
             </a>
-        <?php } ?>
+            <?php } ?>
 
         <!-- Help button -->
         <div class="d-inline-block ms-5 mt-3 mt-sm-0">
@@ -85,9 +85,9 @@ foreach ($systemInfos as $key => $systemInfo) {
             </div>
             <div class="modal-body">
                 <?php // Limeservice mod start -------------------- ?>
-                <?php if (1 == 2 && Permission::model()->hasGlobalPermission('superadmin', 'read')) { ?>
-                    <?php // Limeservice mod end -------------------- ?>
-                    <h4><?php eT("Your system configuration:")?></h4>
+                <?php if (1==2 && Permission::model()->hasGlobalPermission('superadmin', 'read') && !Yii::app()->getConfig('demoMode')) { ?>
+                <?php // Limeservice mod end -------------------- ?>
+                    <h4><?php eT("Your system configuration:") ?></h4>
                     <ul class="list-group">
                         <?php foreach ($systemInfos as $name => $systemInfo) { ?>
                             <li class="list-group-item">
@@ -207,7 +207,7 @@ foreach ($systemInfos as $key => $systemInfo) {
     <div class="modal-dialog">
         <!-- Modal content-->
         <div class="modal-content"> <?php // JS add not.type as panel-type, e.g. panel-default, panel-danger
-                                    ?>
+        ?>
             <div class="modal-header card-header">
                 <h5 class="modal-title"><?php eT("Notifications"); ?></h5>
                 <span class='notification-date'></span>

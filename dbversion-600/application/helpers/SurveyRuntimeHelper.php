@@ -178,6 +178,8 @@ class SurveyRuntimeHelper
     private $groupname;
     private $groupdescription;
 
+    private $thissurvey;
+
     /**
      * Main function
      *
@@ -543,10 +545,6 @@ class SurveyRuntimeHelper
             /* Reset session with multiple tabs (show Token mismatch issue) , but only for not anonymous survey */
             if (!empty($_SESSION[$this->LEMsessid]['token']) and $this->aSurveyInfo['anonymized'] != 'Y') {
                 $this->aSurveyInfo['hiddenInputs']     .= \CHtml::hiddenField('token', $_SESSION[$this->LEMsessid]['token'], array('id' => 'token'));
-            }
-            /* Set sof man to true if it's already in POST */
-            if (App()->request->getPost('mandSoft')) {
-                $this->aSurveyInfo['hiddenInputs']     .= \CHtml::hiddenField('mandSoft', App()->request->getPost('mandSoft'), array('id' => 'mandSoft'));
             }
         }
 
@@ -1328,10 +1326,10 @@ class SurveyRuntimeHelper
             }
 
             $this->aSurveyInfo['aCompleted']['sPluginHTML']  = implode("\n", $blocks) . "\n";
-            $this->aSurveyInfo['aCompleted']['sSurveylsUrl'] = $this->aSurveyInfo['surveyls_url'];
             $this->aSurveyInfo['surveyls_url']               = passthruReplace($this->aSurveyInfo['surveyls_url'], $this->aSurveyInfo);
             $this->aSurveyInfo['surveyls_url']               = $this->processString($this->aSurveyInfo['surveyls_url'], 3, 1);
             $this->aSurveyInfo['aCompleted']['sSurveylsUrl'] = $this->aSurveyInfo['surveyls_url'];
+            $this->aSurveyInfo['surveyls_urldescription'] = $this->processString($this->aSurveyInfo['surveyls_urldescription'], 3, 1);
             $this->aSurveyInfo['aCompleted']['sSurveylsUrlDescription'] = $this->aSurveyInfo['surveyls_urldescription'];
             if ($this->aSurveyInfo['aCompleted']['sSurveylsUrlDescription'] == "") {
                 $this->aSurveyInfo['aCompleted']['sSurveylsUrlDescription'] = $this->aSurveyInfo['surveyls_url'];

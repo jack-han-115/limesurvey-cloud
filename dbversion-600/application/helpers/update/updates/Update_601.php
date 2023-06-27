@@ -2,6 +2,8 @@
 
 namespace LimeSurvey\Helpers\Update;
 
+use Exception;
+
 class Update_601 extends DatabaseUpdateBase
 {
     /**
@@ -11,12 +13,12 @@ class Update_601 extends DatabaseUpdateBase
     {
         // Add button text column to boxes table
         try {
-            $this->db->createCommand()
-            ->addColumn('{{boxes}}', 'buttontext', 'string(255)');
+            setTransactionBookmark();
+            $this->db->createCommand()->addColumn('{{boxes}}', 'buttontext', 'string(255)');
         } catch (Exception $e) {
             // Column already exists - ignore
-        }        
-
+            rollBackToTransactionBookmark();
+        }
         $this->updateCreateSurvey();
         $this->updateSurveyList();
         $this->updateGlobalSettings();
@@ -74,7 +76,7 @@ class Update_601 extends DatabaseUpdateBase
                 [
                     'ico' => 'ri-user-line',
                     'title' => 'Manage survey administrators',
-                    'desc' => 'The user management allows you to add additional users to your survey site.',
+                    'desc' => 'The user management allows you to add additional users to your survey administration.',
                     'buttontext' => 'Manage administrators',
                     'url' => 'userManagement/index'
                 ],

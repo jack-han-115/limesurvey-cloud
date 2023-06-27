@@ -360,8 +360,8 @@ class LsDefaultDataSets
                 gT('Reorder questions & groups', 'unescaped'),
                 gT('Reorder questions & groups', 'unescaped'),
                 gT('Reorder questions & groups', 'unescaped'),
-                '',
-                'remix',
+                'reorder', // ri-list-settings-line (?) for remix
+                'fontawesome',
                 '',
                 'surveyAdministration/organize/',
                 '',
@@ -370,7 +370,7 @@ class LsDefaultDataSets
                 '',
                 'surveycontent',
                 'update',
-                '{"render": {"isActive": false, "link": {"data": {"surveyid": ["survey", "sid"]}}}}',
+                '{"render": {"link": {"data": {"surveyid": ["survey", "sid"]}}}}',
                 '',
                 'en-GB',
                 1,
@@ -937,7 +937,7 @@ class LsDefaultDataSets
                           'url'        => 'userManagement/index',
                           'title'      => gT('Manage survey administrators'),
                           'ico'        => 'ri-user-line',
-                          'desc'       => gT('The user management allows you to add additional users to your survey site.'),
+                          'desc'       => gT('The user management allows you to add additional users to your survey administration.'),
                           'page'       => 'welcome',
                           'usergroup'  => '-2',
                           'buttontext' => gt('Manage administrators')
@@ -1843,7 +1843,7 @@ class LsDefaultDataSets
     {
         return [
             ['stg_name' => 'editorPreset', 'stg_value' => 'wysiwyg'],
-            ['stg_name' => 'showScriptEditor', 'stg_value' => '1'],
+            ['stg_name' => 'showScriptEdit', 'stg_value' => '1'],
             ['stg_name' => 'noViewMode', 'stg_value' => '0'],
             ['stg_name' => 'answeroptionprefix', 'stg_value' => 'AO'],
             ['stg_name' => 'subquestionprefix', 'stg_value' => 'SQ'],
