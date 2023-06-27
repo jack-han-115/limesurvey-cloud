@@ -91,7 +91,7 @@ foreach ($systemInfos as $key => $systemInfo) {
             </div>
             <div class="modal-body">
                 <?php // Limeservice mod start -------------------- ?>
-                <?php if (1 == 2 && Permission::model()->hasGlobalPermission('superadmin', 'read')) { ?>
+			<?php if (1==2 && Permission::model()->hasGlobalPermission('superadmin', 'read') && !Yii::app()->getConfig('demoMode')) { ?> 
                     <?php // Limeservice mod end -------------------- ?>
                     <h4><?php eT("Your system configuration:")?></h4>
                     <ul class="list-group">
