@@ -34,6 +34,55 @@ Thank you to everyone who helped with this new release!
 
 CHANGE LOG
 ------------------------------------------------------
+Changes from 3.28.62 (build 230619) to 3.28.63 (build 230628) June 26, 2023
+-Fixed issue [security] #18866: Label sets can be replaced by any admin user (#3210) (Denis Chenu)
+-Fixed issue #18868: No CRSF control for delete action of label set (Denis Chenu)
+-Fixed issue #18547: Response browsing on MSSQL server could go to 500 error (Denis Chenu)
+-Fixed issue #18420: Different behaviour on grid between MSSQL and MariaDB (Denis Chenu)
+
+
+Changes from 3.28.61 (build 230614) to 3.28.62 (build 230619) June 19, 2023
+-Fixed issue 18459: When filtering the survey list by a parent survey group, surveys assigned to a child survey group are not listed (#3147) (Gabriel Jenik)
+
+
+Changes from 3.28.60 (build 230607) to 3.28.61 (build 230614) June 12, 2023
+-Fixed issue #18585: Click again on link by email submit again the survey (#3193) (Denis Chenu)
+#Updated translation: Hungarian by kkd
+
+
+Changes from 3.28.59 (build 230517) to 3.28.60 (build 230607) June 5, 2023
+- Fixed issue #17491: Multiple Short Text subquestions missing from Export Printable Survey (#3134)
+- Fixed issue [security] #18847: Cross-Site Scripting vulnerability via the loadsecurity parameter (#3181)
+- Updated translation: Italian by ritapas
+
+Changes from 3.28.58 (build 230504) to 3.28.59 (build 230517) May 15, 2023
+-Fixed issue #18634: Export single selected response can export a empty line (#2909) (Denis Chenu)
+-Fixed issue #18343: Problem with interpreting double slash in URL (IIS) (#2630) (Denis Chenu)
+
+
+Changes from 3.28.57 (build 230425) to 3.28.58 (build 230504) May 3, 2023
+-Fixed issue #18639: Token browse can be unusable with lot of data in attribute (#2915) (Denis Chenu)
+-Fixed issue #18603: Set minimum number of files for file upload not working (#2864) (Denis Chenu)
+#Updated translation: Swedish by maxzomborszki
+#Updated translation: Norwegian (Bokmål) by pmonstad
+
+
+Changes from 3.28.56 (build 230404) to 3.28.57 (build 230425) April 24, 2023
+-Fixed issue #18703: Upload files show error if not seen (using index) (#3014) (Denis Chenu)
+#Updated translation: Turkish by kayazeren
+#Updated translation: Norwegian (Bokmål) by pmonstad
+#Updated translation: German (Easy) by c_schmitz
+
+
+Changes from 3.28.55 (build 230328) to 3.28.56 (build 230404) April 3, 2023
+-Fixed issue: PCLZip error on last step of ComfortUpdate when trying to update from version 3 to latest version (Carsten Schmitz)
+
+
+Changes from 3.28.54 (build 230321) to 3.28.55 (build 230328) March 27, 2023
+-Fixed issue: Division by Zero error when running statistics (Carsten Schmitz)
+-Fixed issue #18071: Importing Qaestion through Remote Control may fail if the imported question already exists (#2972) (Denis Chenu)
+
+
 Changes from 3.28.53 (build 230314) to 3.28.54 (build 230321) March 20, 2023
 +New feature #18197: Allow GA4 tracking (#2962)
 -Fixed issue: $aFiles can be null (Olle Haerstedt)
