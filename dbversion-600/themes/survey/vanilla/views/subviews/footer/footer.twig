@@ -23,7 +23,7 @@ body > article {
         <div class="row text-center datapolicy-links">
             {% if aSurveyInfo.oSurvey.showdatapolicybutton == 1 or aSurveyInfo.sShowGlobalDataPolicyButton == '1' %}
                 <a data-bs-toggle="modal" data-bs-target="#datapolicy-modal">
-                    {{ gT('Data policy') }}
+                    {{ gT('Privacy policy') }}
                 </a>
             {% endif %}
             {% if (aSurveyInfo.oSurvey.showdatapolicybutton == 1 and aSurveyInfo.oSurvey.showlegalnoticebutton == 1) or (aSurveyInfo.sShowGlobalLegalNoticeButton == '1' and aSurveyInfo.sShowGlobalDataPolicyButton == '1') %}
@@ -37,15 +37,15 @@ body > article {
         </div>
     </div>
 
-    <!-- Data policy Modal -->
-    <div class="modal fade" id="datapolicy-modal" tabindex="-1" role="dialog" aria-labelledby="{{ gT('Data policy') }}">
+    <!-- Privacy policy Modal -->
+    <div class="modal fade" id="datapolicy-modal" tabindex="-1" role="dialog" aria-labelledby="{{ gT('Privacy policy') }}">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"><span
                             aria-hidden="true">&times;</span>
                     </button>
-                    <h5 class="modal-title" id="datapolicy-label">{{ gT('Data policy') }}</h5>
+                    <h5 class="modal-title" id="datapolicy-label">{{ gT('Privacy policy') }}</h5>
                 </div>
                 <div class="modal-body">
                     {% if aSurveyInfo.oSurvey.showdatapolicybutton %}
