@@ -45,7 +45,9 @@
                     <td>
                         <?php
                             templatereplace($qrrow['question'],array('QID'=>$qrrow['qid']),$aReplacementData,'Unspecified', false ,$qid);
-                            echo viewHelper::stripTagsEM(LimeExpressionManager::GetLastPrettyPrintExpression());
+                            $pretty = LimeExpressionManager::GetLastPrettyPrintExpression();
+                            echo viewHelper::stripTagsEM($pretty);
+                            unset($pretty);
                         ?>
                     </td>
                 </tr>
