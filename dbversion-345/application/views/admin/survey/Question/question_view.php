@@ -46,6 +46,11 @@
                         <?php
                             templatereplace($qrrow['question'],array('QID'=>$qrrow['qid']),$aReplacementData,'Unspecified', false ,$qid);
                             $pretty = LimeExpressionManager::GetLastPrettyPrintExpression();
+                            // If expression is huge, abort the pretty output due to memory constraints.
+                            if (strlen($pretty) > 1000000) {
+                                $pretty = substr($pretty, 0, 1000000);
+                                Yii::app()->user->setFlash('info', gT('The question text is too long to be displayed. It has been truncated.'));
+                            }
                             echo viewHelper::stripTagsEM($pretty);
                             unset($pretty);
                         ?>
