@@ -38,6 +38,12 @@ class ComposerStaticInitddb1a145e450f862353420acc5153e40
             'ParagonIE\\ConstantTime\\' => 23,
             'PHPMailer\\PHPMailer\\' => 20,
         ),
+        'M' => 
+        array (
+            'MaxMind\\WebService\\' => 19,
+            'MaxMind\\Exception\\' => 18,
+            'MaxMind\\Db\\' => 11,
+        ),
         'L' => 
         array (
             'LimeSurvey\\PluginManager\\' => 25,
@@ -49,10 +55,19 @@ class ComposerStaticInitddb1a145e450f862353420acc5153e40
             'LimeSurvey\\ExtensionInstaller\\' => 30,
             'LimeSurvey\\Exceptions\\' => 22,
             'LimeSurvey\\Datavalueobjects\\' => 28,
+            'LimeSurveyProfessional\\' => 23,
         ),
         'H' => 
         array (
             'Html2Text\\' => 10,
+        ),
+        'G' => 
+        array (
+            'GeoIp2\\' => 7,
+        ),
+        'C' => 
+        array (
+            'Composer\\CaBundle\\' => 18,
         ),
         'A' => 
         array (
@@ -93,6 +108,18 @@ class ComposerStaticInitddb1a145e450f862353420acc5153e40
         array (
             0 => __DIR__ . '/..' . '/phpmailer/phpmailer/src',
         ),
+        'MaxMind\\WebService\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/maxmind/web-service-common/src/WebService',
+        ),
+        'MaxMind\\Exception\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/maxmind/web-service-common/src/Exception',
+        ),
+        'MaxMind\\Db\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/maxmind-db/reader/src/MaxMind/Db',
+        ),
         'LimeSurvey\\PluginManager\\' => 
         array (
             0 => __DIR__ . '/../..' . '/application/libraries/PluginManager',
@@ -131,10 +158,22 @@ class ComposerStaticInitddb1a145e450f862353420acc5153e40
         array (
             0 => __DIR__ . '/../..' . '/application/datavalueobjects',
         ),
+        'LimeSurveyProfessional\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/application/core/plugins/LimeSurveyProfessional',
+        ),
         'Html2Text\\' => 
         array (
             0 => __DIR__ . '/..' . '/html2text/html2text/src',
             1 => __DIR__ . '/..' . '/html2text/html2text/test',
+        ),
+        'GeoIp2\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/geoip2/geoip2/src',
+        ),
+        'Composer\\CaBundle\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/composer/ca-bundle/src',
         ),
         'ArPHP\\I18N\\' => 
         array (
