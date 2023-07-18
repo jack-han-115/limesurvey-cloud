@@ -55,7 +55,6 @@
 !/upload/global/readme.txt
 
 # tmp directory : whole except the index.html for directory create
-/tmp/*
 /tmp/assets/*
 /tmp/runtime/*
 /tmp/upload/*
