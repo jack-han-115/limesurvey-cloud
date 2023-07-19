@@ -13,13 +13,7 @@
             <a class="dropdown-item" href="https://forums.limesurvey.org" target="_blank"><?php eT("Support forum") ?></a>
         </li>
         <li>
-            <a class="dropdown-item" href="https://community.limesurvey.org/releases/" target="_blank"><?php eT("Release notes") ?></a>
-        </li>
-        <li>
             <a class="dropdown-item" href="https://www.limesurvey.org/legal-notice" target="_blank"><?php eT("Legal information") ?></a>
-        </li>
-        <li>
-            <a class="dropdown-item" href="mailto:info@limesurvey.org"><?php eT("Contact") ?></a>
         </li>
     </ul>
 </div>
