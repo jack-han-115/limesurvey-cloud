@@ -309,7 +309,7 @@ class Survey extends LSActiveRecord
         if (array_key_exists($this->sid, $this->findByPkCache)) {
             unset ($this->findByPkCache[$this->sid]);
         }
-                
+
         return true;
     }
 
@@ -989,7 +989,7 @@ class Survey extends LSActiveRecord
             unset($aData['wishSID']);
         }
         if(empty($aData['sid'])) {
-            $aData['sid'] = intval(randomChars(6, '123456789'));
+            $aData['sid'] = intval(randomChars(5, '123456789'));
         }
         $survey = new self;
         foreach ($aData as $k => $v) {
@@ -1000,7 +1000,7 @@ class Survey extends LSActiveRecord
         /* Validate sid : > 1 and unique */
         while(!$survey->validate(array('sid'))) {
             $attempts++;
-            $survey->sid = intval(randomChars(6, '123456789'));
+            $survey->sid = intval(randomChars(5, '123456789'));
             /* If it's happen : there are an issue in server … (or in randomChars function …) */
             if($attempts > 50) {
                 throw new Exception("Unable to get a valid survey id after 50 attempts");
