@@ -5946,7 +5946,7 @@ function sanitizeHtml(unsafeHtml, allowList, sanitizeFn) {
     var elementName = element.nodeName.toLowerCase();
     if (!Object.keys(allowList).includes(elementName)) {
       element.remove();
-      return "continue";
+      return 1; // continue
     }
     var attributeList = (_ref8 = []).concat.apply(_ref8, _toConsumableArray(element.attributes));
     var allowedAttributes = [].concat(allowList['*'] || [], allowList[elementName] || []);
@@ -5957,8 +5957,7 @@ function sanitizeHtml(unsafeHtml, allowList, sanitizeFn) {
     });
   };
   for (var i = 0, len = elements.length; i < len; i++) {
-    var _ret = _loop();
-    if (_ret === "continue") continue;
+    if (_loop()) continue;
   }
   return createdDocument.body.innerHTML;
 }

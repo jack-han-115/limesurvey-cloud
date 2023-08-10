@@ -19,8 +19,8 @@ $signupUrl = 'https://www.limesurvey.org/?' . $trackingQueryString;
 ?>
 <div class="col-lg-5 col-md-6 col-sm-8 col-xs-12 col-centered">
     <div class="well text-center">
-        <h3>
-            <?php eT('Thank you for taking this survey powered by LimeSurvey.'); ?>
+        <h3 class="thankyou">
+            <?php eT('Thank you!'); ?>
         </h3>
         <p>
             <?php eT('Turn your own questions into answers and start building your own survey today.'); ?>
